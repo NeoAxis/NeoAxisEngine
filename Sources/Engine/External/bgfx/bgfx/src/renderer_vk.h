@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -324,7 +324,7 @@ namespace bgfx { namespace vk
 		::Vk##_name* operator &() { return &vk; }                \
 		const ::Vk##_name* operator &() const { return &vk; }    \
 	};                                                           \
-	BX_STATIC_ASSERT(sizeof(::Vk##_name) == sizeof(Vk##_name) ); \
+	static_assert(sizeof(::Vk##_name) == sizeof(Vk##_name) ); \
 	void vkDestroy(Vk##_name&);                                  \
 	void release(Vk##_name&)
 VK_DESTROY

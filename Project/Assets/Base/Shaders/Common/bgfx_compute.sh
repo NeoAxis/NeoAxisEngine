@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -10,17 +10,15 @@
 
 #ifndef __cplusplus
 
-#if BGFX_SHADER_LANGUAGE_HLSL > 0 && BGFX_SHADER_LANGUAGE_HLSL < 400
-#	error "Compute is not supported!"
-#endif // BGFX_SHADER_LANGUAGE_HLSL
-
-#if BGFX_SHADER_LANGUAGE_METAL || BGFX_SHADER_LANGUAGE_SPIRV
+#if BGFX_SHADER_LANGUAGE_METAL \
+ || BGFX_SHADER_LANGUAGE_SPIRV \
+ || BGFX_SHADER_LANGUAGE_WGSL
 #	define FORMAT(_format) [[spv::format_ ## _format]]
 #	define WRITEONLY [[spv::nonreadable]]
 #else
 #	define FORMAT(_format)
 #	define WRITEONLY
-#endif // BGFX_SHADER_LANGUAGE_METAL || BGFX_SHADER_LANGUAGE_SPIRV
+#endif // BGFX_SHADER_LANGUAGE_*
 
 #if BGFX_SHADER_LANGUAGE_GLSL
 
@@ -79,6 +77,9 @@
 #define COMP_r32ui    uint
 #define COMP_rg32ui   uint2
 #define COMP_rgba32ui uint4
+#define COMP_r16ui    uint
+#define COMP_rg16ui   uint2
+#define COMP_rgba16ui uint4
 #define COMP_r32f     float
 #define COMP_r16f     float
 #define COMP_rg16f    float2
@@ -87,10 +88,16 @@
 #	define COMP_rgba8 unorm float4
 #	define COMP_rg8   unorm float2
 #	define COMP_r8    unorm float
+#	define COMP_rgba16 unorm float4
+#	define COMP_rg16   unorm float2
+#	define COMP_r16    unorm float
 #else
 #	define COMP_rgba8       float4
 #	define COMP_rg8         float2
 #	define COMP_r8          float
+#	define COMP_rgba16       float4
+#	define COMP_rg16         float2
+#	define COMP_r16          float
 #endif // BGFX_SHADER_LANGUAGE_HLSL
 #define COMP_rgba32f  float4
 //!!!!betauser
@@ -103,7 +110,7 @@
 
 #define IMAGE2D_WO( _name, _format, _reg)                                                 \
 	WRITEONLY FORMAT(_format) RWTexture2D<COMP_ ## _format> _name : REGISTER(u, _reg);  \
-	
+
 #define UIMAGE2D_WO(_name, _format, _reg) IMAGE2D_WO(_name, _format, _reg)
 
 #define IMAGE2D_RW( _name, _format, _reg)                       \
@@ -141,7 +148,9 @@
 
 #define UIMAGE3D_RW(_name, _format, _reg) IMAGE3D_RW(_name, _format, _reg)
 
-#if BGFX_SHADER_LANGUAGE_METAL || BGFX_SHADER_LANGUAGE_SPIRV
+#if BGFX_SHADER_LANGUAGE_METAL \
+ || BGFX_SHADER_LANGUAGE_SPIRV \
+ || BGFX_SHADER_LANGUAGE_WGSL
 #define BUFFER_RO(_name, _struct, _reg) StructuredBuffer<_struct>   _name : REGISTER(t, _reg)
 #define BUFFER_RW(_name, _struct, _reg) RWStructuredBuffer <_struct> _name : REGISTER(u, _reg)
 #define BUFFER_WO(_name, _struct, _reg) BUFFER_RW(_name, _struct, _reg)
@@ -149,7 +158,7 @@
 #define BUFFER_RO(_name, _struct, _reg) Buffer<_struct>   _name : REGISTER(t, _reg)
 #define BUFFER_RW(_name, _struct, _reg) RWBuffer<_struct> _name : REGISTER(u, _reg)
 #define BUFFER_WO(_name, _struct, _reg) BUFFER_RW(_name, _struct, _reg)
-#endif
+#endif // BGFX_SHADER_LANGUAGE_*
 
 #define NUM_THREADS(_x, _y, _z) [numthreads(_x, _y, _z)]
 
@@ -242,12 +251,10 @@
 	}
 
 #define __IMAGE_IMPL_ATOMIC(_format, _storeComponents, _type, _loadComponents)            \
-	\
 	void imageAtomicAdd(RWTexture2D<_format> _image, ivec2 _uv,  _type _value)       \
 	{				                                                                 \
 		InterlockedAdd(_image[_uv], _value._storeComponents);	                     \
 	}                                                                                \
-
 
 __IMAGE_IMPL_A(float,       x,    vec4,  xxxx)
 __IMAGE_IMPL_A(float2,      xy,   vec4,  xyyy)
@@ -257,14 +264,13 @@ __IMAGE_IMPL_A(uint,        x,    uvec4, xxxx)
 __IMAGE_IMPL_A(uint2,       xy,   uvec4, xyyy)
 __IMAGE_IMPL_A(uint4,       xyzw, uvec4, xyzw)
 
-#if BGFX_SHADER_LANGUAGE_HLSL
+#if BGFX_SHADER_LANGUAGE_HLSL && !BGFX_SHADER_LANGUAGE_DXIL
 __IMAGE_IMPL_A(unorm float,       x,    vec4,  xxxx)
 __IMAGE_IMPL_A(unorm float2,      xy,   vec4,  xyyy)
 __IMAGE_IMPL_A(unorm float4,      xyzw, vec4,  xyzw)
-#endif
+#endif // BGFX_SHADER_LANGUAGE_HLSL && !BGFX_SHADER_LANGUAGE_DXIL
 
 __IMAGE_IMPL_ATOMIC(uint,       x,    uvec4, xxxx)
-
 
 #define atomicAdd(_mem, _data)                                       InterlockedAdd(_mem, _data)
 #define atomicAnd(_mem, _data)                                       InterlockedAnd(_mem, _data)

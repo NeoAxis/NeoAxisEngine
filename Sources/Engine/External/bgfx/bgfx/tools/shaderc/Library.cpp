@@ -83,7 +83,7 @@ private:
 
 namespace bgfx
 {
-	bool compileShader(const char* _varying, const char* _comment, char* _shader, uint32_t _shaderLen, Options& _options, bx::WriterI* _shaderWriter, bx::WriterI* _messageWriter);
+	bool compileShader(const char* _varying, const char* _comment, char* _shader, uint32_t _shaderLen, const Options& _options, bx::WriterI* _shaderWriter, bx::WriterI* _messageWriter);
 	//bool compileShader(const char* _varying, const char* _comment, char* _shader, uint32_t _shaderLen, Options& _options, bx::FileWriter* _writer);
 }
 
@@ -179,12 +179,18 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 	case ShaderModel_DX12:
 		switch (shaderType)
 		{
-		//case ShaderType_Vertex:instance->options.profile = "s_5_0"; break;
-		//case ShaderType_Fragment:instance->options.profile = "s_5_0"; break;
-		//case ShaderType_Compute:instance->options.profile = "s_5_0"; break;
-		case ShaderType_Vertex:instance->options.profile = "vs_6_0"; break;
-		case ShaderType_Fragment:instance->options.profile = "ps_6_0"; break;
-		case ShaderType_Compute:instance->options.profile = "cs_6_0"; break;
+		case ShaderType_Vertex:instance->options.profile = "s_6_0"; break;
+		case ShaderType_Fragment:instance->options.profile = "s_6_0"; break;
+		case ShaderType_Compute:instance->options.profile = "s_6_0"; break;
+
+		////case ShaderType_Vertex:instance->options.profile = "s_5_0"; break;
+		////case ShaderType_Fragment:instance->options.profile = "s_5_0"; break;
+		////case ShaderType_Compute:instance->options.profile = "s_5_0"; break;
+
+		//case ShaderType_Vertex:instance->options.profile = "vs_6_0"; break;
+		//case ShaderType_Fragment:instance->options.profile = "ps_6_0"; break;
+		//case ShaderType_Compute:instance->options.profile = "cs_6_0"; break;
+
 		default: ::Fatal2("ShaderC_New: impl."); break;
 		}
 		break;

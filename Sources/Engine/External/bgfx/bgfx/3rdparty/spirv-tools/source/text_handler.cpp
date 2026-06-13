@@ -18,6 +18,7 @@
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
+#include <string_view>
 #include <tuple>
 
 #include "source/assembly_grammar.h"
@@ -118,6 +119,9 @@ spv_result_t getWord(spv_text text, spv_position position, std::string* word) {
           break;
         case ' ':
         case ';':
+        case ',':
+        case '(':
+        case ')':
         case '\t':
         case '\n':
         case '\r':
@@ -147,6 +151,31 @@ bool startsWithOp(spv_text text, spv_position position) {
   char ch1 = text->str[position->index + 1];
   char ch2 = text->str[position->index + 2];
   return ('O' == ch0 && 'p' == ch1 && ('A' <= ch2 && ch2 <= 'Z'));
+}
+
+// Returns false if the the floating point encoding requires a bit width
+// different from the given width. Write the expected bit width via *expected.
+bool validBitWidthForFPEncoding(spv_fp_encoding_t enc, uint32_t width,
+                                uint32_t* expected) {
+  switch (enc) {
+    case SPV_FP_ENCODING_IEEE754_BINARY16:
+    case SPV_FP_ENCODING_BFLOAT16:
+      *expected = 16;
+      break;
+    case SPV_FP_ENCODING_IEEE754_BINARY32:
+      *expected = 32;
+      break;
+    case SPV_FP_ENCODING_IEEE754_BINARY64:
+      *expected = 64;
+      break;
+    case SPV_FP_ENCODING_FLOAT8_E5M2:
+    case SPV_FP_ENCODING_FLOAT8_E4M3:
+      *expected = 8;
+      break;
+    default:
+      return true;
+  }
+  return width == *expected;
 }
 
 }  // namespace
@@ -251,13 +280,13 @@ spv_result_t AssemblyContext::binaryEncodeNumericLiteral(
              << "Unexpected numeric literal type";
     case IdTypeClass::kScalarIntegerType:
       if (type.isSigned) {
-        number_type = {type.bitwidth, SPV_NUMBER_SIGNED_INT};
+        number_type = {type.bitwidth, SPV_NUMBER_SIGNED_INT, type.encoding};
       } else {
-        number_type = {type.bitwidth, SPV_NUMBER_UNSIGNED_INT};
+        number_type = {type.bitwidth, SPV_NUMBER_UNSIGNED_INT, type.encoding};
       }
       break;
     case IdTypeClass::kScalarFloatType:
-      number_type = {type.bitwidth, SPV_NUMBER_FLOATING};
+      number_type = {type.bitwidth, SPV_NUMBER_FLOATING, type.encoding};
       break;
     case IdTypeClass::kBottom:
       // kBottom means the type is unknown and we need to infer the type before
@@ -267,11 +296,11 @@ spv_result_t AssemblyContext::binaryEncodeNumericLiteral(
       // signed integer, otherwise an unsigned integer.
       uint32_t bitwidth = static_cast<uint32_t>(assumedBitWidth(type));
       if (strchr(val, '.')) {
-        number_type = {bitwidth, SPV_NUMBER_FLOATING};
+        number_type = {bitwidth, SPV_NUMBER_FLOATING, type.encoding};
       } else if (type.isSigned || val[0] == '-') {
-        number_type = {bitwidth, SPV_NUMBER_SIGNED_INT};
+        number_type = {bitwidth, SPV_NUMBER_SIGNED_INT, type.encoding};
       } else {
-        number_type = {bitwidth, SPV_NUMBER_UNSIGNED_INT};
+        number_type = {bitwidth, SPV_NUMBER_UNSIGNED_INT, type.encoding};
       }
       break;
   }
@@ -327,13 +356,36 @@ spv_result_t AssemblyContext::recordTypeDefinition(
     if (pInst->words.size() != 4)
       return diagnostic() << "Invalid OpTypeInt instruction";
     types_[value] = {pInst->words[2], pInst->words[3] != 0,
-                     IdTypeClass::kScalarIntegerType};
+                     IdTypeClass::kScalarIntegerType, SPV_FP_ENCODING_UNKNOWN};
   } else if (pInst->opcode == spv::Op::OpTypeFloat) {
-    if (pInst->words.size() != 3)
+    if ((pInst->words.size() != 3) && (pInst->words.size() != 4))
       return diagnostic() << "Invalid OpTypeFloat instruction";
-    types_[value] = {pInst->words[2], false, IdTypeClass::kScalarFloatType};
+    spv_fp_encoding_t enc = SPV_FP_ENCODING_UNKNOWN;
+    if (pInst->words.size() >= 4) {
+      const spvtools::OperandDesc* desc = nullptr;
+      spv_result_t status = spvtools::LookupOperand(SPV_OPERAND_TYPE_FPENCODING,
+                                                    pInst->words[3], &desc);
+      if (status == SPV_SUCCESS) {
+        enc = spvFPEncodingFromOperandFPEncoding(
+            static_cast<spv::FPEncoding>(desc->value));
+        uint32_t expected_width;
+        if (!validBitWidthForFPEncoding(enc, pInst->words[2],
+                                        &expected_width)) {
+          const auto& name_span = desc->name();
+          const std::string_view name(name_span.data(), name_span.size() - 1);
+          return diagnostic() << "Invalid bit width " << pInst->words[2]
+                              << " for floating point encoding " << name
+                              << "; expected " << expected_width;
+        }
+      } else {
+        return diagnostic() << "Invalid OpTypeFloat encoding";
+      }
+    }
+    types_[value] = {pInst->words[2], false, IdTypeClass::kScalarFloatType,
+                     enc};
   } else {
-    types_[value] = {0, false, IdTypeClass::kOtherType};
+    types_[value] = {0, false, IdTypeClass::kOtherType,
+                     SPV_FP_ENCODING_UNKNOWN};
   }
   return SPV_SUCCESS;
 }

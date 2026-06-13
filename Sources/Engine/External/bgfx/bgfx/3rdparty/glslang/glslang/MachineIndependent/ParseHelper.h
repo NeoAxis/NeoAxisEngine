@@ -115,7 +115,7 @@ public:
 
     virtual void setLimits(const TBuiltInResource&) = 0;
 
-    void checkIndex(const TSourceLoc&, const TType&, int& index);
+    void checkIndex(const TSourceLoc&, const TType&, int64_t& index);
 
     EShLanguage getLanguage() const { return language; }
     void setScanContext(TScanContext* c) { scanContext = c; }
@@ -344,6 +344,7 @@ public:
     TIntermTyped* handleUnaryMath(const TSourceLoc&, const char* str, TOperator op, TIntermTyped* childNode);
     TIntermTyped* handleDotDereference(const TSourceLoc&, TIntermTyped* base, const TString& field);
     TIntermTyped* handleDotSwizzle(const TSourceLoc&, TIntermTyped* base, const TString& field);
+    TIntermTyped* handleTypeCast(const TSourceLoc&, TType *castType, TIntermTyped *base);
     void blockMemberExtensionCheck(const TSourceLoc&, const TIntermTyped* base, int member, const TString& memberName);
     TFunction* handleFunctionDeclarator(const TSourceLoc&, TFunction& function, bool prototype);
     TIntermAggregate* handleFunctionDefinition(const TSourceLoc&, TFunction&);
@@ -381,10 +382,11 @@ public:
     void rValueErrorCheck(const TSourceLoc&, const char* op, TIntermTyped*) override;
     void constantValueCheck(TIntermTyped* node, const char* token);
     void integerCheck(const TIntermTyped* node, const char* token);
+    void arrayIndexCheck(const TIntermTyped* node, const char* token);
     void globalCheck(const TSourceLoc&, const char* token);
     bool constructorError(const TSourceLoc&, TIntermNode*, TFunction&, TOperator, TType&);
     bool constructorTextureSamplerError(const TSourceLoc&, const TFunction&);
-    void arraySizeCheck(const TSourceLoc&, TIntermTyped* expr, TArraySize&, const char *sizeType, const bool allowZero = false);
+    void arraySizeCheck(const TSourceLoc&, TIntermTyped* expr, TArraySize&, const char *sizeType, const bool isTypeParameter = false);
     bool arrayQualifierError(const TSourceLoc&, const TQualifier&);
     bool arrayError(const TSourceLoc&, const TType&);
     void arraySizeRequiredCheck(const TSourceLoc&, const TArraySizes&);
@@ -397,6 +399,8 @@ public:
     void samplerCheck(const TSourceLoc&, const TType&, const TString& identifier, TIntermTyped* initializer);
     void atomicUintCheck(const TSourceLoc&, const TType&, const TString& identifier);
     void accStructCheck(const TSourceLoc & loc, const TType & type, const TString & identifier);
+    void hitObjectEXTCheck(const TSourceLoc& loc, const TType& type, const TString& identifier);
+    void hitObjectNVCheck(const TSourceLoc & loc, const TType & type, const TString & identifier);
     void transparentOpaqueCheck(const TSourceLoc&, const TType&, const TString& identifier);
     void memberQualifierCheck(glslang::TPublicType&);
     void globalQualifierFixCheck(const TSourceLoc&, TQualifier&, bool isMemberCheck = false, const TPublicType* publicType = nullptr);
@@ -406,14 +410,14 @@ public:
     void setDefaultPrecision(const TSourceLoc&, TPublicType&, TPrecisionQualifier);
     int computeSamplerTypeIndex(TSampler&);
     TPrecisionQualifier getDefaultPrecision(TPublicType&);
-    void precisionQualifierCheck(const TSourceLoc&, TBasicType, TQualifier&, bool isCoopMat);
+    void precisionQualifierCheck(const TSourceLoc&, TBasicType, TQualifier&, bool hasTypeParameter);
     void parameterTypeCheck(const TSourceLoc&, TStorageQualifier qualifier, const TType& type);
     bool containsFieldWithBasicType(const TType& type ,TBasicType basicType);
     TSymbol* redeclareBuiltinVariable(const TSourceLoc&, const TString&, const TQualifier&, const TShaderQualifiers&);
     void redeclareBuiltinBlock(const TSourceLoc&, TTypeList& typeList, const TString& blockName, const TString* instanceName, TArraySizes* arraySizes);
     void paramCheckFixStorage(const TSourceLoc&, const TStorageQualifier&, TType& type);
     void paramCheckFix(const TSourceLoc&, const TQualifier&, TType& type);
-    void nestedBlockCheck(const TSourceLoc&);
+    void nestedBlockCheck(const TSourceLoc&, const bool allowedInnerStruct = false);
     void nestedStructCheck(const TSourceLoc&);
     void arrayObjectCheck(const TSourceLoc&, const TType&, const char* op);
     void opaqueCheck(const TSourceLoc&, const TType&, const char* op);
@@ -424,7 +428,7 @@ public:
     void inductiveLoopCheck(const TSourceLoc&, TIntermNode* init, TIntermLoop* loop);
     void arrayLimitCheck(const TSourceLoc&, const TString&, int size);
     void limitCheck(const TSourceLoc&, int value, const char* limit, const char* feature);
-    void coopMatTypeParametersCheck(const TSourceLoc&, const TPublicType&);
+    void typeParametersCheck(const TSourceLoc&, const TPublicType&);
 
     void inductiveLoopBodyCheck(TIntermNode*, long long loopIndexId, TSymbolTable&);
     void constantIndexExpressionCheck(TIntermNode*);
@@ -449,8 +453,13 @@ public:
     TIntermTyped* addConstructor(const TSourceLoc&, TIntermNode*, const TType&);
     TIntermTyped* constructAggregate(TIntermNode*, const TType&, int, const TSourceLoc&);
     TIntermTyped* constructBuiltIn(const TType&, TOperator, TIntermTyped*, const TSourceLoc&, bool subset);
+    void makeVariadic(TFunction *F, const TSourceLoc &loc);
+    TParameter getParamWithDefault(const TPublicType& ty, TString* identifier, TIntermTyped* initializer,
+                                   const TSourceLoc& loc);
     void inheritMemoryQualifiers(const TQualifier& from, TQualifier& to);
-    void declareBlock(const TSourceLoc&, TTypeList& typeList, const TString* instanceName = nullptr, TArraySizes* arraySizes = nullptr);
+    void descHeapBuiltinRemap(TType* type, bool isInnerBlock);
+    bool untypedHeapCheck(TSymbol* symbol, const TType& type, const TSourceLoc& loc, const char* name);
+    TIntermNode* declareBlock(const TSourceLoc&, TTypeList& typeList, const TString* instanceName = nullptr, TArraySizes* arraySizes = nullptr);
     void blockStorageRemap(const TSourceLoc&, const TString*, TQualifier&);
     void blockStageIoCheck(const TSourceLoc&, const TQualifier&);
     void blockQualifierCheck(const TSourceLoc&, const TQualifier&, bool instanceName);
@@ -508,6 +517,9 @@ protected:
     TIntermNode* executeInitializer(const TSourceLoc&, TIntermTyped* initializer, TVariable* variable);
     TIntermTyped* convertInitializerList(const TSourceLoc&, const TType&, TIntermTyped* initializer);
     void finish() override;
+    void handleCoopMat2FunctionCall(const TSourceLoc& loc, const TFunction* fnCandidate, TIntermTyped* result, TIntermNode* arguments);
+    void handleVector2CoopMatConversionCall(const TSourceLoc& loc, const TFunction* fnCandidate, TIntermTyped* &result, TIntermNode* arguments);
+    void handleLongVectorBuiltin(const TSourceLoc& loc, const TFunction* fnCandidate, TType* resultType, TIntermNode* arguments);
 
     virtual const char* getGlobalUniformBlockName() const override;
     virtual void finalizeGlobalUniformBlockLayout(TVariable&) override;
@@ -517,6 +529,32 @@ protected:
     virtual void finalizeAtomicCounterBlockLayout(TVariable&) override;
     virtual void setAtomicCounterBlockDefaults(TType& block) const override;
     virtual void setInvariant(const TSourceLoc& loc, const char* builtin) override;
+
+    // Returns true if the given long vector type is correctly parameterized.
+    // Otherwise emits an error and returns false.
+    template<typename TTYPE>
+    bool isValidLongVectorElseError(const TSourceLoc& loc, const TTYPE& type) {
+        assert(type.isLongVector());
+        const TTypeParameters* typeParams = type.getTypeParameters();
+        if (typeParams == nullptr) {
+            error(loc, "vector type missing type parameters", "", "");
+            return false;
+        }
+        const auto basicType = typeParams->basicType;
+        if (!isTypeInt(basicType) && !isTypeFloat(basicType) && basicType != EbtBool) {
+            error(loc, "invalid element type for vector", TType::getBasicString(typeParams->basicType), "");
+            return false;
+        }
+        if (typeParams->arraySizes == nullptr) {
+            error(loc, "vector type missing element count", "", "");
+            return false;
+        }
+        if (typeParams->arraySizes->getNumDims() != 1) {
+            error(loc, "vector type requires exactly 1 element count", "", "");
+            return false;
+        }
+        return true;
+    }
 
 public:
     //

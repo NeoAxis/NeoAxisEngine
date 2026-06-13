@@ -336,6 +336,30 @@ namespace bx
 	///
 	BX_CONSTEXPR_FUNC float sub(float _a, float _b);
 
+	/// Saturating integer add. Clamps the result to the representable range
+	/// of `Ty` instead of wrapping around. Supports signed and unsigned
+	/// integer types.
+	///
+	/// @param[in] _a Left operand.
+	/// @param[in] _b Right operand.
+	///
+	/// @returns Sum clamped to `[LimitsT<Ty>::min, LimitsT<Ty>::max]`.
+	///
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC Ty satAdd(Ty _a, Ty _b);
+
+	/// Saturating integer subtract. Clamps the result to the representable
+	/// range of `Ty` instead of wrapping around. Supports signed and
+	/// unsigned integer types.
+	///
+	/// @param[in] _a Left operand.
+	/// @param[in] _b Right operand.
+	///
+	/// @returns Difference clamped to `[LimitsT<Ty>::min, LimitsT<Ty>::max]`.
+	///
+	template<typename Ty>
+	BX_CONSTEXPR_FUNC Ty satSub(Ty _a, Ty _b);
+
 	/// Returns result of multiply (_a * _b).
 	///
 	BX_CONSTEXPR_FUNC float mul(float _a, float _b);

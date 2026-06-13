@@ -170,7 +170,7 @@ namespace Internal//NeoAxis
 	{
 		struct MacAppNativeWrapper
 		{
-			[DllImport( "NeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_MessageBox", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
+			[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_MessageBox", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
 			public static extern void MessageBox( string text, string caption );
 		}
 

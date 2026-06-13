@@ -68,28 +68,36 @@ namespace NeoAxis.Player.Android
 				Engine.engineInitialized = true;
 			}
 
-			//UI thread can be changed when initially app ran with disabled screen. update it.
-			VirtualFileSystem.SetMainThread( Thread.CurrentThread );
-
-			//update screen size
-			if( surfaceResized )
+			try
 			{
-				RenderingSystem.ApplicationRenderTarget?.WindowMovedOrResized( PlatformFunctionalityAndroid.screenSize );
-				surfaceResized = false;
+				//UI thread can be changed when initially app ran with disabled screen. update it.
+				VirtualFileSystem.SetMainThread( Thread.CurrentThread );
+
+				//update screen size
+				if( surfaceResized )
+				{
+					RenderingSystem.ApplicationRenderTarget?.WindowMovedOrResized( PlatformFunctionalityAndroid.screenSize );
+					surfaceResized = false;
+				}
+
+				//process input
+				Engine.ProcessInputEvents();
+				Engine.activity.UpdateSoftInput();
+
+				//engine tick and render
+				EngineApp.CreatedWindowApplicationIdle( false );
+
+				//update screen settings
+				Engine.activity.UpdateScreenOrientation();
+
+				if( EngineApp.NeedExit )
+					Java.Lang.JavaSystem.Exit( 0 );
 			}
-
-			//process input
-			Engine.ProcessInputEvents();
-			Engine.activity.UpdateSoftInput();
-
-			//engine tick and render
-			EngineApp.CreatedWindowApplicationIdle( false );
-
-			//update screen settings
-			Engine.activity.UpdateScreenOrientation();
-
-			if( EngineApp.NeedExit )
-				Java.Lang.JavaSystem.Exit( 0 );
+			catch( Exception e )
+			{
+				Log.FatalAsException( e.ToString() );
+				return;
+			}
 		}
 	}
 }

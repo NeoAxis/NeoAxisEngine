@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -152,7 +152,6 @@
  *
  */
 #define BGFX_STATE_RESERVED_SHIFT           61
-
 #define BGFX_STATE_RESERVED_MASK            UINT64_C(0xe000000000000000)
 
 /**
@@ -160,7 +159,6 @@
  *
  */
 #define BGFX_STENCIL_FUNC_REF_SHIFT         0
-
 #define BGFX_STENCIL_FUNC_REF_MASK          UINT32_C(0x000000ff)
 #define BGFX_STENCIL_FUNC_REF(v) ( ( (uint32_t)(v)<<BGFX_STENCIL_FUNC_REF_SHIFT )&BGFX_STENCIL_FUNC_REF_MASK)
 
@@ -169,7 +167,6 @@
  *
  */
 #define BGFX_STENCIL_FUNC_RMASK_SHIFT       8
-
 #define BGFX_STENCIL_FUNC_RMASK_MASK        UINT32_C(0x0000ff00)
 #define BGFX_STENCIL_FUNC_RMASK(v) ( ( (uint32_t)(v)<<BGFX_STENCIL_FUNC_RMASK_SHIFT )&BGFX_STENCIL_FUNC_RMASK_MASK)
 
@@ -277,24 +274,22 @@
 #define BGFX_DEBUG_TEXT                     UINT32_C(0x00000008) //!< Enable debug text display.
 #define BGFX_DEBUG_PROFILER                       UINT32_C(0x00000010) //!< Enable profiler. This causes per-view statistics to be collected, available through `bgfx::Stats::ViewStats`. This is unrelated to the profiler functions in `bgfx::CallbackI`.
 
-#define BGFX_BUFFER_COMPUTE_FORMAT_8X1      UINT16_C(0x0001) //!< 1 8-bit value
-#define BGFX_BUFFER_COMPUTE_FORMAT_8X2      UINT16_C(0x0002) //!< 2 8-bit values
-#define BGFX_BUFFER_COMPUTE_FORMAT_8X4      UINT16_C(0x0003) //!< 4 8-bit values
-#define BGFX_BUFFER_COMPUTE_FORMAT_16X1     UINT16_C(0x0004) //!< 1 16-bit value
-#define BGFX_BUFFER_COMPUTE_FORMAT_16X2     UINT16_C(0x0005) //!< 2 16-bit values
-#define BGFX_BUFFER_COMPUTE_FORMAT_16X4     UINT16_C(0x0006) //!< 4 16-bit values
-#define BGFX_BUFFER_COMPUTE_FORMAT_32X1     UINT16_C(0x0007) //!< 1 32-bit value
-#define BGFX_BUFFER_COMPUTE_FORMAT_32X2     UINT16_C(0x0008) //!< 2 32-bit values
-#define BGFX_BUFFER_COMPUTE_FORMAT_32X4     UINT16_C(0x0009) //!< 4 32-bit values
+#define BGFX_BUFFER_COMPUTE_FORMAT_8X1            UINT16_C(0x0001) //!< 1 x 8-bit value
+#define BGFX_BUFFER_COMPUTE_FORMAT_8X2            UINT16_C(0x0002) //!< 2 x 8-bit values
+#define BGFX_BUFFER_COMPUTE_FORMAT_8X4            UINT16_C(0x0003) //!< 4 x 8-bit values
+#define BGFX_BUFFER_COMPUTE_FORMAT_16X1           UINT16_C(0x0004) //!< 1 x 16-bit value
+#define BGFX_BUFFER_COMPUTE_FORMAT_16X2           UINT16_C(0x0005) //!< 2 x 16-bit values
+#define BGFX_BUFFER_COMPUTE_FORMAT_16X4           UINT16_C(0x0006) //!< 4 x 16-bit values
+#define BGFX_BUFFER_COMPUTE_FORMAT_32X1           UINT16_C(0x0007) //!< 1 x 32-bit value
+#define BGFX_BUFFER_COMPUTE_FORMAT_32X2           UINT16_C(0x0008) //!< 2 x 32-bit values
+#define BGFX_BUFFER_COMPUTE_FORMAT_32X4           UINT16_C(0x0009) //!< 4 x 32-bit values
 #define BGFX_BUFFER_COMPUTE_FORMAT_SHIFT    0
-
 #define BGFX_BUFFER_COMPUTE_FORMAT_MASK     UINT16_C(0x000f)
 
 #define BGFX_BUFFER_COMPUTE_TYPE_INT        UINT16_C(0x0010) //!< Type `int`.
 #define BGFX_BUFFER_COMPUTE_TYPE_UINT       UINT16_C(0x0020) //!< Type `uint`.
 #define BGFX_BUFFER_COMPUTE_TYPE_FLOAT      UINT16_C(0x0030) //!< Type `float`.
 #define BGFX_BUFFER_COMPUTE_TYPE_SHIFT      4
-
 #define BGFX_BUFFER_COMPUTE_TYPE_MASK       UINT16_C(0x0030)
 
 #define BGFX_BUFFER_NONE                    UINT16_C(0x0000)
@@ -322,12 +317,10 @@
 #define BGFX_TEXTURE_RT_MSAA_X8             UINT64_C(0x0000004000000000) //!< Render target MSAAx8 mode.
 #define BGFX_TEXTURE_RT_MSAA_X16            UINT64_C(0x0000005000000000) //!< Render target MSAAx16 mode.
 #define BGFX_TEXTURE_RT_MSAA_SHIFT          36
-
 #define BGFX_TEXTURE_RT_MSAA_MASK           UINT64_C(0x0000007000000000)
 
 #define BGFX_TEXTURE_RT_WRITE_ONLY          UINT64_C(0x0000008000000000) //!< Render target will be used for writing
 #define BGFX_TEXTURE_RT_SHIFT               36
-
 #define BGFX_TEXTURE_RT_MASK                UINT64_C(0x000000f000000000)
 
 /**
@@ -338,38 +331,32 @@
 #define BGFX_SAMPLER_U_CLAMP                UINT32_C(0x00000002) //!< Wrap U mode: Clamp
 #define BGFX_SAMPLER_U_BORDER               UINT32_C(0x00000003) //!< Wrap U mode: Border
 #define BGFX_SAMPLER_U_SHIFT                0
-
 #define BGFX_SAMPLER_U_MASK                 UINT32_C(0x00000003)
 
 #define BGFX_SAMPLER_V_MIRROR               UINT32_C(0x00000004) //!< Wrap V mode: Mirror
 #define BGFX_SAMPLER_V_CLAMP                UINT32_C(0x00000008) //!< Wrap V mode: Clamp
 #define BGFX_SAMPLER_V_BORDER               UINT32_C(0x0000000c) //!< Wrap V mode: Border
 #define BGFX_SAMPLER_V_SHIFT                2
-
 #define BGFX_SAMPLER_V_MASK                 UINT32_C(0x0000000c)
 
 #define BGFX_SAMPLER_W_MIRROR               UINT32_C(0x00000010) //!< Wrap W mode: Mirror
 #define BGFX_SAMPLER_W_CLAMP                UINT32_C(0x00000020) //!< Wrap W mode: Clamp
 #define BGFX_SAMPLER_W_BORDER               UINT32_C(0x00000030) //!< Wrap W mode: Border
 #define BGFX_SAMPLER_W_SHIFT                4
-
 #define BGFX_SAMPLER_W_MASK                 UINT32_C(0x00000030)
 
 #define BGFX_SAMPLER_MIN_POINT              UINT32_C(0x00000040) //!< Min sampling mode: Point
 #define BGFX_SAMPLER_MIN_ANISOTROPIC        UINT32_C(0x00000080) //!< Min sampling mode: Anisotropic
 #define BGFX_SAMPLER_MIN_SHIFT              6
-
 #define BGFX_SAMPLER_MIN_MASK               UINT32_C(0x000000c0)
 
 #define BGFX_SAMPLER_MAG_POINT              UINT32_C(0x00000100) //!< Mag sampling mode: Point
 #define BGFX_SAMPLER_MAG_ANISOTROPIC        UINT32_C(0x00000200) //!< Mag sampling mode: Anisotropic
 #define BGFX_SAMPLER_MAG_SHIFT              8
-
 #define BGFX_SAMPLER_MAG_MASK               UINT32_C(0x00000300)
 
 #define BGFX_SAMPLER_MIP_POINT              UINT32_C(0x00000400) //!< Mip sampling mode: Point
 #define BGFX_SAMPLER_MIP_SHIFT              10
-
 #define BGFX_SAMPLER_MIP_MASK               UINT32_C(0x00000400)
 
 #define BGFX_SAMPLER_COMPARE_LESS           UINT32_C(0x00010000) //!< Compare when sampling depth texture: less.
@@ -381,16 +368,13 @@
 #define BGFX_SAMPLER_COMPARE_NEVER          UINT32_C(0x00070000) //!< Compare when sampling depth texture: never.
 #define BGFX_SAMPLER_COMPARE_ALWAYS         UINT32_C(0x00080000) //!< Compare when sampling depth texture: always.
 #define BGFX_SAMPLER_COMPARE_SHIFT          16
-
 #define BGFX_SAMPLER_COMPARE_MASK           UINT32_C(0x000f0000)
 
 #define BGFX_SAMPLER_BORDER_COLOR_SHIFT     24
-
 #define BGFX_SAMPLER_BORDER_COLOR_MASK      UINT32_C(0x0f000000)
 #define BGFX_SAMPLER_BORDER_COLOR(v) ( ( (uint32_t)(v)<<BGFX_SAMPLER_BORDER_COLOR_SHIFT )&BGFX_SAMPLER_BORDER_COLOR_MASK)
 
 #define BGFX_SAMPLER_RESERVED_SHIFT         28
-
 #define BGFX_SAMPLER_RESERVED_MASK          UINT32_C(0xf0000000)
 
 #define BGFX_SAMPLER_NONE                   UINT32_C(0x00000000)
@@ -435,7 +419,6 @@
 #define BGFX_RESET_MSAA_X8                  UINT32_C(0x00000030) //!< Enable 8x MSAA.
 #define BGFX_RESET_MSAA_X16                 UINT32_C(0x00000040) //!< Enable 16x MSAA.
 #define BGFX_RESET_MSAA_SHIFT               4
-
 #define BGFX_RESET_MSAA_MASK                UINT32_C(0x00000070)
 
 #define BGFX_RESET_NONE                     UINT32_C(0x00000000) //!< No reset flags.
@@ -456,7 +439,6 @@
 #define BGFX_RESET_TRANSPARENT_BACKBUFFER         UINT32_C(0x00100000) //!< Transparent backbuffer. Availability depends on: `BGFX_CAPS_TRANSPARENT_BACKBUFFER`.
 
 #define BGFX_RESET_FULLSCREEN_SHIFT         0
-
 #define BGFX_RESET_FULLSCREEN_MASK          UINT32_C(0x00000001)
 
 #define BGFX_RESET_RESERVED_SHIFT           31                   //!< Internal bit shift

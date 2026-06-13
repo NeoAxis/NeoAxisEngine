@@ -4727,7 +4727,7 @@ namespace NeoAxis
 	//#if MACOS
 	//class MacOSXPlatformSpecificUtility : PlatformSpecificUtility
 	//{
-	//	[DllImport( "NeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_LoadLibrary",
+	//	[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_LoadLibrary",
 	//		CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
 	//	public static extern IntPtr MacLoadLibrary( string name );
 

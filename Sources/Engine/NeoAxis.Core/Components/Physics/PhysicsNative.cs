@@ -11,7 +11,7 @@ namespace NeoAxis
 {
 	static class PhysicsNative
 	{
-		internal const string library = "NeoAxisCoreNative";
+		internal const string library = "libNeoAxisCoreNative";
 		internal const CallingConvention convention = CallingConvention.Cdecl;
 
 		///////////////////////////////////////////////

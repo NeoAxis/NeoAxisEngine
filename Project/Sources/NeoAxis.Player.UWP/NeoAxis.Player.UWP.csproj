@@ -110,11 +110,8 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="..\..\Assets" />
     <Content Include="..\..\Caches" />
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\x64\bgfx.dll">
-      <Link>NeoAxis.Internal\Platforms\UWP\x64\bgfx.dll</Link>
-    </Content>
-    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\x64\NeoAxisCoreNative.dll">
-      <Link>NeoAxis.Internal\Platforms\UWP\x64\NeoAxisCoreNative.dll</Link>
+    <Content Include="..\..\Binaries\NeoAxis.Internal\Platforms\UWP\x64\libNeoAxisCoreNative.dll">
+      <Link>NeoAxis.Internal\Platforms\UWP\x64\libNeoAxisCoreNative.dll</Link>
     </Content>
     <Content Include="..\..\Binaries\NeoAxis.Internal\NeoAxis.DefaultSettings.config">
       <Link>NeoAxis.Internal\NeoAxis.DefaultSettings.config</Link>

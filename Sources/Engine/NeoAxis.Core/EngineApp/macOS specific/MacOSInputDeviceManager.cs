@@ -33,7 +33,7 @@ namespace NeoAxis
 
 		unsafe protected override bool OnInit()
 		{
-			NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
+			NativeUtility.PreloadLibrary( "libNeoAxisCoreNative" );
 
 			//!!!!
 			//try

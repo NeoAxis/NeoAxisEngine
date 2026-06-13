@@ -96,6 +96,11 @@ std::string to_string(const T& val) {
     #pragma warning(disable : 4201) // nameless union
 #endif
 
+// Allow compilation to WASI which does not support threads yet.
+#ifdef __wasi__ 
+#define DISABLE_THREAD_SUPPORT
+#endif
+
 #include "PoolAlloc.h"
 
 //
@@ -159,6 +164,11 @@ template<class T> inline T* NewPoolObject(T*)
 template<class T> inline T* NewPoolObject(T, int instances)
 {
     return new(GetThreadPoolAllocator().allocate(instances * sizeof(T))) T[instances];
+}
+
+inline bool StartsWith(TString const &str, const char *prefix)
+{
+    return str.compare(0, strlen(prefix), prefix) == 0;
 }
 
 //

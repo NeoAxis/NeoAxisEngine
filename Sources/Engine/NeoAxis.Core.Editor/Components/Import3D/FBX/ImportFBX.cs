@@ -176,7 +176,7 @@ namespace NeoAxis.Import.FBX
 
 			//-------------------------
 
-			var fixedRotation = settings.component.Rotation.Value;
+			var fixedRotation = settings.component.Rotation.Value.GetNormalize();
 			if( context.settings.component.FixAxes )
 			{
 				var rootNode = scene.GetRootNode();

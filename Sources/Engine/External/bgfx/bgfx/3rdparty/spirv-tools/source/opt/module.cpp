@@ -93,6 +93,7 @@ void Module::ForEachInst(const std::function<void(Instruction*)>& f,
   if (sampled_image_address_mode_)
     sampled_image_address_mode_->ForEachInst(f, run_on_debug_line_insts);
   DELEGATE(entry_points_);
+  DELEGATE(graph_entry_points_);
   DELEGATE(execution_modes_);
   DELEGATE(debugs1_);
   DELEGATE(debugs2_);
@@ -102,6 +103,10 @@ void Module::ForEachInst(const std::function<void(Instruction*)>& f,
   DELEGATE(types_values_);
   for (auto& i : functions_) {
     i->ForEachInst(f, run_on_debug_line_insts,
+                   /* run_on_non_semantic_insts = */ true);
+  }
+  for (auto& g : graphs_) {
+    g->ForEachInst(f, run_on_debug_line_insts,
                    /* run_on_non_semantic_insts = */ true);
   }
 #undef DELEGATE
@@ -129,6 +134,12 @@ void Module::ForEachInst(const std::function<void(const Instruction*)>& f,
   for (auto& i : ext_inst_debuginfo_) DELEGATE(i);
   for (auto& i : functions_) {
     static_cast<const Function*>(i.get())->ForEachInst(
+        f, run_on_debug_line_insts,
+        /* run_on_non_semantic_insts = */ true);
+  }
+  for (auto& i : graph_entry_points_) DELEGATE(i);
+  for (auto& i : graphs_) {
+    static_cast<const Graph*>(i.get())->ForEachInst(
         f, run_on_debug_line_insts,
         /* run_on_non_semantic_insts = */ true);
   }
@@ -176,9 +187,8 @@ void Module::ToBinary(std::vector<uint32_t>* binary, bool skip_nop) const {
         // If the current instruction does not have the line information,
         // the last line information is not effective any more. Emit OpNoLine
         // or DebugNoLine to specify it.
-        uint32_t shader_set_id = context()
-                                     ->get_feature_mgr()
-                                     ->GetExtInstImportId_Shader100DebugInfo();
+        uint32_t shader_set_id =
+            context()->get_feature_mgr()->GetExtInstImportId_ShaderDebugInfo();
         if (shader_set_id != 0) {
           binary->push_back((5 << 16) |
                             static_cast<uint16_t>(spv::Op::OpExtInst));
@@ -206,7 +216,7 @@ void Module::ToBinary(std::vector<uint32_t>* binary, bool skip_nop) const {
       if (scope != last_scope && !between_merge_and_branch) {
         // Can only emit nonsemantic instructions after all phi instructions
         // in a block so don't emit scope instructions before phi instructions
-        // for NonSemantic.Shader.DebugInfo.100.
+        // for NonSemantic.Shader.DebugInfo.
         if (!between_label_and_phi_var ||
             context()
                 ->get_feature_mgr()

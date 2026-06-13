@@ -13,7 +13,7 @@ namespace NeoAxis
 
 		struct Wrapper
 		{
-			public const string library = "bgfx";
+			public const string library = "libNeoAxisCoreNative";
 
 			////#if DEBUG
 			////			public const string library = "shaderc_debug";

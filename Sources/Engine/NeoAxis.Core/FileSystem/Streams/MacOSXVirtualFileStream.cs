@@ -19,20 +19,20 @@
 
 //		///////////////////////////////////////////
 
-//		[DllImport( "NeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_VirtualFileStream_Open",
+//		[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_VirtualFileStream_Open",
 //			CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
 //		public static extern IntPtr VirtualFileStream_Open( string realPath );
 
-//		[DllImport( "NeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_VirtualFileStream_Close", CallingConvention = CallingConvention.Cdecl )]
+//		[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_VirtualFileStream_Close", CallingConvention = CallingConvention.Cdecl )]
 //		public static extern void VirtualFileStream_Close( IntPtr handle );
 
-//		[DllImport( "NeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_VirtualFileStream_Length", CallingConvention = CallingConvention.Cdecl )]
+//		[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_VirtualFileStream_Length", CallingConvention = CallingConvention.Cdecl )]
 //		public static extern int VirtualFileStream_Length( IntPtr handle );
 
-//		[DllImport( "NeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_VirtualFileStream_Read", CallingConvention = CallingConvention.Cdecl )]
+//		[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_VirtualFileStream_Read", CallingConvention = CallingConvention.Cdecl )]
 //		public static extern int VirtualFileStream_Read( IntPtr handle, IntPtr buffer, int count );
 
-//		[DllImport( "NeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_VirtualFileStream_Seek", CallingConvention = CallingConvention.Cdecl )]
+//		[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_VirtualFileStream_Seek", CallingConvention = CallingConvention.Cdecl )]
 //		public static extern int VirtualFileStream_Seek( IntPtr handle, int offset, SeekOrigin origin );
 
 //		///////////////////////////////////////////

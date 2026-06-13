@@ -33,6 +33,7 @@
 #include "source/operand.h"
 #include "source/spirv_constant.h"
 #include "source/spirv_endian.h"
+#include "source/table2.h"
 #include "source/util/string_utils.h"
 
 spv_result_t spvBinaryHeaderGet(const spv_const_binary binary,
@@ -93,6 +94,13 @@ class Parser {
   // Otherwise returns an error code and issues a diagnostic.
   spv_result_t parse(const uint32_t* words, size_t num_words,
                      spv_diagnostic* diagnostic);
+
+  // Sets whether to handle, rather than reject, unrecognized content:
+  // unknown opcodes, unknown extended instruction numbers in semantic sets,
+  // and known opcodes with unknown enum operands.  When set, unknown
+  // instructions are re-emitted as raw OpUnknown data instead of returning
+  // an error.
+  void SetHandleUnknownOpcodes(bool value) { handle_unknown_opcodes_ = value; }
 
  private:
   // All remaining methods work on the current module parse state.
@@ -184,11 +192,15 @@ class Parser {
   const spv_parsed_header_fn_t parsed_header_fn_;  // Parsed header callback
   const spv_parsed_instruction_fn_t
       parsed_instruction_fn_;  // Parsed instruction callback
+  // When true, unrecognized opcodes, ext inst numbers, and enum operands are
+  // passed to the callback as raw OpUnknown data instead of returning an error.
+  bool handle_unknown_opcodes_ = false;
 
   // Describes the format of a typed literal number.
   struct NumberType {
     spv_number_kind_t type;
     uint32_t bit_width;
+    spv_fp_encoding_t encoding;
   };
 
   // The state used to parse a single SPIR-V binary module.
@@ -218,6 +230,11 @@ class Parser {
     // Is the SPIR-V binary in a different endianness from the host native
     // endianness?
     bool requires_endian_conversion;
+    // Set by parseOperand when LookupOperand fails for an enum operand and
+    // handle_unknown_opcodes_ is set.  Signals parseInstruction to discard
+    // the partially-decoded instruction and re-emit it as raw OpUnknown data.
+    // Cleared by parseInstruction immediately before calling emitAsUnknown.
+    bool retry_instruction_as_unknown_ = false;
 
     // Maps a result ID to its type ID.  By convention:
     //  - a result ID that is a type definition maps to itself.
@@ -317,14 +334,49 @@ spv_result_t Parser::parseInstruction() {
     return diagnostic() << "Invalid instruction word count: "
                         << inst_word_count;
   }
-  spv_opcode_desc opcode_desc;
-  if (grammar_.lookupOpcode(static_cast<spv::Op>(inst.opcode), &opcode_desc))
+  const spvtools::InstructionDesc* opcode_desc = nullptr;
+  const bool opcode_known =
+      spvtools::LookupOpcode(static_cast<spv::Op>(inst.opcode), &opcode_desc) ==
+      SPV_SUCCESS;
+  if (!opcode_known && !handle_unknown_opcodes_)
     return diagnostic() << "Invalid opcode: " << inst.opcode;
 
-  // Advance past the opcode word.  But remember the of the start
-  // of the instruction.
+  // Advance past the opcode word.  But remember the start of the instruction.
   const size_t inst_offset = _.word_index;
   _.word_index++;
+
+  // Emits the instruction at inst_offset as raw data with no decoded operands.
+  auto emitAsUnknown = [&]() -> spv_result_t {
+    if (inst_offset + inst_word_count > _.num_words) {
+      return diagnostic() << "Truncated binary: instruction at word "
+                          << inst_offset << " claims " << inst_word_count
+                          << " words but binary ends at " << _.num_words;
+    }
+    // Repopulate endian_converted_words from scratch.  The operand loop may
+    // have partially filled it before the unknown enum was detected.
+    _.endian_converted_words.clear();
+    _.endian_converted_words.push_back(first_word);
+    if (_.requires_endian_conversion) {
+      for (uint16_t i = 1; i < inst_word_count; i++) {
+        _.endian_converted_words.push_back(peekAt(inst_offset + i));
+      }
+    }
+    _.word_index = inst_offset + inst_word_count;
+    inst.words = _.requires_endian_conversion ? _.endian_converted_words.data()
+                                              : _.words + inst_offset;
+    inst.num_words = inst_word_count;
+    _.operands.clear();
+    inst.operands = _.operands.data();
+    inst.num_operands = 0;
+    if (parsed_instruction_fn_) {
+      if (auto error = parsed_instruction_fn_(user_data_, &inst)) return error;
+    }
+    return SPV_SUCCESS;
+  };
+
+  if (!opcode_known) {
+    return emitAsUnknown();
+  }
 
   // Maintains the ordered list of expected operand types.
   // For many instructions we only need the {numTypes, operandTypes}
@@ -334,16 +386,15 @@ spv_result_t Parser::parseInstruction() {
   // ExecutionMode), or for extended instructions that may have their
   // own operands depending on the selected extended instruction.
   _.expected_operands.clear();
-  for (auto i = 0; i < opcode_desc->numTypes; i++)
-    _.expected_operands.push_back(
-        opcode_desc->operandTypes[opcode_desc->numTypes - i - 1]);
+
+  spvPushOperandTypes(opcode_desc->operands(), &_.expected_operands);
 
   while (_.word_index < inst_offset + inst_word_count) {
     const uint16_t inst_word_index = uint16_t(_.word_index - inst_offset);
     if (_.expected_operands.empty()) {
-      return diagnostic() << "Invalid instruction Op" << opcode_desc->name
-                          << " starting at word " << inst_offset
-                          << ": expected no more operands after "
+      return diagnostic() << "Invalid instruction Op"
+                          << opcode_desc->name().data() << " starting at word "
+                          << inst_offset << ": expected no more operands after "
                           << inst_word_index
                           << " words, but stated word count is "
                           << inst_word_count << ".";
@@ -355,6 +406,10 @@ spv_result_t Parser::parseInstruction() {
     if (auto error =
             parseOperand(inst_offset, &inst, type, &_.endian_converted_words,
                          &_.operands, &_.expected_operands)) {
+      if (_.retry_instruction_as_unknown_) {
+        _.retry_instruction_as_unknown_ = false;
+        return emitAsUnknown();
+      }
       return error;
     }
   }
@@ -362,15 +417,15 @@ spv_result_t Parser::parseInstruction() {
   if (!_.expected_operands.empty() &&
       !spvOperandIsOptional(_.expected_operands.back())) {
     return diagnostic() << "End of input reached while decoding Op"
-                        << opcode_desc->name << " starting at word "
+                        << opcode_desc->name().data() << " starting at word "
                         << inst_offset << ": expected more operands after "
                         << inst_word_count << " words.";
   }
 
   if ((inst_offset + inst_word_count) != _.word_index) {
-    return diagnostic() << "Invalid word count: Op" << opcode_desc->name
-                        << " starting at word " << inst_offset
-                        << " says it has " << inst_word_count
+    return diagnostic() << "Invalid word count: Op"
+                        << opcode_desc->name().data() << " starting at word "
+                        << inst_offset << " says it has " << inst_word_count
                         << " words, but found " << _.word_index - inst_offset
                         << " words instead.";
   }
@@ -385,8 +440,6 @@ spv_result_t Parser::parseInstruction() {
   assert(_.requires_endian_conversion ||
          (_.endian_converted_words.size() == 1));
 
-  recordNumberType(inst_offset, &inst);
-
   if (_.requires_endian_conversion) {
     // We must wait until here to set this pointer, because the vector might
     // have been be resized while we accumulated its elements.
@@ -397,6 +450,8 @@ spv_result_t Parser::parseInstruction() {
     inst.words = _.words + inst_offset;
   }
   inst.num_words = inst_word_count;
+
+  recordNumberType(inst_offset, &inst);
 
   // We must wait until here to set this pointer, because the vector might
   // have been be resized while we accumulated its elements.
@@ -473,7 +528,7 @@ spv_result_t Parser::parseOperand(size_t inst_offset,
       if (!word) return diagnostic(SPV_ERROR_INVALID_ID) << "Id is 0";
       parsed_operand.type = SPV_OPERAND_TYPE_ID;
 
-      if (opcode == spv::Op::OpExtInst && parsed_operand.offset == 3) {
+      if (spvIsExtendedInstruction(opcode) && parsed_operand.offset == 3) {
         // The current word is the extended instruction set Id.
         // Set the extended instruction set type for the current instruction.
         auto ext_inst_type_iter = _.import_id_to_ext_inst_type.find(word);
@@ -494,24 +549,35 @@ spv_result_t Parser::parseOperand(size_t inst_offset,
       break;
 
     case SPV_OPERAND_TYPE_EXTENSION_INSTRUCTION_NUMBER: {
-      assert(spv::Op::OpExtInst == opcode);
+      assert(spvIsExtendedInstruction(opcode));
       assert(inst->ext_inst_type != SPV_EXT_INST_TYPE_NONE);
-      spv_ext_inst_desc ext_inst;
-      if (grammar_.lookupExtInst(inst->ext_inst_type, word, &ext_inst) ==
+
+      const spvtools::ExtInstDesc* desc = nullptr;
+      if (spvtools::LookupExtInst(inst->ext_inst_type, word, &desc) ==
           SPV_SUCCESS) {
-        // if we know about this ext inst, push the expected operands
-        spvPushOperandTypes(ext_inst->operandTypes, expected_operands);
-      } else {
-        // if we don't know this extended instruction and the set isn't
-        // non-semantic, we cannot process further
-        if (!spvExtInstIsNonSemantic(inst->ext_inst_type)) {
-          return diagnostic()
-                 << "Invalid extended instruction number: " << word;
-        } else {
-          // for non-semantic instruction sets, we know the form of all such
-          // extended instructions contains a series of IDs as parameters
+        // Push VARIABLE_ID so extra trailing operands from future NSDI
+        // versions are silently absorbed after the instruction-specific ones.
+        if (spvExtInstIsNonSemantic(inst->ext_inst_type)) {
           expected_operands->push_back(SPV_OPERAND_TYPE_VARIABLE_ID);
         }
+
+        // if we know about this ext inst, push the expected operands
+        spvPushOperandTypes(desc->operands(), expected_operands);
+      } else {
+        // If we don't know this extended instruction and the set is semantic,
+        // fail unless handle_unknown_opcodes_ is set.  For non-semantic sets,
+        // always continue regardless of the flag. In both non-error cases the
+        // remaining operands are exposed as variable IDs. For non-semantic
+        // sets the disassembler emits the instruction via its normal operand
+        // loop; for semantic sets with handle_unknown_opcodes_ set, the
+        // disassembler independently detects the unknown number via
+        // LookupExtInst and emits the entire instruction as OpUnknown.
+        if (!spvExtInstIsNonSemantic(inst->ext_inst_type) &&
+            !handle_unknown_opcodes_) {
+          return diagnostic()
+                 << "Invalid extended instruction number: " << word;
+        }
+        expected_operands->push_back(SPV_OPERAND_TYPE_VARIABLE_ID);
       }
     } break;
 
@@ -522,8 +588,8 @@ spv_result_t Parser::parseOperand(size_t inst_offset,
         return diagnostic()
                << "Invalid " << spvOperandTypeStr(type) << ": " << word;
       }
-      spv_opcode_desc opcode_entry = nullptr;
-      if (grammar_.lookupOpcode(spv::Op(word), &opcode_entry)) {
+      const spvtools::InstructionDesc* opcode_entry = nullptr;
+      if (spvtools::LookupOpcode(spv::Op(word), &opcode_entry)) {
         return diagnostic(SPV_ERROR_INTERNAL)
                << "OpSpecConstant opcode table out of sync";
       }
@@ -532,8 +598,9 @@ spv_result_t Parser::parseOperand(size_t inst_offset,
       // operants for the opcode.
       assert(opcode_entry->hasType);
       assert(opcode_entry->hasResult);
-      assert(opcode_entry->numTypes >= 2);
-      spvPushOperandTypes(opcode_entry->operandTypes + 2, expected_operands);
+      assert(opcode_entry->operands().size() >= 2);
+      spvPushOperandTypes(opcode_entry->operands().subspan(2),
+                          expected_operands);
     } break;
 
     case SPV_OPERAND_TYPE_LITERAL_INTEGER:
@@ -633,6 +700,7 @@ spv_result_t Parser::parseOperand(size_t inst_offset,
     } break;
 
     case SPV_OPERAND_TYPE_CAPABILITY:
+    case SPV_OPERAND_TYPE_OPTIONAL_CAPABILITY:
     case SPV_OPERAND_TYPE_EXECUTION_MODEL:
     case SPV_OPERAND_TYPE_ADDRESSING_MODEL:
     case SPV_OPERAND_TYPE_MEMORY_MODEL:
@@ -670,7 +738,13 @@ spv_result_t Parser::parseOperand(size_t inst_offset,
     case SPV_OPERAND_TYPE_QUANTIZATION_MODES:
     case SPV_OPERAND_TYPE_OVERFLOW_MODES:
     case SPV_OPERAND_TYPE_PACKED_VECTOR_FORMAT:
-    case SPV_OPERAND_TYPE_OPTIONAL_PACKED_VECTOR_FORMAT: {
+    case SPV_OPERAND_TYPE_OPTIONAL_PACKED_VECTOR_FORMAT:
+    case SPV_OPERAND_TYPE_FPENCODING:
+    case SPV_OPERAND_TYPE_OPTIONAL_FPENCODING:
+    case SPV_OPERAND_TYPE_HOST_ACCESS_QUALIFIER:
+    case SPV_OPERAND_TYPE_LOAD_CACHE_CONTROL:
+    case SPV_OPERAND_TYPE_STORE_CACHE_CONTROL:
+    case SPV_OPERAND_TYPE_NAMED_MAXIMUM_NUMBER_OF_REGISTERS: {
       // A single word that is a plain enum value.
 
       // Map an optional operand type to its corresponding concrete type.
@@ -678,30 +752,36 @@ spv_result_t Parser::parseOperand(size_t inst_offset,
         parsed_operand.type = SPV_OPERAND_TYPE_ACCESS_QUALIFIER;
       if (type == SPV_OPERAND_TYPE_OPTIONAL_PACKED_VECTOR_FORMAT)
         parsed_operand.type = SPV_OPERAND_TYPE_PACKED_VECTOR_FORMAT;
+      if (type == SPV_OPERAND_TYPE_OPTIONAL_FPENCODING)
+        parsed_operand.type = SPV_OPERAND_TYPE_FPENCODING;
+      if (type == SPV_OPERAND_TYPE_OPTIONAL_CAPABILITY)
+        parsed_operand.type = SPV_OPERAND_TYPE_CAPABILITY;
 
-      spv_operand_desc entry;
-      if (grammar_.lookupOperand(type, word, &entry)) {
+      const spvtools::OperandDesc* entry = nullptr;
+      if (spvtools::LookupOperand(type, word, &entry)) {
+        if (handle_unknown_opcodes_) _.retry_instruction_as_unknown_ = true;
         return diagnostic()
                << "Invalid " << spvOperandTypeStr(parsed_operand.type)
                << " operand: " << word;
       }
       // Prepare to accept operands to this operand, if needed.
-      spvPushOperandTypes(entry->operandTypes, expected_operands);
+      spvPushOperandTypes(entry->operands(), expected_operands);
     } break;
 
     case SPV_OPERAND_TYPE_SOURCE_LANGUAGE: {
-      spv_operand_desc entry;
-      if (grammar_.lookupOperand(type, word, &entry)) {
+      const spvtools::OperandDesc* entry = nullptr;
+      if (spvtools::LookupOperand(type, word, &entry)) {
+        if (handle_unknown_opcodes_) _.retry_instruction_as_unknown_ = true;
         return diagnostic()
                << "Invalid " << spvOperandTypeStr(parsed_operand.type)
                << " operand: " << word
                << ", if you are creating a new source language please use "
                   "value 0 "
                   "(Unknown) and when ready, add your source language to "
-                  "SPRIV-Headers";
+                  "SPIRV-Headers";
       }
       // Prepare to accept operands to this operand, if needed.
-      spvPushOperandTypes(entry->operandTypes, expected_operands);
+      spvPushOperandTypes(entry->operands(), expected_operands);
     } break;
 
     case SPV_OPERAND_TYPE_FP_FAST_MATH_MODE:
@@ -709,21 +789,36 @@ spv_result_t Parser::parseOperand(size_t inst_offset,
     case SPV_OPERAND_TYPE_LOOP_CONTROL:
     case SPV_OPERAND_TYPE_IMAGE:
     case SPV_OPERAND_TYPE_OPTIONAL_IMAGE:
+    case SPV_OPERAND_TYPE_MEMORY_ACCESS:
+    case SPV_OPERAND_TYPE_TENSOR_OPERANDS:
+    case SPV_OPERAND_TYPE_OPTIONAL_TENSOR_OPERANDS:
     case SPV_OPERAND_TYPE_OPTIONAL_MEMORY_ACCESS:
+    case SPV_OPERAND_TYPE_OPTIONAL_RAW_ACCESS_CHAIN_OPERANDS:
     case SPV_OPERAND_TYPE_SELECTION_CONTROL:
     case SPV_OPERAND_TYPE_CLDEBUG100_DEBUG_INFO_FLAGS:
     case SPV_OPERAND_TYPE_DEBUG_INFO_FLAGS:
     case SPV_OPERAND_TYPE_COOPERATIVE_MATRIX_OPERANDS:
-    case SPV_OPERAND_TYPE_OPTIONAL_COOPERATIVE_MATRIX_OPERANDS: {
+    case SPV_OPERAND_TYPE_OPTIONAL_COOPERATIVE_MATRIX_OPERANDS:
+    case SPV_OPERAND_TYPE_COOPERATIVE_MATRIX_REDUCE:
+    case SPV_OPERAND_TYPE_TENSOR_ADDRESSING_OPERANDS:
+    case SPV_OPERAND_TYPE_MATRIX_MULTIPLY_ACCUMULATE_OPERANDS:
+    case SPV_OPERAND_TYPE_OPTIONAL_MATRIX_MULTIPLY_ACCUMULATE_OPERANDS: {
       // This operand is a mask.
 
       // Map an optional operand type to its corresponding concrete type.
       if (type == SPV_OPERAND_TYPE_OPTIONAL_IMAGE)
         parsed_operand.type = SPV_OPERAND_TYPE_IMAGE;
-      else if (type == SPV_OPERAND_TYPE_OPTIONAL_MEMORY_ACCESS)
+      if (type == SPV_OPERAND_TYPE_OPTIONAL_MEMORY_ACCESS)
         parsed_operand.type = SPV_OPERAND_TYPE_MEMORY_ACCESS;
       if (type == SPV_OPERAND_TYPE_OPTIONAL_COOPERATIVE_MATRIX_OPERANDS)
         parsed_operand.type = SPV_OPERAND_TYPE_COOPERATIVE_MATRIX_OPERANDS;
+      if (type == SPV_OPERAND_TYPE_OPTIONAL_RAW_ACCESS_CHAIN_OPERANDS)
+        parsed_operand.type = SPV_OPERAND_TYPE_RAW_ACCESS_CHAIN_OPERANDS;
+      if (type == SPV_OPERAND_TYPE_OPTIONAL_MATRIX_MULTIPLY_ACCUMULATE_OPERANDS)
+        parsed_operand.type =
+            SPV_OPERAND_TYPE_MATRIX_MULTIPLY_ACCUMULATE_OPERANDS;
+      if (type == SPV_OPERAND_TYPE_OPTIONAL_TENSOR_OPERANDS)
+        parsed_operand.type = SPV_OPERAND_TYPE_TENSOR_OPERANDS;
 
       // Check validity of set mask bits. Also prepare for operands for those
       // masks if they have any.  To get operand order correct, scan from
@@ -734,23 +829,24 @@ spv_result_t Parser::parseOperand(size_t inst_offset,
       uint32_t remaining_word = word;
       for (uint32_t mask = (1u << 31); remaining_word; mask >>= 1) {
         if (remaining_word & mask) {
-          spv_operand_desc entry;
-          if (grammar_.lookupOperand(type, mask, &entry)) {
+          const spvtools::OperandDesc* entry = nullptr;
+          if (spvtools::LookupOperand(type, mask, &entry)) {
+            if (handle_unknown_opcodes_) _.retry_instruction_as_unknown_ = true;
             return diagnostic()
                    << "Invalid " << spvOperandTypeStr(parsed_operand.type)
                    << " operand: " << word << " has invalid mask component "
                    << mask;
           }
           remaining_word ^= mask;
-          spvPushOperandTypes(entry->operandTypes, expected_operands);
+          spvPushOperandTypes(entry->operands(), expected_operands);
         }
       }
       if (word == 0) {
         // An all-zeroes mask *might* also be valid.
-        spv_operand_desc entry;
-        if (SPV_SUCCESS == grammar_.lookupOperand(type, 0, &entry)) {
+        const spvtools::OperandDesc* entry = nullptr;
+        if (SPV_SUCCESS == spvtools::LookupOperand(type, 0, &entry)) {
           // Prepare for its operands, if any.
-          spvPushOperandTypes(entry->operandTypes, expected_operands);
+          spvPushOperandTypes(entry->operands(), expected_operands);
         }
       }
     } break;
@@ -808,6 +904,7 @@ spv_result_t Parser::setNumericTypeInfoForType(
 
   parsed_operand->number_kind = info.type;
   parsed_operand->number_bit_width = info.bit_width;
+  parsed_operand->fp_encoding = info.encoding;
   // Round up the word count.
   parsed_operand->num_words = static_cast<uint16_t>((info.bit_width + 31) / 32);
   return SPV_SUCCESS;
@@ -825,6 +922,17 @@ void Parser::recordNumberType(size_t inst_offset,
     } else if (spv::Op::OpTypeFloat == opcode) {
       info.type = SPV_NUMBER_FLOATING;
       info.bit_width = peekAt(inst_offset + 2);
+      if (inst->num_words >= 4) {
+        const spvtools::OperandDesc* desc = nullptr;
+        spv_result_t status = spvtools::LookupOperand(
+            SPV_OPERAND_TYPE_FPENCODING, peekAt(inst_offset + 3), &desc);
+        if (status == SPV_SUCCESS) {
+          info.encoding = spvFPEncodingFromOperandFPEncoding(
+              static_cast<spv::FPEncoding>(desc->value));
+        } else {
+          info.encoding = SPV_FP_ENCODING_UNKNOWN;
+        }
+      }
     }
     // The *result* Id of a type generating instruction is the type Id.
     _.type_id_to_number_type_info[inst->result_id] = info;
@@ -838,12 +946,25 @@ spv_result_t spvBinaryParse(const spv_const_context context, void* user_data,
                             spv_parsed_header_fn_t parsed_header,
                             spv_parsed_instruction_fn_t parsed_instruction,
                             spv_diagnostic* diagnostic) {
+  return spvBinaryParseWithOptions(context, user_data, code, num_words,
+                                   parsed_header, parsed_instruction,
+                                   diagnostic, 0);
+}
+
+spv_result_t spvBinaryParseWithOptions(
+    const spv_const_context context, void* user_data, const uint32_t* code,
+    const size_t num_words, spv_parsed_header_fn_t parsed_header,
+    spv_parsed_instruction_fn_t parsed_instruction, spv_diagnostic* diagnostic,
+    uint32_t options) {
   spv_context_t hijack_context = *context;
   if (diagnostic) {
     *diagnostic = nullptr;
     spvtools::UseDiagnosticAsMessageConsumer(&hijack_context, diagnostic);
   }
   Parser parser(&hijack_context, user_data, parsed_header, parsed_instruction);
+  if (options & SPV_BINARY_TO_TEXT_OPTION_HANDLE_UNKNOWN_OPCODES) {
+    parser.SetHandleUnknownOpcodes(true);
+  }
   return parser.parse(code, num_words, diagnostic);
 }
 

@@ -7,7 +7,7 @@ namespace NeoAxis
 {
 	struct OgreWrapper
 	{
-		public const string library = "NeoAxisCoreNative";
+		public const string library = "libNeoAxisCoreNative";
 		public const CallingConvention convention = CallingConvention.Cdecl;
 	}
 

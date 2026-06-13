@@ -25,7 +25,13 @@ SOFTWARE.
 
 #include "cppdef.h"
 #include "cpp.h"
-#include "dirent.h"
+
+//!!!!betauser
+#if defined(__WIN32__) || defined(_WIN32)
+#include "dirent_bx.h"
+#else
+#include <dirent.h>
+#endif
 
 ReturnCode fpp_openfile(struct Global *global, char *filename)
 {

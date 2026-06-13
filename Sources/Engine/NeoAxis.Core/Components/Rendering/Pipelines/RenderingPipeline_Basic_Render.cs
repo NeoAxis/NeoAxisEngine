@@ -11217,11 +11217,9 @@ namespace NeoAxis
 				}
 
 				var pass = new GpuMaterialPass( null, vertexProgram, fragmentProgram );
-
 				pass.CullingMode = CullingMode.None;
 				pass.DepthCheck = true;
 				pass.DepthWrite = false;
-
 				deferredShadingData.clearBackgroundPass = pass;
 			}
 

@@ -1,11 +1,9 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #include "bgfx_p.h"
-#include "shader_dxbc.h"
-#include "shader_spirv.h"
 
 namespace bgfx
 {
@@ -23,7 +21,7 @@ namespace bgfx
 		{ DescriptorType::StorageBuffer, 0x0007 },
 		{ DescriptorType::StorageImage,  0x0003 },
 	};
-	BX_STATIC_ASSERT(BX_COUNTOF(s_descriptorTypeToId) == DescriptorType::Count);
+	static_assert(BX_COUNTOF(s_descriptorTypeToId) == DescriptorType::Count);
 
 	DescriptorType::Enum idToDescriptorType(uint16_t _id)
 	{
@@ -58,7 +56,7 @@ namespace bgfx
 		{ TextureComponentType::Depth,             0x03 },
 		{ TextureComponentType::UnfilterableFloat, 0x04 },
 	};
-	BX_STATIC_ASSERT(BX_COUNTOF(s_textureComponentTypeToId) == TextureComponentType::Count);
+	static_assert(BX_COUNTOF(s_textureComponentTypeToId) == TextureComponentType::Count);
 
 	TextureComponentType::Enum idToTextureComponentType(uint8_t _id)
 	{
@@ -94,7 +92,7 @@ namespace bgfx
 		{ TextureDimension::DimensionCubeArray, 0x05 },
 		{ TextureDimension::Dimension3D,        0x06 },
 	};
-	BX_STATIC_ASSERT(BX_COUNTOF(s_textureDimensionToId) == TextureDimension::Count);
+	static_assert(BX_COUNTOF(s_textureDimensionToId) == TextureDimension::Count);
 
 	TextureDimension::Enum idToTextureDimension(uint8_t _id)
 	{
@@ -112,149 +110,6 @@ namespace bgfx
 	uint8_t textureDimensionToId(TextureDimension::Enum _dim)
 	{
 		return s_textureDimensionToId[_dim].id;
-	}
-
-	static bool printAsm(uint32_t _offset, const DxbcInstruction& _instruction, void* _userData)
-	{
-		BX_UNUSED(_offset);
-		bx::WriterI* writer = reinterpret_cast<bx::WriterI*>(_userData);
-		char temp[512];
-		toString(temp, sizeof(temp), _instruction);
-
-		bx::Error err;
-		bx::write(writer, temp, (int32_t)bx::strLen(temp), &err);
-		bx::write(writer, '\n', &err);
-		return true;
-	}
-
-	static bool printAsm(uint32_t _offset, const SpvInstruction& _instruction, void* _userData)
-	{
-		BX_UNUSED(_offset);
-		bx::WriterI* writer = reinterpret_cast<bx::WriterI*>(_userData);
-		char temp[512];
-		toString(temp, sizeof(temp), _instruction);
-
-		bx::Error err;
-		bx::write(writer, temp, (int32_t)bx::strLen(temp), &err);
-		bx::write(writer, '\n', &err);
-		return true;
-	}
-
-	void disassembleByteCode(bx::WriterI* _writer, bx::ReaderSeekerI* _reader, bx::Error* _err)
-	{
-		uint32_t magic;
-		bx::peek(_reader, magic, _err);
-
-		if (magic == SPV_CHUNK_HEADER)
-		{
-			SpirV spirv;
-			read(_reader, spirv, _err);
-			parse(spirv.shader, printAsm, _writer, _err);
-		}
-		else if (magic == DXBC_CHUNK_HEADER)
-		{
-			DxbcContext dxbc;
-			read(_reader, dxbc, _err);
-			parse(dxbc.shader, printAsm, _writer, _err);
-		}
-		else
-		{
-			BX_TRACE("Unrecognized shader binary format (magic: 0x%08x)!", magic);
-			BX_ERROR_SET(_err, kShaderInvalidHeader, "Failed to read shader binary. Invalid magic number.");
-		}
-	}
-
-	void disassemble(bx::WriterI* _writer, bx::ReaderSeekerI* _reader, bx::Error* _err)
-	{
-		BX_ERROR_SCOPE(_err);
-
-		uint32_t magic;
-		bx::peek(_reader, magic, _err);
-
-		if (isShaderBin(magic) )
-		{
-			bx::read(_reader, magic, _err);
-
-			uint32_t hashIn;
-			bx::read(_reader, hashIn, _err);
-
-			uint32_t hashOut;
-
-			if (isShaderVerLess(magic, 6) )
-			{
-				hashOut = hashIn;
-			}
-			else
-			{
-				bx::read(_reader, hashOut, _err);
-			}
-
-			uint16_t count;
-			bx::read(_reader, count, _err);
-
-			if (!_err->isOk() ) { return; }
-
-			for (uint32_t ii = 0; ii < count; ++ii)
-			{
-				uint8_t nameSize = 0;
-				bx::read(_reader, nameSize, _err);
-
-				if (!_err->isOk() ) { return; }
-
-				char name[256];
-				bx::read(_reader, &name, nameSize, _err);
-				name[nameSize] = '\0';
-
-				uint8_t type;
-				bx::read(_reader, type, _err);
-
-				uint8_t num;
-				bx::read(_reader, num, _err);
-
-				uint16_t regIndex;
-				bx::read(_reader, regIndex, _err);
-
-				uint16_t regCount;
-				bx::read(_reader, regCount, _err);
-
-				if (!isShaderVerLess(magic, 8) )
-				{
-					uint16_t texInfo;
-					bx::read(_reader, texInfo, _err);
-				}
-
-				if (!isShaderVerLess(magic, 10) )
-				{
-					uint16_t texFormat = 0;
-					bx::read(_reader, texFormat, _err);
-				}
-			}
-
-			uint32_t shaderSize;
-			bx::read(_reader, shaderSize, _err);
-
-			if (!_err->isOk() ) { return; }
-
-			uint8_t* shaderCode = (uint8_t*)bx::alloc(g_allocator, shaderSize);
-			bx::read(_reader, shaderCode, shaderSize, _err);
-
-			bx::MemoryReader reader(shaderCode, shaderSize);
-			disassembleByteCode(_writer, &reader, _err);
-
-			bx::write(_writer, '\0', _err);
-
-			bx::free(g_allocator, shaderCode);
-		}
-		else
-		{
-			disassembleByteCode(_writer, _reader, _err);
-		}
-	}
-
-	void disassemble(bx::WriterI* _writer, const void* _data, uint32_t _size, bx::Error* _err)
-	{
-		bx::MemoryReader reader(_data, _size);
-		disassemble(_writer, &reader, _err);
 	}
 
 } // namespace bgfx

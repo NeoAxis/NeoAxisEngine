@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -272,7 +272,7 @@ namespace bgfx { namespace gl
 				}
 				BGFX_FATAL(NULL != m_context, Fatal::UnableToInitialize, "Failed to create context 0x%08x.", GetLastError() );
 
-				BX_STATIC_ASSERT(sizeof(contextAttrs) == sizeof(m_contextAttrs) );
+				static_assert(sizeof(contextAttrs) == sizeof(m_contextAttrs) );
 				bx::memCopy(m_contextAttrs, contextAttrs, sizeof(contextAttrs) );
 			}
 

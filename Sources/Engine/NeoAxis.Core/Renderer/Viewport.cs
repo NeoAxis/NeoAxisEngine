@@ -10,8 +10,6 @@ namespace NeoAxis
 	/// </summary>
 	public sealed partial class Viewport
 	{
-		//!!!!!чтобы не пересоздавалось когда не нужно
-
 		internal RenderTarget parent;
 
 		bool disposed;
@@ -26,9 +24,7 @@ namespace NeoAxis
 
 		internal Simple3DRendererImpl simple3DRenderer;
 
-		//!!!!!что у неё вызывать еще?
 		CanvasRendererImpl canvasRenderer;
-		//!!!!!что у неё вызывать еще?
 		UIContainer uiContainer;
 
 		//user interaction

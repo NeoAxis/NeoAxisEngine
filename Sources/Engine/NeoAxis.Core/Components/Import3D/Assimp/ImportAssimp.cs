@@ -339,18 +339,18 @@ namespace NeoAxis
 			importContext.processedMeshes.Add( mesh );
 		}
 
-		static void InitMeshGeometriesRecursive( ImportContext importContext, Node node, Matrix4 nodeTransform, Mesh meshComponent ) //, int[] newIndexFromOldIndex )
+		static void InitMeshGeometriesRecursive( ImportContext importContext, Node node, Matrix4 nodeTransform, Mesh meshComponent )
 		{
 			foreach( var meshIndex in node.MeshIndices )
 			{
 				var mesh = importContext.scene.Meshes[ meshIndex ];
-				AddMesh( importContext, nodeTransform, meshComponent, mesh );//, newIndexFromOldIndex );
+				AddMesh( importContext, nodeTransform, meshComponent, mesh );
 			}
 
 			foreach( var childNode in node.Children )
 			{
 				var childTransform = nodeTransform * ToMatrix4( childNode.Transform );
-				InitMeshGeometriesRecursive( importContext, childNode, childTransform, meshComponent );//, newIndexFromOldIndex );
+				InitMeshGeometriesRecursive( importContext, childNode, childTransform, meshComponent );
 			}
 		}
 
@@ -383,9 +383,6 @@ namespace NeoAxis
 
 					assimpContext.SetConfig( new SortByPrimitiveTypeConfig( PrimitiveType.Line | PrimitiveType.Point ) );
 					assimpContext.Scale = (float)settings.component.Scale;
-
-					//works incorrectly. adding rotation manually.
-					//context.XAxisRotation = -90;
 
 					//175 by default
 					//importer.SetConfig( new NormalSmoothingAngleConfig( 55.0f ) );
@@ -484,10 +481,7 @@ namespace NeoAxis
 					var rotateByX = Matrix3.Identity;
 					if( settings.component.FixAxes )
 						rotateByX = new Matrix3( 1, 0, 0, 0, 0, 1, 0, -1, 0 );
-					var globalTransform2 = new Matrix4( settings.component.Rotation.Value.ToMatrix3() * rotateByX, settings.component.Position );
-					context.globalTransform = globalTransform2;
-
-					//Matrix4 globalTransform = new Matrix4( rotation * rotateByX, settings.component.Position ) * ToMatrix4( scene.RootNode.Transform );
+					context.globalTransform = new Matrix4( settings.component.Rotation.Value.GetNormalize().ToMatrix3() * rotateByX, settings.component.Position );
 
 					var mode = settings.component.Mode.Value;
 
@@ -495,13 +489,10 @@ namespace NeoAxis
 					if( mode == Import3D.ModeEnum.OneMesh && scene.HasMeshes && scene.MeshCount != 0 ) //&& settings.updateMeshes )
 					{
 						//skeleton and animations
-						//var boneTransformsToNormalize = new Dictionary<SkeletonBone, Matrix4>( 128 );
 						Skeleton skeletonComponent = null;
-						//int[] newIndexFromOldIndex = null;
-						skeletonComponent = CreateSkeletonComponent( context, scene );///*, out newIndexFromOldIndex, out var oldBoneFromNewIndex*/, globalTransform );//, out var addedBones );//, boneTransformsToNormalize );
+						skeletonComponent = CreateSkeletonComponent( context, scene );
 
 
-						//!!!!
 						//try
 						//{
 						//	Log.Info( "----------" );
@@ -542,7 +533,7 @@ namespace NeoAxis
 						foreach( var node in scene.RootNode.Children )
 						{
 							var transform = GetNodeFullTransform( context, node );
-							InitMeshGeometriesRecursive( context, node, transform, meshComponent );//, newIndexFromOldIndex );
+							InitMeshGeometriesRecursive( context, node, transform, meshComponent );
 						}
 
 						//need
@@ -553,7 +544,7 @@ namespace NeoAxis
 							foreach( var mesh in scene.Meshes )
 							{
 								if( !context.processedMeshes.Contains( mesh ) )
-									AddMesh( context, transform, meshComponent, mesh );//, newIndexFromOldIndex );
+									AddMesh( context, transform, meshComponent, mesh );
 							}
 						}
 
@@ -562,7 +553,7 @@ namespace NeoAxis
 						{
 							meshComponent.AddComponent( skeletonComponent );
 							meshComponent.Skeleton = ReferenceUtility.MakeThisReference( meshComponent, skeletonComponent );
-							InitAnimations( context, scene, meshComponent/*, oldBoneFromNewIndex*/);//, globalTransform );//, addedBones ); //, boneTransformsToNormalize );
+							InitAnimations( context, scene, meshComponent );
 						}
 
 						if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
@@ -574,10 +565,6 @@ namespace NeoAxis
 					//create meshes, object in space (Meshes mode)
 					if( mode == Import3D.ModeEnum.Meshes && scene.HasMeshes && scene.MeshCount != 0 )
 					{
-						//skeleton and animations
-						//!!!!is not enabled in Meshes mode
-						//int[] newIndexFromOldIndex = null;
-
 						var meshesGroup = settings.component.GetComponent( "Meshes" );
 
 						//Meshes
@@ -600,9 +587,6 @@ namespace NeoAxis
 									else
 										meshComponent.Name = node.Name;
 
-									//skeleton and animations
-									//!!!!is not enabled in Meshes mode
-
 									if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
 										meshComponent.MergeGeometriesWithEqualVertexStructureAndMaterial();
 								}
@@ -620,14 +604,11 @@ namespace NeoAxis
 									if( !context.processedMeshes.Contains( mesh ) )
 									{
 										var meshComponent = meshesGroup.CreateComponent<Mesh>();
-										AddMesh( context, transform, meshComponent, mesh );//, newIndexFromOldIndex );
+										AddMesh( context, transform, meshComponent, mesh );
 
 										if( meshComponent.Components.Count != 0 )
 										{
 											meshComponent.Name = meshComponent.Components.ToArray()[ 0 ].Name;
-
-											//skeleton and animations
-											//!!!!is not enabled in Meshes mode
 
 											if( settings.component.MergeGeometries.Value != Import3D.MergeGeometriesEnum.False )
 												meshComponent.MergeGeometriesWithEqualVertexStructureAndMaterial();
@@ -705,8 +686,6 @@ namespace NeoAxis
 
 
 
-
-					//////!!!!
 					//////create objects in space (Scene mode)
 					////if( false /*settings.component.Mode.Value == Import3D.ModeEnum.Scene*/ &&
 					////	( importContext.meshesGroup != null || scene.LightCount != 0 || scene.CameraCount != 0 ) )
@@ -1798,28 +1777,33 @@ namespace NeoAxis
 					rootSkeletonNode = scene.RootNode;
 			}
 
-			void CalculateAllBoneNamesRecursive( Node node )
+			void CalculateAllBoneNamesRecursive( Node rootNode )
 			{
-				boneIndexByName.Add( node.Name, boneIndexByName.Count );
-				boneNodeByName.Add( node.Name, node );
+				boneIndexByName.Add( rootNode.Name, boneIndexByName.Count );
+				boneNodeByName.Add( rootNode.Name, rootNode );
+
+				CalculateAllChildBoneNamesRecursive( rootNode );
+			}
+
+			void CalculateAllChildBoneNamesRecursive( Node node )
+			{
+				foreach( var childNode in node.Children )
+				{
+					boneIndexByName.Add( childNode.Name, boneIndexByName.Count );
+					boneNodeByName.Add( childNode.Name, childNode );
+				}
 
 				foreach( var childNode in node.Children )
 				{
 					if( potentiallyMeshBones.ContainsKey( childNode ) )
-						CalculateAllBoneNamesRecursive( childNode );
+						CalculateAllChildBoneNamesRecursive( childNode );
 				}
 			}
 		}
 
-		////Node rootNode, out int[] newIndexFromOldIndex, out SkeletonBone[] oldBoneFromNewIndex //, Matrix4 additionalTransform/*, out EDictionary<SkeletonBone, Node> addedBones*/ ) //, Dictionary<SkeletonBone, Matrix4> boneTransformsToNormalize )	
-		////newIndexFromOld - an array mapping from old bone indices to a new : ret[oldIndex]==newIndex
-
 		static Skeleton CreateSkeletonComponent( ImportContext importContext, Internal.Assimp.Scene scene )
-
 		{
-			//newIndexFromOldIndex = null;
-			//oldBoneFromNewIndex = null;
-
+			//get skeleton info
 			var skeletonStructure = new MeshesSkeletonStructure( scene );
 
 			//no bones
@@ -1834,27 +1818,6 @@ namespace NeoAxis
 
 			//create bone components
 			InitBoneRecursive( importContext, skeletonComponent, skeletonStructure.rootSkeletonNode );
-
-
-			////var oldBones = new Dictionary<NeoAxis.SkeletonBone, SkeletonBone>();
-			////foreach( var firstLevelBone in skeleton.RootBone.Children )
-			////	InitBoneRecursive( importContext, skeletonComponent, firstLevelBone, skeleton, oldBones, additionalTransform, boneTransformsToNormalize );
-
-			////var allBones = skeletonComponent.GetBones(); //contains information about new bone indices
-			////int maxOldIndex = oldBones.Count == 0 ? -1 : oldBones.Values.Select( _ => skeleton.GetBoneIndexByNode( _.Node ) ).Max();
-			////newIndexFromOldIndex = new int[ maxOldIndex + 1 ];
-			////for( int i = 0; i < newIndexFromOldIndex.Length; i++ )
-			////	newIndexFromOldIndex[ i ] = -1;
-			////for( int newIndex = 0; newIndex < allBones.Length; newIndex++ )
-			////{
-			////	var bone = oldBones[ allBones[ newIndex ] ];
-			////	newIndexFromOldIndex[ skeleton.GetBoneIndexByNode( bone.Node ) ] = newIndex;
-			////}
-
-			////oldBoneFromNewIndex = new SkeletonBone[ allBones.Length ];
-			////for( int boneIndex = 0; boneIndex < oldBoneFromNewIndex.Length; boneIndex++ )
-			////	oldBoneFromNewIndex[ boneIndex ] = oldBones[ allBones[ boneIndex ] ];
-
 
 			return skeletonComponent;
 		}
@@ -2096,7 +2059,6 @@ namespace NeoAxis
 		static void InitAnimations( ImportContext importContext, Internal.Assimp.Scene scene, Mesh meshComponent )
 		{
 			var skeletonStructure = importContext.skeletonStructure;
-			//var skeletonBonesArray = skeletonStructure.nodeBySkeletonBone.Keys.ToArray();
 
 			//create animations group component
 			var animationsComponent = meshComponent.CreateComponent<Component>();
@@ -2141,38 +2103,6 @@ namespace NeoAxis
 				////		continue;
 				////	Log.Info( "Channel: " + channel.NodeName + ", Position keys: " + channel.PositionKeys.Count.ToString() + ", Rotation keys: " + channel.RotationKeys.Count.ToString() + ", Scaling keys: " + channel.ScalingKeys.Count.ToString() );
 				////}
-
-
-
-
-				//!!!!something wrong in the code of getting track data
-
-				//useful info:
-				//NeoAxis skeleton bone components contains global transform, not relative.
-				//NeoAxis track data contains relative transforms, not global.
-				//ImportFBX.cs works right (import via FBX SDK), so the problem is in the code of getting track data from Assimp.
-				//To disable any transforms, disable FixAxes in the Import3D settings. Then global transform will be identity.
-
-				//Import skeleton: OK.
-				//Bind pose: OK.
-				//List of animations: OK.
-				//Animation tracks: Invalid transforms.
-
-				//how test models and snow hierarchy:
-				//https://gltf-viewer.donmccurdy.com/
-				//https://sandbox.babylonjs.com/
-
-				//useful samples:
-				//glTF-Sample-Assets library on guthub. SimpleSkin sample
-				//sketchfab models as example: https://sketchfab.com/3d-models/blue-flower-animated-c20b1f12833148e09f7f49c3dd444906
-
-
-
-				//minor nuance, but ok: in Assimp can't detect root skeleton node, so just use root node of the scene as root skeleton node
-				//CalculateRootSkeletonNode() method
-
-
-
 
 
 				{
@@ -2228,11 +2158,8 @@ namespace NeoAxis
 								var rotation = keyCalculator.EvaluateRotation( time );
 								var scale = keyCalculator.EvaluateScale( time );
 
-								//this order gives right result on SimpleSkin
 								var localTransform = Matrix4.FromTranslate( position ) * rotation.ToMatrix3().ToMatrix4() * Matrix3.FromScale( scale ).ToMatrix4();
-								//var localTransform = Matrix3.FromScale( scale ).ToMatrix4() * rotation.ToMatrix3().ToMatrix4() * Matrix4.FromTranslate( position );
 
-								//this seems correct. because if disabled, the glitch remains
 								nodeTransform = localTransform;
 							}
 
@@ -2267,13 +2194,10 @@ namespace NeoAxis
 								var parentGlobalTransform = boneGlobalTransforms[ parentNode.Name ];
 
 								result = parentGlobalTransform.GetInverse() * boneGlobalTransform;
-								//result = boneGlobalTransform * parentGlobalTransform.GetInverse();
 							}
 							else
 							{
-								//!!!!right?
 								result = importContext.globalTransform * boneGlobalTransform;
-								//result = importContext.globalTransform * ToMatrix4( boneNode.Transform );
 							}
 
 							if( !result.Decompose( out var finalPosition, out Quaternion finalRotation, out var finalScale ) )
@@ -2300,155 +2224,6 @@ namespace NeoAxis
 
 					}
 				}
-
-
-
-				//test
-				//{
-				//	trackData = new List<SkeletonAnimationTrack.KeyFrame>();
-
-				//	for( int n = 0; n < skeletonStructure.boneIndexByName.Count; n++ )
-				//	{
-				//		var boneNode = skeletonStructure.boneNodeByName.Values.FirstOrDefault( n2 => skeletonStructure.boneIndexByName[ n2.Name ] == n );
-
-				//		var tr = ToMatrix4( boneNode.Transform );
-
-				//		//!!!!
-				//		tr = Matrix4.Identity;
-
-				//		//!!!!
-				//		if( skeletonStructure.boneOffsetMatrixByName.TryGetValue( boneNode.Name, out var offsetMatrix ) )
-				//		{
-				//			tr = offsetMatrix;//.GetInverse();
-				//			//tr = offsetMatrix.GetInverse() * tr;
-
-				//			//tr *= offsetMatrix;
-				//		}
-
-				//		tr.Decompose( out var p, out Quaternion r, out var s );
-
-				//		//var p = new Vector3( 0, 0, 0 );
-				//		//var r = Quaternion.Identity;
-				//		//var s = new Vector3( 1, 1, 1 );
-
-				//		trackData.Add( new SkeletonAnimationTrack.KeyFrame
-				//		{
-				//			Time = (float)0,
-				//			BoneIndex = n,
-				//			Position = p.ToVector3F(),
-				//			Rotation = r.ToQuaternionF(),
-				//			Scale = s.ToVector3F()
-				//		} );
-				//	}
-				//}
-
-
-
-				////not working code
-				//if( false )
-				//{
-				//	var bonesWithData = new bool[ skeletonStructure.boneIndexByName.Count ];
-
-				//	//enumerate channels
-				//	foreach( var channel in animation.NodeAnimationChannels )
-				//	{
-				//		//get bone index
-				//		if( !skeletonStructure.boneIndexByName.TryGetValue( channel.NodeName, out var boneIndex ) )
-				//			continue;
-
-				//		//mark that this bone has animation data to fill later not initialized bones with default key frames
-				//		bonesWithData[ boneIndex ] = true;
-
-				//		if( channel.PositionKeys.Count == 0 || channel.RotationKeys.Count == 0 || channel.ScalingKeys.Count == 0 )
-				//		{
-				//			//!!!!possible?
-
-				//			Log.Warning( "Not all key types (position, rotation, scale) are present in the animation channel. This may lead to incorrect animation. Channel: " + channel.NodeName );
-				//			continue;
-				//		}
-
-				//		//get sorted times
-				//		double[] availableTimes;
-				//		{
-				//			var availableTimesSet = new ESet<double>();
-				//			foreach( var key in channel.PositionKeys )
-				//				availableTimesSet.AddWithCheckAlreadyContained( key.Time * timeFactor );
-				//			foreach( var key in channel.RotationKeys )
-				//				availableTimesSet.AddWithCheckAlreadyContained( key.Time * timeFactor );
-				//			foreach( var key in channel.ScalingKeys )
-				//				availableTimesSet.AddWithCheckAlreadyContained( key.Time * timeFactor );
-
-				//			availableTimes = availableTimesSet.ToArray();
-
-				//			CollectionUtility.MergeSort( availableTimes, delegate ( double v1, double v2 )
-				//			{
-				//				return ( v1 < v2 ) ? -1 : 1;
-				//			} );
-				//		}
-
-				//		var keyCalculator = new KeyCalculator { channel = channel, timeFactor = timeFactor };
-
-				//		//add key frames to track data
-				//		for( int nTime = 0; nTime < availableTimes.Length; nTime++ )
-				//		{
-				//			var time = availableTimes[ nTime ];
-
-				//			var position = keyCalculator.EvaluatePosition( time );
-				//			var rotation = keyCalculator.EvaluateRotation( time );
-				//			var scale = keyCalculator.EvaluateScale( time );
-
-				//			//make matrix from SRT
-				//			var localTransform = Matrix3.FromScale( scale ).ToMatrix4() * rotation.ToMatrix3().ToMatrix4() * Matrix4.FromTranslate( position );
-				//			//var localTransform = Matrix4.FromTranslate( position ) * rotation.ToMatrix3().ToMatrix4() * Matrix3.FromScale( scale ).ToMatrix4();
-
-				//			//decompose matrix to get final transform
-				//			if( !localTransform.Decompose( out var finalPosition, out Quaternion finalRotation, out var finalScale ) )
-				//				continue;
-
-				//			trackData.Add( new SkeletonAnimationTrack.KeyFrame
-				//			{
-				//				Time = (float)time,
-				//				BoneIndex = boneIndex,
-				//				Position = finalPosition.ToVector3F(),
-				//				Rotation = finalRotation.ToQuaternionF(),
-				//				Scale = finalScale.ToVector3F()
-				//			} );
-				//		}
-				//	}
-
-				//	//add default key frames for bones without animation data
-				//	for( int nBone = 0; nBone < bonesWithData.Length; nBone++ )
-				//	{
-				//		if( !bonesWithData[ nBone ] )
-				//		{
-				//			var boneNode = skeletonStructure.boneNodeByName.Values.FirstOrDefault( n => skeletonStructure.boneIndexByName[ n.Name ] == nBone );
-
-				//			if( boneNode == null )
-				//			{
-				//				//!!!!possible?
-
-				//				Log.Warning( "Bone node not found for bone index: " + nBone.ToString() );
-				//				continue;
-				//			}
-
-				//			var transform = ToMatrix4( boneNode.Transform );
-				//			transform.Decompose( out var translation, out Quaternion rotation, out var scale );
-
-				//			//!!!!right?
-				//			rotation.Normalize();
-
-				//			trackData.Add( new SkeletonAnimationTrack.KeyFrame
-				//			{
-				//				Time = 0,
-				//				BoneIndex = nBone,
-				//				Position = translation.ToVector3F(),
-				//				Rotation = rotation.ToQuaternionF(),
-				//				Scale = scale.ToVector3F()
-				//			} );
-				//		}
-				//	}
-				//}
-
 
 				//find min,max time and fill float.NaN time (for non animated bones with single keyframe) with minTime.
 				float minTime = float.PositiveInfinity;
@@ -2480,11 +2255,6 @@ namespace NeoAxis
 					}
 				}
 
-
-				//var length = (float)animation.DurationInTicks / (float)animation.TicksPerSecond;
-				//Log.Info( $"Animation '{skeletonAnimationComponent.Name}' track '{skeletonAnimationTrackComponent.Name}' has {trackData.Count} key frames, time range: {minTime} - {maxTime}. length: {length}" );
-
-
 				//sort. by bone index first, then by time
 				CollectionUtility.MergeSort( trackData, ( a, b ) =>
 				{
@@ -2493,89 +2263,6 @@ namespace NeoAxis
 						return c;
 					return a.Time.CompareTo( b.Time );
 				} );
-
-
-
-				//////apply parent transforms to the key frames to make them relative to the skeleton root
-				////for( int nBone = 0; nBone < skeletonStructure.boneIndexByName.Count; nBone++ )
-				////{
-				////	var bone = skeletonBonesArray[ nBone ];
-				////	var parentBone = bone.Parent as SkeletonBone;
-				////	var parentBoneIndex = parentBone != null ? Array.IndexOf( skeletonBonesArray, parentBone ) : -1;
-
-				////	if( parentBone != null )
-				////	{
-				////		var parentFrames = trackData.Where( e => e.BoneIndex == parentBoneIndex ).ToArray();
-
-				////		for( int nTrack = 0; nTrack < trackData.Count; nTrack++ )
-				////		{
-				////			var keyFrame = trackData[ nTrack ];
-				////			if( keyFrame.BoneIndex == nBone )
-				////			{
-				////				var time = keyFrame.Time;
-
-				////				//get interpolated parent frame for the same time. if not exists, interpolate between nearest frames
-
-				////				for( int n = 0; n < parentFrames.Length - 1; n++ )
-				////				{
-				////					var t0 = parentFrames[ n ];
-				////					var t1 = parentFrames[ n + 1 ];
-
-				////					if( time <= t1.Time || n == parentFrames.Length - 2 )
-				////					{
-				////						var factor = t1.Time != t0.Time ? ( time - t0.Time ) / ( t1.Time - t0.Time ) : 0.0f;
-				////						MathEx.Saturate( ref factor );
-				////						var position = Vector3.Lerp( t0.Position, t1.Position, factor );
-				////						var rotation = Quaternion.Slerp( t0.Rotation, t1.Rotation, factor );
-				////						var scale = Vector3.Lerp( t0.Scale, t1.Scale, factor );
-
-				////						var parentTransform = new Transform( position, rotation, scale ).ToMatrix4();
-				////						var transform = new Transform( keyFrame.Position, keyFrame.Rotation, keyFrame.Scale ).ToMatrix4();
-
-				////						var resultTransform = parentTransform * transform;
-				////						resultTransform.Decompose( out Vector3 t, out Quaternion r, out Vector3 s );
-
-				////						trackData[ nTrack ] = new SkeletonAnimationTrack.KeyFrame
-				////						{
-				////							BoneIndex = keyFrame.BoneIndex,
-				////							Time = keyFrame.Time,
-				////							Position = t.ToVector3F(),
-				////							Rotation = r.ToQuaternionF(),
-				////							Scale = s.ToVector3F()
-				////						};
-
-				////						break;
-				////					}
-				////				}
-				////			}
-				////		}
-				////	}
-				////	else
-				////	{
-				////		for( int nTrack = 0; nTrack < trackData.Count; nTrack++ )
-				////		{
-				////			var keyFrame = trackData[ nTrack ];
-				////			if( keyFrame.BoneIndex == nBone )
-				////			{
-				////				var transform = new Transform( keyFrame.Position, keyFrame.Rotation, keyFrame.Scale ).ToMatrix4();
-
-				////				var resultTransform = importContext.globalTransform * transform;
-				////				resultTransform.Decompose( out Vector3 t, out Quaternion r, out Vector3 s );
-
-				////				trackData[ nTrack ] = new SkeletonAnimationTrack.KeyFrame
-				////				{
-				////					BoneIndex = keyFrame.BoneIndex,
-				////					Time = keyFrame.Time,
-				////					Position = t.ToVector3F(),
-				////					Rotation = r.ToQuaternionF(),
-				////					Scale = s.ToVector3F()
-				////				};
-
-				////			}
-				////		}
-				////	}
-				////}
-
 
 				skeletonAnimationTrackComponent.KeyFrames = SkeletonAnimationTrack.ToBytes( trackData );
 				skeletonAnimationComponent.Track = ReferenceUtility.MakeThisReference( skeletonAnimationComponent, skeletonAnimationTrackComponent );

@@ -1,4 +1,6 @@
 // Copyright (c) 2018 Google LLC.
+// Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights
+// reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +32,15 @@ bool DecorationTakesIdParameters(spv::Decoration type) {
     case spv::Decoration::AlignmentId:
     case spv::Decoration::MaxByteOffsetId:
     case spv::Decoration::HlslCounterBufferGOOGLE:
+    case spv::Decoration::NodeMaxPayloadsAMDX:
+    case spv::Decoration::NodeSharesPayloadLimitsWithAMDX:
+    case spv::Decoration::PayloadNodeArraySizeAMDX:
+    case spv::Decoration::PayloadNodeNameAMDX:
+    case spv::Decoration::PayloadNodeBaseIndexAMDX:
+    case spv::Decoration::ArrayStrideIdEXT:
+    case spv::Decoration::OffsetIdEXT:
+    case spv::Decoration::AliasScopeINTEL:
+    case spv::Decoration::NoAliasINTEL:
       return true;
     default:
       break;
@@ -58,6 +69,7 @@ bool IsNotMemberDecoration(spv::Decoration dec) {
     case spv::Decoration::Block:
     case spv::Decoration::BufferBlock:
     case spv::Decoration::ArrayStride:
+    case spv::Decoration::ArrayStrideIdEXT:
     case spv::Decoration::GLSLShared:
     case spv::Decoration::GLSLPacked:
     case spv::Decoration::CPacked:
@@ -123,12 +135,14 @@ spv_result_t ValidateDecorationTarget(ValidationState_t& _, spv::Decoration dec,
     case spv::Decoration::ArrayStride:
       if (target->opcode() != spv::Op::OpTypeArray &&
           target->opcode() != spv::Op::OpTypeRuntimeArray &&
-          target->opcode() != spv::Op::OpTypePointer) {
+          target->opcode() != spv::Op::OpTypePointer &&
+          target->opcode() != spv::Op::OpTypeUntypedPointerKHR) {
         return fail(0) << "must be an array or pointer type";
       }
       break;
     case spv::Decoration::BuiltIn:
       if (target->opcode() != spv::Op::OpVariable &&
+          target->opcode() != spv::Op::OpUntypedVariableKHR &&
           !spvOpcodeIsConstant(target->opcode())) {
         return _.diag(SPV_ERROR_INVALID_DATA, inst)
                << "BuiltIns can only target variables, structure members or "
@@ -139,7 +153,8 @@ spv_result_t ValidateDecorationTarget(ValidationState_t& _, spv::Decoration dec,
         if (!spvOpcodeIsConstant(target->opcode())) {
           return fail(0) << "must be a constant for WorkgroupSize";
         }
-      } else if (target->opcode() != spv::Op::OpVariable) {
+      } else if (target->opcode() != spv::Op::OpVariable &&
+                 target->opcode() != spv::Op::OpUntypedVariableKHR) {
         return fail(0) << "must be a variable";
       }
       break;
@@ -160,11 +175,15 @@ spv_result_t ValidateDecorationTarget(ValidationState_t& _, spv::Decoration dec,
     case spv::Decoration::Stream:
     case spv::Decoration::RestrictPointer:
     case spv::Decoration::AliasedPointer:
+    case spv::Decoration::PerPrimitiveEXT:
       if (target->opcode() != spv::Op::OpVariable &&
-          target->opcode() != spv::Op::OpFunctionParameter) {
+          target->opcode() != spv::Op::OpUntypedVariableKHR &&
+          target->opcode() != spv::Op::OpFunctionParameter &&
+          target->opcode() != spv::Op::OpRawAccessChainNV &&
+          target->opcode() != spv::Op::OpBufferPointerEXT) {
         return fail(0) << "must be a memory object declaration";
       }
-      if (_.GetIdOpcode(target->type_id()) != spv::Op::OpTypePointer) {
+      if (!_.IsPointerType(target->type_id())) {
         return fail(0) << "must be a pointer type";
       }
       break;
@@ -175,7 +194,8 @@ spv_result_t ValidateDecorationTarget(ValidationState_t& _, spv::Decoration dec,
     case spv::Decoration::Binding:
     case spv::Decoration::DescriptorSet:
     case spv::Decoration::InputAttachmentIndex:
-      if (target->opcode() != spv::Op::OpVariable) {
+      if (target->opcode() != spv::Op::OpVariable &&
+          target->opcode() != spv::Op::OpUntypedVariableKHR) {
         return fail(0) << "must be a variable";
       }
       break;
@@ -203,6 +223,7 @@ spv_result_t ValidateDecorationTarget(ValidationState_t& _, spv::Decoration dec,
             sc != spv::StorageClass::IncomingCallableDataKHR &&
             sc != spv::StorageClass::ShaderRecordBufferKHR &&
             sc != spv::StorageClass::HitObjectAttributeNV &&
+            sc != spv::StorageClass::HitObjectAttributeEXT &&
             sc != spv::StorageClass::TileImageEXT) {
           return _.diag(SPV_ERROR_INVALID_ID, target)
                  << _.VkErrorID(6672) << _.SpvDecorationString(dec)
@@ -219,7 +240,8 @@ spv_result_t ValidateDecorationTarget(ValidationState_t& _, spv::Decoration dec,
       case spv::Decoration::DescriptorSet:
         if (sc != spv::StorageClass::StorageBuffer &&
             sc != spv::StorageClass::Uniform &&
-            sc != spv::StorageClass::UniformConstant) {
+            sc != spv::StorageClass::UniformConstant &&
+            sc != spv::StorageClass::TileAttachmentQCOM) {
           return fail(6491) << "must be in the StorageBuffer, Uniform, or "
                                "UniformConstant storage class";
         }
@@ -267,6 +289,34 @@ spv_result_t ValidateDecorate(ValidationState_t& _, const Instruction* inst) {
     }
   }
 
+  if (decoration == spv::Decoration::FPFastMathMode) {
+    if (_.HasDecoration(target_id, spv::Decoration::NoContraction)) {
+      return _.diag(SPV_ERROR_INVALID_ID, inst)
+             << "FPFastMathMode and NoContraction cannot decorate the same "
+                "target";
+    }
+    auto mask = inst->GetOperandAs<spv::FPFastMathModeMask>(2);
+    if ((mask & spv::FPFastMathModeMask::AllowTransform) !=
+            spv::FPFastMathModeMask::MaskNone &&
+        ((mask & (spv::FPFastMathModeMask::AllowContract |
+                  spv::FPFastMathModeMask::AllowReassoc)) !=
+         (spv::FPFastMathModeMask::AllowContract |
+          spv::FPFastMathModeMask::AllowReassoc))) {
+      return _.diag(SPV_ERROR_INVALID_DATA, inst)
+             << "AllowReassoc and AllowContract must be specified when "
+                "AllowTransform is specified";
+    }
+  }
+
+  // This is checked from both sides since we register decorations as we go.
+  if (decoration == spv::Decoration::NoContraction) {
+    if (_.HasDecoration(target_id, spv::Decoration::FPFastMathMode)) {
+      return _.diag(SPV_ERROR_INVALID_ID, inst)
+             << "FPFastMathMode and NoContraction cannot decorate the same "
+                "target";
+    }
+  }
+
   if (DecorationTakesIdParameters(decoration)) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
            << "Decorations taking ID parameters may not be used with "
@@ -290,11 +340,69 @@ spv_result_t ValidateDecorate(ValidationState_t& _, const Instruction* inst) {
 }
 
 spv_result_t ValidateDecorateId(ValidationState_t& _, const Instruction* inst) {
+  const auto target_id = inst->GetOperandAs<uint32_t>(0);
+  const auto target = _.FindDef(target_id);
+  if (target && spv::Op::OpDecorationGroup == target->opcode()) {
+    return _.diag(SPV_ERROR_INVALID_ID, inst)
+           << "OpMemberDecorate Target <id> " << _.getIdName(target_id)
+           << " must not be an OpDecorationGroup instruction.";
+  }
+
   const auto decoration = inst->GetOperandAs<spv::Decoration>(1);
   if (!DecorationTakesIdParameters(decoration)) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
            << "Decorations that don't take ID parameters may not be used with "
               "OpDecorateId";
+  }
+
+  if (decoration == spv::Decoration::ArrayStrideIdEXT) {
+    if (target->opcode() != spv::Op::OpTypeArray &&
+        target->opcode() != spv::Op::OpTypeRuntimeArray) {
+      // ArrayStrideIdEXT is suppose to identical to ArrayStride, which would
+      // allow it to be a OpTypePointer/OpTypeUntypedPointerKHR
+      return _.diag(SPV_ERROR_INVALID_ID, inst)
+             << "ArrayStrideIdEXT decoration must only be applied to array "
+                "types.";
+    } else {
+      const uint32_t operand_id = inst->GetOperandAs<uint32_t>(2);
+      if (!_.IsIntScalarType(_.GetTypeId(operand_id), 32)) {
+        return _.diag(SPV_ERROR_INVALID_ID, inst)
+               << "ArrayStrideIdEXT extra operand must be a 32-bit int "
+                  "scalar type.";
+      }
+
+      // Even if spec constant, validation layers will test when frozen
+      uint64_t stride_value = 0;
+      if (_.EvalConstantValUint64(operand_id, &stride_value)) {
+        if (stride_value == 0) {
+          return _.diag(SPV_ERROR_INVALID_ID, inst)
+                 << "ArrayStrideIdEXT contains a stride of zero.";
+        }
+      }
+
+      // Strip array and should be the descriptor type
+      const uint32_t element_type =
+          _.FindDef(target_id)->GetOperandAs<uint32_t>(1);
+      if (!_.IsDescriptorType(element_type)) {
+        return _.diag(SPV_ERROR_INVALID_ID, inst)
+               << "ArrayStrideIdEXT decoration must only be applied to"
+               << " array type containing a Descriptor type.";
+      }
+    }
+  }
+
+  for (uint32_t i = 2; i < inst->operands().size(); ++i) {
+    const auto param_id = inst->GetOperandAs<uint32_t>(i);
+    const auto param = _.FindDef(param_id);
+
+    // Both target and param are elements of ordered_instructions we can
+    // determine their relative positions in the SPIR-V module by comparing
+    // pointers.
+    if (target <= param) {
+      return _.diag(SPV_ERROR_INVALID_ID, inst)
+             << "Parameter <ID> " << _.getIdName(param_id)
+             << " must appear earlier in the binary than the target";
+    }
   }
 
   // No member decorations take id parameters, so we don't bother checking if
@@ -309,24 +417,70 @@ spv_result_t ValidateMemberDecorate(ValidationState_t& _,
                                     const Instruction* inst) {
   const auto struct_type_id = inst->GetOperandAs<uint32_t>(0);
   const auto struct_type = _.FindDef(struct_type_id);
+  const bool is_mem_dec_id_inst =
+      (inst->opcode() == spv::Op::OpMemberDecorateIdEXT);
   if (!struct_type || spv::Op::OpTypeStruct != struct_type->opcode()) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
-           << "OpMemberDecorate Structure type <id> "
-           << _.getIdName(struct_type_id) << " is not a struct type.";
+           << (is_mem_dec_id_inst ? "OpMemberDecorateIdEXT"
+                                  : "OpMemberDecorate")
+           << " Structure type <id> " << _.getIdName(struct_type_id)
+           << " is not a struct type.";
   }
   const auto member = inst->GetOperandAs<uint32_t>(1);
   const auto member_count =
       static_cast<uint32_t>(struct_type->words().size() - 2);
   if (member_count <= member) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
-           << "Index " << member
-           << " provided in OpMemberDecorate for struct <id> "
-           << _.getIdName(struct_type_id)
+           << "Index " << member << " provided in "
+           << (is_mem_dec_id_inst ? "OpMemberDecorateIdEXT"
+                                  : "OpMemberDecorate")
+           << " for struct <id> " << _.getIdName(struct_type_id)
            << " is out of bounds. The structure has " << member_count
            << " members. Largest valid index is " << member_count - 1 << ".";
   }
 
   const auto decoration = inst->GetOperandAs<spv::Decoration>(2);
+  if (is_mem_dec_id_inst) {
+    if (decoration != spv::Decoration::OffsetIdEXT) {
+      if (decoration == spv::Decoration::ArrayStrideIdEXT) {
+        return _.diag(SPV_ERROR_INVALID_ID, inst)
+               << "ArrayStrideIdEXT could only be directly applied"
+               << " to array type using OpDecorateId.";
+      } else {
+        return _.diag(SPV_ERROR_INVALID_ID, inst)
+               << "Decoration operand could only be OffsetIdEXT.";
+      }
+    }
+
+    const auto is_descriptor_type = [&_](const Instruction* type_inst) {
+      return _.IsDescriptorType(type_inst->opcode());
+    };
+
+    // recursively scans the struct to find if anything has a descriptor type,
+    // must be at least 1
+    if (decoration == spv::Decoration::OffsetIdEXT) {
+      const uint32_t operand_id = inst->GetOperandAs<uint32_t>(3);
+      if (!_.IsIntScalarType(_.GetTypeId(operand_id), 32)) {
+        return _.diag(SPV_ERROR_INVALID_ID, inst)
+               << "OffsetIdEXT extra operand must be a 32-bit int scalar type.";
+      }
+      if (!_.ContainsType(struct_type_id, is_descriptor_type, true)) {
+        return _.diag(SPV_ERROR_INVALID_ID, inst)
+               << "OffsetIdEXT decoration in MemberDecorateIdEXT must only be "
+                  "applied to members of structs where the struct contains "
+                  "descriptor types.";
+      }
+    }
+
+    for (uint32_t elem_idx = 3; elem_idx < inst->operands().size();
+         elem_idx++) {
+      if (_.FindDef(inst->GetOperandAs<uint32_t>(elem_idx)) > struct_type) {
+        return _.diag(SPV_ERROR_INVALID_ID, inst)
+               << "All <id> Extra Operands must appear before Structure Type.";
+      }
+    }
+  }
+
   if (IsNotMemberDecoration(decoration)) {
     return _.diag(SPV_ERROR_INVALID_ID, inst)
            << _.SpvDecorationString(decoration)
@@ -345,8 +499,7 @@ spv_result_t ValidateDecorationGroup(ValidationState_t& _,
     if (use->opcode() != spv::Op::OpDecorate &&
         use->opcode() != spv::Op::OpGroupDecorate &&
         use->opcode() != spv::Op::OpGroupMemberDecorate &&
-        use->opcode() != spv::Op::OpName &&
-        use->opcode() != spv::Op::OpDecorateId && !use->IsNonSemantic()) {
+        use->opcode() != spv::Op::OpName && !use->IsNonSemantic()) {
       return _.diag(SPV_ERROR_INVALID_ID, inst)
              << "Result id of OpDecorationGroup can only "
              << "be targeted by OpName, OpGroupDecorate, "
@@ -432,7 +585,8 @@ spv_result_t RegisterDecorations(ValidationState_t& _,
       _.RegisterDecorationForId(target_id, Decoration(dec_type, dec_params));
       break;
     }
-    case spv::Op::OpMemberDecorate: {
+    case spv::Op::OpMemberDecorate:
+    case spv::Op::OpMemberDecorateIdEXT: {
       const uint32_t struct_id = inst->word(1);
       const uint32_t index = inst->word(2);
       const spv::Decoration dec_type =
@@ -503,6 +657,7 @@ spv_result_t AnnotationPass(ValidationState_t& _, const Instruction* inst) {
     // TODO(dneto): spv::Op::OpDecorateStringGOOGLE
     // See https://github.com/KhronosGroup/SPIRV-Tools/issues/2253
     case spv::Op::OpMemberDecorate:
+    case spv::Op::OpMemberDecorateIdEXT:
       if (auto error = ValidateMemberDecorate(_, inst)) return error;
       break;
     case spv::Op::OpDecorationGroup:

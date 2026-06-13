@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -11,25 +11,73 @@ namespace bgfx
 	extern bool g_verbose;
 }
 
-#ifndef SHADERC_CONFIG_HLSL
-#	define SHADERC_CONFIG_HLSL BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT //!!!!betauser
-#endif // SHADERC_CONFIG_HLSL
+#include <bx/bx.h>
 
-//!!!!disabled. hard to compile, compilation error long path on spirv-opt. 
-////!!!!betauser
-//#ifndef SHADERC_CONFIG_SPIRV
-//#	define SHADERC_CONFIG_SPIRV BX_PLATFORM_WINDOWS
+// HLSL compilation support:
+// - Windows: Native D3DCompiler DLL
+// - Linux/macOS: d3d4linux (Wine-based D3DCompiler via IPC)
+#ifndef SHADERC_CONFIG_HAS_D3DCOMPILER
+#	if BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT //!!!!betauser
+#		if __has_include(<d3dcompiler.h>)
+#			define SHADERC_CONFIG_HAS_D3DCOMPILER 1
+#		endif
+#	elif BX_PLATFORM_LINUX
+#		if __has_include(<d3d4linux.h>)
+#			define SHADERC_CONFIG_HAS_D3DCOMPILER 1
+#		endif
+#	endif
+// Still not?
+#	ifndef SHADERC_CONFIG_HAS_D3DCOMPILER
+#		define SHADERC_CONFIG_HAS_D3DCOMPILER 0
+#	endif
+#endif // SHADERC_CONFIG_HAS_D3DCOMPILER
+
+//#ifndef SHADERC_CONFIG_HLSL
+//#	define SHADERC_CONFIG_HLSL BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT //!!!!betauser
 //#endif // SHADERC_CONFIG_HLSL
 
-#include <alloca.h>
-#include <stdint.h>
-#include <string.h>
-#include <algorithm>
-#include <string>
-#include <vector>
-#include <unordered_map>
 
-#include <bx/bx.h>
+//!!!!betauser. disabled SHADERC_CONFIG_HAS_DXC for Linux
+//|| BX_PLATFORM_LINUX       \
+
+// DXIL compilation support (Shader Model 6.0+):
+// - Windows: Native DXC (dxcompiler.dll)
+// - Linux: DXC (libdxcompiler.so) via directx-headers
+// - macOS: Not supported (no DXC dynamic library available)
+#ifndef SHADERC_CONFIG_HAS_DXC
+#	define SHADERC_CONFIG_HAS_DXC (0  \
+		|| BX_PLATFORM_WINDOWS     \
+		)
+#endif // SHADERC_CONFIG_HAS_DXC
+
+#ifndef SHADERC_CONFIG_HAS_TINT
+#	if __has_include(<tint/api/tint.h>)
+#		define SHADERC_CONFIG_HAS_TINT 1
+#	else
+#		define SHADERC_CONFIG_HAS_TINT 0
+#	endif
+#endif
+
+//!!!!betauser
+//#ifndef SHADERC_CONFIG_HAS_GLSLANG
+//#	if __has_include(<ShaderLang.h>) \
+//	&& __has_include(<SPIRV/SpvTools.h>)
+//#		define SHADERC_CONFIG_HAS_GLSLANG 1
+//#	else
+//#		define SHADERC_CONFIG_HAS_GLSLANG 0
+//#	endif
+//#endif
+
+
+//!!!!betauser
+//#ifndef SHADERC_CONFIG_HAS_GLSL_OPTIMIZER
+//#	if __has_include("glsl_optimizer.h")
+//#		define SHADERC_CONFIG_HAS_GLSL_OPTIMIZER 1
+//#	else
+//#		define SHADERC_CONFIG_HAS_GLSL_OPTIMIZER 0
+//#	endif
+//#endif
+
 #include <bx/debug.h>
 #include <bx/commandline.h>
 #include <bx/endian.h>
@@ -39,6 +87,11 @@ namespace bgfx
 #include <bx/file.h>
 #include "../../src/vertexlayout.h"
 
+#include <string.h>
+#include <algorithm>
+#include <string>
+#include <vector>
+#include <unordered_map>
 
 //!!!!betauser
 #define SHADERC_AS_DLL
@@ -59,6 +112,13 @@ namespace bgfx
 	extern bool g_verbose;
 
 	bx::StringView nextWord(bx::StringView& _parse);
+
+	constexpr uint16_t kAccessRead  = 0x8000;
+	constexpr uint16_t kAccessWrite = 0x4000;
+	constexpr uint16_t kAccessMask  = 0
+		| kAccessRead
+		| kAccessWrite
+		;
 
 	//!!!!betauser
 	//constexpr uint8_t kUniformFragmentBit  = 0x10;
@@ -118,6 +178,7 @@ namespace bgfx
 		bool disasm;
 		bool raw;
 		bool preprocessOnly;
+		bool keepComments;
 		bool depends;
 
 		bool debugInformation;
@@ -143,10 +204,11 @@ namespace bgfx
 
 	bool compileGLSLShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
 	bool compileHLSLShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
-	bool compileHLSLShaderDX12(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
+	bool compileDxilShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
 	bool compileMetalShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
 	bool compilePSSLShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
 	bool compileSPIRVShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
+	bool compileWgslShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _writer, bx::WriterI* _messages);
 
 	const char* getPsslPreamble();
 

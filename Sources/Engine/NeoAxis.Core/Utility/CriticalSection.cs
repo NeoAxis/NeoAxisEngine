@@ -153,7 +153,7 @@ namespace NeoAxis
 	//	//
 
 	//	//!!!!name. не было .dll
-	//	const string library = "NeoAxisCoreNative";
+	//	const string library = "libNeoAxisCoreNative";
 
 	//	[DllImport( library, EntryPoint = "UtilsNativeWrapper_pthread_mutex_init" )]
 	//	unsafe static extern IntPtr pthread_mutex_init();
@@ -210,7 +210,7 @@ namespace NeoAxis
 
 	//   //
 
-	//   const string library = "NeoAxisCoreNative";
+	//   const string library = "libNeoAxisCoreNative";
 
 	//   [DllImport( library, EntryPoint = "UtilsNativeWrapper_pthread_mutex_init" )]
 	//   unsafe static extern IntPtr pthread_mutex_init();

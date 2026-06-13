@@ -86,6 +86,7 @@
 #	endif // BX_COMPILER_GCC
 
 #	define BX_ATTRIBUTE(_x) __attribute__( (_x) )
+#	define BX_STACK_ALLOC(_size) __builtin_alloca(_size)
 
 #	if BX_CRT_MSVC
 #		define __stdcall
@@ -107,6 +108,9 @@
 #	define BX_PRINTF_ARGS(_format, _args)
 #	define BX_THREAD_LOCAL __declspec(thread)
 #	define BX_ATTRIBUTE(_x)
+
+extern "C" void* __cdecl _alloca(size_t _size);
+#	define BX_STACK_ALLOC(_size) ::_alloca(_size)
 #else
 #	error "Unknown BX_COMPILER_?"
 #endif

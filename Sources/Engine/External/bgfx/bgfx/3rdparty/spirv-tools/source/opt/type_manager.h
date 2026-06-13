@@ -34,7 +34,7 @@ namespace analysis {
 
 // Hashing functor.
 //
-// All type pointers must be non-null.
+// All type pointers must be non-null to reach here.
 struct HashTypePointer {
   size_t operator()(const Type* type) const {
     assert(type);
@@ -203,7 +203,11 @@ class TypeManager {
     return GetRegisteredType(&bool_type);
   }
 
-  uint32_t GetBoolTypeId() { return GetTypeInstruction(GetBoolType()); }
+  uint32_t GetBoolTypeId() {
+    Type* bool_type = GetBoolType();
+    if (bool_type == nullptr) return 0;
+    return GetTypeInstruction(bool_type);
+  }
 
   Type* GetVoidType() {
     Void void_type;
@@ -260,7 +264,9 @@ class TypeManager {
   // Returns an equivalent pointer to |type| built in terms of pointers owned by
   // |type_pool_|. For example, if |type| is a vec3 of bool, it will be rebuilt
   // replacing the bool subtype with one owned by |type_pool_|.
-  Type* RebuildType(const Type& type);
+  //
+  // The re-built type will have ID |type_id|.
+  Type* RebuildType(uint32_t type_id, const Type& type);
 
   // Completes the incomplete type |type|, by replaces all references to
   // ForwardPointer by the defining Pointer.

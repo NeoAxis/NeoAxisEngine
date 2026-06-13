@@ -97,7 +97,7 @@ template <typename T>
 size_t CountSetBits(T word) {
   static_assert(std::is_integral<T>::value,
                 "CountSetBits requires integer type");
-  size_t count = 0;
+  uint32_t count = 0;
   while (word) {
     word &= word - 1;
     ++count;
@@ -180,6 +180,48 @@ T ClearHighBits(T word, size_t num_bits_to_set) {
   return MutateBits(word, word_bit_width - num_bits_to_set, num_bits_to_set,
                     false);
 }
+
+// Returns the value obtained by extracting the |number_of_bits| least
+// significant bits from |value|, and sign-extending it to 64-bits.
+template <typename T>
+T SignExtendValue(T value, uint32_t number_of_bits) {
+  const uint32_t bit_width = sizeof(value) * 8;
+  if (number_of_bits == bit_width) return value;
+
+  bool is_negative = utils::IsBitAtPositionSet(value, number_of_bits - 1);
+  if (is_negative) {
+    value = utils::SetHighBits(value, bit_width - number_of_bits);
+  } else {
+    value = utils::ClearHighBits(value, bit_width - number_of_bits);
+  }
+  return value;
+}
+
+// Returns the value obtained by extracting the |number_of_bits| least
+// significant bits from |value|, and zero-extending it to 64-bits.
+template <typename T>
+T ZeroExtendValue(T value, uint32_t number_of_bits) {
+  const uint32_t bit_width = sizeof(value) * 8;
+  if (number_of_bits == bit_width) return value;
+  return utils::ClearHighBits(value, bit_width - number_of_bits);
+}
+
+// Returns the the least significant bit from |value|.
+template <typename T>
+constexpr T LSB(T value) {
+  static_assert(std::is_integral<T>::value, "LSB requires integer type");
+  if constexpr (std::is_unsigned_v<T>) {
+    // Prevent warnings about doing a -x on unsigned values.
+    return value & (~value + 1);
+  } else {
+    return value & -value;
+  }
+}
+
+static_assert(LSB<uint32_t>(UINT32_MAX) == uint32_t(0x00000001), "LSB failed");
+static_assert(LSB<uint32_t>(0x10001000) == uint32_t(0x00001000), "LSB failed");
+static_assert(LSB<uint32_t>(0x10000000) == uint32_t(0x10000000), "LSB failed");
+static_assert(LSB<int32_t>(-1) == int32_t(0x00000001), "LSB failed");
 
 }  // namespace utils
 }  // namespace spvtools

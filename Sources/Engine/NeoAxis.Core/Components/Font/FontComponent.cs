@@ -1430,7 +1430,7 @@ namespace NeoAxis
 						}
 					}, out int drawOffsetX, out int drawOffsetY, out var advance );
 
-					if( success )
+					if( success && points != null )
 					{
 						//var drawOffset = new Vector2I( 0, 0 );
 						//var drawOffset = new Vector2I( currentAdvance + drawOffsetX, drawOffsetY );
@@ -1505,7 +1505,7 @@ namespace NeoAxis
 
 					contourData.Advance = advance / (double)GetContourFontHeight();
 
-					if( success )
+					if( success && points != null )
 					{
 						//var drawOffset = new Vector2I( currentAdvance + 0, 0 );
 						//var drawOffset = new Vector2I( currentAdvance + drawOffsetX, drawOffsetY );

@@ -25,8 +25,6 @@ namespace NeoAxis
 
 		unsafe protected override bool OnInit()
 		{
-			//NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
-
 			try
 			{
 				//!!!!impl

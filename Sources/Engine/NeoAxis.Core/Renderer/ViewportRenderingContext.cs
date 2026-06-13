@@ -785,19 +785,6 @@ namespace NeoAxis
 			get { return currentViewport; }
 		}
 
-		//public static int CurrentViewNumber
-		//{
-		//	get { return currentViewNumber; }
-		//	set { currentViewNumber = value; }
-		//}
-
-		//public void ResetViews()
-		//{
-		//	for( int n = 0; n < currentViewNumber; n++ )
-		//		Bgfx.ResetView( (ushort)n );
-		//	currentViewNumber = -1;
-		//}
-
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static uint ToRGBA( ColorValue color )
 		{
@@ -815,77 +802,166 @@ namespace NeoAxis
 			public Vector2F sizeInv;
 		}
 
-		public void SetViewport( Viewport viewport, Matrix4F viewMatrix, Matrix4F projectionMatrix, FrameBufferTypes clearBuffers, ColorValue clearBackgroundColor, float clearDepthValue = 1, byte clearStencilValue = 0 )//, bool setInvalidFrameBuffer = false )
+		//static Mesh clearBackgroundMesh;
+		//static GpuMaterialPass[] clearBackgroundPasses = new GpuMaterialPass[ 4 ];
+
+		//void ViewportClearMRT( FrameBufferTypes clearBuffers, ColorValue clearBackgroundColor, float clearDepthValue = 1, byte clearStencilValue = 0 )
+		//{
+
+		//	//!!!!replace with native graphics API calls
+
+		//	//!!!!stencil is not cleared
+
+		//	var passIndex = (int)( clearBuffers & ( FrameBufferTypes.Color | FrameBufferTypes.Depth ) );
+
+		//	//create mesh
+		//	if( clearBackgroundMesh == null )
+		//	{
+		//		clearBackgroundMesh = ComponentUtility.CreateComponent<Mesh>( null, true, false );
+		//		var geometry = clearBackgroundMesh.CreateComponent<MeshGeometry_Plane>();
+		//		geometry.Dimensions = new Vector2( 2.1, 2.1 );
+		//		clearBackgroundMesh.Enabled = true;
+		//	}
+
+		//	//create rendering pass
+		//	if( clearBackgroundPasses[ passIndex ] == null )
+		//	{
+		//		//generate compile arguments
+		//		var generalDefines = new List<(string, string)>();
+
+		//		string error;
+
+		//		//vertex program
+		//		var vertexProgram = GpuProgramManager.GetProgram( "Clear_Vertex_", GpuProgramType.Vertex,
+		//			@"Base\Shaders\Clear_vs.sc", generalDefines, true, out error );
+		//		if( !string.IsNullOrEmpty( error ) )
+		//			return;
+
+		//		//fragment program
+		//		var fragmentProgram = GpuProgramManager.GetProgram( "Clear_Fragment_", GpuProgramType.Fragment,
+		//			@"Base\Shaders\Clear_fs.sc", generalDefines, true, out error );
+		//		if( !string.IsNullOrEmpty( error ) )
+		//			return;
+
+		//		var pass = new GpuMaterialPass( null, vertexProgram, fragmentProgram );
+		//		pass.CullingMode = CullingMode.None;
+		//		pass.DepthCheck = false;
+		//		pass.ColorWriteBlue = ( clearBuffers & FrameBufferTypes.Color ) != 0;
+		//		pass.ColorWriteGreen = ( clearBuffers & FrameBufferTypes.Color ) != 0;
+		//		pass.ColorWriteRed = ( clearBuffers & FrameBufferTypes.Color ) != 0;
+		//		pass.ColorWriteAlpha = ( clearBuffers & FrameBufferTypes.Color ) != 0;
+		//		pass.DepthWrite = ( clearBuffers & FrameBufferTypes.Depth ) != 0;
+		//		clearBackgroundPasses[ passIndex ] = pass;
+		//	}
+
+		//	//render
+		//	unsafe
+		//	{
+		//		var worldMatrix = Matrix4F.Identity;
+
+		//		foreach( var op in clearBackgroundMesh.Result.MeshData.RenderOperations )
+		//		{
+		//			var generalContainer = new ParameterContainer();
+		//			generalContainer.Set( "clearColor", clearBackgroundColor );
+		//			generalContainer.Set( "clearDepthValue", clearDepthValue );
+
+		//			var containers = new List<ParameterContainer>();
+		//			containers.Add( generalContainer );
+
+		//			Bgfx.SetTransform( (float*)&worldMatrix );
+
+		//			SetVertexBuffer( 0, op.VertexBuffers[ 0 ] );
+		//			SetIndexBuffer( op.IndexBuffer );
+		//			SetPassAndSubmit( clearBackgroundPasses[ passIndex ], RenderOperationType.TriangleList, containers, null, false, true );
+		//		}
+		//	}
+		//}
+
+		public void SetViewport( Viewport viewport, Matrix4F viewMatrix, Matrix4F projectionMatrix, FrameBufferTypes clearBuffers, ColorValue clearBackgroundColor, float clearDepthValue = 1, byte clearStencilValue = 0 )
 		{
 			currentViewport = viewport;
-			RenderingSystem.currentViewNumber++;
 
-			//init bgfx view
+			////!!!!replace with native graphics API calls
+			//var clearByShader = RenderingSystem.Capabilities.Backend == RendererBackend.Direct3D11;
 
-			Bgfx.ResetView( (ushort)RenderingSystem.CurrentViewNumber );
+			////var isMRT = false;
+			////{
+			////	var mrt = viewport.Parent as MultiRenderTarget;
+			////	if( mrt != null && mrt.Items.Length > 1 )
+			////		isMRT = true;
+			////}
 
-			bool skip = false;
-			var renderWindow = currentViewport.parent as RenderWindow;
-			if( renderWindow != null && renderWindow.ThisIsApplicationWindow )
-				skip = true;
-			if( !skip )
-				Bgfx.SetViewFrameBuffer( (ushort)RenderingSystem.CurrentViewNumber, /*setInvalidFrameBuffer ? FrameBuffer.Invalid : */currentViewport.parent.FrameBuffer );
-
-			Bgfx.SetViewMode( (ushort)RenderingSystem.CurrentViewNumber, ViewMode.Sequential );
-			Bgfx.SetViewRect( (ushort)RenderingSystem.CurrentViewNumber, 0, 0, CurrentViewport.SizeInPixels.X, CurrentViewport.SizeInPixels.Y );
-			unsafe
-			{
-				Bgfx.SetViewTransform( (ushort)RenderingSystem.CurrentViewNumber, (float*)&viewMatrix, (float*)&projectionMatrix );
-			}
-
-			////!!!!
-			//if( clearBuffers == 0 )
+			////clear buffers (by shader)
+			//if( clearBuffers != 0 && clearByShader )
 			//{
-			//	var target = viewport.Parent as RenderTexture;
-			//	if( target != null )
+			//	RenderingSystem.currentViewNumber++;
+			//	Bgfx.ResetView( (ushort)RenderingSystem.CurrentViewNumber );
+
+			//	bool skip = false;
+			//	var renderWindow = currentViewport.parent as RenderWindow;
+			//	if( renderWindow != null && renderWindow.ThisIsApplicationWindow )
+			//		skip = true;
+			//	if( !skip )
+			//		Bgfx.SetViewFrameBuffer( (ushort)RenderingSystem.CurrentViewNumber, currentViewport.parent.FrameBuffer );
+
+			//	Bgfx.SetViewMode( (ushort)RenderingSystem.CurrentViewNumber, ViewMode.Sequential );
+			//	Bgfx.SetViewRect( (ushort)RenderingSystem.CurrentViewNumber, 0, 0, CurrentViewport.SizeInPixels.X, CurrentViewport.SizeInPixels.Y );
+
+			//	unsafe
 			//	{
-			//		if( !target.Creator._renderTargetCleared )
-			//		{
-			//			clearBuffers = FrameBufferTypes.Color;
-			//			//clearBuffers = FrameBufferTypes.All;
-			//		}
+			//		var identity = Matrix4F.Identity;
+			//		Bgfx.SetViewTransform( (ushort)RenderingSystem.CurrentViewNumber, (float*)&identity, (float*)&identity );
 			//	}
+
+			//	ViewportClearMRT( clearBuffers, clearBackgroundColor, clearDepthValue, clearStencilValue );
 			//}
 
-			//clear
-			if( clearBuffers != 0 )
+			//configure viewport
 			{
-				ClearTargets targets = 0;
-				if( ( clearBuffers & FrameBufferTypes.Color ) != 0 )
-					targets |= ClearTargets.Color;
-				if( ( clearBuffers & FrameBufferTypes.Depth ) != 0 )
-					targets |= ClearTargets.Depth;
-				if( ( clearBuffers & FrameBufferTypes.Stencil ) != 0 )
-					targets |= ClearTargets.Stencil;
-				Bgfx.SetViewClear( (ushort)RenderingSystem.CurrentViewNumber, targets, ToRGBA( clearBackgroundColor ), clearDepthValue, clearStencilValue );
+				RenderingSystem.currentViewNumber++;
+				Bgfx.ResetView( (ushort)RenderingSystem.CurrentViewNumber );
 
-				Bgfx.Touch( (ushort)RenderingSystem.CurrentViewNumber );
-			}
+				bool skip = false;
+				var renderWindow = currentViewport.parent as RenderWindow;
+				if( renderWindow != null && renderWindow.ThisIsApplicationWindow )
+					skip = true;
+				if( !skip )
+					Bgfx.SetViewFrameBuffer( (ushort)RenderingSystem.CurrentViewNumber, currentViewport.parent.FrameBuffer );
 
-			////!!!!
-			//if( clearBuffers != 0 )//if( clearBuffers == FrameBufferTypes.All )
-			//{
-			//	var target = viewport.Parent as RenderTexture;
-			//	if( target != null )
-			//		target.Creator._renderTargetCleared = true;
-			//}
+				Bgfx.SetViewMode( (ushort)RenderingSystem.CurrentViewNumber, ViewMode.Sequential );
+				Bgfx.SetViewRect( (ushort)RenderingSystem.CurrentViewNumber, 0, 0, CurrentViewport.SizeInPixels.X, CurrentViewport.SizeInPixels.Y );
+				unsafe
+				{
+					Bgfx.SetViewTransform( (ushort)RenderingSystem.CurrentViewNumber, (float*)&viewMatrix, (float*)&projectionMatrix );
+				}
 
-			//u_viewportSettings
-			unsafe
-			{
-				var data = new ViewportSettingsUniform();
-				data.size = viewport.SizeInPixels.ToVector2F();
-				data.sizeInv = new Vector2F( 1, 1 ) / data.size;
+				//clear
+				if( clearBuffers != 0 ) // && !clearByShader )
+				{
+					ClearTargets targets = 0;
+					if( ( clearBuffers & FrameBufferTypes.Color ) != 0 )
+						targets |= ClearTargets.Color;
+					if( ( clearBuffers & FrameBufferTypes.Depth ) != 0 )
+						targets |= ClearTargets.Depth;
+					if( ( clearBuffers & FrameBufferTypes.Stencil ) != 0 )
+						targets |= ClearTargets.Stencil;
+					Bgfx.SetViewClear( (ushort)RenderingSystem.CurrentViewNumber, targets, ToRGBA( clearBackgroundColor ), clearDepthValue, clearStencilValue );
 
-				int vec4Count = sizeof( ViewportSettingsUniform ) / sizeof( Vector4F );
-				if( vec4Count != 1 )
-					Log.Fatal( "RenderingPipeline: Render: vec4Count != 1." );
-				SetUniform( "u_viewportSettings", ParameterType.Vector4, vec4Count, &data );
+					Bgfx.Touch( (ushort)RenderingSystem.CurrentViewNumber );
+				}
+
+				//u_viewportSettings
+				unsafe
+				{
+					var data = new ViewportSettingsUniform();
+					data.size = viewport.SizeInPixels.ToVector2F();
+					data.sizeInv = new Vector2F( 1, 1 ) / data.size;
+
+					int vec4Count = sizeof( ViewportSettingsUniform ) / sizeof( Vector4F );
+					if( vec4Count != 1 )
+						Log.Fatal( "RenderingPipeline: Render: vec4Count != 1." );
+					SetUniform( "u_viewportSettings", ParameterType.Vector4, vec4Count, &data );
+				}
 			}
 		}
 

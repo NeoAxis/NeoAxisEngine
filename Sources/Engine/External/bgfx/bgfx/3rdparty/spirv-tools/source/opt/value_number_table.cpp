@@ -38,6 +38,45 @@ uint32_t ValueNumberTable::GetValueNumber(uint32_t id) const {
   return GetValueNumber(context()->get_def_use_mgr()->GetDef(id));
 }
 
+bool ValueNumberTable::IsReadOnlyLoad(Instruction* inst) {
+  if (!inst->IsLoad()) {
+    return false;
+  }
+
+  Instruction* address_def = inst->GetBaseAddress();
+  if (!address_def) {
+    return false;
+  }
+
+  auto cached_result = read_only_variable_cache_.find(address_def->result_id());
+  if (cached_result != read_only_variable_cache_.end()) {
+    return cached_result->second;
+  }
+
+  bool is_read_only = IsReadOnlyVariable(address_def);
+  read_only_variable_cache_[address_def->result_id()] = is_read_only;
+  return is_read_only;
+}
+
+bool ValueNumberTable::IsReadOnlyVariable(Instruction* address_def) {
+  if (address_def->opcode() == spv::Op::OpVariable) {
+    if (address_def->IsReadOnlyPointer()) {
+      return true;
+    }
+  }
+
+  if (address_def->opcode() == spv::Op::OpLoad) {
+    const analysis::Type* address_type =
+        context()->get_type_mgr()->GetType(address_def->type_id());
+    if (address_type->AsSampledImage() != nullptr) {
+      const auto* image_type =
+          address_type->AsSampledImage()->image_type()->AsImage();
+      return image_type->sampled() == 1;
+    }
+  }
+  return false;
+}
+
 uint32_t ValueNumberTable::AssignValueNumber(Instruction* inst) {
   // If it already has a value return that.
   uint32_t value = GetValueNumber(inst);
@@ -45,26 +84,41 @@ uint32_t ValueNumberTable::AssignValueNumber(Instruction* inst) {
     return value;
   }
 
+  auto assign_new_number = [this](Instruction* i) {
+    const auto new_value = TakeNextValueNumber();
+    id_to_value_[i->result_id()] = new_value;
+    return new_value;
+  };
+
   // If the instruction has other side effects, then it must
   // have its own value number.
-  // OpSampledImage and OpImage must remain in the same basic block in which
-  // they are used, because of this we will assign each one it own value number.
   if (!context()->IsCombinatorInstruction(inst) &&
       !inst->IsCommonDebugInstr()) {
-    value = TakeNextValueNumber();
-    id_to_value_[inst->result_id()] = value;
-    return value;
+    return assign_new_number(inst);
   }
 
+  // OpSampledImage and OpImage must remain in the same basic block in which
+  // they are used, because of this we will assign each one it own value number.
   switch (inst->opcode()) {
     case spv::Op::OpSampledImage:
     case spv::Op::OpImage:
     case spv::Op::OpVariable:
-      value = TakeNextValueNumber();
-      id_to_value_[inst->result_id()] = value;
-      return value;
+      return assign_new_number(inst);
     default:
       break;
+  }
+
+  // A load that yields an image, sampler, or sampled image must remain in
+  // the same basic block.  So assign it its own value number.
+  if (inst->IsLoad()) {
+    switch (context()->get_def_use_mgr()->GetDef(inst->type_id())->opcode()) {
+      case spv::Op::OpTypeSampledImage:
+      case spv::Op::OpTypeImage:
+      case spv::Op::OpTypeSampler:
+        return assign_new_number(inst);
+      default:
+        break;
+    }
   }
 
   // If it is a load from memory that can be modified, we have to assume the
@@ -73,10 +127,8 @@ uint32_t ValueNumberTable::AssignValueNumber(Instruction* inst) {
   // Note that this test will also handle volatile loads because they are not
   // read only.  However, if this is ever relaxed because we analyze stores, we
   // will have to add a new case for volatile loads.
-  if (inst->IsLoad() && !inst->IsReadOnlyLoad()) {
-    value = TakeNextValueNumber();
-    id_to_value_[inst->result_id()] = value;
-    return value;
+  if (inst->IsLoad() && !IsReadOnlyLoad(inst)) {
+    return assign_new_number(inst);
   }
 
   analysis::DecorationManager* dec_mgr = context()->get_decoration_mgr();
@@ -130,8 +182,15 @@ uint32_t ValueNumberTable::AssignValueNumber(Instruction* inst) {
     }
   }
 
-  // TODO: Implement a normal form for opcodes that commute like integer
-  // addition.  This will let us know that a+b is the same value as b+a.
+  // Apply normal form, so a+b == b+a
+  if (spvOpcodeIsCommutativeBinaryOperator(value_ins.opcode())) {
+    if (value_ins.GetSingleWordInOperand(0) >
+        value_ins.GetSingleWordInOperand(1)) {
+      value_ins.SetInOperands(
+          {{SPV_OPERAND_TYPE_ID, {value_ins.GetSingleWordInOperand(1)}},
+           {SPV_OPERAND_TYPE_ID, {value_ins.GetSingleWordInOperand(0)}}});
+    }
+  }
 
   // Otherwise, we check if this value has been computed before.
   auto value_iterator = instruction_to_value_.find(value_ins);

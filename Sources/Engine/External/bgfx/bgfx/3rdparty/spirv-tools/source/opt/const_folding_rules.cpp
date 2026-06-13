@@ -14,6 +14,8 @@
 
 #include "source/opt/const_folding_rules.h"
 
+#include <optional>
+
 #include "source/opt/ir_context.h"
 
 namespace spvtools {
@@ -676,7 +678,6 @@ ConstantFoldingRule FoldUnaryOp(UnaryScalarFoldingRule scalar_rule) {
   return [scalar_rule](IRContext* context, Instruction* inst,
                        const std::vector<const analysis::Constant*>& constants)
              -> const analysis::Constant* {
-
     analysis::ConstantManager* const_mgr = context->get_constant_mgr();
     analysis::TypeManager* type_mgr = context->get_type_mgr();
     const analysis::Type* result_type = type_mgr->GetType(inst->type_id());
@@ -713,6 +714,64 @@ ConstantFoldingRule FoldUnaryOp(UnaryScalarFoldingRule scalar_rule) {
     } else {
       return scalar_rule(result_type, arg, const_mgr);
     }
+  };
+}
+
+// Returns a |ConstantFoldingRule| that folds binary scalar ops
+// using |scalar_rule| and binary vectors ops by applying
+// |scalar_rule| to the elements of the vector. The folding rule assumes that op
+// has two inputs. For regular instruction, those are in operands 0 and 1. For
+// extended instruction, they are in operands 1 and 2. If an element in
+// |constants| is not nullprt, then the constant's type is |Float|, |Integer|,
+// or |Vector| whose element type is |Float| or |Integer|.
+ConstantFoldingRule FoldBinaryOp(BinaryScalarFoldingRule scalar_rule) {
+  return [scalar_rule](IRContext* context, Instruction* inst,
+                       const std::vector<const analysis::Constant*>& constants)
+             -> const analysis::Constant* {
+    assert(constants.size() == inst->NumInOperands());
+    assert(constants.size() == (inst->opcode() == spv::Op::OpExtInst ? 3 : 2));
+    analysis::ConstantManager* const_mgr = context->get_constant_mgr();
+    analysis::TypeManager* type_mgr = context->get_type_mgr();
+    const analysis::Type* result_type = type_mgr->GetType(inst->type_id());
+    const analysis::Vector* vector_type = result_type->AsVector();
+
+    const analysis::Constant* arg1 =
+        (inst->opcode() == spv::Op::OpExtInst) ? constants[1] : constants[0];
+    const analysis::Constant* arg2 =
+        (inst->opcode() == spv::Op::OpExtInst) ? constants[2] : constants[1];
+
+    if (arg1 == nullptr || arg2 == nullptr) {
+      return nullptr;
+    }
+
+    if (vector_type == nullptr) {
+      return scalar_rule(result_type, arg1, arg2, const_mgr);
+    }
+
+    std::vector<const analysis::Constant*> a_components;
+    std::vector<const analysis::Constant*> b_components;
+    std::vector<const analysis::Constant*> results_components;
+
+    a_components = arg1->GetVectorComponents(const_mgr);
+    b_components = arg2->GetVectorComponents(const_mgr);
+    assert(a_components.size() == b_components.size());
+
+    // Fold each component of the vector.
+    for (uint32_t i = 0; i < a_components.size(); ++i) {
+      results_components.push_back(scalar_rule(vector_type->element_type(),
+                                               a_components[i], b_components[i],
+                                               const_mgr));
+      if (results_components[i] == nullptr) {
+        return nullptr;
+      }
+    }
+
+    // Build the constant object and return it.
+    std::vector<uint32_t> ids;
+    for (const analysis::Constant* member : results_components) {
+      ids.push_back(const_mgr->GetDefiningInstruction(member)->result_id());
+    }
+    return const_mgr->GetConstant(vector_type, ids);
   };
 }
 
@@ -772,7 +831,9 @@ const analysis::Constant* FoldFPBinaryOp(
     // Build the constant object and return it.
     std::vector<uint32_t> ids;
     for (const analysis::Constant* member : results_components) {
-      ids.push_back(const_mgr->GetDefiningInstruction(member)->result_id());
+      Instruction* def = const_mgr->GetDefiningInstruction(member);
+      if (!def) return nullptr;
+      ids.push_back(def->result_id());
     }
     return const_mgr->GetConstant(vector_type, ids);
   } else {
@@ -929,6 +990,32 @@ ConstantFoldingRule FoldFSub() { return FoldFPBinaryOp(FOLD_FPARITH_OP(-)); }
 ConstantFoldingRule FoldFAdd() { return FoldFPBinaryOp(FOLD_FPARITH_OP(+)); }
 ConstantFoldingRule FoldFMul() { return FoldFPBinaryOp(FOLD_FPARITH_OP(*)); }
 
+// x - x = 0
+ConstantFoldingRule FoldRedundantSub() {
+  return [](IRContext* context, Instruction* inst,
+            const std::vector<const analysis::Constant*>&)
+             -> const analysis::Constant* {
+    assert(inst->opcode() == spv::Op::OpFSub ||
+           inst->opcode() == spv::Op::OpISub);
+
+    if (inst->GetSingleWordInOperand(0) == inst->GetSingleWordInOperand(1)) {
+      bool use_float = inst->opcode() == spv::Op::OpFSub;
+      if (use_float && !inst->IsFloatingPointFoldingAllowed()) {
+        return nullptr;
+      }
+      analysis::TypeManager* type_mgr = context->get_type_mgr();
+      const analysis::Type* type = type_mgr->GetType(inst->type_id());
+      if (type->IsCooperativeMatrix()) {
+        return nullptr;
+      }
+      analysis::ConstantManager* const_mgr = context->get_constant_mgr();
+      uint32_t null_id = const_mgr->GetNullConstId(type);
+      return const_mgr->FindDeclaredConstant(null_id);
+    }
+    return nullptr;
+  };
+}
+
 // Returns the constant that results from evaluating |numerator| / 0.0.  Returns
 // |nullptr| if the result could not be evaluated.
 const analysis::Constant* FoldFPScalarDivideByZero(
@@ -987,6 +1074,107 @@ const analysis::Constant* FoldScalarFPDivide(
 
 // Returns the constant folding rule to fold |OpFDiv| with two constants.
 ConstantFoldingRule FoldFDiv() { return FoldFPBinaryOp(FoldScalarFPDivide); }
+
+// Get a singular uniform value, which is repeated when the |type| is a vector.
+const analysis::Constant* GetConstantUniformValue(
+    analysis::ConstantManager* const_mgr, const analysis::Type* type,
+    std::optional<double> f = {}, std::optional<uint64_t> i = {}) {
+  const analysis::Constant* uniform = nullptr;
+  bool is_vector = false;
+  const analysis::Type* base_type = type;
+
+  if (base_type->AsVector()) {
+    is_vector = true;
+    base_type = base_type->AsVector()->element_type();
+  }
+
+  if (f && base_type->AsFloat()) {
+    if (base_type->AsFloat()->width() == 32) {
+      uniform = const_mgr->GetConstant(
+          base_type, utils::FloatProxy<float>((float)f.value()).GetWords());
+    } else if (base_type->AsFloat()->width() == 64) {
+      uniform = const_mgr->GetConstant(
+          base_type, utils::FloatProxy<double>(f.value()).GetWords());
+    }
+  } else if (i && base_type->AsInteger()) {
+    uniform =
+        const_mgr->GenerateIntegerConstant(base_type->AsInteger(), i.value());
+  }
+
+  if (!uniform) {
+    return nullptr;
+  }
+
+  if (is_vector) {
+    Instruction* uniform_inst = const_mgr->GetDefiningInstruction(uniform);
+    if (!uniform_inst) return nullptr;
+
+    uint32_t uniform_id = uniform_inst->result_id();
+    uniform =
+        const_mgr->GetConstant(type, std::vector<uint32_t>(4, uniform_id));
+  }
+
+  return uniform;
+}
+
+//  x /  x =  1
+// -x /  x = -1
+//  x / -x = -1
+ConstantFoldingRule FoldRedundantDiv() {
+  return [](IRContext* context, Instruction* inst,
+            const std::vector<const analysis::Constant*>& constants)
+             -> const analysis::Constant* {
+    assert(inst->opcode() == spv::Op::OpFDiv ||
+           inst->opcode() == spv::Op::OpSDiv ||
+           inst->opcode() == spv::Op::OpUDiv);
+
+    if (constants[0] || constants[1]) {
+      return nullptr;
+    }
+
+    analysis::TypeManager* type_mgr = context->get_type_mgr();
+    const analysis::Type* type = type_mgr->GetType(inst->type_id());
+
+    if (type->IsCooperativeMatrix()) {
+      return nullptr;
+    }
+
+    bool use_float = inst->opcode() == spv::Op::OpFDiv;
+    if (use_float && !inst->IsFloatingPointFoldingAllowed()) {
+      return nullptr;
+    }
+
+    analysis::ConstantManager* const_mgr = context->get_constant_mgr();
+
+    if (inst->GetSingleWordInOperand(0) == inst->GetSingleWordInOperand(1)) {
+      return GetConstantUniformValue(const_mgr, type, 1.0, 1);
+    }
+
+    if (inst->opcode() == spv::Op::OpUDiv) {
+      return nullptr;
+    }
+
+    analysis::DefUseManager* def_use_mgr = context->get_def_use_mgr();
+
+    Instruction* lhs = def_use_mgr->GetDef(inst->GetSingleWordInOperand(0));
+    if ((lhs->opcode() == spv::Op::OpSNegate ||
+         lhs->opcode() == spv::Op::OpFNegate) &&
+        lhs->GetSingleWordInOperand(0) == inst->GetSingleWordInOperand(1) &&
+        (!use_float || lhs->IsFloatingPointFoldingAllowed())) {
+      return GetConstantUniformValue(const_mgr, type, -1.0, UINT64_MAX);
+    }
+
+    Instruction* rhs = def_use_mgr->GetDef(inst->GetSingleWordInOperand(1));
+    if ((rhs->opcode() == spv::Op::OpSNegate ||
+         rhs->opcode() == spv::Op::OpFNegate) &&
+        rhs->GetSingleWordInOperand(0) == inst->GetSingleWordInOperand(0) &&
+        (!use_float || rhs->IsFloatingPointFoldingAllowed())) {
+      return GetConstantUniformValue(const_mgr, type, -1.0, UINT64_MAX);
+    }
+
+    return nullptr;
+  };
+}
 
 bool CompareFloatingPoint(bool op_result, bool op_unordered,
                           bool need_ordered) {
@@ -1065,6 +1253,26 @@ ConstantFoldingRule FoldFOrdGreaterThanEqual() {
 }
 ConstantFoldingRule FoldFUnordGreaterThanEqual() {
   return FoldFPBinaryOp(FOLD_FPCMP_OP(>=, false));
+}
+
+ConstantFoldingRule FoldInvariantSelect() {
+  return [](IRContext*, Instruction* inst,
+            const std::vector<const analysis::Constant*>& constants)
+             -> const analysis::Constant* {
+    assert(inst->opcode() == spv::Op::OpSelect);
+    (void)inst;
+
+    if (!constants[1] || !constants[2]) {
+      return nullptr;
+    }
+    if (constants[1] == constants[2]) {
+      return constants[1];
+    }
+    if (constants[1]->IsZero() && constants[2]->IsZero()) {
+      return constants[1];
+    }
+    return nullptr;
+  };
 }
 
 // Folds an OpDot where all of the inputs are constants to a
@@ -1338,13 +1546,18 @@ ConstantFoldingRule FoldFMix() {
     if (base_type->AsFloat()->width() == 32) {
       one = const_mgr->GetConstant(base_type,
                                    utils::FloatProxy<float>(1.0f).GetWords());
-    } else {
+    } else if (base_type->AsFloat()->width() == 64) {
       one = const_mgr->GetConstant(base_type,
                                    utils::FloatProxy<double>(1.0).GetWords());
+    } else {
+      // We won't support folding half types.
+      return nullptr;
     }
 
     if (is_vector) {
-      uint32_t one_id = const_mgr->GetDefiningInstruction(one)->result_id();
+      Instruction* one_inst = const_mgr->GetDefiningInstruction(one);
+      if (one_inst == nullptr) return nullptr;
+      uint32_t one_id = one_inst->result_id();
       one =
           const_mgr->GetConstant(result_type, std::vector<uint32_t>(4, one_id));
     }
@@ -1371,19 +1584,46 @@ ConstantFoldingRule FoldFMix() {
   };
 }
 
+template <typename FloatType>
+static bool NegZeroAwareLessThan(FloatType a, FloatType b) {
+  if (a == 0.0 && b == 0.0) {
+    bool sba = std::signbit(a);
+    bool sbb = std::signbit(b);
+    if (sba && !sbb) {
+      return true;
+    }
+  }
+  return a < b;
+}
+
 const analysis::Constant* FoldMin(const analysis::Type* result_type,
                                   const analysis::Constant* a,
                                   const analysis::Constant* b,
                                   analysis::ConstantManager*) {
   if (const analysis::Integer* int_type = result_type->AsInteger()) {
-    if (int_type->width() == 32) {
+    if (int_type->width() <= 32) {
+      assert(
+          (a->AsIntConstant() != nullptr || a->AsNullConstant() != nullptr) &&
+          "Must be an integer or null constant.");
+      assert(
+          (b->AsIntConstant() != nullptr || b->AsNullConstant() != nullptr) &&
+          "Must be an integer or null constant.");
+
       if (int_type->IsSigned()) {
-        int32_t va = a->GetS32();
-        int32_t vb = b->GetS32();
+        int32_t va = (a->AsIntConstant() != nullptr)
+                         ? a->AsIntConstant()->GetS32BitValue()
+                         : 0;
+        int32_t vb = (b->AsIntConstant() != nullptr)
+                         ? b->AsIntConstant()->GetS32BitValue()
+                         : 0;
         return (va < vb ? a : b);
       } else {
-        uint32_t va = a->GetU32();
-        uint32_t vb = b->GetU32();
+        uint32_t va = (a->AsIntConstant() != nullptr)
+                          ? a->AsIntConstant()->GetU32BitValue()
+                          : 0;
+        uint32_t vb = (b->AsIntConstant() != nullptr)
+                          ? b->AsIntConstant()->GetU32BitValue()
+                          : 0;
         return (va < vb ? a : b);
       }
     } else if (int_type->width() == 64) {
@@ -1401,11 +1641,11 @@ const analysis::Constant* FoldMin(const analysis::Type* result_type,
     if (float_type->width() == 32) {
       float va = a->GetFloat();
       float vb = b->GetFloat();
-      return (va < vb ? a : b);
+      return NegZeroAwareLessThan(va, vb) ? a : b;
     } else if (float_type->width() == 64) {
       double va = a->GetDouble();
       double vb = b->GetDouble();
-      return (va < vb ? a : b);
+      return NegZeroAwareLessThan(va, vb) ? a : b;
     }
   }
   return nullptr;
@@ -1416,14 +1656,29 @@ const analysis::Constant* FoldMax(const analysis::Type* result_type,
                                   const analysis::Constant* b,
                                   analysis::ConstantManager*) {
   if (const analysis::Integer* int_type = result_type->AsInteger()) {
-    if (int_type->width() == 32) {
+    if (int_type->width() <= 32) {
+      assert(
+          (a->AsIntConstant() != nullptr || a->AsNullConstant() != nullptr) &&
+          "Must be an integer or null constant.");
+      assert(
+          (b->AsIntConstant() != nullptr || b->AsNullConstant() != nullptr) &&
+          "Must be an integer or null constant.");
+
       if (int_type->IsSigned()) {
-        int32_t va = a->GetS32();
-        int32_t vb = b->GetS32();
+        int32_t va = (a->AsIntConstant() != nullptr)
+                         ? a->AsIntConstant()->GetS32BitValue()
+                         : 0;
+        int32_t vb = (b->AsIntConstant() != nullptr)
+                         ? b->AsIntConstant()->GetS32BitValue()
+                         : 0;
         return (va > vb ? a : b);
       } else {
-        uint32_t va = a->GetU32();
-        uint32_t vb = b->GetU32();
+        uint32_t va = (a->AsIntConstant() != nullptr)
+                          ? a->AsIntConstant()->GetU32BitValue()
+                          : 0;
+        uint32_t vb = (b->AsIntConstant() != nullptr)
+                          ? b->AsIntConstant()->GetU32BitValue()
+                          : 0;
         return (va > vb ? a : b);
       }
     } else if (int_type->width() == 64) {
@@ -1441,11 +1696,71 @@ const analysis::Constant* FoldMax(const analysis::Type* result_type,
     if (float_type->width() == 32) {
       float va = a->GetFloat();
       float vb = b->GetFloat();
-      return (va > vb ? a : b);
+      return NegZeroAwareLessThan(vb, va) ? a : b;
     } else if (float_type->width() == 64) {
       double va = a->GetDouble();
       double vb = b->GetDouble();
-      return (va > vb ? a : b);
+      return NegZeroAwareLessThan(vb, va) ? a : b;
+    }
+  }
+  return nullptr;
+}
+
+const analysis::Constant* FoldNMin(const analysis::Type* result_type,
+                                   const analysis::Constant* a,
+                                   const analysis::Constant* b,
+                                   analysis::ConstantManager*) {
+  if (const analysis::Float* float_type = result_type->AsFloat()) {
+    if (float_type->width() == 32) {
+      float va = a->GetFloat();
+      float vb = b->GetFloat();
+      if (std::isnan(va)) {
+        return b;
+      }
+      if (std::isnan(vb)) {
+        return a;
+      }
+      return NegZeroAwareLessThan(va, vb) ? a : b;
+    } else if (float_type->width() == 64) {
+      double va = a->GetDouble();
+      double vb = b->GetDouble();
+      if (std::isnan(va)) {
+        return b;
+      }
+      if (std::isnan(vb)) {
+        return a;
+      }
+      return NegZeroAwareLessThan(va, vb) ? a : b;
+    }
+  }
+  return nullptr;
+}
+
+const analysis::Constant* FoldNMax(const analysis::Type* result_type,
+                                   const analysis::Constant* a,
+                                   const analysis::Constant* b,
+                                   analysis::ConstantManager*) {
+  if (const analysis::Float* float_type = result_type->AsFloat()) {
+    if (float_type->width() == 32) {
+      float va = a->GetFloat();
+      float vb = b->GetFloat();
+      if (std::isnan(va)) {
+        return b;
+      }
+      if (std::isnan(vb)) {
+        return a;
+      }
+      return NegZeroAwareLessThan(vb, va) ? a : b;
+    } else if (float_type->width() == 64) {
+      double va = a->GetDouble();
+      double vb = b->GetDouble();
+      if (std::isnan(va)) {
+        return b;
+      }
+      if (std::isnan(vb)) {
+        return a;
+      }
+      return NegZeroAwareLessThan(vb, va) ? a : b;
     }
   }
   return nullptr;
@@ -1533,6 +1848,88 @@ const analysis::Constant* FoldClamp3(
   return nullptr;
 }
 
+// Fold an clamp instruction when all three operands are constant.
+const analysis::Constant* FoldNClamp1(
+    IRContext* context, Instruction* inst,
+    const std::vector<const analysis::Constant*>& constants) {
+  assert(inst->opcode() == spv::Op::OpExtInst &&
+         "Expecting an extended instruction.");
+  assert(inst->GetSingleWordInOperand(0) ==
+             context->get_feature_mgr()->GetExtInstImportId_GLSLstd450() &&
+         "Expecting a GLSLstd450 extended instruction.");
+
+  // Make sure all Clamp operands are constants.
+  for (uint32_t i = 1; i < 4; i++) {
+    if (constants[i] == nullptr) {
+      return nullptr;
+    }
+  }
+
+  const analysis::Constant* temp = FoldFPBinaryOp(
+      FoldNMax, inst->type_id(), {constants[1], constants[2]}, context);
+  if (temp == nullptr) {
+    return nullptr;
+  }
+  return FoldFPBinaryOp(FoldNMin, inst->type_id(), {temp, constants[3]},
+                        context);
+}
+
+// Fold a clamp instruction when |x <= min_val|.
+const analysis::Constant* FoldNClamp2(
+    IRContext* context, Instruction* inst,
+    const std::vector<const analysis::Constant*>& constants) {
+  assert(inst->opcode() == spv::Op::OpExtInst &&
+         "Expecting an extended instruction.");
+  assert(inst->GetSingleWordInOperand(0) ==
+             context->get_feature_mgr()->GetExtInstImportId_GLSLstd450() &&
+         "Expecting a GLSLstd450 extended instruction.");
+
+  const analysis::Constant* x = constants[1];
+  const analysis::Constant* min_val = constants[2];
+
+  if (x == nullptr || min_val == nullptr) {
+    return nullptr;
+  }
+
+  const analysis::Constant* temp =
+      FoldFPBinaryOp(FoldNMax, inst->type_id(), {x, min_val}, context);
+  if (temp == min_val) {
+    // We can assume that |min_val| is less than |max_val|.  Therefore, if the
+    // result of the max operation is |min_val|, we know the result of the min
+    // operation, even if |max_val| is not a constant.
+    return min_val;
+  }
+  return nullptr;
+}
+
+// Fold a clamp instruction when |x >= max_val|.
+const analysis::Constant* FoldNClamp3(
+    IRContext* context, Instruction* inst,
+    const std::vector<const analysis::Constant*>& constants) {
+  assert(inst->opcode() == spv::Op::OpExtInst &&
+         "Expecting an extended instruction.");
+  assert(inst->GetSingleWordInOperand(0) ==
+             context->get_feature_mgr()->GetExtInstImportId_GLSLstd450() &&
+         "Expecting a GLSLstd450 extended instruction.");
+
+  const analysis::Constant* x = constants[1];
+  const analysis::Constant* max_val = constants[3];
+
+  if (x == nullptr || max_val == nullptr) {
+    return nullptr;
+  }
+
+  const analysis::Constant* temp =
+      FoldFPBinaryOp(FoldNMin, inst->type_id(), {x, max_val}, context);
+  if (temp == max_val) {
+    // We can assume that |min_val| is less than |max_val|.  Therefore, if the
+    // result of the max operation is |min_val|, we know the result of the min
+    // operation, even if |max_val| is not a constant.
+    return max_val;
+  }
+  return nullptr;
+}
+
 UnaryScalarFoldingRule FoldFTranscendentalUnary(double (*fp)(double)) {
   return
       [fp](const analysis::Type* result_type, const analysis::Constant* a,
@@ -1587,6 +1984,74 @@ BinaryScalarFoldingRule FoldFTranscendentalBinary(double (*fp)(double,
         return nullptr;
       };
 }
+
+enum Sign { Signed, Unsigned };
+
+// Returns a BinaryScalarFoldingRule that applies `op` to the scalars.
+// The `signedness` is used to determine if the operands should be interpreted
+// as signed or unsigned. If the operands are signed, the value will be sign
+// extended before the value is passed to `op`. Otherwise the values will be
+// zero extended.
+template <Sign signedness>
+BinaryScalarFoldingRule FoldBinaryIntegerOperation(uint64_t (*op)(uint64_t,
+                                                                  uint64_t)) {
+  return
+      [op](const analysis::Type* result_type, const analysis::Constant* a,
+           const analysis::Constant* b,
+           analysis::ConstantManager* const_mgr) -> const analysis::Constant* {
+        assert(result_type != nullptr && a != nullptr && b != nullptr);
+        const analysis::Integer* integer_type = result_type->AsInteger();
+        assert(integer_type != nullptr);
+        assert(a->type()->kind() == analysis::Type::kInteger);
+        assert(b->type()->kind() == analysis::Type::kInteger);
+        assert(integer_type->width() == a->type()->AsInteger()->width());
+        assert(integer_type->width() == b->type()->AsInteger()->width());
+
+        // In SPIR-V, all operations support unsigned types, but the way they
+        // are interpreted depends on the opcode. This is why we use the
+        // template argument to determine how to interpret the operands.
+        uint64_t ia = (signedness == Signed ? a->GetSignExtendedValue()
+                                            : a->GetZeroExtendedValue());
+        uint64_t ib = (signedness == Signed ? b->GetSignExtendedValue()
+                                            : b->GetZeroExtendedValue());
+        uint64_t result = op(ia, ib);
+
+        const analysis::Constant* result_constant =
+            const_mgr->GenerateIntegerConstant(integer_type, result);
+        return result_constant;
+      };
+}
+
+// A scalar folding rule that folds OpSConvert.
+const analysis::Constant* FoldScalarSConvert(
+    const analysis::Type* result_type, const analysis::Constant* a,
+    analysis::ConstantManager* const_mgr) {
+  assert(result_type != nullptr);
+  assert(a != nullptr);
+  assert(const_mgr != nullptr);
+  const analysis::Integer* integer_type = result_type->AsInteger();
+  assert(integer_type && "The result type of an SConvert");
+  int64_t value = a->GetSignExtendedValue();
+  return const_mgr->GenerateIntegerConstant(integer_type, value);
+}
+
+// A scalar folding rule that folds OpUConvert.
+const analysis::Constant* FoldScalarUConvert(
+    const analysis::Type* result_type, const analysis::Constant* a,
+    analysis::ConstantManager* const_mgr) {
+  assert(result_type != nullptr);
+  assert(a != nullptr);
+  assert(const_mgr != nullptr);
+  const analysis::Integer* integer_type = result_type->AsInteger();
+  assert(integer_type && "The result type of an UConvert");
+  uint64_t value = a->GetZeroExtendedValue();
+
+  // If the operand was an unsigned value with less than 32-bit, it would have
+  // been sign extended earlier, and we need to clear those bits.
+  auto* operand_type = a->type()->AsInteger();
+  value = utils::ClearHighBits(value, 64 - operand_type->width());
+  return const_mgr->GenerateIntegerConstant(integer_type, value);
+}
 }  // namespace
 
 void ConstantFoldingRules::AddFoldingRules() {
@@ -1604,12 +2069,21 @@ void ConstantFoldingRules::AddFoldingRules() {
   rules_[spv::Op::OpConvertFToU].push_back(FoldFToI());
   rules_[spv::Op::OpConvertSToF].push_back(FoldIToF());
   rules_[spv::Op::OpConvertUToF].push_back(FoldIToF());
+  rules_[spv::Op::OpSConvert].push_back(FoldUnaryOp(FoldScalarSConvert));
+  rules_[spv::Op::OpUConvert].push_back(FoldUnaryOp(FoldScalarUConvert));
 
   rules_[spv::Op::OpDot].push_back(FoldOpDotWithConstants());
   rules_[spv::Op::OpFAdd].push_back(FoldFAdd());
+
   rules_[spv::Op::OpFDiv].push_back(FoldFDiv());
+  rules_[spv::Op::OpFDiv].push_back(FoldRedundantDiv());
+
   rules_[spv::Op::OpFMul].push_back(FoldFMul());
+
   rules_[spv::Op::OpFSub].push_back(FoldFSub());
+  rules_[spv::Op::OpFSub].push_back(FoldRedundantSub());
+
+  rules_[spv::Op::OpSelect].push_back(FoldInvariantSelect());
 
   rules_[spv::Op::OpFOrdEqual].push_back(FoldFOrdEqual());
 
@@ -1662,6 +2136,54 @@ void ConstantFoldingRules::AddFoldingRules() {
   rules_[spv::Op::OpSNegate].push_back(FoldSNegate());
   rules_[spv::Op::OpQuantizeToF16].push_back(FoldQuantizeToF16());
 
+  rules_[spv::Op::OpIAdd].push_back(
+      FoldBinaryOp(FoldBinaryIntegerOperation<Unsigned>(
+          [](uint64_t a, uint64_t b) { return a + b; })));
+
+  rules_[spv::Op::OpISub].push_back(
+      FoldBinaryOp(FoldBinaryIntegerOperation<Unsigned>(
+          [](uint64_t a, uint64_t b) { return a - b; })));
+  rules_[spv::Op::OpISub].push_back(FoldRedundantSub());
+
+  rules_[spv::Op::OpIMul].push_back(
+      FoldBinaryOp(FoldBinaryIntegerOperation<Unsigned>(
+          [](uint64_t a, uint64_t b) { return a * b; })));
+
+  rules_[spv::Op::OpUDiv].push_back(
+      FoldBinaryOp(FoldBinaryIntegerOperation<Unsigned>(
+          [](uint64_t a, uint64_t b) { return (b != 0 ? a / b : 0); })));
+  rules_[spv::Op::OpUDiv].push_back(FoldRedundantDiv());
+
+  rules_[spv::Op::OpSDiv].push_back(FoldBinaryOp(
+      FoldBinaryIntegerOperation<Signed>([](uint64_t a, uint64_t b) {
+        return (b != 0 ? static_cast<uint64_t>(static_cast<int64_t>(a) /
+                                               static_cast<int64_t>(b))
+                       : 0);
+      })));
+  rules_[spv::Op::OpSDiv].push_back(FoldRedundantDiv());
+
+  rules_[spv::Op::OpUMod].push_back(
+      FoldBinaryOp(FoldBinaryIntegerOperation<Unsigned>(
+          [](uint64_t a, uint64_t b) { return (b != 0 ? a % b : 0); })));
+
+  rules_[spv::Op::OpSRem].push_back(FoldBinaryOp(
+      FoldBinaryIntegerOperation<Signed>([](uint64_t a, uint64_t b) {
+        return (b != 0 ? static_cast<uint64_t>(static_cast<int64_t>(a) %
+                                               static_cast<int64_t>(b))
+                       : 0);
+      })));
+
+  rules_[spv::Op::OpSMod].push_back(FoldBinaryOp(
+      FoldBinaryIntegerOperation<Signed>([](uint64_t a, uint64_t b) {
+        if (b == 0) return static_cast<uint64_t>(0ull);
+
+        int64_t signed_a = static_cast<int64_t>(a);
+        int64_t signed_b = static_cast<int64_t>(b);
+        int64_t result = signed_a % signed_b;
+        if ((signed_b < 0) != (result < 0)) result += signed_b;
+        return static_cast<uint64_t>(result);
+      })));
+
   // Add rules for GLSLstd450
   FeatureManager* feature_manager = context_->get_feature_mgr();
   uint32_t ext_inst_glslstd450_id =
@@ -1674,12 +2196,16 @@ void ConstantFoldingRules::AddFoldingRules() {
         FoldFPBinaryOp(FoldMin));
     ext_rules_[{ext_inst_glslstd450_id, GLSLstd450FMin}].push_back(
         FoldFPBinaryOp(FoldMin));
+    ext_rules_[{ext_inst_glslstd450_id, GLSLstd450NMin}].push_back(
+        FoldFPBinaryOp(FoldNMin));
     ext_rules_[{ext_inst_glslstd450_id, GLSLstd450SMax}].push_back(
         FoldFPBinaryOp(FoldMax));
     ext_rules_[{ext_inst_glslstd450_id, GLSLstd450UMax}].push_back(
         FoldFPBinaryOp(FoldMax));
     ext_rules_[{ext_inst_glslstd450_id, GLSLstd450FMax}].push_back(
         FoldFPBinaryOp(FoldMax));
+    ext_rules_[{ext_inst_glslstd450_id, GLSLstd450NMax}].push_back(
+        FoldFPBinaryOp(FoldNMax));
     ext_rules_[{ext_inst_glslstd450_id, GLSLstd450UClamp}].push_back(
         FoldClamp1);
     ext_rules_[{ext_inst_glslstd450_id, GLSLstd450UClamp}].push_back(
@@ -1698,6 +2224,12 @@ void ConstantFoldingRules::AddFoldingRules() {
         FoldClamp2);
     ext_rules_[{ext_inst_glslstd450_id, GLSLstd450FClamp}].push_back(
         FoldClamp3);
+    ext_rules_[{ext_inst_glslstd450_id, GLSLstd450NClamp}].push_back(
+        FoldNClamp1);
+    ext_rules_[{ext_inst_glslstd450_id, GLSLstd450NClamp}].push_back(
+        FoldNClamp2);
+    ext_rules_[{ext_inst_glslstd450_id, GLSLstd450NClamp}].push_back(
+        FoldNClamp3);
     ext_rules_[{ext_inst_glslstd450_id, GLSLstd450Sin}].push_back(
         FoldFPUnaryOp(FoldFTranscendentalUnary(std::sin)));
     ext_rules_[{ext_inst_glslstd450_id, GLSLstd450Cos}].push_back(

@@ -162,6 +162,51 @@ namespace bx
 		return _a * _a;
 	}
 
+	template<typename Ty>
+	inline BX_CONSTEXPR_FUNC Ty satAdd(Ty _a, Ty _b)
+	{
+		static_assert(isInteger<Ty>(), "Type Ty must be an integer type.");
+
+		using UTy = MakeUnsignedType<Ty>;
+
+		const UTy ua  = UTy(_a);
+		const UTy ub  = UTy(_b);
+		const UTy sum = UTy(ua + ub);
+
+		if constexpr (isSigned<Ty>() )
+		{
+			const UTy signBit  = UTy(UTy(1) << (sizeof(Ty)*8 - 1) );
+			const UTy overflow = UTy(~(ua ^ ub) & (ua ^ sum) & signBit);
+			const Ty  satVal   = (ua & signBit) ? LimitsT<Ty>::min : LimitsT<Ty>::max;
+			return 0 != overflow ? satVal : Ty(sum);
+		}
+
+		return sum < ua ? LimitsT<Ty>::max : Ty(sum);
+	}
+
+	template<typename Ty>
+	inline BX_CONSTEXPR_FUNC Ty satSub(Ty _a, Ty _b)
+	{
+		static_assert(isInteger<Ty>(), "Type Ty must be an integer type.");
+
+		using UTy = MakeUnsignedType<Ty>;
+
+		const UTy ua   = UTy(_a);
+		const UTy ub   = UTy(_b);
+		const UTy diff = UTy(ua - ub);
+
+		if constexpr (isSigned<Ty>() )
+		{
+			const UTy signBit  = UTy(UTy(1) << (sizeof(Ty)*8 - 1) );
+			const UTy overflow = UTy( (ua ^ ub) & (ua ^ diff) & signBit);
+			const Ty  satVal   = (ua & signBit) ? LimitsT<Ty>::min : LimitsT<Ty>::max;
+
+			return 0 != overflow ? satVal : Ty(diff);
+		}
+
+		return ua > ub ? Ty(diff) : Ty(0);
+	}
+
 	inline BX_CONST_FUNC float sin(float _a)
 	{
 		return cos(_a - kPiHalf);

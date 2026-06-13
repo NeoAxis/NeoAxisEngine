@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -42,7 +42,6 @@ extern "C++" {
 
 #include "renderer.h"
 #include "renderer_d3d.h"
-#include "shader_dxbc.h"
 #include "debug_renderdoc.h"
 #include "nvapi.h"
 #include "dxgi.h"
@@ -397,7 +396,7 @@ namespace bgfx { namespace d3d12
 			, m_completedFence(0)
 			, m_control(BX_COUNTOF(m_commandList) )
 		{
-			BX_STATIC_ASSERT(BX_COUNTOF(m_commandList) == BX_COUNTOF(m_release) );
+			static_assert(BX_COUNTOF(m_commandList) == BX_COUNTOF(m_release) );
 		}
 
 		void init(ID3D12Device* _device);

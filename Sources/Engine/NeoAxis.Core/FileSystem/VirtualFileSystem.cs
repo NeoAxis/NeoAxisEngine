@@ -284,7 +284,7 @@ namespace NeoAxis
 					CorrectCurrentDirectory();
 
 				var fatalOnLoadingCoreNative = SystemSettings.CurrentPlatform != SystemSettings.Platform.Linux;
-				neoAxisCoreNativeLoaded = NativeUtility.PreloadLibrary( "NeoAxisCoreNative", errorFatal: fatalOnLoadingCoreNative ) != IntPtr.Zero;
+				neoAxisCoreNativeLoaded = NativeUtility.PreloadLibrary( "libNeoAxisCoreNative", errorFatal: fatalOnLoadingCoreNative ) != IntPtr.Zero;
 				//on some system native libraries always loaded
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android  || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS  || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 					neoAxisCoreNativeLoaded = true;

@@ -19,7 +19,7 @@
 
 #include "source/opt/ir_context.h"
 
-// Constants for OpenCL.DebugInfo.100 & NonSemantic.Shader.DebugInfo.100
+// Constants for OpenCL.DebugInfo.100 & NonSemantic.Shader.DebugInfo
 // extension instructions.
 
 namespace spvtools {
@@ -86,8 +86,7 @@ uint32_t DebugInfoManager::GetDbgSetImportId() {
   uint32_t setId =
       context()->get_feature_mgr()->GetExtInstImportId_OpenCL100DebugInfo();
   if (setId == 0) {
-    setId =
-        context()->get_feature_mgr()->GetExtInstImportId_Shader100DebugInfo();
+    setId = context()->get_feature_mgr()->GetExtInstImportId_ShaderDebugInfo();
   }
   return setId;
 }
@@ -118,13 +117,13 @@ void DebugInfoManager::RegisterDbgFunction(Instruction* inst) {
         fn_id_to_dbg_fn_.find(fn_id) == fn_id_to_dbg_fn_.end() &&
         "Register DebugFunction for a function that already has DebugFunction");
     fn_id_to_dbg_fn_[fn_id] = inst;
-  } else if (inst->GetShader100DebugOpcode() ==
+  } else if (inst->GetShaderDebugOpcode() ==
              NonSemanticShaderDebugInfo100DebugFunctionDefinition) {
     auto fn_id = inst->GetSingleWordOperand(
         kDebugFunctionDefinitionOperandOpFunctionIndex);
     auto fn_inst = GetDbgInst(inst->GetSingleWordOperand(
         kDebugFunctionDefinitionOperandDebugFunctionIndex));
-    assert(fn_inst && fn_inst->GetShader100DebugOpcode() ==
+    assert(fn_inst && fn_inst->GetShaderDebugOpcode() ==
                           NonSemanticShaderDebugInfo100DebugFunction);
     assert(fn_id_to_dbg_fn_.find(fn_id) == fn_id_to_dbg_fn_.end() &&
            "Register DebugFunctionDefinition for a function that already has "
@@ -176,10 +175,10 @@ uint32_t DebugInfoManager::CreateDebugInlinedAt(const Instruction* line,
   spv_operand_type_t line_number_type =
       spv_operand_type_t::SPV_OPERAND_TYPE_LITERAL_INTEGER;
 
-  // In NonSemantic.Shader.DebugInfo.100, all constants are IDs of OpConstant,
+  // In NonSemantic.Shader.DebugInfo, all constants are IDs of OpConstant,
   // not literals.
   if (setId ==
-      context()->get_feature_mgr()->GetExtInstImportId_Shader100DebugInfo())
+      context()->get_feature_mgr()->GetExtInstImportId_ShaderDebugInfo())
     line_number_type = spv_operand_type_t::SPV_OPERAND_TYPE_ID;
 
   uint32_t line_number = 0;
@@ -214,7 +213,7 @@ uint32_t DebugInfoManager::CreateDebugInlinedAt(const Instruction* line,
   } else {
     if (line->opcode() == spv::Op::OpLine) {
       line_number = line->GetSingleWordOperand(kOpLineOperandLineIndex);
-    } else if (line->GetShader100DebugOpcode() ==
+    } else if (line->GetShaderDebugOpcode() ==
                NonSemanticShaderDebugInfo100DebugLine) {
       line_number = line->GetSingleWordOperand(kLineOperandIndexDebugLine);
     } else {
@@ -331,6 +330,7 @@ Instruction* DebugInfoManager::GetDebugOperationWithDeref() {
   if (deref_operation_ != nullptr) return deref_operation_;
 
   uint32_t result_id = context()->TakeNextId();
+  if (result_id == 0) return nullptr;
   std::unique_ptr<Instruction> deref_operation;
 
   if (context()->get_feature_mgr()->GetExtInstImportId_OpenCL100DebugInfo()) {
@@ -374,10 +374,13 @@ Instruction* DebugInfoManager::GetDebugOperationWithDeref() {
 Instruction* DebugInfoManager::DerefDebugExpression(Instruction* dbg_expr) {
   assert(dbg_expr->GetCommonDebugOpcode() == CommonDebugInfoDebugExpression);
   std::unique_ptr<Instruction> deref_expr(dbg_expr->Clone(context()));
-  deref_expr->SetResultId(context()->TakeNextId());
-  deref_expr->InsertOperand(
-      kDebugExpressOperandOperationIndex,
-      {SPV_OPERAND_TYPE_ID, {GetDebugOperationWithDeref()->result_id()}});
+  uint32_t result_id = context()->TakeNextId();
+  if (result_id == 0) return nullptr;
+  deref_expr->SetResultId(result_id);
+  Instruction* deref_op = GetDebugOperationWithDeref();
+  if (!deref_op) return nullptr;
+  deref_expr->InsertOperand(kDebugExpressOperandOperationIndex,
+                            {SPV_OPERAND_TYPE_ID, {deref_op->result_id()}});
   auto* deref_expr_instr =
       context()->ext_inst_debuginfo_end()->InsertBefore(std::move(deref_expr));
   AnalyzeDebugInst(deref_expr_instr);
@@ -390,6 +393,7 @@ Instruction* DebugInfoManager::GetDebugInfoNone() {
   if (debug_info_none_inst_ != nullptr) return debug_info_none_inst_;
 
   uint32_t result_id = context()->TakeNextId();
+  if (result_id == 0) return nullptr;
   std::unique_ptr<Instruction> dbg_info_none_inst(new Instruction(
       context(), spv::Op::OpExtInst, context()->get_type_mgr()->GetVoidTypeId(),
       result_id,
@@ -558,11 +562,11 @@ bool DebugInfoManager::IsDeclareVisibleToInstr(Instruction* dbg_declare,
   return false;
 }
 
-bool DebugInfoManager::AddDebugValueForVariable(Instruction* scope_and_line,
+bool DebugInfoManager::AddDebugValueForVariable(Instruction* line,
                                                 uint32_t variable_id,
                                                 uint32_t value_id,
                                                 Instruction* insert_pos) {
-  assert(scope_and_line != nullptr);
+  assert(line != nullptr);
 
   auto dbg_decl_itr = var_id_to_dbg_decl_.find(variable_id);
   if (dbg_decl_itr == var_id_to_dbg_decl_.end()) return false;
@@ -577,14 +581,15 @@ bool DebugInfoManager::AddDebugValueForVariable(Instruction* scope_and_line,
       insert_before = insert_before->NextNode();
     }
     modified |= AddDebugValueForDecl(dbg_decl_or_val, value_id, insert_before,
-                                     scope_and_line) != nullptr;
+                                     line) != nullptr;
   }
   return modified;
 }
 
-Instruction* DebugInfoManager::AddDebugValueForDecl(
-    Instruction* dbg_decl, uint32_t value_id, Instruction* insert_before,
-    Instruction* scope_and_line) {
+Instruction* DebugInfoManager::AddDebugValueForDecl(Instruction* dbg_decl,
+                                                    uint32_t value_id,
+                                                    Instruction* insert_before,
+                                                    Instruction* line) {
   if (dbg_decl == nullptr || !IsDebugDeclare(dbg_decl)) return nullptr;
 
   std::unique_ptr<Instruction> dbg_val(dbg_decl->Clone(context()));
@@ -593,7 +598,7 @@ Instruction* DebugInfoManager::AddDebugValueForDecl(
   dbg_val->SetOperand(kDebugDeclareOperandVariableIndex, {value_id});
   dbg_val->SetOperand(kDebugValueOperandExpressionIndex,
                       {GetEmptyDebugExpression()->result_id()});
-  dbg_val->UpdateDebugInfoFrom(scope_and_line);
+  dbg_val->UpdateDebugInfoFrom(dbg_decl, line);
 
   auto* added_dbg_val = insert_before->InsertBefore(std::move(dbg_val));
   AnalyzeDebugInst(added_dbg_val);
@@ -608,7 +613,7 @@ Instruction* DebugInfoManager::AddDebugValueForDecl(
 }
 
 uint32_t DebugInfoManager::GetVulkanDebugOperation(Instruction* inst) {
-  assert(inst->GetShader100DebugOpcode() ==
+  assert(inst->GetShaderDebugOpcode() ==
              NonSemanticShaderDebugInfo100DebugOperation &&
          "inst must be Vulkan DebugOperation");
   return context()
@@ -717,7 +722,7 @@ void DebugInfoManager::AnalyzeDebugInst(Instruction* inst) {
   RegisterDbgInst(inst);
 
   if (inst->GetOpenCL100DebugOpcode() == OpenCLDebugInfo100DebugFunction ||
-      inst->GetShader100DebugOpcode() ==
+      inst->GetShaderDebugOpcode() ==
           NonSemanticShaderDebugInfo100DebugFunctionDefinition) {
     RegisterDbgFunction(inst);
   }
@@ -730,7 +735,7 @@ void DebugInfoManager::AnalyzeDebugInst(Instruction* inst) {
   }
 
   if (deref_operation_ == nullptr &&
-      inst->GetShader100DebugOpcode() ==
+      inst->GetShaderDebugOpcode() ==
           NonSemanticShaderDebugInfo100DebugOperation) {
     uint32_t operation_const = GetVulkanDebugOperation(inst);
     if (operation_const == NonSemanticShaderDebugInfo100Deref) {
@@ -768,15 +773,29 @@ void DebugInfoManager::ConvertDebugGlobalToLocalVariable(
          local_var->opcode() == spv::Op::OpFunctionParameter);
 
   // Convert |dbg_global_var| to DebugLocalVariable
+  // All of the operands up to the scope operand are the same for the type
+  // instructions. The flag operand needs to move from operand
+  // kDebugGlobalVariableOperandFlagsIndex to
+  // kDebugLocalVariableOperandFlagsIndex. No other operands are needed to
+  // define the DebugLocalVariable.
+
+  // Modify the opcode.
   dbg_global_var->SetInOperand(kExtInstInstructionInIdx,
                                {CommonDebugInfoDebugLocalVariable});
+
+  // Move the flags operand.
   auto flags = dbg_global_var->GetSingleWordOperand(
       kDebugGlobalVariableOperandFlagsIndex);
-  for (uint32_t i = dbg_global_var->NumInOperands() - 1;
-       i >= kDebugLocalVariableOperandFlagsIndex; --i) {
+  dbg_global_var->SetOperand(kDebugLocalVariableOperandFlagsIndex, {flags});
+
+  // Remove the  extra operands. Starting at the end to avoid copying too much
+  // data.
+  for (uint32_t i = dbg_global_var->NumOperands() - 1;
+       i > kDebugLocalVariableOperandFlagsIndex; --i) {
     dbg_global_var->RemoveOperand(i);
   }
-  dbg_global_var->SetOperand(kDebugLocalVariableOperandFlagsIndex, {flags});
+
+  // Update the def-use manager.
   context()->ForgetUses(dbg_global_var);
   context()->AnalyzeUses(dbg_global_var);
 
@@ -856,7 +875,7 @@ void DebugInfoManager::ClearDebugInfo(Instruction* instr) {
         instr->GetSingleWordOperand(kDebugFunctionOperandFunctionIndex);
     fn_id_to_dbg_fn_.erase(fn_id);
   }
-  if (instr->GetShader100DebugOpcode() ==
+  if (instr->GetShaderDebugOpcode() ==
       NonSemanticShaderDebugInfo100DebugFunctionDefinition) {
     auto fn_id = instr->GetSingleWordOperand(
         kDebugFunctionDefinitionOperandOpFunctionIndex);
@@ -889,7 +908,7 @@ void DebugInfoManager::ClearDebugInfo(Instruction* instr) {
         deref_operation_ = &*dbg_instr_itr;
         break;
       } else if (instr != &*dbg_instr_itr &&
-                 dbg_instr_itr->GetShader100DebugOpcode() ==
+                 dbg_instr_itr->GetShaderDebugOpcode() ==
                      NonSemanticShaderDebugInfo100DebugOperation) {
         uint32_t operation_const = GetVulkanDebugOperation(&*dbg_instr_itr);
         if (operation_const == NonSemanticShaderDebugInfo100Deref) {

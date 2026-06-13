@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -125,7 +125,7 @@ namespace bgfx
 		DXGI_COLOR_SPACE_YCBCR_STUDIO_G2084_TOPLEFT_P2020
 #endif // BX_PLATFORM_WINDOWS
 		;
-	BX_STATIC_ASSERT(BX_COUNTOF(s_colorSpaceStr) == kDxgiLastColorSpace+2, "Colorspace string table mismatch with DXGI_COLOR_SPACE_*.");
+	static_assert(BX_COUNTOF(s_colorSpaceStr) == kDxgiLastColorSpace+2, "Colorspace string table mismatch with DXGI_COLOR_SPACE_*.");
 
 	static const GUID s_dxgiDeviceIIDs[] =
 	{

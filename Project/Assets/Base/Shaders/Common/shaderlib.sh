@@ -1,6 +1,6 @@
 /*
- * Copyright 2011-2020 Branimir Karadzic. All rights reserved.
- * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
+ * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
 #ifndef __SHADERLIB_SH__
@@ -401,8 +401,8 @@ float unpackRgbaToFloat( vec4 _rgba )
 /*
 vec4 packFloatToRgba(float _value)
 {
-	const vec4 shift = vec4(256 * 256 * 256, 256 * 256, 256, 1.0);
-	const vec4 mask = vec4(0, 1.0 / 256.0, 1.0 / 256.0, 1.0 / 256.0);
+	const vec4 shift = vec4(255 * 255 * 255, 255 * 255, 255, 1.0);
+	const vec4 mask = vec4(0, 1.0 / 255.0, 1.0 / 255.0, 1.0 / 255.0);
 	vec4 comp = fract(_value * shift);
 	comp -= comp.xxyz * mask;
 	return comp;
@@ -410,15 +410,15 @@ vec4 packFloatToRgba(float _value)
 
 float unpackRgbaToFloat(vec4 _rgba)
 {
-	const vec4 shift = vec4(1.0 / (256.0 * 256.0 * 256.0), 1.0 / (256.0 * 256.0), 1.0 / 256.0, 1.0);
+	const vec4 shift = vec4(1.0 / (255.0 * 255.0 * 255.0), 1.0 / (255.0 * 255.0), 1.0 / 255.0, 1.0);
 	return dot(_rgba, shift);
 }
 */
 
 vec2 packHalfFloat(float _value)
 {
-	const vec2 shift = vec2(256, 1.0);
-	const vec2 mask = vec2(0, 1.0 / 256.0);
+	const vec2 shift = vec2(255, 1.0);
+	const vec2 mask = vec2(0, 1.0 / 255.0);
 	vec2 comp = fract(_value * shift);
 	comp -= comp.xx * mask;
 	return comp;
@@ -426,7 +426,7 @@ vec2 packHalfFloat(float _value)
 
 float unpackHalfFloat(vec2 _rg)
 {
-	const vec2 shift = vec2(1.0 / 256.0, 1.0);
+	const vec2 shift = vec2(1.0 / 255.0, 1.0);
 	return dot(_rg, shift);
 }
 

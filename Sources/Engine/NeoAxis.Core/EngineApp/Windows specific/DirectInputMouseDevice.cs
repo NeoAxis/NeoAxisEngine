@@ -45,7 +45,7 @@ namespace DirectInput
 				return false;
 			}
 
-			NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
+			NativeUtility.PreloadLibrary( "libNeoAxisCoreNative" );
 
 			instance = new DirectInputMouseDevice();
 			if( !instance.InitInternal( windowHandle, alreadyCreatedDirectInput ) )

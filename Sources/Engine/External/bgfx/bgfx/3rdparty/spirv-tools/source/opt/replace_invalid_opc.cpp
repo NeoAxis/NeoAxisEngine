@@ -17,6 +17,8 @@
 #include <bitset>
 #include <vector>
 
+#include "source/table2.h"
+
 namespace spvtools {
 namespace opt {
 
@@ -104,7 +106,7 @@ bool ReplaceInvalidOpcodePass::RewriteFunction(Function* function,
             uint32_t file_name_id = 0;
             if (last_line_dbg_inst->opcode() == spv::Op::OpLine) {
               file_name_id = last_line_dbg_inst->GetSingleWordInOperand(0);
-            } else {  // Shader100::DebugLine
+            } else {  // NSDI::DebugLine
               uint32_t debug_source_id =
                   last_line_dbg_inst->GetSingleWordInOperand(2);
               Instruction* debug_source_inst =
@@ -207,10 +209,10 @@ uint32_t ReplaceInvalidOpcodePass::GetSpecialConstant(uint32_t type_id) {
 }
 
 std::string ReplaceInvalidOpcodePass::BuildWarningMessage(spv::Op opcode) {
-  spv_opcode_desc opcode_info;
-  context()->grammar().lookupOpcode(opcode, &opcode_info);
+  const spvtools::InstructionDesc* opcode_desc = nullptr;
+  spvtools::LookupOpcode(opcode, &opcode_desc);
   std::string message = "Removing ";
-  message += opcode_info->name;
+  message += opcode_desc->name().data();
   message += " instruction because of incompatible execution model.";
   return message;
 }

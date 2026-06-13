@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -96,7 +96,7 @@
 			{                                                                                      \
 				#_name,                                                                            \
 				{                                                                                  \
-			BGFX_EMBEDDED_SHADER_PSSL (bgfx::RendererType::Agc,        _name)              \
+					BGFX_EMBEDDED_SHADER_PSSL (bgfx::RendererType::Agc,        _name)              \
 					BGFX_EMBEDDED_SHADER_DXBC (bgfx::RendererType::Direct3D11, _name)              \
 					BGFX_EMBEDDED_SHADER_DXBC (bgfx::RendererType::Direct3D12, _name)              \
 					BGFX_EMBEDDED_SHADER_PSSL (bgfx::RendererType::Gnm,        _name)              \

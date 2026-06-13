@@ -3,18 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.2.11415.280
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NeoAxisCoreNative", "Sources\Engine\NeoAxis.Core.Native\NeoAxisCoreNative.WinRT.vcxproj", "{A49B1604-5C02-3455-8543-8A45A6E6C450}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Native", "Native", "{67F4E20B-24FA-4ACE-80C1-529222FC311E}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bgfx-shared-lib", "Sources\Engine\External\bgfx\bgfx\.build\projects\vs2017-winstore100\bgfx-shared-lib.vcxproj", "{08FF48B8-F92F-4154-ACAE-CBD51F24F913}"
-	ProjectSection(ProjectDependencies) = postProject
-		{A49B1604-5C02-3455-8543-8A45A6E6C450} = {A49B1604-5C02-3455-8543-8A45A6E6C450}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libNeoAxisCoreNative", "Sources\Engine\NeoAxis.Core.Native\NeoAxisCoreNative.WinRT.vcxproj", "{A49B1604-5C02-3455-8543-8A45A6E6C450}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Player.UWP", "Project\Sources\NeoAxis.Player.UWP\NeoAxis.Player.UWP.csproj", "{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}"
 	ProjectSection(ProjectDependencies) = postProject
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913} = {08FF48B8-F92F-4154-ACAE-CBD51F24F913}
 		{A49B1604-5C02-3455-8543-8A45A6E6C450} = {A49B1604-5C02-3455-8543-8A45A6E6C450}
 	EndProjectSection
 EndProject
@@ -45,20 +37,6 @@ Global
 		{A49B1604-5C02-3455-8543-8A45A6E6C450}.Release|x64.Build.0 = Release|x64
 		{A49B1604-5C02-3455-8543-8A45A6E6C450}.Release|x86.ActiveCfg = Release|x64
 		{A49B1604-5C02-3455-8543-8A45A6E6C450}.Release|x86.Build.0 = Release|x64
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Debug|ARM.ActiveCfg = Debug|ARM
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Debug|ARM.Build.0 = Debug|ARM
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Debug|ARM64.ActiveCfg = Debug|Win32
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Debug|x64.ActiveCfg = Debug|x64
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Debug|x64.Build.0 = Debug|x64
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Debug|x86.ActiveCfg = Debug|Win32
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Debug|x86.Build.0 = Debug|Win32
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Release|ARM.ActiveCfg = Release|ARM
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Release|ARM.Build.0 = Release|ARM
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Release|ARM64.ActiveCfg = Release|Win32
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Release|x64.ActiveCfg = Release|x64
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Release|x64.Build.0 = Release|x64
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Release|x86.ActiveCfg = Release|Win32
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913}.Release|x86.Build.0 = Release|Win32
 		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Debug|ARM.ActiveCfg = Debug|ARM
 		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Debug|ARM.Build.0 = Debug|ARM
 		{5417393A-BA14-4C40-AAC7-9FD5A5EC9278}.Debug|ARM.Deploy.0 = Debug|ARM
@@ -82,10 +60,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{A49B1604-5C02-3455-8543-8A45A6E6C450} = {67F4E20B-24FA-4ACE-80C1-529222FC311E}
-		{08FF48B8-F92F-4154-ACAE-CBD51F24F913} = {67F4E20B-24FA-4ACE-80C1-529222FC311E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D50DA316-1FA2-405C-879A-AA4D7E3309CB}

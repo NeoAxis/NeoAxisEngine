@@ -14,7 +14,7 @@
     <ProjectGuid>{258274FA-C24A-4E71-A1D1-D27FF6AB2EB0}</ProjectGuid>
     <RootNamespace>NeoAxisCoreNative</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <ProjectName>NeoAxisCoreNative</ProjectName>
+    <ProjectName>libNeoAxisCoreNative</ProjectName>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -22,7 +22,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>false</WholeProgramOptimization>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -30,7 +30,7 @@
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -46,10 +46,10 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkIncremental>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
@@ -66,10 +66,10 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libtheora\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbisfile\include;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;..\External\SDL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;INCLUDE_LIB_OPENEXR;INCLUDE_LIB_RAW;INCLUDE_LIB_WEBP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libtheora\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbisfile\include;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;..\External\SDL\include;..\External\bgfx\bx\include\compat\msvc;..\External\bgfx\bgfx\3rdparty;..\External\bgfx\bx\include;..\External\bgfx\bimg\include;..\External\bgfx\bgfx\3rdparty\dx__sdk\include;..\External\bgfx\bgfx\3rdparty\khronos;..\External\bgfx\bgfx\include;..\External\bgfx\bgfx\3rdparty\fcpp;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Public;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Include;..\External\bgfx\bgfx\3rdparty\glslang;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\src\glsl;..\External\bgfx\bgfx\3rdparty\spirv-cross;..\External\bgfx\bgfx\3rdparty\spirv-tools\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include\c99;..\External\bgfx\bgfx\3rdparty\dxc\inc;..\External\bgfx\bimg\3rdparty\astc-encoder;..\External\bgfx\bimg\3rdparty\astc-encoder\include;..\External\bgfx\..\..\NeoAxis.Core.Native\MemoryManager;..\External\bgfx\bx\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;INCLUDE_LIB_OPENEXR;INCLUDE_LIB_RAW;INCLUDE_LIB_WEBP;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BX_CONFIG_DEBUG=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -80,14 +80,15 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)NeoAxisCoreNative.dll</OutputFile>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;psapi.lib;dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)libNeoAxisCoreNative.dll</OutputFile>
       <Version>0.99</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\Lib\Windows_x64;..\External\DirectX\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Lib\Windows_x64;..\External\DirectX\Lib\x64;..\External\bgfx\bgfx\3rdparty\lib\win64_vs2017;..\External\bgfx\bgfx\3rdparty\nvidia-vxgi\lib;..\External\bgfx\bgfx\3rdparty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>Export.def</ModuleDefinitionFile>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -102,8 +103,8 @@
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
-copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
+      <Command>rem copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
+copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\libNeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -116,10 +117,10 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoA
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libtheora\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbisfile\include;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;INCLUDE_LIB_OPENEXR;INCLUDE_LIB_RAW;INCLUDE_LIB_WEBP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libtheora\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbisfile\include;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;..\External\bgfx\bx\include\compat\msvc;..\External\bgfx\bgfx\3rdparty;..\External\bgfx\bx\include;..\External\bgfx\bimg\include;..\External\bgfx\bgfx\3rdparty\dx__sdk\include;..\External\bgfx\bgfx\3rdparty\khronos;..\External\bgfx\bgfx\include;..\External\bgfx\bgfx\3rdparty\fcpp;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Public;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Include;..\External\bgfx\bgfx\3rdparty\glslang;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\src\glsl;..\External\bgfx\bgfx\3rdparty\spirv-cross;..\External\bgfx\bgfx\3rdparty\spirv-tools\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include\c99;..\External\bgfx\bgfx\3rdparty\dxc\inc;..\External\bgfx\bimg\3rdparty\astc-encoder;..\External\bgfx\bimg\3rdparty\astc-encoder\include;..\External\bgfx\..\..\NeoAxis.Core.Native\MemoryManager;..\External\bgfx\bx\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;INCLUDE_LIB_OPENEXR;INCLUDE_LIB_RAW;INCLUDE_LIB_WEBP;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -129,14 +130,15 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoA
       <DisableSpecificWarnings>4985;4309;5040;26446;26455;26440;26496;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)NeoAxisCoreNative.dll</OutputFile>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;psapi.lib;dxcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)libNeoAxisCoreNative.dll</OutputFile>
       <Version>0.99</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\Lib\Windows_x64;..\External\DirectX\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Lib\Windows_x64;..\External\DirectX\Lib\x64;..\External\bgfx\bgfx\3rdparty\lib\win64_vs2017;..\External\bgfx\bgfx\3rdparty\nvidia-vxgi\lib;..\External\bgfx\bgfx\3rdparty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>Export.def</ModuleDefinitionFile>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -151,12 +153,90 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoA
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
-copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
+      <Command>rem copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoAxisCoreNative.lib ..\Lib\Windows_x64
+copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\libNeoAxisCoreNative.dll "..\..\..\Project\Binaries\NeoAxis.Internal\Platforms\Windows"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\fcpp\cpp1.c" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\fcpp\cpp2.c" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\fcpp\cpp3.c" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\fcpp\cpp4.c" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\fcpp\cpp5.c" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\fcpp\cpp6.c" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\bgfx.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\debug_renderdoc.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\dxgi.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\glcontext_egl.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\glcontext_wgl.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\nvapi.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_agc.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_d3d11.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_d3d12.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_gl.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_gnm.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_noop.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_nvn.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_vk.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\shader.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\special.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\topology.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\vertexlayout.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\Library.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\LibraryBase.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_dxil.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_hlsl.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_metal.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_pssl.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_spirv.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_wgsl.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_averages_and_directions.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_block_sizes.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_color_quantize.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_color_unquantize.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_compress_symbolic.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_compute_variance.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_decompress_symbolic.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_entry.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_find_best_partitioning.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_ideal_endpoints_and_weights.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_image.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_integer_sequence.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_mathlib_softfloat.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_partition_tables.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_percentile_tables.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_pick_best_endpoint_format.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_quantization.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_symbolic_physical.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_weight_align.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_weight_quant_xfer_tables.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\src\image_bimg.cpp" />
+    <ClCompile Include="..\External\bgfx\bimg\src\image_gnf.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\allocator.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\bx.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\commandline.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\crtnone.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\debug.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\dtoa.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\easing.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\file.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\filepath.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\hash.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\math.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\mutex.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\os.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\process.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\semaphore_bx.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\settings.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\sort.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\string.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\thread.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\timer.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\url.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Background.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\BSplineRotate.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Channels.cpp" />
@@ -1224,6 +1304,57 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoA
     <ClCompile Include="SimpleTrayIcon\TrayMenuSeparator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\cpp.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\cppadd.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\cppdef.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\fpp.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\FPPBase.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\fpp_pragmas.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\FPP_protos.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\include\bgfx\bgfx.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\include\bgfx\c99\bgfx.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\include\bgfx\c99\platform.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\include\bgfx\defines.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\include\bgfx\embedded_shader.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\include\bgfx\platform.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\bgfx_p.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\charset.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\config.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\debug_renderdoc.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\dxgi.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\glcontext_eagl.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\glcontext_egl.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\glcontext_nsgl.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\glcontext_wgl.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\glimports.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\nvapi.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\renderer.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\renderer_d3d.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\renderer_d3d11.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\renderer_d3d12.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\renderer_gl.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\renderer_mtl.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\renderer_vk.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\shader.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\special.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\topology.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\vertexlayout.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\tools\shaderc\LibraryBase.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\tools\shaderc\shaderc.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\include\astcenc.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_diagnostic_trace.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_internal.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_internal_entry.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_mathlib.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_avx2_8.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_common_4.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_neon_4.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_none_4.h" />
+    <ClInclude Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_vecmathlib_sse_4.h" />
+    <ClInclude Include="..\External\bgfx\bimg\include\bimg\bimg.h" />
+    <ClInclude Include="..\External\bgfx\bimg\include\bimg\decode.h" />
+    <ClInclude Include="..\External\bgfx\bimg\include\bimg\encode.h" />
     <ClInclude Include="..\External\FreeImage\Source\CacheFile.h" />
     <ClInclude Include="..\External\FreeImage\Source\FreeImage.h" />
     <ClInclude Include="..\External\FreeImage\Source\FreeImageIO.h" />
@@ -2169,6 +2300,8 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\NeoAxisCoreNative\NeoA
     <ClInclude Include="SimpleTrayIcon\Win32Exception.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\External\bgfx\bgfx\src\glcontext_eagl.mm" />
+    <None Include="..\External\bgfx\bgfx\src\renderer_mtl.mm" />
     <None Include="..\External\FreeImage\Source\LibPNG\libpng.3" />
     <None Include="..\External\FreeImage\Source\LibPNG\libpngpf.3" />
     <None Include="..\External\FreeImage\Source\LibPNG\png.5" />

@@ -10,7 +10,7 @@ namespace NeoAxis.OggVorbisTheora
 {
 	static class Theora
 	{
-		const string library = "NeoAxisCoreNative";
+		const string library = "libNeoAxisCoreNative";
 		const CallingConvention convention = CallingConvention.Cdecl;
 
 		///////////////////////////////////////////

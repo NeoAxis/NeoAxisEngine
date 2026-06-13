@@ -318,19 +318,19 @@ class Instruction : public utils::IntrusiveNodeBase<Instruction> {
   inline void SetDebugScope(const DebugScope& scope);
   inline const DebugScope& GetDebugScope() const { return dbg_scope_; }
   // Add debug line inst. Renew result id if Debug[No]Line
-  void AddDebugLine(const Instruction* inst);
+  bool AddDebugLine(const Instruction* inst);
   // Updates DebugInlinedAt of DebugScope and OpLine.
   void UpdateDebugInlinedAt(uint32_t new_inlined_at);
   // Clear line-related debug instructions attached to this instruction
   // along with def-use entries.
   void ClearDbgLineInsts();
-  // Return true if Shader100:Debug[No]Line
+  // Return true if NSDI:Debug[No]Line
   bool IsDebugLineInst() const;
-  // Return true if Op[No]Line or Shader100:Debug[No]Line
+  // Return true if Op[No]Line or NSDI:Debug[No]Line
   bool IsLineInst() const;
-  // Return true if OpLine or Shader100:DebugLine
+  // Return true if OpLine or NSDI:DebugLine
   bool IsLine() const;
-  // Return true if OpNoLine or Shader100:DebugNoLine
+  // Return true if OpNoLine or NSDI:DebugNoLine
   bool IsNoLine() const;
   inline uint32_t GetDebugInlinedAt() const {
     return dbg_scope_.GetInlinedAt();
@@ -338,7 +338,8 @@ class Instruction : public utils::IntrusiveNodeBase<Instruction> {
   // Updates lexical scope of DebugScope and OpLine.
   void UpdateLexicalScope(uint32_t scope);
   // Updates OpLine and DebugScope based on the information of |from|.
-  void UpdateDebugInfoFrom(const Instruction* from);
+  bool UpdateDebugInfoFrom(const Instruction* from,
+                           const Instruction* line = nullptr);
   // Remove the |index|-th operand
   void RemoveOperand(uint32_t index) {
     operands_.erase(operands_.begin() + index);
@@ -580,13 +581,13 @@ class Instruction : public utils::IntrusiveNodeBase<Instruction> {
   // OpenCLDebugInfo100InstructionsMax.
   OpenCLDebugInfo100Instructions GetOpenCL100DebugOpcode() const;
 
-  // Returns debug opcode of an NonSemantic.Shader.DebugInfo.100 instruction. If
-  // it is not an NonSemantic.Shader.DebugInfo.100 instruction, just return
+  // Returns debug opcode of a NonSemantic.Shader.DebugInfo instruction. If
+  // it is not a NonSemantic.Shader.DebugInfo instruction, just return
   // NonSemanticShaderDebugInfo100InstructionsMax.
-  NonSemanticShaderDebugInfo100Instructions GetShader100DebugOpcode() const;
+  NonSemanticShaderDebugInfo100Instructions GetShaderDebugOpcode() const;
 
   // Returns debug opcode of an OpenCL.100.DebugInfo or
-  // NonSemantic.Shader.DebugInfo.100 instruction. Since these overlap, we
+  // NonSemantic.Shader.DebugInfo instruction. Since these overlap, we
   // return the OpenCLDebugInfo code
   CommonDebugInfoInstructions GetCommonDebugOpcode() const;
 
@@ -595,9 +596,9 @@ class Instruction : public utils::IntrusiveNodeBase<Instruction> {
     return GetOpenCL100DebugOpcode() != OpenCLDebugInfo100InstructionsMax;
   }
 
-  // Returns true if it is an NonSemantic.Shader.DebugInfo.100 instruction.
-  bool IsShader100DebugInstr() const {
-    return GetShader100DebugOpcode() !=
+  // Returns true if it is a NonSemantic.Shader.DebugInfo instruction.
+  bool IsShaderDebugInstr() const {
+    return GetShaderDebugOpcode() !=
            NonSemanticShaderDebugInfo100InstructionsMax;
   }
   bool IsCommonDebugInstr() const {

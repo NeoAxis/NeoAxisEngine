@@ -9,7 +9,7 @@ namespace DirectInput
 {
 	struct Wrapper
 	{
-		public const string library = "NeoAxisCoreNative";
+		public const string library = "libNeoAxisCoreNative";
 		public const CallingConvention convention = CallingConvention.Cdecl;
 
 		public const int MAX_PATH = 260;   // windef.h MAX_PATH = 260

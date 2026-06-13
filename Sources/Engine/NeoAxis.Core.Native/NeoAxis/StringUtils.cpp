@@ -85,13 +85,17 @@ std::string ConvertStringToUTF8(const std::wstring& str)
 			if(WideCharToMultiByte(CP_UTF8, 0, str.c_str(), -1, aString, size, NULL, NULL) != 0)
 				result = aString;
 		}
-#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX)
-		// can't use ConvertString/iconv because __LP64__ is defined somewhere..
-		// https://stackoverflow.com/questions/4804298/how-to-convert-wstring-into-string
-		using convert_type = std::codecvt_utf8<wchar_t>;
-		std::wstring_convert<convert_type, wchar_t> converter;
-		//use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
-		result = converter.to_bytes(str);
+#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX) || defined(__EMSCRIPTEN__)
+
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+		result = myconv.to_bytes(str);
+
+		//// can't use ConvertString/iconv because __LP64__ is defined somewhere..
+		//// https://stackoverflow.com/questions/4804298/how-to-convert-wstring-into-string
+		//using convert_type = std::codecvt_utf8<wchar_t>;
+		//std::wstring_convert<convert_type, wchar_t> converter;
+		////use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
+		//result = converter.to_bytes(str);
 #else
 		static iconv_t cd = (iconv_t)-1;
 		if (cd == (iconv_t)-1)
@@ -122,7 +126,12 @@ std::wstring ConvertStringToUTFWide(const std::string& str)
 			if(MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wString, size) != 0)
 				result = wString;
 		}
-#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX)
+#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX) || defined(__EMSCRIPTEN__)
+
+		//!!!!
+		//for (int n = 0; n < str.length(); n++)
+		//	result += str[n];
+
 		using convert_type = std::codecvt_utf8<wchar_t>;
 		std::wstring_convert<convert_type, wchar_t> converter;
 		//use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)

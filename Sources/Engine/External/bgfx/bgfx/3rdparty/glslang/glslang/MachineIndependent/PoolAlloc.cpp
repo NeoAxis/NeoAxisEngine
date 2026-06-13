@@ -35,14 +35,21 @@
 #include "../Include/Common.h"
 #include "../Include/PoolAlloc.h"
 
+// Mostly here for target that do not support threads such as WASI.
+#ifdef DISABLE_THREAD_SUPPORT
+#define THREAD_LOCAL 
+#else
+#define THREAD_LOCAL thread_local
+#endif
+
 namespace glslang {
 
 namespace {
-thread_local TPoolAllocator* threadPoolAllocator = nullptr;
+THREAD_LOCAL TPoolAllocator* threadPoolAllocator = nullptr;
 
 TPoolAllocator* GetDefaultThreadPoolAllocator()
 {
-    thread_local TPoolAllocator defaultAllocator;
+    THREAD_LOCAL TPoolAllocator defaultAllocator;
     return &defaultAllocator;
 }
 } // anonymous namespace
@@ -141,7 +148,7 @@ void TAllocation::checkGuardBlock(unsigned char*, unsigned char, const char*) co
 #endif
 {
 #ifdef GUARD_BLOCKS
-    for (size_t x = 0; x < guardBlockSize; x++) {
+    for (size_t x = 0; x < guardBlockSize(); x++) {
         if (blockMem[x] != val) {
             const int maxSize = 80;
             char assertMsg[maxSize];
@@ -153,7 +160,7 @@ void TAllocation::checkGuardBlock(unsigned char*, unsigned char, const char*) co
         }
     }
 #else
-    assert(guardBlockSize == 0);
+    assert(guardBlockSize() == 0);
 #endif
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -50,7 +50,7 @@ namespace bgfx { namespace d3d11
 		{ D3D11_PRIMITIVE_TOPOLOGY_POINTLIST,     1, 1, 0 },
 		{ D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED,     0, 0, 0 },
 	};
-	BX_STATIC_ASSERT(Topology::Count == BX_COUNTOF(s_primInfo)-1);
+	static_assert(Topology::Count == BX_COUNTOF(s_primInfo)-1);
 
 	union Zero
 	{
@@ -304,7 +304,7 @@ namespace bgfx { namespace d3d11
 		{ DXGI_FORMAT_R32_TYPELESS,       DXGI_FORMAT_R32_FLOAT,             DXGI_FORMAT_D32_FLOAT,         DXGI_FORMAT_UNKNOWN              }, // D32F
 		{ DXGI_FORMAT_R24G8_TYPELESS,     DXGI_FORMAT_R24_UNORM_X8_TYPELESS, DXGI_FORMAT_D24_UNORM_S8_UINT, DXGI_FORMAT_UNKNOWN              }, // D0S8
 	};
-	BX_STATIC_ASSERT(TextureFormat::Count == BX_COUNTOF(s_textureFormat) );
+	static_assert(TextureFormat::Count == BX_COUNTOF(s_textureFormat) );
 
 	static const D3D11_INPUT_ELEMENT_DESC s_attrib[] =
 	{
@@ -327,7 +327,7 @@ namespace bgfx { namespace d3d11
 		{ "TEXCOORD",     6, DXGI_FORMAT_R32G32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD",     7, DXGI_FORMAT_R32G32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	BX_STATIC_ASSERT(Attrib::Count == BX_COUNTOF(s_attrib) );
+	static_assert(Attrib::Count == BX_COUNTOF(s_attrib) );
 
 	static const DXGI_FORMAT s_attribType[][4][2] =
 	{
@@ -362,7 +362,7 @@ namespace bgfx { namespace d3d11
 			{ DXGI_FORMAT_R32G32B32A32_FLOAT, DXGI_FORMAT_R32G32B32A32_FLOAT },
 		},
 	};
-	BX_STATIC_ASSERT(AttribType::Count == BX_COUNTOF(s_attribType) );
+	static_assert(AttribType::Count == BX_COUNTOF(s_attribType) );
 
 	static D3D11_INPUT_ELEMENT_DESC* fillVertexLayout(uint8_t _stream, D3D11_INPUT_ELEMENT_DESC* _out, const VertexLayout& _layout)
 	{
@@ -4278,42 +4278,42 @@ namespace bgfx { namespace d3d11
 		BufferD3D11::create(_size, _data, _flags, stride, true);
 	}
 
-	static bool hasDepthOp(const void* _code, uint32_t _size)
-	{
-		bx::MemoryReader rd(_code, _size);
+	//static bool hasDepthOp(const void* _code, uint32_t _size)
+	//{
+	//	bx::MemoryReader rd(_code, _size);
 
-		bx::Error err;
-		DxbcContext dxbc;
-		read(&rd, dxbc, &err);
+	//	bx::Error err;
+	//	DxbcContext dxbc;
+	//	read(&rd, dxbc, &err);
 
-		struct FindDepthOp
-		{
-			FindDepthOp()
-				: m_found(false)
-			{
-			}
+	//	struct FindDepthOp
+	//	{
+	//		FindDepthOp()
+	//			: m_found(false)
+	//		{
+	//		}
 
-			static bool find(uint32_t /*_offset*/, const DxbcInstruction& _instruction, void* _userData)
-			{
-				FindDepthOp& out = *reinterpret_cast<FindDepthOp*>(_userData);
-				if (_instruction.opcode == DxbcOpcode::DISCARD
-				|| (0 != _instruction.numOperands &&  DxbcOperandType::OutputDepth == _instruction.operand[0].type) )
-				{
-					out.m_found = true;
-					return false;
-				}
+	//		static bool find(uint32_t /*_offset*/, const DxbcInstruction& _instruction, void* _userData)
+	//		{
+	//			FindDepthOp& out = *reinterpret_cast<FindDepthOp*>(_userData);
+	//			if (_instruction.opcode == DxbcOpcode::DISCARD
+	//			|| (0 != _instruction.numOperands &&  DxbcOperandType::OutputDepth == _instruction.operand[0].type) )
+	//			{
+	//				out.m_found = true;
+	//				return false;
+	//			}
 
-				return true;
-			}
+	//			return true;
+	//		}
 
-			bool m_found;
+	//		bool m_found;
 
-		} find;
+	//	} find;
 
-		parse(dxbc.shader, FindDepthOp::find, &find);
+	//	parse(dxbc.shader, FindDepthOp::find, &find);
 
-		return find.m_found;
-	}
+	//	return find.m_found;
+	//}
 
 	//static void patchUAVRegisterByteCode(DxbcInstruction& _instruction, void* _userData)
 	//{
@@ -4554,7 +4554,7 @@ namespace bgfx { namespace d3d11
 
 		if (isShaderType(magic, 'F') )
 		{
-			m_hasDepthOp = hasDepthOp(code, shaderSize);
+			//m_hasDepthOp = hasDepthOp(code, shaderSize);
 			DX_CHECK(s_renderD3D11->m_device->CreatePixelShader(code, shaderSize, NULL, &m_pixelShader) );
 			BGFX_FATAL(NULL != m_ptr, bgfx::Fatal::InvalidShader, "Failed to create fragment shader.");
 		}
@@ -6443,8 +6443,7 @@ namespace bgfx { namespace d3d11
 						deviceCtx->VSSetConstantBuffers(0, 1, &vsh->m_buffer);
 
 						const ShaderD3D11* fsh = program.m_fsh;
-						if (NULL != fsh
-						&& (NULL != m_currentColor || fsh->m_hasDepthOp) )
+						if (NULL != fsh ) //&& (NULL != m_currentColor || fsh->m_hasDepthOp) )
 						{
 							deviceCtx->PSSetShader(fsh->m_pixelShader, NULL, 0);
 							deviceCtx->PSSetConstantBuffers(0, 1, &fsh->m_buffer);

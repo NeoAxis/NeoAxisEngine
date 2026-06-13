@@ -17,11 +17,14 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <SupportedOSPlatformVersion>33.0</SupportedOSPlatformVersion>
+    <RunAOTCompilation>false</RunAOTCompilation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
     <NoWarn>
     </NoWarn>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <AndroidUseFastDev>False</AndroidUseFastDev>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <NoWarn>
@@ -30,8 +33,11 @@
     <Optimize>False</Optimize>
     <!-- Optional: produce symbols like Debug so stack traces are useful -->
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>      
+    <DebugType>portable</DebugType>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="libs\arm64-v8a\libNeoAxisCoreNative.so" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="Implementation\RestartApp.cs" />
     <Compile Include="Implementation\Engine.cs" />
@@ -92,13 +98,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidNativeLibrary Update="lib\arm64-v8a\libbgfx.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <Link>libs\arm64-v8a\libbgfx.so</Link>
-    </AndroidNativeLibrary>
-    <AndroidNativeLibrary Update="lib\arm64-v8a\libNeoAxisCoreNative.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <Link>libs\arm64-v8a\libNeoAxisCoreNative.so</Link>
+    <AndroidNativeLibrary Include="libs\arm64-v8a\libNeoAxisCoreNative.so">
+    <Link>libs\arm64-v8a\libNeoAxisCoreNative.so</Link>
     </AndroidNativeLibrary>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -106,7 +107,7 @@
     </None>
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="if EXIST &quot;$(ProjectDir)..\..\Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.Android.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot; ) )&#xD;&#xA;&#xD;&#xA;set Product=Base\Build\Mobile Demo Android.product&#xD;&#xA;rem set Product=Samples\Simple Game\Build\Simple Game Android.product&#xD;&#xA;if exist &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -prepareProductAssets 1 -productFile &quot;%25Product%25&quot; -destinationFolder &quot;$(ProjectDir)Assets&quot; -platform Android" />
+    <Exec Command="if EXIST &quot;$(ProjectDir)..\..\Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.Android.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot; ) )&#xD;&#xA;&#xD;&#xA;set Product=Base\Build\Mobile Demo Android.product&#xD;&#xA;rem set Product=Base\Build\Simple Game Android.product&#xD;&#xA;if exist &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -prepareProductAssets 1 -productFile &quot;%25Product%25&quot; -destinationFolder &quot;$(ProjectDir)Assets&quot; -platform Android" />
   </Target>
   <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
     <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />

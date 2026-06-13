@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -224,7 +224,9 @@
 
 /// Enable use of tinystl.
 #ifndef BGFX_CONFIG_USE_TINYSTL
-#	define BGFX_CONFIG_USE_TINYSTL 1
+//!!!!betauser
+#	define BGFX_CONFIG_USE_TINYSTL 0
+//#	define BGFX_CONFIG_USE_TINYSTL 1
 #endif // BGFX_CONFIG_USE_TINYSTL
 
 /// Debug text maximum scale factor.
@@ -309,14 +311,14 @@
 
 // Cannot be configured via compiler options.
 #define BGFX_CONFIG_MAX_PROGRAMS (1<<BGFX_CONFIG_SORT_KEY_NUM_BITS_PROGRAM)
-BX_STATIC_ASSERT(bx::isPowerOf2(BGFX_CONFIG_MAX_PROGRAMS), "BGFX_CONFIG_MAX_PROGRAMS must be power of 2.");
+static_assert(bx::isPowerOf2(BGFX_CONFIG_MAX_PROGRAMS), "BGFX_CONFIG_MAX_PROGRAMS must be power of 2.");
 
 #ifndef BGFX_CONFIG_MAX_VIEWS
 //!!!!betauser
 #	define BGFX_CONFIG_MAX_VIEWS 1024
 //#	define BGFX_CONFIG_MAX_VIEWS 256
 #endif // BGFX_CONFIG_MAX_VIEWS
-BX_STATIC_ASSERT(bx::isPowerOf2(BGFX_CONFIG_MAX_VIEWS), "BGFX_CONFIG_MAX_VIEWS must be power of 2.");
+static_assert(bx::isPowerOf2(BGFX_CONFIG_MAX_VIEWS), "BGFX_CONFIG_MAX_VIEWS must be power of 2.");
 
 #define BGFX_CONFIG_MAX_VIEW_NAME_RESERVED 6
 

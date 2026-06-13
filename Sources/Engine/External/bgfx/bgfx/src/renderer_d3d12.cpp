@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -50,7 +50,7 @@ namespace bgfx { namespace d3d12
 		{ D3D_PRIMITIVE_TOPOLOGY_POINTLIST,     D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT,     1, 1, 0 },
 		{ D3D_PRIMITIVE_TOPOLOGY_UNDEFINED,     D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED, 0, 0, 0 },
 	};
-	BX_STATIC_ASSERT(Topology::Count == BX_COUNTOF(s_primInfo)-1);
+	static_assert(Topology::Count == BX_COUNTOF(s_primInfo)-1);
 
 	static const uint32_t s_checkMsaa[] =
 	{
@@ -296,7 +296,7 @@ namespace bgfx { namespace d3d12
 #undef $B
 #undef $A
 	};
-	BX_STATIC_ASSERT(TextureFormat::Count == BX_COUNTOF(s_textureFormat) );
+	static_assert(TextureFormat::Count == BX_COUNTOF(s_textureFormat) );
 
 	static const D3D12_INPUT_ELEMENT_DESC s_attrib[] =
 	{
@@ -319,7 +319,7 @@ namespace bgfx { namespace d3d12
 		{ "TEXCOORD",     6, DXGI_FORMAT_R32G32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD",     7, DXGI_FORMAT_R32G32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 	};
-	BX_STATIC_ASSERT(Attrib::Count == BX_COUNTOF(s_attrib) );
+	static_assert(Attrib::Count == BX_COUNTOF(s_attrib) );
 
 	static const DXGI_FORMAT s_attribType[][4][2] =
 	{
@@ -354,7 +354,7 @@ namespace bgfx { namespace d3d12
 			{ DXGI_FORMAT_R32G32B32A32_FLOAT, DXGI_FORMAT_R32G32B32A32_FLOAT },
 		},
 	};
-	BX_STATIC_ASSERT(AttribType::Count == BX_COUNTOF(s_attribType) );
+	static_assert(AttribType::Count == BX_COUNTOF(s_attribType) );
 
 	static D3D12_INPUT_ELEMENT_DESC* fillVertexLayout(uint8_t _stream, D3D12_INPUT_ELEMENT_DESC* _out, const VertexLayout& _layout)
 	{
@@ -470,7 +470,7 @@ namespace bgfx { namespace d3d12
 		{ { D3D12_HEAP_TYPE_UPLOAD,   D3D12_CPU_PAGE_PROPERTY_UNKNOWN, D3D12_MEMORY_POOL_UNKNOWN, 0, 0 }, D3D12_RESOURCE_STATE_GENERIC_READ },
 		{ { D3D12_HEAP_TYPE_READBACK, D3D12_CPU_PAGE_PROPERTY_UNKNOWN, D3D12_MEMORY_POOL_UNKNOWN, 0, 0 }, D3D12_RESOURCE_STATE_COPY_DEST    },
 	};
-	BX_STATIC_ASSERT(BX_COUNTOF(s_heapProperties) == HeapProperty::Count);
+	static_assert(BX_COUNTOF(s_heapProperties) == HeapProperty::Count);
 
 	static inline D3D12_HEAP_PROPERTIES ID3D12DeviceGetCustomHeapProperties(ID3D12Device *device, uint32_t nodeMask, D3D12_HEAP_TYPE heapType)
 	{
@@ -1308,7 +1308,7 @@ namespace bgfx { namespace d3d12
 					{ D3D12_DESCRIPTOR_RANGE_TYPE_CBV,     1,                                0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
 					{ D3D12_DESCRIPTOR_RANGE_TYPE_UAV,     BGFX_CONFIG_MAX_TEXTURE_SAMPLERS, 0, 0, D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND },
 				};
-				BX_STATIC_ASSERT(BX_COUNTOF(descRange) == Rdt::Count);
+				static_assert(BX_COUNTOF(descRange) == Rdt::Count);
 
 				D3D12_ROOT_PARAMETER rootParameter[] =
 				{
@@ -2510,9 +2510,9 @@ namespace bgfx { namespace d3d12
 					{
 #if BX_PLATFORM_WINDOWS
 						uint32_t nodeMask[] = { 1, 1, 1, 1 };
-						BX_STATIC_ASSERT(BX_COUNTOF(m_backBufferColor) == BX_COUNTOF(nodeMask) );
+						static_assert(BX_COUNTOF(m_backBufferColor) == BX_COUNTOF(nodeMask) );
 						IUnknown* presentQueue[] ={ m_cmd.m_commandQueue, m_cmd.m_commandQueue, m_cmd.m_commandQueue, m_cmd.m_commandQueue };
-						BX_STATIC_ASSERT(BX_COUNTOF(m_backBufferColor) == BX_COUNTOF(presentQueue) );
+						static_assert(BX_COUNTOF(m_backBufferColor) == BX_COUNTOF(presentQueue) );
 						DX_CHECK(m_dxgi.resizeBuffers(m_swapChain, m_scd, nodeMask, presentQueue) );
 #elif BX_PLATFORM_WINRT
 						DX_CHECK(m_dxgi.resizeBuffers(m_swapChain, m_scd));
@@ -2970,36 +2970,36 @@ namespace bgfx { namespace d3d12
 			return setInputLayout(_vertexElements, BX_COUNTOF(layouts), layouts, _program, _numInstanceData);
 		}
 
-		static void patchCb0(DxbcInstruction& _instruction, void* _userData)
-		{
-			union { void* ptr; uint32_t offset; } cast = { _userData };
+		//static void patchCb0(DxbcInstruction& _instruction, void* _userData)
+		//{
+		//	union { void* ptr; uint32_t offset; } cast = { _userData };
 
-			for (uint32_t ii = 0; ii < _instruction.numOperands; ++ii)
-			{
-				DxbcOperand& operand = _instruction.operand[ii];
-				if (DxbcOperandType::ConstantBuffer == operand.type)
-				{
-					if (DxbcOperandAddrMode::Imm32 == operand.addrMode[0]
-					&&  0 == operand.regIndex[0])
-					{
-						for (uint32_t jj = 1; jj < operand.numAddrModes; ++jj)
-						{
-							if (DxbcOperandAddrMode::Imm32    == operand.addrMode[jj]
-							||  DxbcOperandAddrMode::RegImm32 == operand.addrMode[jj])
-							{
-								operand.regIndex[jj] += cast.offset;
-							}
-							else if (0 != cast.offset)
-							{
-								operand.subOperand[jj].regIndex = operand.regIndex[jj];
-								operand.addrMode[jj] = DxbcOperandAddrMode::RegImm32;
-								operand.regIndex[jj] = cast.offset;
-							}
-						}
-					}
-				}
-			}
-		}
+		//	for (uint32_t ii = 0; ii < _instruction.numOperands; ++ii)
+		//	{
+		//		DxbcOperand& operand = _instruction.operand[ii];
+		//		if (DxbcOperandType::ConstantBuffer == operand.type)
+		//		{
+		//			if (DxbcOperandAddrMode::Imm32 == operand.addrMode[0]
+		//			&&  0 == operand.regIndex[0])
+		//			{
+		//				for (uint32_t jj = 1; jj < operand.numAddrModes; ++jj)
+		//				{
+		//					if (DxbcOperandAddrMode::Imm32    == operand.addrMode[jj]
+		//					||  DxbcOperandAddrMode::RegImm32 == operand.addrMode[jj])
+		//					{
+		//						operand.regIndex[jj] += cast.offset;
+		//					}
+		//					else if (0 != cast.offset)
+		//					{
+		//						operand.subOperand[jj].regIndex = operand.regIndex[jj];
+		//						operand.addrMode[jj] = DxbcOperandAddrMode::RegImm32;
+		//						operand.regIndex[jj] = cast.offset;
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 
 		ID3D12PipelineState* getPipelineState(ProgramHandle _program)
 		{
@@ -3168,68 +3168,68 @@ namespace bgfx { namespace d3d12
 			{
  				bx::MemoryReader rd(program.m_fsh->m_code->data, program.m_fsh->m_code->size);
 
-				DxbcContext dxbc;
-				bx::Error err;
-				read(&rd, dxbc, &err);
+				//DxbcContext dxbc;
+				//bx::Error err;
+				//read(&rd, dxbc, &err);
 
-				bool patchShader = !dxbc.shader.aon9;
+				//bool patchShader = !dxbc.shader.aon9;
 
-				//!!!!betauser
-				patchShader = false;
+	//			//!!!!betauser
+	//			patchShader = false;
 
-				if (BX_ENABLED(BGFX_CONFIG_DEBUG)
-				&&  patchShader)
-				{
-					union { uint32_t offset; void* ptr; } cast = { 0 };
-					filter(dxbc.shader, dxbc.shader, patchCb0, cast.ptr);
+	//			if (BX_ENABLED(BGFX_CONFIG_DEBUG)
+	//			&&  patchShader)
+	//			{
+	//				union { uint32_t offset; void* ptr; } cast = { 0 };
+	//				filter(dxbc.shader, dxbc.shader, patchCb0, cast.ptr);
 
-					temp = alloc(uint32_t(dxbc.header.size));
-					bx::StaticMemoryBlockWriter wr(temp->data, temp->size);
+	//				temp = alloc(uint32_t(dxbc.header.size));
+	//				bx::StaticMemoryBlockWriter wr(temp->data, temp->size);
 
-					int32_t size = write(&wr, dxbc, &err);
-					dxbcHash(temp->data + 20, size - 20, temp->data + 4);
+	//				int32_t size = write(&wr, dxbc, &err);
+	//				dxbcHash(temp->data + 20, size - 20, temp->data + 4);
 
-					patchShader = 0 == bx::memCmp(program.m_fsh->m_code->data, temp->data, 16);
-					BX_ASSERT(patchShader, "DXBC fragment shader patching error (ShaderHandle: %d).", program.m_fsh - m_shaders);
+	//				patchShader = 0 == bx::memCmp(program.m_fsh->m_code->data, temp->data, 16);
+	//				BX_ASSERT(patchShader, "DXBC fragment shader patching error (ShaderHandle: %d).", program.m_fsh - m_shaders);
 
-					if (!patchShader)
-					{
-						for (uint32_t ii = 20; ii < temp->size; ii += 16)
-						{
-							if (0 != bx::memCmp(&program.m_fsh->m_code->data[ii], &temp->data[ii], 16) )
-							{
-	// 							bx::debugPrintfData(&program.m_fsh->m_code->data[ii], temp->size-ii, "");
-	// 							bx::debugPrintfData(&temp->data[ii], temp->size-ii, "");
-								break;
-							}
-						}
+	//				if (!patchShader)
+	//				{
+	//					for (uint32_t ii = 20; ii < temp->size; ii += 16)
+	//					{
+	//						if (0 != bx::memCmp(&program.m_fsh->m_code->data[ii], &temp->data[ii], 16) )
+	//						{
+	//// 							bx::debugPrintfData(&program.m_fsh->m_code->data[ii], temp->size-ii, "");
+	//// 							bx::debugPrintfData(&temp->data[ii], temp->size-ii, "");
+	//							break;
+	//						}
+	//					}
 
-						desc.PS.pShaderBytecode = program.m_fsh->m_code->data;
-						desc.PS.BytecodeLength  = program.m_fsh->m_code->size;
-					}
+	//					desc.PS.pShaderBytecode = program.m_fsh->m_code->data;
+	//					desc.PS.BytecodeLength  = program.m_fsh->m_code->size;
+	//				}
 
-					release(temp);
-					temp = NULL;
-				}
+	//				release(temp);
+	//				temp = NULL;
+	//			}
 
-				if (patchShader)
-				{
-					union { uint32_t offset; void* ptr; } cast =
-					{
-						uint32_t(program.m_vsh->m_size)/16
-					};
-					filter(dxbc.shader, dxbc.shader, patchCb0, cast.ptr);
+	//			if (patchShader)
+	//			{
+	//				union { uint32_t offset; void* ptr; } cast =
+	//				{
+	//					uint32_t(program.m_vsh->m_size)/16
+	//				};
+	//				filter(dxbc.shader, dxbc.shader, patchCb0, cast.ptr);
 
-					temp = alloc(uint32_t(dxbc.header.size));
-					bx::StaticMemoryBlockWriter wr(temp->data, temp->size);
+	//				temp = alloc(uint32_t(dxbc.header.size));
+	//				bx::StaticMemoryBlockWriter wr(temp->data, temp->size);
 
-					int32_t size = write(&wr, dxbc, &err);
-					dxbcHash(temp->data + 20, size - 20, temp->data + 4);
+	//				int32_t size = write(&wr, dxbc, &err);
+	//				dxbcHash(temp->data + 20, size - 20, temp->data + 4);
 
-					desc.PS.pShaderBytecode = temp->data;
-					desc.PS.BytecodeLength  = size;
-				}
-				else
+	//				desc.PS.pShaderBytecode = temp->data;
+	//				desc.PS.BytecodeLength  = size;
+	//			}
+	//			else
 				{
 					desc.PS.pShaderBytecode = program.m_fsh->m_code->data;
 					desc.PS.BytecodeLength  = program.m_fsh->m_code->size;
@@ -4477,7 +4477,7 @@ namespace bgfx { namespace d3d12
 		sizeof(BatchD3D12::DrawIndirectCommand),
 		sizeof(BatchD3D12::DrawIndexedIndirectCommand),
 	};
-	BX_STATIC_ASSERT(BX_COUNTOF(s_indirectCommandSize) == BatchD3D12::Count);
+	static_assert(BX_COUNTOF(s_indirectCommandSize) == BatchD3D12::Count);
 
 	void BatchD3D12::flush(ID3D12GraphicsCommandList* _commandList, Enum _type)
 	{

@@ -25,6 +25,7 @@
 #include "source/opt/def_use_manager.h"
 #include "source/opt/ir_context.h"
 #include "source/opt/module.h"
+#include "source/util/status.h"
 #include "spirv-tools/libspirv.hpp"
 #include "types.h"
 
@@ -46,11 +47,7 @@ class Pass {
   //
   // The numbers for the cases are assigned to make sure that Failure & anything
   // is Failure, SuccessWithChange & any success is SuccessWithChange.
-  enum class Status {
-    Failure = 0x00,
-    SuccessWithChange = 0x10,
-    SuccessWithoutChange = 0x11,
-  };
+  using Status = utils::Status;
 
   using ProcessFunction = std::function<bool(Function*)>;
 
@@ -145,7 +142,8 @@ class Pass {
 
   // Returns the id whose value is the same as |object_to_copy| except its type
   // is |new_type_id|.  Any instructions needed to generate this value will be
-  // inserted before |insertion_position|.
+  // inserted before |insertion_position|. Returns 0 if a copy could not be
+  // done.
   uint32_t GenerateCopy(Instruction* object_to_copy, uint32_t new_type_id,
                         Instruction* insertion_position);
 

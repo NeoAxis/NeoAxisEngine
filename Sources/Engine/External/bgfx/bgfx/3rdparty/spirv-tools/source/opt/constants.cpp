@@ -302,6 +302,8 @@ const Constant* ConstantManager::GetConstantFromInst(const Instruction* inst) {
                                 inst->GetInOperand(i).words.end());
   }
 
+  const Type* type = GetType(inst);
+
   switch (inst->opcode()) {
     // OpConstant{True|False} have the value embedded in the opcode. So they
     // are not handled by the for-loop above. Here we add the value explicitly.
@@ -316,11 +318,20 @@ const Constant* ConstantManager::GetConstantFromInst(const Instruction* inst) {
     case spv::Op::OpConstantComposite:
     case spv::Op::OpSpecConstantComposite:
       break;
+    // Replicated composite constant instructions have a single operand for the
+    // value. We need to replicate it as many times as there are components.
+    case spv::Op::OpConstantCompositeReplicateEXT:
+    case spv::Op::OpSpecConstantCompositeReplicateEXT: {
+      uint32_t value = literal_words_or_ids[0];
+      literal_words_or_ids.assign(
+          static_cast<size_t>(type->NumberOfComponents()), value);
+      break;
+    }
     default:
       return nullptr;
   }
 
-  return GetConstant(GetType(inst), literal_words_or_ids);
+  return GetConstant(type, literal_words_or_ids);
 }
 
 std::unique_ptr<Instruction> ConstantManager::CreateInstruction(
@@ -461,7 +472,9 @@ const Constant* ConstantManager::GetNumericVectorConstantWithWords(
 
 uint32_t ConstantManager::GetFloatConstId(float val) {
   const Constant* c = GetFloatConst(val);
-  return GetDefiningInstruction(c)->result_id();
+  Instruction* inst = GetDefiningInstruction(c);
+  if (inst == nullptr) return 0;
+  return inst->result_id();
 }
 
 const Constant* ConstantManager::GetFloatConst(float val) {
@@ -473,7 +486,9 @@ const Constant* ConstantManager::GetFloatConst(float val) {
 
 uint32_t ConstantManager::GetDoubleConstId(double val) {
   const Constant* c = GetDoubleConst(val);
-  return GetDefiningInstruction(c)->result_id();
+  Instruction* inst = GetDefiningInstruction(c);
+  if (inst == nullptr) return 0;
+  return inst->result_id();
 }
 
 const Constant* ConstantManager::GetDoubleConst(double val) {
@@ -498,7 +513,7 @@ const Constant* ConstantManager::GetIntConst(uint64_t val, int32_t bitWidth,
     int32_t num_of_bit_to_ignore = 64 - bitWidth;
     val = static_cast<int64_t>(val << num_of_bit_to_ignore) >>
           num_of_bit_to_ignore;
-  } else {
+  } else if (bitWidth < 64) {
     // Clear the upper bit that are not used.
     uint64_t mask = ((1ull << bitWidth) - 1);
     val &= mask;
@@ -511,7 +526,7 @@ const Constant* ConstantManager::GetIntConst(uint64_t val, int32_t bitWidth,
   // If the value is more than 32-bit, we need to split the operands into two
   // 32-bit integers.
   return GetConstant(
-      int_type, {static_cast<uint32_t>(val >> 32), static_cast<uint32_t>(val)});
+      int_type, {static_cast<uint32_t>(val), static_cast<uint32_t>(val >> 32)});
 }
 
 uint32_t ConstantManager::GetUIntConstId(uint32_t val) {
@@ -523,6 +538,28 @@ uint32_t ConstantManager::GetUIntConstId(uint32_t val) {
 uint32_t ConstantManager::GetNullConstId(const Type* type) {
   const Constant* c = GetConstant(type, {});
   return GetDefiningInstruction(c)->result_id();
+}
+
+const Constant* ConstantManager::GenerateIntegerConstant(
+    const analysis::Integer* integer_type, uint64_t result) {
+  assert(integer_type != nullptr);
+
+  std::vector<uint32_t> words;
+  if (integer_type->width() == 64) {
+    // In the 64-bit case, two words are needed to represent the value.
+    words = {static_cast<uint32_t>(result),
+             static_cast<uint32_t>(result >> 32)};
+  } else {
+    // In all other cases, only a single word is needed.
+    assert(integer_type->width() <= 32);
+    if (integer_type->IsSigned()) {
+      result = utils::SignExtendValue(result, integer_type->width());
+    } else {
+      result = utils::ZeroExtendValue(result, integer_type->width());
+    }
+    words = {static_cast<uint32_t>(result)};
+  }
+  return GetConstant(integer_type, words);
 }
 
 std::vector<const analysis::Constant*> Constant::GetVectorComponents(

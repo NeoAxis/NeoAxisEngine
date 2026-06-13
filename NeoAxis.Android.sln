@@ -5,16 +5,12 @@ VisualStudioVersion = 18.2.11415.280
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libNeoAxisCoreNative", "Sources\Engine\NeoAxis.Core.Native\NeoAxisCoreNative.Android.vcxproj", "{A49B1604-5C02-3455-8543-8A45A6E6C450}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libbgfx", "Sources\Engine\External\bgfx\bgfx\.build\projects\vs2017-android\bgfx.vcxproj", "{85F5B410-5450-430A-A385-56231A8640D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Player.Android", "Project\Sources\NeoAxis.Player.Android\NeoAxis.Player.Android.csproj", "{147E910F-7E64-1746-3261-50BAA3E19C35}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A49B1604-5C02-3455-8543-8A45A6E6C450} = {A49B1604-5C02-3455-8543-8A45A6E6C450}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Player.Android", "Project\Sources\NeoAxis.Player.Android\NeoAxis.Player.Android.csproj", "{147E910F-7E64-1746-3261-50BAA3E19C35}"
-	ProjectSection(ProjectDependencies) = postProject
-		{85F5B410-5450-430A-A385-56231A8640D3} = {85F5B410-5450-430A-A385-56231A8640D3}
-		{A49B1604-5C02-3455-8543-8A45A6E6C450} = {A49B1604-5C02-3455-8543-8A45A6E6C450}
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Core", "Sources\Engine\NeoAxis.Core\NeoAxis.Core.csproj", "{E766770E-5DE9-3354-786D-9676B04E7559}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,14 +28,6 @@ Global
 		{A49B1604-5C02-3455-8543-8A45A6E6C450}.Release|ARM.Build.0 = Release|ARM
 		{A49B1604-5C02-3455-8543-8A45A6E6C450}.Release|ARM64.ActiveCfg = Release|ARM64
 		{A49B1604-5C02-3455-8543-8A45A6E6C450}.Release|ARM64.Build.0 = Release|ARM64
-		{85F5B410-5450-430A-A385-56231A8640D3}.Debug|ARM.ActiveCfg = Debug|ARM
-		{85F5B410-5450-430A-A385-56231A8640D3}.Debug|ARM.Build.0 = Debug|ARM
-		{85F5B410-5450-430A-A385-56231A8640D3}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{85F5B410-5450-430A-A385-56231A8640D3}.Debug|ARM64.Build.0 = Debug|ARM64
-		{85F5B410-5450-430A-A385-56231A8640D3}.Release|ARM.ActiveCfg = Release|ARM
-		{85F5B410-5450-430A-A385-56231A8640D3}.Release|ARM.Build.0 = Release|ARM
-		{85F5B410-5450-430A-A385-56231A8640D3}.Release|ARM64.ActiveCfg = Release|ARM64
-		{85F5B410-5450-430A-A385-56231A8640D3}.Release|ARM64.Build.0 = Release|ARM64
 		{147E910F-7E64-1746-3261-50BAA3E19C35}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{147E910F-7E64-1746-3261-50BAA3E19C35}.Debug|ARM.Build.0 = Debug|Any CPU
 		{147E910F-7E64-1746-3261-50BAA3E19C35}.Debug|ARM.Deploy.0 = Debug|Any CPU
@@ -52,6 +40,14 @@ Global
 		{147E910F-7E64-1746-3261-50BAA3E19C35}.Release|ARM64.ActiveCfg = Release|Any CPU
 		{147E910F-7E64-1746-3261-50BAA3E19C35}.Release|ARM64.Build.0 = Release|Any CPU
 		{147E910F-7E64-1746-3261-50BAA3E19C35}.Release|ARM64.Deploy.0 = Release|Any CPU
+		{E766770E-5DE9-3354-786D-9676B04E7559}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{E766770E-5DE9-3354-786D-9676B04E7559}.Debug|ARM.Build.0 = Debug|Any CPU
+		{E766770E-5DE9-3354-786D-9676B04E7559}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{E766770E-5DE9-3354-786D-9676B04E7559}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{E766770E-5DE9-3354-786D-9676B04E7559}.Release|ARM.ActiveCfg = Release|Any CPU
+		{E766770E-5DE9-3354-786D-9676B04E7559}.Release|ARM.Build.0 = Release|Any CPU
+		{E766770E-5DE9-3354-786D-9676B04E7559}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{E766770E-5DE9-3354-786D-9676B04E7559}.Release|ARM64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

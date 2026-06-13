@@ -715,7 +715,7 @@ namespace Internal.SharpBgfx
 #pragma warning restore IDE1006 // Naming Styles
 
         //!!!!betauser
-        public const string DllName = "bgfx";
+        public const string DllName = "libNeoAxisCoreNative";
         //#if DEBUG
         //        public const string DllName = "bgfx_debug.dll";
         //#else

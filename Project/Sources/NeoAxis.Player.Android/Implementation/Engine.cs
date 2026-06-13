@@ -66,6 +66,13 @@ namespace NeoAxis.Player.Android
 		{
 			try
 			{
+				new PlatformFunctionalityAndroid();
+				EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Simulation;
+
+				//preload native library
+				Java.Lang.JavaSystem.LoadLibrary( "NeoAxisCoreNative" );
+
+				//subscribe to log events
 				Log.Handlers.InvisibleInfoHandler += Log_InvisibleInfoHandler;
 				Log.Handlers.InfoHandler += Log_InfoHandler;
 				Log.Handlers.WarningHandler += Log_WarningHandler;
@@ -73,8 +80,8 @@ namespace NeoAxis.Player.Android
 
 				//EngineApp.AppCreateBefore += EngineApp_AppCreateBefore;
 
-				new PlatformFunctionalityAndroid();
-				EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Simulation;
+				//new PlatformFunctionalityAndroid();
+				//EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Simulation;
 
 				ExtractProjectZip( out var projectDir );
 

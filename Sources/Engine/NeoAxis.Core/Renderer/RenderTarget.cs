@@ -97,14 +97,10 @@ namespace NeoAxis
 		{
 			EngineThreading.CheckMainThread();
 
-			//!!!!!!как указывать rendering pipeline?
-
 			unsafe
 			{
-				//OgreViewport* realViewport = (OgreViewport*)OgreRenderTarget.addViewport( realObject, insertIndex );
-				Viewport viewport = new Viewport();// realViewport );
+				var viewport = new Viewport();
 				viewport.parent = this;
-				//viewport.UpdateNativeBackgroundColor();
 
 				if( insertIndex >= viewports.Count )
 					viewports.Add( viewport );

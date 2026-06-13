@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx/blob/master/LICENSE
  */
 
@@ -1468,20 +1468,20 @@ namespace bgfx
 		uint32_t m_num;
 	};
 
-	constexpr uint8_t  kConstantOpcodeTypeShift = 27;
-	constexpr uint32_t kConstantOpcodeTypeMask  = UINT32_C(0xf8000000);
-	constexpr uint8_t  kConstantOpcodeLocShift  = 11;
-	constexpr uint32_t kConstantOpcodeLocMask   = UINT32_C(0x07fff800);
-	constexpr uint8_t  kConstantOpcodeNumShift  = 1;
-	constexpr uint32_t kConstantOpcodeNumMask   = UINT32_C(0x000007fe);
-	constexpr uint8_t  kConstantOpcodeCopyShift = 0;
-	constexpr uint32_t kConstantOpcodeCopyMask  = UINT32_C(0x00000001);
+	static constexpr uint8_t  kConstantOpcodeTypeShift = 27;
+	static constexpr uint32_t kConstantOpcodeTypeMask  = UINT32_C(0xf8000000);
+	static constexpr uint8_t  kConstantOpcodeLocShift  = 11;
+	static constexpr uint32_t kConstantOpcodeLocMask   = UINT32_C(0x07fff800);
+	static constexpr uint8_t  kConstantOpcodeNumShift  = 1;
+	static constexpr uint32_t kConstantOpcodeNumMask   = UINT32_C(0x000007fe);
+	static constexpr uint8_t  kConstantOpcodeCopyShift = 0;
+	static constexpr uint32_t kConstantOpcodeCopyMask  = UINT32_C(0x00000001);
 
-	constexpr uint8_t kUniformFragmentBit  = 0x10;
-	constexpr uint8_t kUniformSamplerBit   = 0x20;
-	constexpr uint8_t kUniformReadOnlyBit  = 0x40;
-	constexpr uint8_t kUniformCompareBit   = 0x80;
-	constexpr uint8_t kUniformMask = 0
+	static constexpr uint8_t kUniformFragmentBit  = 0x10;
+	static constexpr uint8_t kUniformSamplerBit   = 0x20;
+	static constexpr uint8_t kUniformReadOnlyBit  = 0x40;
+	static constexpr uint8_t kUniformCompareBit   = 0x80;
+	static constexpr uint8_t kUniformMask = 0
 		| kUniformFragmentBit
 		| kUniformSamplerBit
 		| kUniformReadOnlyBit

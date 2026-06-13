@@ -17,7 +17,7 @@ namespace NeoAxis
 		{
 			//!!!!make better API
 
-			const string library = "NeoAxisCoreNative";
+			const string library = "libNeoAxisCoreNative";
 
 			public delegate void ClickHandler( IntPtr obj );
 

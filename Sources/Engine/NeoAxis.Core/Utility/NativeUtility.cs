@@ -15,7 +15,7 @@ namespace NeoAxis
 	/// </summary>
 	public static class NativeUtility
 	{
-		internal const string library = "NeoAxisCoreNative";
+		internal const string library = "libNeoAxisCoreNative";
 		internal const CallingConvention convention = CallingConvention.Cdecl;
 
 		static bool nativeWrapperLibraryLoaded;
@@ -380,14 +380,19 @@ namespace NeoAxis
 
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
 			{
-				//!!!!maybe rename libraries to remove adding "lib" prefix
-
-				if( libraryName == "NeoAxisCoreNative" || libraryName == "bgfx" )
+				if( libraryName == "libNeoAxisCoreNative" )
 				{
-					var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "lib" + libraryName + ".so" );
+					var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, libraryName + ".so" );
 					TryLoadReflection( path, out libHandle );
 					//NativeLibrary.TryLoad( path, out libHandle );
 				}
+
+				//if( libraryName == "NeoAxisCoreNative" || libraryName == "bgfx" )
+				//{
+				//	var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "lib" + libraryName + ".so" );
+				//	TryLoadReflection( path, out libHandle );
+				//	//NativeLibrary.TryLoad( path, out libHandle );
+				//}
 			}
 			return libHandle;
 		}

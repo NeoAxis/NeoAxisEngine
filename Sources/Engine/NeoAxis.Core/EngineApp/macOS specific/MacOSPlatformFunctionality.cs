@@ -73,7 +73,7 @@ namespace Internal
 
 		struct Wrapper
 		{
-			public const string library = "NeoAxisCoreNative";
+			public const string library = "libNeoAxisCoreNative";
 			public const CallingConvention convention = CallingConvention.Cdecl;
 		}
 

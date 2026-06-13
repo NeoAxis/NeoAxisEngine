@@ -280,8 +280,8 @@ namespace NeoAxis
 		{
 			if( !nativeDLLsPreloaded )
 			{
-				NativeUtility.PreloadLibrary( "NeoAxisCoreNative" );
-				NativeUtility.PreloadLibrary( Internal.SharpBgfx.NativeMethods.DllName );
+				NativeUtility.PreloadLibrary( "libNeoAxisCoreNative" );
+				//NativeUtility.PreloadLibrary( Internal.SharpBgfx.NativeMethods.DllName );
 				nativeDLLsPreloaded = true;
 			}
 		}
