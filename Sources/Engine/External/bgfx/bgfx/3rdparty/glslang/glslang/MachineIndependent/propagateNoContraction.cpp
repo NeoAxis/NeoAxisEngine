@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2015-2016 Google, Inc.
 //
@@ -867,3 +870,6 @@ void PropagateNoContraction(const glslang::TIntermediate& intermediate)
     }
 }
 }
+
+//!!!!betauser
+#endif

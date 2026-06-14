@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -119,3 +122,6 @@ void AdaptPhiInstructionsForRemovedEdge(uint32_t from_id,
 
 }  // namespace reduce
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

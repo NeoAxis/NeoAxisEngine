@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2016 Google Inc.
 // Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights
 // reserved.
@@ -1333,3 +1336,6 @@ void TypeManager::ReplaceType(Type* new_type, Type* original_type) {
 }  // namespace analysis
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

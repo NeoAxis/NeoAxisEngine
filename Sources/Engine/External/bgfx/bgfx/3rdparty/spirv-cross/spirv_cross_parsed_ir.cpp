@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /*
  * Copyright 2018-2021 Arm Limited
  * SPDX-License-Identifier: Apache-2.0 OR MIT
@@ -1121,3 +1124,6 @@ void ParsedIR::make_constant_null(uint32_t id, uint32_t type, bool add_to_typed_
 }
 
 } // namespace SPIRV_CROSS_NAMESPACE
+
+//!!!!betauser
+#endif

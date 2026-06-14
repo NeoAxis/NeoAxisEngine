@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2014-2016 LunarG, Inc.
 // Copyright (C) 2015-2020 Google, Inc.
@@ -11929,3 +11932,6 @@ void GlslangToSpv(const TIntermediate& intermediate, std::vector<unsigned int>& 
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

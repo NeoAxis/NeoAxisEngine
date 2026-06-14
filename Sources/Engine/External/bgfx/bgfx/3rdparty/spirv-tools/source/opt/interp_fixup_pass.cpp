@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2021 The Khronos Group Inc.
 // Copyright (c) 2021 Valve Corporation
 // Copyright (c) 2021 LunarG Inc.
@@ -120,3 +123,6 @@ Pass::Status InterpFixupPass::Process() {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

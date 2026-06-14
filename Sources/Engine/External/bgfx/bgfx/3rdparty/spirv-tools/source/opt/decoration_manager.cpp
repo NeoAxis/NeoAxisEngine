@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2017 Pierre Moreau
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -643,3 +646,6 @@ bool operator==(const DecorationManager& lhs, const DecorationManager& rhs) {
 }  // namespace analysis
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

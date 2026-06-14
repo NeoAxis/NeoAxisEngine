@@ -1,3 +1,9 @@
+//!!!!betauser
+#ifdef SPIRV
+
+//!!!!betauser
+#ifdef _WIN32
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // All rights reserved.
@@ -65,3 +71,9 @@ void OS_DumpMemoryCounters()
 }
 
 } // namespace glslang
+
+//!!!!betauser
+#endif
+
+//!!!!betauser
+#endif

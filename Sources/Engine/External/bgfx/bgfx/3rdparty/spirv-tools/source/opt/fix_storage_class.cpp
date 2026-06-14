@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2019 Google LLC
 // Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights
 // reserved.
@@ -368,3 +371,6 @@ uint32_t FixStorageClass::WalkAccessChainType(Instruction* inst, uint32_t id) {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

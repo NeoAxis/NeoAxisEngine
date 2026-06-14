@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -520,3 +523,6 @@ Pass::Status LoopFissionPass::Process() {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

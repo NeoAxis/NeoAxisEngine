@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2015-2020 The Khronos Group Inc.
 // Modifications Copyright (C) 2020 Advanced Micro Devices, Inc. All rights
 // reserved.
@@ -984,3 +987,6 @@ size_t spv_strnlen_s(const char* str, size_t strsz) {
   }
   return strsz;
 }
+
+//!!!!betauser
+#endif

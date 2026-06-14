@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2013 LunarG, Inc.
 //
@@ -196,3 +199,6 @@ void TParseContext::constantIndexExpressionCheck(TIntermNode* index)
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

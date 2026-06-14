@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2016 Google, Inc.
 //
@@ -129,3 +132,6 @@ void spv::inReadableOrder(Block* root, std::function<void(Block*, spv::ReachReas
 {
     ReadableOrderTraverser(callback).visit(root, spv::ReachViaControlFlow, nullptr);
 }
+
+//!!!!betauser
+#endif

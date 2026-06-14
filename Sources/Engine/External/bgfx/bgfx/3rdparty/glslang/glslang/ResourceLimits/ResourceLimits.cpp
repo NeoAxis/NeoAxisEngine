@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2016 Google, Inc.
 //
@@ -540,3 +543,6 @@ const TBuiltInResource* GetDefaultResources()
 {
     return &DefaultTBuiltInResource;
 }
+
+//!!!!betauser
+#endif

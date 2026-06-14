@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // All rights reserved.
@@ -304,3 +307,6 @@ void TAllocation::checkAllocList() const
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

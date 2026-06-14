@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // All rights reserved.
@@ -111,3 +114,6 @@ void TInfoSinkBase::append(const TString& t)
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

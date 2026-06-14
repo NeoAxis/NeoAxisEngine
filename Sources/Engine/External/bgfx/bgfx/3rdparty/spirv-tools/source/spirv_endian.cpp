@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2015-2016 The Khronos Group Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,3 +78,6 @@ bool spvIsHostEndian(spv_endianness_t endian) {
          ((SPV_ENDIANNESS_BIG == endian) &&
           (I32_ENDIAN_BIG == I32_ENDIAN_HOST));
 }
+
+//!!!!betauser
+#endif

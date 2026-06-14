@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // Copyright (C) 2013 LunarG, Inc.
@@ -183,3 +186,6 @@ void TPpContext::UngetToken(int token, TPpToken* ppToken)
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

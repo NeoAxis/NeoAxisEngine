@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /*
  * Copyright 2018-2021 Bradley Austin Davis
  * SPDX-License-Identifier: Apache-2.0 OR MIT
@@ -719,3 +722,6 @@ string CompilerReflection::to_member_name(const SPIRType &type, uint32_t index) 
 	else
 		return join("_m", index);
 }
+
+//!!!!betauser
+#endif

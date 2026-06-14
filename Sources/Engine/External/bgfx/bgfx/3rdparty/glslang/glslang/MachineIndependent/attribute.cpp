@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2017 LunarG, Inc.
 // Copyright (C) 2018 Google, Inc.
@@ -374,3 +377,6 @@ void TParseContext::handleFunctionAttributes(const TSourceLoc& loc, const TAttri
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

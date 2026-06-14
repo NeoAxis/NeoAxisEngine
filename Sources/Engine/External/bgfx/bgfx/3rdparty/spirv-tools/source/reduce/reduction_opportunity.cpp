@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,3 +28,6 @@ void ReductionOpportunity::TryToApply() {
 
 }  // namespace reduce
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

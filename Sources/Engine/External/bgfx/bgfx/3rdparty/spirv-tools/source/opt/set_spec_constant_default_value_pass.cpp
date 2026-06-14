@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2016 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -388,3 +391,6 @@ SetSpecConstantDefaultValuePass::ParseDefaultValuesString(const char* str) {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

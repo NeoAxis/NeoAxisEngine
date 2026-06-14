@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2019 The Khronos Group Inc.
 // Copyright (c) 2019 Valve Corporation
 // Copyright (c) 2019 LunarG Inc.
@@ -646,3 +649,6 @@ void ConvertToHalfPass::Initialize() {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

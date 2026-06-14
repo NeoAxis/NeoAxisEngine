@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // Copyright (C) 2016 Google, Inc.
@@ -769,3 +772,6 @@ void TParseContextBase::finish()
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

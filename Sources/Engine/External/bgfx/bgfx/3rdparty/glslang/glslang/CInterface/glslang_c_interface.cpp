@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /**
     This code is based on the glslang_c_interface implementation by Viktor Latypov
 **/
@@ -551,3 +554,6 @@ GLSLANG_EXPORT void glslang_glsl_resolver_delete(glslang_resolver_t* resolver)
 
     delete reinterpret_cast<glslang::TDefaultGlslIoResolver* >(resolver);
 }
+
+//!!!!betauser
+#endif

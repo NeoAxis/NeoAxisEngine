@@ -1072,10 +1072,6 @@ namespace NeoAxis
 					if( Path.GetExtension( virtualFileName ).ToLower() == ".fbx" )
 					{
 						//FBX
-
-						////settings.loadAnimations = true;
-						//settings.frameStep = 0.25;
-
 						EditorAssemblyInterface.Instance.ImportFBX( settings, out error );
 						//Import.FBX.ImportFBX.DoImport( settings, out error );
 						if( !string.IsNullOrEmpty( error ) )
@@ -1084,12 +1080,8 @@ namespace NeoAxis
 					else
 					{
 						//Assimp
-
-						//settings.loadAnimations = false;
-
 						ImportAssimp.DoImport( settings, out error );
 						//EditorAssemblyInterface.Instance.ImportAssimp( settings, out error );
-
 						if( !string.IsNullOrEmpty( error ) )
 							return false;
 					}

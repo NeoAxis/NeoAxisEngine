@@ -58,6 +58,12 @@ namespace bgfx
 #	endif
 #endif
 
+
+//!!!!betauser
+#ifdef SRIRV
+#define SHADERC_CONFIG_HAS_GLSLANG_SPIRV_ONLY 1
+#endif
+
 //!!!!betauser
 //#ifndef SHADERC_CONFIG_HAS_GLSLANG
 //#	if __has_include(<ShaderLang.h>) \
@@ -193,6 +199,9 @@ namespace bgfx
 
 		bool optimize;
 		uint32_t optimizationLevel;
+
+		////!!!!betauser
+		//bool compileToSpirv;
 	};
 
 	typedef std::vector<Uniform> UniformArray;

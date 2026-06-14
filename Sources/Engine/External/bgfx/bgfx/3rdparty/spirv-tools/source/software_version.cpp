@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2015-2016 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,3 +28,6 @@ const char* kBuildVersions[] = {
 const char* spvSoftwareVersionString(void) { return kBuildVersions[0]; }
 
 const char* spvSoftwareVersionDetailsString(void) { return kBuildVersions[1]; }
+
+//!!!!betauser
+#endif

@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /**
 BSD 2-Clause License
 
@@ -54,3 +57,6 @@ void glslang_decode_resource_limits(glslang_resource_t* resources, char* config)
 {
     DecodeResourceLimits(reinterpret_cast<TBuiltInResource*>(resources), config);
 }
+
+//!!!!betauser
+#endif

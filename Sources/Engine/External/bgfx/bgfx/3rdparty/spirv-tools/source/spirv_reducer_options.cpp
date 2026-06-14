@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,3 +52,6 @@ SPIRV_TOOLS_EXPORT void spvReducerOptionsSetTargetFunction(
     spv_reducer_options options, uint32_t target_function) {
   options->target_function = target_function;
 }
+
+//!!!!betauser
+#endif

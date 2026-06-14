@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -131,3 +134,6 @@ uint32_t GetNumberOfElementsForArrayOrStruct(IRContext* context,
 }  // namespace descsroautil
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /*
  * Copyright 2016-2021 Arm Limited
  * SPDX-License-Identifier: Apache-2.0 OR MIT
@@ -523,3 +526,6 @@ void DominatorBuilder::lift_continue_block_dominator()
 		dominator = cfg.get_function().entry_block;
 }
 } // namespace SPIRV_CROSS_NAMESPACE
+
+//!!!!betauser
+#endif

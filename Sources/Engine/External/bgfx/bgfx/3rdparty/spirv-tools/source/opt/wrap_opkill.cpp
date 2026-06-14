@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2019 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -199,3 +202,6 @@ uint32_t WrapOpKill::GetOwningFunctionsReturnType(Instruction* inst) {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

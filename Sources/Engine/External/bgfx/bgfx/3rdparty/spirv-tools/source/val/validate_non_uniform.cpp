@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -494,3 +497,6 @@ spv_result_t NonUniformPass(ValidationState_t& _, const Instruction* inst) {
 
 }  // namespace val
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

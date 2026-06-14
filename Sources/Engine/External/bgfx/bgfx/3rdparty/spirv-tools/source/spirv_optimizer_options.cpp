@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2017 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,3 +52,6 @@ SPIRV_TOOLS_EXPORT void spvOptimizerOptionsSetPreserveSpecConstants(
     spv_optimizer_options options, bool val) {
   options->preserve_spec_constants_ = val;
 }
+
+//!!!!betauser
+#endif

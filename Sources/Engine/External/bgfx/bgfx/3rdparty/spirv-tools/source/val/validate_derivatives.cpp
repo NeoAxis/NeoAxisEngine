@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2017 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -115,3 +118,6 @@ spv_result_t DerivativesPass(ValidationState_t& _, const Instruction* inst) {
 
 }  // namespace val
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

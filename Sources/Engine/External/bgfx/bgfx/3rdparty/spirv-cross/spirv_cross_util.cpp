@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /*
  * Copyright 2015-2021 Arm Limited
  * SPDX-License-Identifier: Apache-2.0 OR MIT
@@ -75,3 +78,6 @@ void inherit_combined_sampler_bindings(Compiler &compiler)
 	}
 }
 } // namespace spirv_cross_util
+
+//!!!!betauser
+#endif

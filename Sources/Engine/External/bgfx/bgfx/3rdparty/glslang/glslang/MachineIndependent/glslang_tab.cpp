@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison implementation for Yacc-like parsers in C
@@ -13317,3 +13320,6 @@ yyreturnlab:
 
 #line 4666 "MachineIndependent/glslang.y"
 
+
+//!!!!betauser
+#endif

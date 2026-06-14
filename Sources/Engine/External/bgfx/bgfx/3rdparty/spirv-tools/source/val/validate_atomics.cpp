@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2017 Google Inc.
 // Modifications Copyright (C) 2020 Advanced Micro Devices, Inc. All rights
 // reserved.
@@ -439,3 +442,6 @@ spv_result_t AtomicsPass(ValidationState_t& _, const Instruction* inst) {
 
 }  // namespace val
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

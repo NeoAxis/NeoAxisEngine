@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // Copyright (C) 2013 LunarG, Inc.
@@ -2176,3 +2179,6 @@ int TScanContext::secondGenerationImage()
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2024 NVIDIA Corporation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -181,3 +184,6 @@ spv_result_t TensorLayoutPass(ValidationState_t& _, const Instruction* inst) {
 
 }  // namespace val
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

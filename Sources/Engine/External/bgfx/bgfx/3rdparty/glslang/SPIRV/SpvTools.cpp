@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2014-2016 LunarG, Inc.
 // Copyright (C) 2018-2020 Google, Inc.
@@ -315,4 +318,7 @@ void SpirvToolsStripDebugInfo(const glslang::TIntermediate& intermediate,
 
 } // end namespace glslang
 
+#endif
+
+//!!!!betauser
 #endif

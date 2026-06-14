@@ -211,15 +211,31 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 		break;
 
 	case ShaderModel_Vulkan:
+
 		switch (shaderType)
 		{
+
+		//!!!!?
+
+		case ShaderType_Vertex:instance->options.profile = "spirv15-12"; break;
+		case ShaderType_Fragment:instance->options.profile = "spirv15-12"; break;
+		case ShaderType_Compute:instance->options.profile = "spirv15-12"; break;
+
+		//case ShaderType_Vertex:instance->options.profile = "spirv"; break;
+		//case ShaderType_Fragment:instance->options.profile = "spirv"; break;
+		//case ShaderType_Compute:instance->options.profile = "spirv"; break;
+
 		//case ShaderType_Vertex:instance->options.profile = "spirv16-13"; break;
 		//case ShaderType_Fragment:instance->options.profile = "spirv16-13"; break;
 		//case ShaderType_Compute:instance->options.profile = "spirv16-13"; break;
 
-		case ShaderType_Vertex:instance->options.profile = "spirv"; break;
-		case ShaderType_Fragment:instance->options.profile = "spirv"; break;
-		case ShaderType_Compute:instance->options.profile = "spirv"; break;
+		//{ ShadingLang::SpirV, 1010,	"spirv" },
+		//{ ShadingLang::SpirV, 1010,	"spirv10-10" },
+		//{ ShadingLang::SpirV, 1311,   "spirv13-11" },
+		//{ ShadingLang::SpirV, 1411,   "spirv14-11" },
+		//{ ShadingLang::SpirV, 1512,   "spirv15-12" },
+		//{ ShadingLang::SpirV, 1613,   "spirv16-13" },
+
 
 		default: ::Fatal2("ShaderC_New: impl."); break;
 		}

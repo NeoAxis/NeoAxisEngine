@@ -66,8 +66,8 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libtheora\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbisfile\include;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;..\External\SDL\include;..\External\bgfx\bx\include\compat\msvc;..\External\bgfx\bgfx\3rdparty;..\External\bgfx\bx\include;..\External\bgfx\bimg\include;..\External\bgfx\bgfx\3rdparty\dx__sdk\include;..\External\bgfx\bgfx\3rdparty\khronos;..\External\bgfx\bgfx\include;..\External\bgfx\bgfx\3rdparty\fcpp;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Public;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Include;..\External\bgfx\bgfx\3rdparty\glslang;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\src\glsl;..\External\bgfx\bgfx\3rdparty\spirv-cross;..\External\bgfx\bgfx\3rdparty\spirv-tools\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include\c99;..\External\bgfx\bgfx\3rdparty\dxc\inc;..\External\bgfx\bimg\3rdparty\astc-encoder;..\External\bgfx\bimg\3rdparty\astc-encoder\include;..\External\bgfx\..\..\NeoAxis.Core.Native\MemoryManager;..\External\bgfx\bx\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;INCLUDE_LIB_OPENEXR;INCLUDE_LIB_RAW;INCLUDE_LIB_WEBP;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;NDEBUG;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BX_CONFIG_DEBUG=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libtheora\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbisfile\include;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;..\External\SDL\include;..\External\bgfx\bx\include\compat\msvc;..\External\bgfx\bgfx\3rdparty;..\External\bgfx\bx\include;..\External\bgfx\bimg\include;..\External\bgfx\bgfx\3rdparty\dx__sdk\include;..\External\bgfx\bgfx\3rdparty\khronos;..\External\bgfx\bgfx\include;..\External\bgfx\bgfx\3rdparty\fcpp;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Public;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Include;..\External\bgfx\bgfx\3rdparty\glslang;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\src\glsl;..\External\bgfx\bgfx\3rdparty\spirv-cross;..\External\bgfx\bgfx\3rdparty\spirv-tools\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include\c99;..\External\bgfx\bgfx\3rdparty\dxc\inc;..\External\bgfx\bimg\3rdparty\astc-encoder;..\External\bgfx\bimg\3rdparty\astc-encoder\include;..\External\bgfx\..\..\NeoAxis.Core.Native\MemoryManager;..\External\bgfx\bx\3rdparty;..\External\bgfx\bgfx\3rdparty\spirv-tools;..\External\bgfx\bgfx\3rdparty\spirv-headers\include;..\External\bgfx\bgfx\3rdparty\spirv-tools\include\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;INCLUDE_LIB_OPENEXR;INCLUDE_LIB_RAW;INCLUDE_LIB_WEBP;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_WIN32;_HAS_EXCEPTIONS=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BX_CONFIG_DEBUG=0;ENABLE_OPT=1;SPIRV;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -88,7 +88,7 @@
       <OutputFile>$(OutDir)libNeoAxisCoreNative.dll</OutputFile>
       <Version>0.99</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\Lib\Windows_x64;..\External\DirectX\Lib\x64;..\External\bgfx\bgfx\3rdparty\lib\win64_vs2017;..\External\bgfx\bgfx\3rdparty\nvidia-vxgi\lib;..\External\bgfx\bgfx\3rdparty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Lib\Windows_x64;..\External\DirectX\Lib\x64;..\External\bgfx\bgfx\3rdparty\lib\win64_vs2017;..\External\bgfx\bgfx\3rdparty\nvidia-vxgi\lib;..\External\bgfx\bgfx\3rdparty\dxc\lib\x64;..\External\bgfx\bgfx\3rdparty\libs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>Export.def</ModuleDefinitionFile>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -117,8 +117,8 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libtheora\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbisfile\include;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;..\External\bgfx\bx\include\compat\msvc;..\External\bgfx\bgfx\3rdparty;..\External\bgfx\bx\include;..\External\bgfx\bimg\include;..\External\bgfx\bgfx\3rdparty\dx__sdk\include;..\External\bgfx\bgfx\3rdparty\khronos;..\External\bgfx\bgfx\include;..\External\bgfx\bgfx\3rdparty\fcpp;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Public;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Include;..\External\bgfx\bgfx\3rdparty\glslang;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\src\glsl;..\External\bgfx\bgfx\3rdparty\spirv-cross;..\External\bgfx\bgfx\3rdparty\spirv-tools\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include\c99;..\External\bgfx\bgfx\3rdparty\dxc\inc;..\External\bgfx\bimg\3rdparty\astc-encoder;..\External\bgfx\bimg\3rdparty\astc-encoder\include;..\External\bgfx\..\..\NeoAxis.Core.Native\MemoryManager;..\External\bgfx\bx\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;INCLUDE_LIB_OPENEXR;INCLUDE_LIB_RAW;INCLUDE_LIB_WEBP;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_DEBUG;_WIN32;_HAS_EXCEPTIONS=0;_HAS_ITERATOR_DEBUGGING=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SECURE_SCL=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ImageLibrary;..\NativeMemoryManager;..\External\FreeImage\Source;..\External\FreeType\include;NeoAxis;NeoAxis\hacd\HACD_Lib\inc;NativeWrapper;MemoryManager;MaskedOcclusionCulling;.\;..\External\OggVorbisTheora\libogg\include;..\External\OggVorbisTheora\libtheora\include;..\External\OggVorbisTheora\libvorbis\include;..\External\OggVorbisTheora\libvorbisfile\include;..\External\FreeImage\Source\FreeImageToolkit;..\External\FreeImage\Source\LibJPEG;include;..\External\FreeImage\Source\LibOpenJPEG;..\External\FreeImage\Source\LibPNG;..\External\FreeImage\Source\LibRawLite;..\External\FreeImage\Source\LibRawLite\dcraw;..\External\FreeImage\Source\LibRawLite\internal;..\External\FreeImage\Source\LibRawLite\libraw;..\External\FreeImage\Source\LibRawLite\src;..\External\FreeImage\Source\LibTIFF;..\External\FreeImage\Source\LibWebP;..\External\FreeImage\Source\OpenEXR;..\External\FreeImage\Source\OpenEXR\Half;..\External\FreeImage\Source\OpenEXR\Iex;..\External\FreeImage\Source\OpenEXR\IexMath;..\External\FreeImage\Source\OpenEXR\IlmImf;..\External\FreeImage\Source\OpenEXR\IlmThread;..\External\FreeImage\Source\OpenEXR\Imath;..\External\FreeImage\Source\ZLib;..\External\OpenALSoft;..\External\OpenALSoft\include;..\External\OpenALSoft\build;..\External\OpenALSoft\alc;..\External\OpenALSoft\common;..\External\OpenALSoft\al;..\External\bgfx\bx\include\compat\msvc;..\External\bgfx\bgfx\3rdparty;..\External\bgfx\bx\include;..\External\bgfx\bimg\include;..\External\bgfx\bgfx\3rdparty\dx__sdk\include;..\External\bgfx\bgfx\3rdparty\khronos;..\External\bgfx\bgfx\include;..\External\bgfx\bgfx\3rdparty\fcpp;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Public;..\External\bgfx\bgfx\3rdparty\glslang\glslang\Include;..\External\bgfx\bgfx\3rdparty\glslang;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\src\glsl;..\External\bgfx\bgfx\3rdparty\spirv-cross;..\External\bgfx\bgfx\3rdparty\spirv-tools\include;..\External\bgfx\bgfx\3rdparty\glsl-optimizer\include\c99;..\External\bgfx\bgfx\3rdparty\dxc\inc;..\External\bgfx\bimg\3rdparty\astc-encoder;..\External\bgfx\bimg\3rdparty\astc-encoder\include;..\External\bgfx\..\..\NeoAxis.Core.Native\MemoryManager;..\External\bgfx\bx\3rdparty;..\External\bgfx\bgfx\3rdparty\spirv-tools;..\External\bgfx\bgfx\3rdparty\spirv-headers\include;..\External\bgfx\bgfx\3rdparty\spirv-tools\include\generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_MT;OGRE_NONCLIENT_BUILD;OGRE_PARTICLEFXPLUGIN_EXPORTS;OGRE_MEMORY_TRACKER_DEBUG_MODE;_STLP_DONT_USE_AUTO_LINK;_STLP_DESIGNATED_DLL;_HAS_ITERATOR_DEBUGGING=0;_SECURE_SCL=0;NVTT_EXPORTS;NVTT_SHARED;FREEIMAGE_LIB;NATIVEMEMORYMANAGER_EXPORTS;LIBOGG_EXPORTS;LIBVORBIS_EXPORTS;LIBVORBISFILE_EXPORTS;LIBTHEORA_EXPORTS;JPH_DOUBLE_PRECISION;JPH_DEBUG_RENDERER;JPH_USE_SSE4_1;JPH_FLOA_______disabled_______TING_POINT_EXCEPTIONS_ENABLED;_HAS_TR1_NAMESPACE;FT2_BUILD_LIBRARY;OPJ_STATIC;LIBRAW_NODLL;LIBRAW_LIBRARY_BUILD;USE_JPIP;DISABLE_PERF_MEASUREMENT;_HAS_AUTO_PTR_ETC=1;AL_BUILD_LIBRARY;AL_ALEXT_PROTOTYPES;_LARGEFILE_SOURCE;_LARGE_FILES;_CRT_SECURE_NO_WARNINGS;strcasecmp=_stricmp;strncasecmp=_strnicmp;OpenAL_EXPORTS;NOMINMAX;INCLUDE_LIB_OPENEXR;INCLUDE_LIB_RAW;INCLUDE_LIB_WEBP;__STDC_LIMIT_MACROS;__STDC_FORMAT_MACROS;__STDC_CONSTANT_MACROS;_WIN32;_HAS_EXCEPTIONS=0;_ITERATOR_DEBUG_LEVEL=0;_SCL_SECURE=0;_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_WIN64;BGFX_SHARED_LIB_BUILD=1;BX_CONFIG_DEBUG=1;BGFX_CONFIG_DEBUG_UNIFORM=0;ENABLE_OPT=1;SPIRV;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
@@ -138,7 +138,7 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
       <OutputFile>$(OutDir)libNeoAxisCoreNative.dll</OutputFile>
       <Version>0.99</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\Lib\Windows_x64;..\External\DirectX\Lib\x64;..\External\bgfx\bgfx\3rdparty\lib\win64_vs2017;..\External\bgfx\bgfx\3rdparty\nvidia-vxgi\lib;..\External\bgfx\bgfx\3rdparty\dxc\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Lib\Windows_x64;..\External\DirectX\Lib\x64;..\External\bgfx\bgfx\3rdparty\lib\win64_vs2017;..\External\bgfx\bgfx\3rdparty\nvidia-vxgi\lib;..\External\bgfx\bgfx\3rdparty\dxc\lib\x64;..\External\bgfx\bgfx\3rdparty\libs\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>Export.def</ModuleDefinitionFile>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -165,6 +165,298 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\fcpp\cpp4.c" />
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\fcpp\cpp5.c" />
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\fcpp\cpp6.c" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\CInterface\glslang_c_interface.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\GenericCodeGen\CodeGen.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\GenericCodeGen\Link.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\attribute.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\Constant.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\glslang_tab.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\InfoSink.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\Initialize.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\Intermediate.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\intermOut.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\IntermTraverse.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\iomapper.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\limits.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\linkValidate.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\parseConst.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\ParseContextBase.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\ParseHelper.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\PoolAlloc.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\Pp.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpAtom.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpContext.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpScanner.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpTokens.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\propagateNoContraction.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\reflection.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\RemoveTree.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\Scan.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\ShaderLang.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\SpirvIntrinsics.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\SymbolTable.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\Versions.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\OSDependent\Unix\ossource_unix.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\OSDependent\Windows\ossource_windows.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\ResourceLimits\ResourceLimits.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\ResourceLimits\resource_limits_c.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\stub.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\CInterface\spirv_c_interface.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\disassemble.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\doc.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\GlslangToSpv.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\InReadableOrder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\Logger.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\SpvBuilder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\SpvPostProcess.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\SpvTools.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_cfg.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_cpp.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_cross.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_cross_parsed_ir.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_cross_util.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_glsl.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_parser.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_reflect.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\assembly_grammar.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\binary.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\diagnostic.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\diff\diff.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\disassemble_spirvtools.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\extensions.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\ext_inst.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\libspirv.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\link\fnvar.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\link\linker.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\lint\divergence_analysis.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\lint\linter.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\lint\lint_divergent_derivatives.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\name_mapper.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opcode.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\operand.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\aggressive_dead_code_elim_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\amd_ext_to_khr.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\analyze_live_input_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\basic_block.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\block_merge_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\block_merge_util.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\build_module.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\canonicalize_ids_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\ccp_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\cfg.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\cfg_cleanup_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\code_sink.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\combine_access_chains.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\compact_ids_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\composite.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\constants.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\const_folding_rules.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\control_dependence.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\convert_to_half_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\convert_to_sampled_image_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\copy_prop_arrays.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dataflow.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dead_branch_elim_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dead_insert_elim_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dead_variable_elimination.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\debug_info_manager.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\decoration_manager.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\def_use_manager.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\desc_sroa.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\desc_sroa_util.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dominator_analysis.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dominator_tree.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_constant_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_functions_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_functions_util.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_io_components_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_members_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_output_stores_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\feature_manager.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\fix_func_call_arguments.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\fix_storage_class.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\flatten_decoration_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\fold.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\folding_rules.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\fold_spec_constant_op_and_composite_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\freeze_spec_constant_value_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\function.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\graph.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\graphics_robust_access_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\if_conversion.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\inline_exhaustive_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\inline_opaque_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\inline_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\instruction.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\instruction_list.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\interface_var_sroa.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\interp_fixup_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\invocation_interlock_placement_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\ir_context.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\ir_loader.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\legalize_multidim_array_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\licm_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\liveness.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\local_access_chain_convert_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\local_redundancy_elimination.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\local_single_block_elim_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\local_single_store_elim_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_dependence.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_dependence_helpers.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_descriptor.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_fission.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_fusion.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_fusion_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_peeling.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_unroller.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_unswitch_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_utils.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\mem_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\merge_return_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\modify_maximal_reconvergence.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\module.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\opextinst_forward_ref_fixup_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\optimizer.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\pass_manager.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\pch_source_opt.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\private_to_local_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\propagator.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\reduce_load_size.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\redundancy_elimination.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\register_pressure.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\relax_float_ops_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\remove_dontinline_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\remove_duplicates_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\remove_unused_interface_variables_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\replace_desc_array_access_using_var_index.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\replace_invalid_opc.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\resolve_binding_conflicts_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\scalar_analysis.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\scalar_analysis_simplification.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\scalar_replacement_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\set_spec_constant_default_value_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\simplification_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\split_combined_image_sampler_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\spread_volatile_semantics.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\ssa_rewrite_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\strength_reduction_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\strip_debug_info_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\strip_nonsemantic_info_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\struct_cfg_analysis.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\struct_packing_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\switch_descriptorset_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\trim_capabilities_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\types.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\type_manager.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\unify_const_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\upgrade_memory_model.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\value_number_table.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\vector_dce.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\workaround1209.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\wrap_opkill.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\parsed_operand.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\pch_source.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\print.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\change_operand_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\change_operand_to_undef_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\conditional_branch_to_simple_conditional_branch_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\conditional_branch_to_simple_conditional_branch_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\merge_blocks_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\merge_blocks_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\operand_to_const_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\operand_to_dominating_id_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\operand_to_undef_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\pch_source_reduce.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\reducer.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\reduction_pass.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\reduction_util.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_block_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_block_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_function_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_function_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_instruction_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_selection_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_selection_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_struct_member_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_unused_instruction_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_unused_struct_member_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\simple_conditional_branch_to_branch_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\simple_conditional_branch_to_branch_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\structured_construct_to_block_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\structured_construct_to_block_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\structured_loop_to_selection_reduction_opportunity.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\structured_loop_to_selection_reduction_opportunity_finder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\software_version.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_endian.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_fuzzer_options.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_optimizer_options.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_reducer_options.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_target_env.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_validator_options.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\table.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\table2.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\text.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\text_handler.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\to_string.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\util\bit_vector.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\util\parse_number.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\util\string_utils.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\util\timer.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\basic_block_spirvtools_val.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\construct.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\function_spirvtools_val.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\instruction_spirvtools_val.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_adjacency.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_annotation.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_arithmetics.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_atomics.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_barriers.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_bitwise.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_builtins.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_capability.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_cfg.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_composites.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_constants.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_conversion.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_debug.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_decorations.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_derivatives.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_dot_product.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_execution_limitations.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_extensions.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_function.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_graph.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_group.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_id.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_image.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_instruction.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_interfaces.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_invalid_type.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_layout.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_literals.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_logicals.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_logical_pointers.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_memory.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_memory_semantics.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_mesh_shading.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_misc.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_mode_setting.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_non_uniform.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_pipe.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_primitives.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_ray_query.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_ray_tracing.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_ray_tracing_reorder.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_scopes.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_small_type_uses.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_tensor.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_tensor_layout.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_type.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validation_state.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\bgfx.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\debug_renderdoc.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\dxgi.cpp" />
@@ -235,7 +527,7 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <ClCompile Include="..\External\bgfx\bx\src\sort.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\string.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\thread.cpp" />
-    <ClCompile Include="..\External\bgfx\bx\src\timer.cpp" />
+    <ClCompile Include="..\External\bgfx\bx\src\timer_bx.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\url.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\Background.cpp" />
     <ClCompile Include="..\External\FreeImage\Source\FreeImageToolkit\BSplineRotate.cpp" />
@@ -1311,6 +1603,7 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\FPPBase.h" />
     <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\fpp_pragmas.h" />
     <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\FPP_protos.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\glslang_tab.cpp.h" />
     <ClInclude Include="..\External\bgfx\bgfx\include\bgfx\bgfx.h" />
     <ClInclude Include="..\External\bgfx\bgfx\include\bgfx\c99\bgfx.h" />
     <ClInclude Include="..\External\bgfx\bgfx\include\bgfx\c99\platform.h" />

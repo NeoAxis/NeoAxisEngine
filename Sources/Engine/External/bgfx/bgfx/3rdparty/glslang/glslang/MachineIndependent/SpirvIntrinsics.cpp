@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright(C) 2021 Advanced Micro Devices, Inc.
 //
@@ -358,3 +361,6 @@ TSpirvInstruction* TParseContext::mergeSpirvInstruction(const TSourceLoc& loc, T
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

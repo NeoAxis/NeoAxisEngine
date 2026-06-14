@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2014-2015 LunarG, Inc.
 // Copyright (C) 2015-2018 Google, Inc.
@@ -5123,3 +5126,6 @@ bool Builder::DecorationInstructionLessThan::operator()(const std::unique_ptr<In
     return false;
 }
 } // end spv namespace
+
+//!!!!betauser
+#endif

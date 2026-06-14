@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2021 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,3 +60,6 @@ bool Linter::Run(const uint32_t* binary, size_t binary_size) {
 }
 
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -826,3 +829,6 @@ uint32_t UpgradeMemoryModel::MemoryAccessNumWords(uint32_t mask) {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

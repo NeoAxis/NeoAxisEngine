@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // All rights reserved.
@@ -85,3 +88,6 @@ void DeleteBindingList(TShHandleBase* bindingList)
 {
     delete bindingList;
 }
+
+//!!!!betauser
+#endif

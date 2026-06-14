@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2016 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -169,3 +172,6 @@ bool SpirvTools::Validate(const uint32_t* binary, const size_t binary_size,
 bool SpirvTools::IsValid() const { return impl_->context != nullptr; }
 
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2021 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -452,3 +455,6 @@ void ReplaceDescArrayAccessUsingVarIndex::ReplacePhiIncomingBlock(
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

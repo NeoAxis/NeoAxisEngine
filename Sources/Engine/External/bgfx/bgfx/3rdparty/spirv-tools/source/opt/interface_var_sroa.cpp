@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2022 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -1029,3 +1032,6 @@ InterfaceVariableScalarReplacement::ReplaceInterfaceVarsWithScalars(
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

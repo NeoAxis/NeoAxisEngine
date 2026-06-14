@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2022 The Khronos Group Inc.
 // Copyright (c) 2022 LunarG Inc.
 //
@@ -254,3 +257,6 @@ void EliminateDeadIOComponentsPass::ChangeIOVarStructLength(Instruction& io_var,
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

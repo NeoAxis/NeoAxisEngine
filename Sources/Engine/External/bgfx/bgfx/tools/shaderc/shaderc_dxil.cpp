@@ -679,11 +679,21 @@ namespace bgfx { namespace dxil
 
 } // namespace hlsl
 
+	//!!!!betauser
+	static bgfx::dxil::Dxc dxc;
+	static bool dxcLoaded = false;
+
 	bool compileDxilShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _shaderWriter, bx::WriterI* _messageWriter)
 	{
 		using namespace dxil;
 
-		Dxc dxc = load();
+		//!!!!betauser
+		if(!dxcLoaded)
+		{
+			dxc = load();
+			dxcLoaded = true;
+		}
+		//Dxc dxc = load();
 
 		if (NULL == dxc.dll)
 		{
@@ -693,7 +703,8 @@ namespace bgfx { namespace dxil
 
 		const bool result = dxil::compile(dxc, _options, _version, _code, _shaderWriter, _messageWriter, true);
 
-		unload(dxc);
+		//!!!!betauser
+		//unload(dxc);
 
 		return result;
 	}

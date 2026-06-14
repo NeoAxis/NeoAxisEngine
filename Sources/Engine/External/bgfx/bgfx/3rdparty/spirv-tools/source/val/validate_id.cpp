@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2015-2016 The Khronos Group Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -300,3 +303,6 @@ spv_result_t IdPass(ValidationState_t& _, Instruction* inst) {
 
 }  // namespace val
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

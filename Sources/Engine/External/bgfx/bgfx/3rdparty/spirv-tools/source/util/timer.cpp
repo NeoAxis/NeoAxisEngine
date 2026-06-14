@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,3 +103,6 @@ void Timer::Report(const char* tag) {
 }  // namespace spvtools
 
 #endif  // defined(SPIRV_TIMER_ENABLED)
+
+//!!!!betauser
+#endif

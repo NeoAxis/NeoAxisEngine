@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2016 Google Inc.
 // Copyright (c) 2025 Arm Ltd.
 //
@@ -355,3 +358,6 @@ Instruction* FoldSpecConstantOpAndCompositePass::DoComponentWiseOperation(
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

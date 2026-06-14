@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2022 The Khronos Group Inc.
 // Copyright (c) 2022 LunarG Inc.
 //
@@ -43,3 +46,6 @@ Pass::Status AnalyzeLiveInputPass::DoLiveInputAnalysis() {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

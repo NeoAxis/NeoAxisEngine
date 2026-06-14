@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // Copyright (C) 2012-2015 LunarG, Inc.
@@ -3940,3 +3943,6 @@ const char* TIntermediate::getResourceName(TResourceType res)
 
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

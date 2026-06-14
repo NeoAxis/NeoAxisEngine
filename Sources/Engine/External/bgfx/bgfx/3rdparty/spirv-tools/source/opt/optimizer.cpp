@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2016 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -1317,3 +1320,6 @@ spv_result_t spvOptimizerRun(spv_optimizer_t* optimizer,
 }
 
 }  // extern "C"
+
+//!!!!betauser
+#endif

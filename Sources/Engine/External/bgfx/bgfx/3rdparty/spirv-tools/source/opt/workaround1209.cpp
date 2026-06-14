@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,3 +70,6 @@ bool Workaround1209::RemoveOpUnreachableInLoops() {
 }
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

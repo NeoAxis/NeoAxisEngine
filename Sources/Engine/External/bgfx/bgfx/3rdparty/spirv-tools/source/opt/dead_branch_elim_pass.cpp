@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2017 The Khronos Group Inc.
 // Copyright (c) 2017 Valve Corporation
 // Copyright (c) 2017 LunarG Inc.
@@ -649,3 +652,6 @@ bool DeadBranchElimPass::SwitchHasNestedBreak(uint32_t switch_header_id) {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

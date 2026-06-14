@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /*
  * Copyright 2015-2021 Arm Limited
  * SPDX-License-Identifier: Apache-2.0 OR MIT
@@ -20338,3 +20341,6 @@ bool CompilerGLSL::has_legacy_nocontract(uint32_t result_type, uint32_t id) cons
 	                      FPFastMathModeAllowReassocMask;
 	return (get_fp_fast_math_flags_for_op(result_type, id) & fp_flags) != fp_flags;
 }
+
+//!!!!betauser
+#endif

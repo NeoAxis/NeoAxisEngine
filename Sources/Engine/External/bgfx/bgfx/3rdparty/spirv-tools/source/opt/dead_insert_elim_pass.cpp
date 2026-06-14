@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 The Khronos Group Inc.
 // Copyright (c) 2018 Valve Corporation
 // Copyright (c) 2018 LunarG Inc.
@@ -260,3 +263,6 @@ Pass::Status DeadInsertElimPass::Process() {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

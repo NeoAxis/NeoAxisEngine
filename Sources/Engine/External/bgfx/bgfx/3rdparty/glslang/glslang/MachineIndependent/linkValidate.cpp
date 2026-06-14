@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2013 LunarG, Inc.
 // Copyright (C) 2017 ARM Limited.
@@ -2790,3 +2793,6 @@ bool TIntermediate::isIoResizeArray(const TType& type, EShLanguage language) {
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

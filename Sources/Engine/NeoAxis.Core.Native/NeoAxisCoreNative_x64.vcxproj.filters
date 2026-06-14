@@ -3239,9 +3239,6 @@
     <ClCompile Include="..\External\bgfx\bx\src\thread.cpp">
       <Filter>bgfx\bx</Filter>
     </ClCompile>
-    <ClCompile Include="..\External\bgfx\bx\src\timer.cpp">
-      <Filter>bgfx\bx</Filter>
-    </ClCompile>
     <ClCompile Include="..\External\bgfx\bx\src\url.cpp">
       <Filter>bgfx\bx</Filter>
     </ClCompile>
@@ -3295,6 +3292,885 @@
     </ClCompile>
     <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_pssl.cpp">
       <Filter>bgfx\shaderc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_glsl.cpp">
+      <Filter>bgfx\3rdparty\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_cfg.cpp">
+      <Filter>bgfx\3rdparty\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_cross.cpp">
+      <Filter>bgfx\3rdparty\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_cpp.cpp">
+      <Filter>bgfx\3rdparty\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_cross_parsed_ir.cpp">
+      <Filter>bgfx\3rdparty\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_cross_util.cpp">
+      <Filter>bgfx\3rdparty\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_parser.cpp">
+      <Filter>bgfx\3rdparty\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-cross\spirv_reflect.cpp">
+      <Filter>bgfx\3rdparty\spirv-cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\CInterface\glslang_c_interface.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\GenericCodeGen\CodeGen.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\GenericCodeGen\Link.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\Pp.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpAtom.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpContext.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpScanner.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\preprocessor\PpTokens.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\attribute.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\Constant.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\glslang_tab.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\InfoSink.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\Initialize.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\Intermediate.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\intermOut.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\IntermTraverse.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\iomapper.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\limits.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\linkValidate.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\parseConst.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\ParseContextBase.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\ParseHelper.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\PoolAlloc.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\propagateNoContraction.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\reflection.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\RemoveTree.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\Scan.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\ShaderLang.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\SpirvIntrinsics.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\SymbolTable.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\Versions.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\OSDependent\Windows\ossource_windows.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\ResourceLimits\ResourceLimits.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\ResourceLimits\resource_limits_c.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\stub.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\CInterface\spirv_c_interface.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\disassemble.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\doc.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\GlslangToSpv.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\InReadableOrder.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\Logger.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\SpvBuilder.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\SpvPostProcess.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\SPIRV\SpvTools.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\diff\diff.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\link\fnvar.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\link\linker.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\lint\divergence_analysis.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\lint\linter.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\lint\lint_divergent_derivatives.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\aggressive_dead_code_elim_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\amd_ext_to_khr.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\analyze_live_input_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\basic_block.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\block_merge_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\block_merge_util.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\build_module.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\canonicalize_ids_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\ccp_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\cfg.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\cfg_cleanup_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\code_sink.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\combine_access_chains.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\compact_ids_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\composite.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\constants.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\const_folding_rules.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\control_dependence.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\convert_to_half_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\convert_to_sampled_image_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\copy_prop_arrays.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dataflow.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dead_branch_elim_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dead_insert_elim_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dead_variable_elimination.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\debug_info_manager.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\decoration_manager.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\def_use_manager.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\desc_sroa.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\desc_sroa_util.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dominator_analysis.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\dominator_tree.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_constant_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_functions_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_functions_util.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_io_components_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_members_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\eliminate_dead_output_stores_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\feature_manager.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\fix_func_call_arguments.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\fix_storage_class.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\flatten_decoration_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\fold.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\folding_rules.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\fold_spec_constant_op_and_composite_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\freeze_spec_constant_value_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\function.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\graph.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\graphics_robust_access_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\if_conversion.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\inline_exhaustive_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\inline_opaque_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\inline_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\instruction.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\instruction_list.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\interface_var_sroa.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\interp_fixup_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\invocation_interlock_placement_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\ir_context.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\ir_loader.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\legalize_multidim_array_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\licm_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\liveness.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\local_access_chain_convert_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\local_redundancy_elimination.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\local_single_block_elim_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\local_single_store_elim_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_dependence.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_dependence_helpers.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_descriptor.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_fission.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_fusion.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_fusion_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_peeling.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_unroller.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_unswitch_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\loop_utils.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\mem_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\merge_return_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\modify_maximal_reconvergence.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\module.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\opextinst_forward_ref_fixup_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\optimizer.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\pass_manager.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\pch_source_opt.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\private_to_local_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\propagator.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\reduce_load_size.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\redundancy_elimination.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\register_pressure.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\relax_float_ops_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\remove_dontinline_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\remove_duplicates_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\remove_unused_interface_variables_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\replace_desc_array_access_using_var_index.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\replace_invalid_opc.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\resolve_binding_conflicts_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\scalar_analysis.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\scalar_analysis_simplification.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\scalar_replacement_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\set_spec_constant_default_value_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\simplification_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\split_combined_image_sampler_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\spread_volatile_semantics.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\ssa_rewrite_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\strength_reduction_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\strip_debug_info_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\strip_nonsemantic_info_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\struct_cfg_analysis.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\struct_packing_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\switch_descriptorset_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\trim_capabilities_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\types.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\type_manager.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\unify_const_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\upgrade_memory_model.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\value_number_table.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\vector_dce.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\workaround1209.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opt\wrap_opkill.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\change_operand_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\change_operand_to_undef_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\conditional_branch_to_simple_conditional_branch_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\conditional_branch_to_simple_conditional_branch_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\merge_blocks_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\merge_blocks_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\operand_to_const_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\operand_to_dominating_id_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\operand_to_undef_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\pch_source_reduce.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\reducer.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\reduction_pass.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\reduction_util.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_block_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_block_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_function_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_function_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_instruction_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_selection_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_selection_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_struct_member_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_unused_instruction_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\remove_unused_struct_member_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\simple_conditional_branch_to_branch_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\simple_conditional_branch_to_branch_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\structured_construct_to_block_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\structured_construct_to_block_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\structured_loop_to_selection_reduction_opportunity.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\reduce\structured_loop_to_selection_reduction_opportunity_finder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\util\bit_vector.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\util\parse_number.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\util\string_utils.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\util\timer.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\construct.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_adjacency.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_annotation.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_arithmetics.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_atomics.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_barriers.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_bitwise.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_builtins.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_capability.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_cfg.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_composites.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_constants.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_conversion.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_debug.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_decorations.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_derivatives.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_dot_product.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_execution_limitations.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_extensions.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_function.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_graph.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_group.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_id.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_image.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_instruction.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_interfaces.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_invalid_type.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_layout.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_literals.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_logicals.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_logical_pointers.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_memory.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_memory_semantics.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_mesh_shading.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_misc.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_mode_setting.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_non_uniform.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_pipe.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_primitives.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_ray_query.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_ray_tracing.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_ray_tracing_reorder.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_scopes.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_small_type_uses.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_tensor.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_tensor_layout.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_type.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validation_state.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\assembly_grammar.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\binary.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\diagnostic.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\extensions.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\ext_inst.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\libspirv.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\name_mapper.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\opcode.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\operand.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\parsed_operand.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\pch_source.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\print.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\software_version.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_endian.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_fuzzer_options.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_optimizer_options.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_reducer_options.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_target_env.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\spirv_validator_options.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\table.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\table2.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\text.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\text_handler.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\to_string.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bx\src\timer_bx.cpp">
+      <Filter>bgfx\bx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\basic_block_spirvtools_val.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\function_spirvtools_val.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\instruction_spirvtools_val.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\disassemble_spirvtools.cpp">
+      <Filter>bgfx\3rdparty\spirv-tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\OSDependent\Unix\ossource_unix.cpp">
+      <Filter>bgfx\3rdparty\glslang</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -6092,6 +6968,9 @@
     <ClInclude Include="..\External\bgfx\bgfx\3rdparty\fcpp\FPP_protos.h">
       <Filter>bgfx\shaderc\fcpp</Filter>
     </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\glslang_tab.cpp.h">
+      <Filter>bgfx\3rdparty\glslang</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MemoryManager">
@@ -6186,6 +7065,18 @@
     </Filter>
     <Filter Include="bgfx\bgfx\3rdparty">
       <UniqueIdentifier>{dcd7db58-56bd-4c66-9aff-1925f09b23fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bgfx\3rdparty">
+      <UniqueIdentifier>{dfaf21ed-4f2d-44ce-82eb-22451d4e4ef9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bgfx\3rdparty\spirv-cross">
+      <UniqueIdentifier>{48c22871-8c4f-4599-9ce3-1eb05f3b289f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bgfx\3rdparty\glslang">
+      <UniqueIdentifier>{648549d2-9e0e-43f0-8cfd-39da4b6406ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bgfx\3rdparty\spirv-tools">
+      <UniqueIdentifier>{9270a456-ba54-41db-9dcb-9875a46632e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

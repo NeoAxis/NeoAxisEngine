@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 Google LLC.
 // Copyright (c) 2019 NVIDIA Corporation
 //
@@ -212,3 +215,6 @@ spv_result_t MiscPass(ValidationState_t& _, const Instruction* inst) {
 
 }  // namespace val
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

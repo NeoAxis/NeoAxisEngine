@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // Copyright (C) 2012-2015 LunarG, Inc.
@@ -11707,3 +11710,6 @@ TLayoutFormat TParseContext::mapLegacyLayoutFormat(TLayoutFormat legacyLayoutFor
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

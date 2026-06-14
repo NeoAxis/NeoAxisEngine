@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /**
     This code is based on the glslang_c_interface implementation by Viktor Latypov
 **/
@@ -120,3 +123,6 @@ GLSLANG_EXPORT const char* glslang_program_SPIRV_get_messages(glslang_program_t*
 {
     return program->loggerMessages.empty() ? nullptr : program->loggerMessages.c_str();
 }
+
+//!!!!betauser
+#endif

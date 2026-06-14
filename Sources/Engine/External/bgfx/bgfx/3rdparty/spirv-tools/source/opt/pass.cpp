@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2017 The Khronos Group Inc.
 // Copyright (c) 2017 Valve Corporation
 // Copyright (c) 2017 LunarG Inc.
@@ -171,3 +174,6 @@ uint32_t Pass::GenerateCopy(Instruction* object_to_copy, uint32_t new_type_id,
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2016 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -1112,3 +1115,6 @@ void DebugScope::ToBinary(uint32_t type_id, uint32_t result_id,
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

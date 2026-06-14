@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /*
  * Copyright 2018-2021 Arm Limited
  * SPDX-License-Identifier: Apache-2.0 OR MIT
@@ -1559,3 +1562,6 @@ bool Parser::variable_storage_is_aliased(const SPIRVariable &v) const
 	return !is_restrict && (ssbo || image || counter);
 }
 } // namespace SPIRV_CROSS_NAMESPACE
+
+//!!!!betauser
+#endif

@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2014-2015 LunarG, Inc.
 // Copyright (C) 2022-2025 Arm Limited.
@@ -4134,3 +4137,6 @@ void Parameterize()
 }
 
 } // end spv namespace
+
+//!!!!betauser
+#endif

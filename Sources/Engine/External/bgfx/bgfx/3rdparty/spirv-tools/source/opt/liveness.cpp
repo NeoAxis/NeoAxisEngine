@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2022 The Khronos Group Inc.
 // Copyright (c) 2022 LunarG Inc.
 //
@@ -350,3 +353,6 @@ void LivenessManager::GetLiveness(std::unordered_set<uint32_t>* live_locs,
 }  // namespace analysis
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

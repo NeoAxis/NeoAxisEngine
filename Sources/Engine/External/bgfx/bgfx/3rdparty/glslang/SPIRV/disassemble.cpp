@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2014-2015 LunarG, Inc.
 //
@@ -887,3 +890,6 @@ void Disassemble(std::ostream& out, const std::vector<unsigned int>& stream)
 }
 
 } // end namespace spv
+
+//!!!!betauser
+#endif

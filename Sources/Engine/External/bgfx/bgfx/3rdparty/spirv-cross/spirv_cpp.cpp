@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /*
  * Copyright 2015-2021 Arm Limited
  * SPDX-License-Identifier: Apache-2.0 OR MIT
@@ -551,3 +554,6 @@ void CompilerCPP::emit_header()
 		SPIRV_CROSS_THROW("Unsupported execution model.");
 	}
 }
+
+//!!!!betauser
+#endif

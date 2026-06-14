@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2015-2016 The Khronos Group Inc.
 // Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights
 // reserved.
@@ -3013,3 +3016,6 @@ std::string ValidationState_t::VkErrorID(uint32_t id,
 
 }  // namespace val
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

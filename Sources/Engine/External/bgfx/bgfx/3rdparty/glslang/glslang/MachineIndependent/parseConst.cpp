@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // All rights reserved.
@@ -211,3 +214,6 @@ bool TIntermediate::parseConstTree(TIntermNode* root, TConstUnionArray unionArra
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

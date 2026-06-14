@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // Copyright (C) 2012-2016 LunarG, Inc.
@@ -1536,3 +1539,6 @@ void TIntermediate::output(TInfoSink& infoSink, bool tree)
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

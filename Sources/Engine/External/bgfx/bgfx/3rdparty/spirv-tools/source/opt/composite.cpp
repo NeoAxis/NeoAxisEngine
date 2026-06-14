@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2018 The Khronos Group Inc.
 // Copyright (c) 2018 Valve Corporation
 // Copyright (c) 2018 LunarG Inc.
@@ -50,3 +53,6 @@ bool ExtInsConflict(const std::vector<uint32_t>& extIndices,
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

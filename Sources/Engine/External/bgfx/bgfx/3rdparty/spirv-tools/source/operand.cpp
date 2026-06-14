@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2015-2020 The Khronos Group Inc.
 // Modifications Copyright (C) 2020 Advanced Micro Devices, Inc. All rights
 // reserved.
@@ -652,3 +655,6 @@ spv_fp_encoding_t spvFPEncodingFromOperandFPEncoding(spv::FPEncoding encoding) {
   }
   return SPV_FP_ENCODING_UNKNOWN;
 }
+
+//!!!!betauser
+#endif

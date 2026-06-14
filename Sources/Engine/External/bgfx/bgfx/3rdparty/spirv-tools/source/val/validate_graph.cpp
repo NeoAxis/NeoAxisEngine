@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2023-2025 Arm Ltd.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -545,3 +548,6 @@ spv_result_t GraphPass(ValidationState_t& _, const Instruction* inst) {
 
 }  // namespace val
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

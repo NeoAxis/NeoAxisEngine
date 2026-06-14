@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2021 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -244,3 +247,6 @@ std::ostream& operator<<(std::ostream& os,
 
 }  // namespace lint
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

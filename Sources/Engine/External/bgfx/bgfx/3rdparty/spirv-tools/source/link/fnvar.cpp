@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright 2025 The Khronos Group Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -1009,3 +1012,6 @@ void VariantDefs::CombineInstructions(IRContext* linked_context) {
 }
 
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

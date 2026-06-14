@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2015-2016 The Khronos Group Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -509,3 +512,6 @@ spv_result_t spvValidateWithOptions(const spv_const_context context,
   return spvtools::val::ValidateBinaryUsingContextAndValidationState(
       hijack_context, binary->code, binary->wordCount, pDiagnostic, &vstate);
 }
+
+//!!!!betauser
+#endif

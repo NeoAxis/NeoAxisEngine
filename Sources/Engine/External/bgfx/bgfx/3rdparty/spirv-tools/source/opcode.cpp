@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2015-2022 The Khronos Group Inc.
 // Modifications Copyright (C) 2020-2024 Advanced Micro Devices, Inc. All
 // rights reserved.
@@ -738,3 +741,6 @@ bool spvOpcodeGeneratesUntypedPointer(spv::Op opcode) {
       return false;
   }
 }
+
+//!!!!betauser
+#endif

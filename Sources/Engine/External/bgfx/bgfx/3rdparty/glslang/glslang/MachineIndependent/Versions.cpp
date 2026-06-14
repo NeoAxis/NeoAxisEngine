@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // Copyright (C) 2012-2013 LunarG, Inc.
@@ -1573,3 +1576,6 @@ void TParseVersions::requireSpv(const TSourceLoc& loc, const char *op, unsigned 
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

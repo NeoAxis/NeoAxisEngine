@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2019 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -323,3 +326,6 @@ bool CodeSinkingPass::IntersectsPath(uint32_t start, uint32_t end,
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

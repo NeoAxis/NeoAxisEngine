@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2017 The Khronos Group Inc.
 // Copyright (c) 2017 Valve Corporation
 // Copyright (c) 2017 LunarG Inc.
@@ -49,3 +52,6 @@ BlockMergePass::BlockMergePass() = default;
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2024 The Khronos Group Inc.
 // All rights reserved.
@@ -49,3 +52,6 @@
 // Force stub library to export function to preserve backcompat.
 // https://github.com/KhronosGroup/glslang/issues/3882
 STUB_EXPORT int stub_library_function() { return 0; }
+
+//!!!!betauser
+#endif

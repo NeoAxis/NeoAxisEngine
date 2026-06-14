@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2017 The Khronos Group Inc.
 // Copyright (c) 2017 Valve Corporation
 // Copyright (c) 2017 LunarG Inc.
@@ -116,3 +119,6 @@ Pass::Status InlineOpaquePass::Process() {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

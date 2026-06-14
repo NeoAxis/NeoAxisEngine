@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2016 Google Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -86,3 +89,6 @@ std::unique_ptr<opt::IRContext> BuildModule(spv_target_env env,
 }
 
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

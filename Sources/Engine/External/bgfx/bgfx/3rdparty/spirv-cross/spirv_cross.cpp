@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /*
  * Copyright 2015-2021 Arm Limited
  * SPDX-License-Identifier: Apache-2.0 OR MIT
@@ -5812,3 +5815,6 @@ const SPIRType *Compiler::OpcodeHandler::get_expression_result_type(uint32_t id)
 
 	return &compiler.get<SPIRType>(itr->second);
 }
+
+//!!!!betauser
+#endif

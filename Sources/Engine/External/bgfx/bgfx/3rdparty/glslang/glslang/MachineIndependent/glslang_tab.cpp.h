@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 /* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
@@ -601,3 +604,6 @@ int yyparse (glslang::TParseContext* pParseContext);
 
 
 #endif /* !YY_YY_MACHINEINDEPENDENT_GLSLANG_TAB_CPP_H_INCLUDED  */
+
+//!!!!betauser
+#endif

@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // Copyright (C) 2013 LunarG, Inc.
@@ -119,3 +122,6 @@ void TPpContext::setInput(TInputScanner& input, bool versionWillBeError)
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

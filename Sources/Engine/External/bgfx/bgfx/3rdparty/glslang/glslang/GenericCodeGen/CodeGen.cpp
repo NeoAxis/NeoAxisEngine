@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2002-2005  3Dlabs Inc. Ltd.
 // All rights reserved.
@@ -70,3 +73,6 @@ bool TGenericCompiler::compile(TIntermNode* /*root*/, int /*version*/, EProfile 
 
     return haveValidObjectCode;
 }
+
+//!!!!betauser
+#endif

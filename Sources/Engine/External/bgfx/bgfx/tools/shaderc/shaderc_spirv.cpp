@@ -8,7 +8,9 @@
 //!!!!betauser
 #include "../../src/bgfx_p.h"
 
-#if SHADERC_CONFIG_HAS_GLSLANG
+//!!!!betauser
+#if SHADERC_CONFIG_HAS_GLSLANG || SHADERC_CONFIG_HAS_GLSLANG_SPIRV_ONLY
+//#if SHADERC_CONFIG_HAS_GLSLANG
 
 #include <iostream> // std::cout
 

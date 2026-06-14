@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2022 Advanced Micro Devices, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -92,3 +95,6 @@ uint32_t FixFuncCallArgumentsPass::ReplaceAccessChainFuncCallArguments(
 
   return var->result_id();
 }
+
+//!!!!betauser
+#endif

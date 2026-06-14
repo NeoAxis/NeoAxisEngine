@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2022 Google LLC.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -3000,3 +3003,6 @@ spv_result_t Diff(opt::IRContext* src, opt::IRContext* dst, std::ostream& out,
 
 }  // namespace diff
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

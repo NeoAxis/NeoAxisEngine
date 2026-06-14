@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2025 LunarG Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -529,3 +532,6 @@ void CanonicalizeIdsPass::PrintNewIds() const {
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

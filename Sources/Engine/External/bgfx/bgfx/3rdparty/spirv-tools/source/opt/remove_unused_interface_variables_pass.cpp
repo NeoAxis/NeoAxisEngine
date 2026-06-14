@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2021 ZHOU He
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -103,3 +106,6 @@ RemoveUnusedInterfaceVariablesPass::Process() {
 }
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

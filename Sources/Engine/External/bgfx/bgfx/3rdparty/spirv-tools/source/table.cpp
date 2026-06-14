@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2015-2016 The Khronos Group Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,3 +61,6 @@ void spvtools::SetContextMessageConsumer(spv_context context,
                                          spvtools::MessageConsumer consumer) {
   context->consumer = std::move(consumer);
 }
+
+//!!!!betauser
+#endif

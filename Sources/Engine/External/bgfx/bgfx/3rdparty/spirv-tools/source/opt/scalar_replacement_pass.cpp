@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2017 Google Inc.
 // Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights
 // reserved.
@@ -1021,3 +1024,6 @@ void ScalarReplacementPass::CopyNecessaryMemberDecorationsToVariable(
 
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

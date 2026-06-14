@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2016 Google Inc.
 // Modifications Copyright (C) 2024 Advanced Micro Devices, Inc. All rights
 // reserved.
@@ -346,3 +349,6 @@ std::string FriendlyNameMapper::NameForEnumOperand(spv_operand_type_t type,
 }
 
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

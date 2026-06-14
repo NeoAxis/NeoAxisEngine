@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2020 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -198,3 +201,6 @@ std::string RemoveUnusedStructMemberReductionOpportunityFinder::GetName()
 
 }  // namespace reduce
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

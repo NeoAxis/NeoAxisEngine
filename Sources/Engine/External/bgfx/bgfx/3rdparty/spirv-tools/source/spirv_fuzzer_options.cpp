@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2019 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -66,3 +69,6 @@ SPIRV_TOOLS_EXPORT void spvFuzzerOptionsEnableAllPasses(
     spv_fuzzer_options options) {
   options->all_passes_enabled = true;
 }
+
+//!!!!betauser
+#endif

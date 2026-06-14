@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 // Copyright (c) 2020-2022 Google LLC
 // Copyright (c) 2022 LunarG Inc.
 //
@@ -948,3 +951,6 @@ void DebugInfoManager::ClearDebugInfo(Instruction* instr) {
 }  // namespace analysis
 }  // namespace opt
 }  // namespace spvtools
+
+//!!!!betauser
+#endif

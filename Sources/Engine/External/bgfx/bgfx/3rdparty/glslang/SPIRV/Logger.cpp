@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2016 Google, Inc.
 //
@@ -66,3 +69,6 @@ std::string SpvBuildLogger::getAllMessages() const {
 }
 
 } // end spv namespace
+
+//!!!!betauser
+#endif

@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2018 Google, Inc.
 //
@@ -624,3 +627,6 @@ void Builder::postProcess(bool compileOnly)
 }
 
 } // end spv namespace
+
+//!!!!betauser
+#endif
