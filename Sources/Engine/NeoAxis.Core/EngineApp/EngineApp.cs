@@ -311,6 +311,7 @@ namespace NeoAxis
 			public static bool SimulationVSync = true;//for garbage collector is better to enable vsync
 			public static bool SimulationTripleBuffering;
 			public static bool UseShaderCache = true;
+			public static bool RenderingScene = true;
 			//public static bool AnisotropicFiltering = true;
 
 			public static string SoundSystem = "";

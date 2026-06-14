@@ -497,7 +497,6 @@ namespace NeoAxis
 			Parallel.ForEach( items2.Values.ToArray(), delegate ( GetProgramItem item )
 			{
 				GetProgram( item, out item.Error );
-				//GetProgram( item, out _ );
 			} );
 #endif
 		}

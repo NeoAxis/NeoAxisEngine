@@ -2033,6 +2033,9 @@ namespace NeoAxis
 
 		public virtual CompiledMaterialData Compile( CompiledMaterialData.SpecialMode specialMode, CompileExtensionData extensionData, int multiMaterialStartIndexOfCombinedGroup, CompiledMaterialData[] multiMaterialReferencedSeparateMaterialsOfCombinedGroup, Material[] multiMaterialSourceMaterialsToGetProperties, int multiSubMaterialSeparatePassIndex )
 		{
+			if( !EngineApp.InitSettings.RenderingScene )
+				return new CompiledMaterialData();
+
 			var optimize = true;
 			if( EngineApp.IsEditor )
 			{

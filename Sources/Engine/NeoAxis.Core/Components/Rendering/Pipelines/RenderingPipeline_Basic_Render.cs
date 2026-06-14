@@ -13279,7 +13279,7 @@ namespace NeoAxis
 
 				/////////////////////////////////////
 				//Scene
-				if( DebugDirectLighting )
+				if( DebugDirectLighting && EngineApp.InitSettings.RenderingScene )
 				{
 					if( DebugDrawForwardOpaquePass )
 						Render3DSceneForwardOpaque( context, frameData );
@@ -13292,7 +13292,7 @@ namespace NeoAxis
 				//debug geometry
 				if( owner.Simple3DRenderer != null )
 				{
-					if( DebugDrawSimple3DRenderer )
+					if( DebugDrawSimple3DRenderer && EngineApp.InitSettings.RenderingScene )
 					{
 						if( owner.Simple3DRenderer.ViewportRendering_PrepareRenderables() )
 							owner.Simple3DRenderer.ViewportRendering_RenderToCurrentViewport( context );
@@ -13430,9 +13430,12 @@ namespace NeoAxis
 
 			//!!!!parallel?
 			//prepare dynamic textures
-			PrepareMaterialsTexture( context, frameData );
-			PrepareBonesTexture( context, frameData );
-			PrepareReflectionProbesCubemapEnvironmentMipmapsAndBlur( context, frameData );
+			if( EngineApp.InitSettings.RenderingScene )
+			{
+				PrepareMaterialsTexture( context, frameData );
+				PrepareBonesTexture( context, frameData );
+				PrepareReflectionProbesCubemapEnvironmentMipmapsAndBlur( context, frameData );
+			}
 
 			//set u_viewportOwnerMatrices
 			unsafe
@@ -13492,7 +13495,7 @@ namespace NeoAxis
 					manager.Init( this, false );
 			}
 
-			if( UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
+			if( UseRenderTargets && DebugMode.Value == DebugModeEnum.None && EngineApp.InitSettings.RenderingScene )
 				RenderWithRenderTargets( context, frameData );
 			else
 				RenderWithoutRenderTargets( context, frameData );
