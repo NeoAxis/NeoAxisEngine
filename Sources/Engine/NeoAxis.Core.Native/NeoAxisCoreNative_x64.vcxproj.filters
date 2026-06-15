@@ -2258,9 +2258,6 @@
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_read.c">
       <Filter>FreeImage</Filter>
     </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_stream.cxx">
-      <Filter>FreeImage</Filter>
-    </ClCompile>
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_strip.c">
       <Filter>FreeImage</Filter>
     </ClCompile>

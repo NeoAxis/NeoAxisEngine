@@ -818,7 +818,6 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_predict.c" />
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_print.c" />
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_read.c" />
-    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_stream.cxx" />
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_strip.c" />
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_swab.c" />
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_thunder.c" />
