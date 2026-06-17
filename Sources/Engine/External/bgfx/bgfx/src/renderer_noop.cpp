@@ -267,6 +267,11 @@ namespace bgfx { namespace noop
 		void blitRender(TextVideoMemBlitter& /*_blitter*/, uint32_t /*_numIndices*/) override
 		{
 		}
+
+		//!!!!betauser
+		void customCommand(int _command, const Memory* _mem) override
+		{
+		}
 	};
 
 	static RendererContextNOOP* s_renderNOOP;

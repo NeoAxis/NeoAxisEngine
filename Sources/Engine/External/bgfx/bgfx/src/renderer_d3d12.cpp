@@ -3588,6 +3588,11 @@ namespace bgfx { namespace d3d12
 			m_commandList = _alloc ? m_cmd.alloc() : NULL;
 		}
 
+		//!!!!betauser
+		void customCommand(int _command, const Memory* _mem) override
+		{
+		}
+
 #if !BX_PLATFORM_LINUX
 		Dxgi m_dxgi;
 #endif // !BX_PLATFORM_LINUX

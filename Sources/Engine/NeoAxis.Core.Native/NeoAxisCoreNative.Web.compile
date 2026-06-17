@@ -5,6 +5,7 @@ EmscriptenFolder: C:\emsdk\emsdk
 HeaderFolder: C:\emsdk\emsdk\upstream\emscripten\cache\sysroot\include
 H__eaderFolder: C:\emsdk\upstream\emscripten\cache\sysroot\usr\include
 
+Platform: Web
 CFlags: -g -fno-omit-frame-pointer -fms-extensions -fwasm-exceptions -O0 -m32 -x c
 CppFlags: -g -fno-omit-frame-pointer -fms-extensions -fwasm-exceptions -O0 -m32 -frtti -std=c++17
 

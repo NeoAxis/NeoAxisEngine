@@ -938,6 +938,9 @@ namespace bgfx
 			DestroyFrameBuffer,
 			DestroyUniform,
 			ReadTexture,
+
+			//!!!!betauser
+			CustomCommand,			
 		};
 
 		void resize(uint32_t _capacity = 0)
@@ -3112,6 +3115,9 @@ namespace bgfx
 		virtual void submit(Frame* _render, ClearQuad& _clearQuad, TextVideoMemBlitter& _textVideoMemBlitter) = 0;
 		virtual void blitSetup(TextVideoMemBlitter& _blitter) = 0;
 		virtual void blitRender(TextVideoMemBlitter& _blitter, uint32_t _numIndices) = 0;
+
+		//!!!!betauser
+		virtual void customCommand(int _command, const Memory* _mem) = 0;
 	};
 
 	inline RendererContextI::~RendererContextI()
@@ -5345,6 +5351,17 @@ namespace bgfx
 		BGFX_API_FUNC(void end(Encoder* _encoder) );
 
 		BGFX_API_FUNC(uint32_t frame(bool _capture = false) );
+
+		//!!!!betauser
+		BGFX_API_FUNC(void customCommand(int _command, const Memory* _mem))
+		{
+			//!!!!?
+			//BGFX_MUTEX_SCOPE(m_resourceApiLock);
+
+			CommandBuffer& cmdbuf = getCommandBuffer(CommandBuffer::CustomCommand);
+			cmdbuf.write(_command);
+			cmdbuf.write(_mem);
+		}
 
 		uint32_t getSeqIncr(ViewId _id)
 		{

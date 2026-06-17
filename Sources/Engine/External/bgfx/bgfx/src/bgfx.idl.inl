@@ -1291,6 +1291,11 @@ BGFX_C_API bool bgfx_init(const bgfx_init_t * _init)
 
 }
 
+BGFX_C_API void bgfx_custom_command(int _command, const bgfx_memory_t* _mem)
+{
+	bgfx::customCommand(_command, (const bgfx::Memory*)_mem);
+}
+
 /**/
 BGFX_C_API bgfx_interface_vtbl_t* bgfx_get_interface(uint32_t _version)
 {

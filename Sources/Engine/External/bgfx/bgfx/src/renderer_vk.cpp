@@ -4434,6 +4434,11 @@ VK_IMPORT_DEVICE
 			return createHostBuffer(_size, flags, _buffer, _memory, NULL);
 		}
 
+		//!!!!betauser
+		void customCommand(int _command, const Memory* _mem) override
+		{
+		}
+
 		VkAllocationCallbacks*   m_allocatorCb;
 		VkDebugReportCallbackEXT m_debugReportCallback;
 		VkInstance       m_instance;

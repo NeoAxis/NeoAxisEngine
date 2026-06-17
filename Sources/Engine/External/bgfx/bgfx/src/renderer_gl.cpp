@@ -4791,6 +4791,11 @@ namespace bgfx { namespace gl
 			}
 		}
 
+		//!!!!betauser
+		void customCommand(int _command, const Memory* _mem) override
+		{
+		}
+
 		void* m_renderdocdll;
 
 		uint16_t m_numWindows;

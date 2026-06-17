@@ -8,196 +8,7 @@ namespace CommandLineTools
 {
 	public static class Compile
 	{
-		public class CompileFileParser
-		{
-			public string CompileFilePath;
-			public string Platform;
-			public HashSet<string> Includes;
-			public HashSet<string> Defines;
-			public List<string> SourceFiles;
-			public HashSet<string> ExcludeSources;
-			public List<string> HeaderFolders;
-			public string TempFolder;
-			public string EmscriptenFolder;
-			public string OutputFilePath;
-			public Dictionary<string, string> CompileFlags;
-			//public Dictionary<string, string> Compilers;
-			public string PythonPath;
-
-			/// <summary>
-			/// Корневая директория, которая будет использоваться в качесте Working Directory для команды компилятора.
-			/// Необходима, чтобы указывать относительные пути файлов и папок, а не полные, так как максимальная длина команды ограничена и необходимо по максимуму уменьшать длину команды.
-			/// </summary>
-			public string RootPath;
-
-			//
-
-			public CompileFileParser()
-			{
-				Includes = new HashSet<string>();
-				ExcludeSources = new HashSet<string>( StringComparer.CurrentCultureIgnoreCase );
-				Defines = new HashSet<string>();
-				SourceFiles = new List<string>();
-				HeaderFolders = new List<string>();
-				CompileFlags = new Dictionary<string, string>( StringComparer.CurrentCultureIgnoreCase );
-				//Compilers = new Dictionary<string, string>( StringComparer.CurrentCultureIgnoreCase );
-			}
-
-			public void Parse( string filePath )
-			{
-				CompileFilePath = filePath;
-				RootPath = Path.GetFullPath( Path.GetDirectoryName( filePath ) );
-				var ctx = new ParseContext( this, "" );
-				ctx.Parse( Path.GetFileName( filePath ) );
-			}
-
-			public void Print()
-			{
-				Console.WriteLine( $"Platform: {Platform}" );
-				Console.WriteLine( "Defines: " + string.Join( ", ", Defines ) );
-				Console.WriteLine( "Source Files: " );
-				foreach( var sourceFile in SourceFiles )
-					Console.WriteLine( $"- {sourceFile}" );
-				Console.WriteLine( "Header Folders: " );
-				foreach( var headerFolder in HeaderFolders )
-					Console.WriteLine( $"- {headerFolder}" );
-				Console.WriteLine( $"Temp Folder: {TempFolder}" );
-				Console.WriteLine( $"Emscripten Folder: {EmscriptenFolder}" );
-				Console.WriteLine( $"Output: {OutputFilePath}" );
-			}
-
-			public string GetFullSourcePath( string path )
-			{
-				if( Path.IsPathRooted( path ) )
-					return Path.GetFullPath( path );
-				return Path.GetFullPath( Path.Combine( RootPath, path ) );
-			}
-
-			struct ParseContext
-			{
-				readonly CompileFileParser parser;
-
-				/// <summary>
-				/// Директория .compile файла, относительно корневой директории
-				/// </summary>
-				string basePath;
-
-				//
-
-				public ParseContext( CompileFileParser parser, string basePath )
-				{
-					this.parser = parser;
-					this.basePath = basePath;
-				}
-
-				public void Parse( string filePath )
-				{
-					if( !Path.IsPathRooted( filePath ) )
-						filePath = Path.Join( basePath, filePath );
-
-					var fullPath = parser.GetFullSourcePath( Path.Join( basePath, filePath ) );
-					if( !File.Exists( fullPath ) )
-						throw new FileNotFoundException( "Файл не найден.", filePath );
-
-					basePath = Path.GetDirectoryName( filePath );
-
-					var lines = File.ReadAllLines( fullPath );
-					foreach( var line in lines )
-						ParseLine( line );
-				}
-
-				readonly void ParseLine( string line )
-				{
-					// Очищаем строку от пробелов и заменяем все символы на верхний регистр для упрощения проверки
-					line = line.Trim();
-					var parts = line.Split( new[] { ':' }, 2 );
-
-					if( parts.Length < 2 )
-						return; // Если нет префикса, пропускаем строку
-
-					var prefix = parts[ 0 ].Trim();
-					var value = parts[ 1 ].Trim();
-
-
-					//!!!!тут он лищние запятые ввел?
-
-					string flags;
-					switch( prefix.ToUpper() )
-					{
-					case "PLATFORM":
-						parser.Platform = value;
-						break;
-					case "DEFINES":
-						parser.Defines.UnionWith( value.Split( new[] { ',' }, StringSplitOptions.RemoveEmptyEntries )
-							.Select( v => v.Trim( ' ', '"' ) ) );
-						break;
-					case "EXCLUDESOURCE":
-						foreach( var v in EnumerateWildcardFiles( parser.GetFullSourcePath( PreparePath( value ) ) ) )
-							parser.ExcludeSources.Add( v.Replace( '\\', '/' ) );
-						break;
-					case "SOURCE":
-						var baseDir = parser.GetFullSourcePath( basePath );
-						foreach( var v in EnumerateWildcardFiles( parser.GetFullSourcePath( PreparePath( value ) ) ) )
-							parser.SourceFiles.Add( PreparePath( Path.GetRelativePath( baseDir, v ) ) );
-						break;
-					case "TEMPFOLDER":
-						parser.TempFolder = PreparePath( value );
-						break;
-					case "EMSCRIPTENFOLDER":
-						parser.EmscriptenFolder = PreparePath( value );
-						break;
-					case "OUTPUT":
-						parser.OutputFilePath = PreparePath( value );
-						break;
-					case "INCLUDE":
-						value = parser.GetFullSourcePath( PreparePath( value ) );
-						if( parser.Includes.Add( value.Replace( '\\', '/' ) ) )
-						{
-							var ctx = new ParseContext( parser, basePath );
-							ctx.Parse( value );
-						}
-						break;
-					case "HEADERFOLDER":
-						parser.HeaderFolders.Add( PreparePath( value ) );
-						break;
-					default:
-						if( prefix.EndsWith( "FLAGS", StringComparison.InvariantCultureIgnoreCase ) )
-						{
-							var ext = prefix.Substring( 0, prefix.Length - 5 ).ToLowerInvariant();
-							if( !parser.CompileFlags.TryGetValue( ext, out flags ) )
-								flags = "";
-							parser.CompileFlags[ ext ] = flags + value;
-						}
-						//if( prefix.EndsWith( "COMPILER", StringComparison.InvariantCultureIgnoreCase ) )
-						//{
-						//	var ext = prefix.Substring( 0, prefix.Length - 8 ).ToLowerInvariant();
-						//	parser.Compilers[ ext ] = value;
-						//}
-						break;
-					}
-				}
-
-				readonly string PreparePath( string path )
-				{
-					path = path.Trim( ' ', '"' ); // Убираем кавычки и пробелы
-					if( !Path.IsPathRooted( path ) )
-						path = Path.Join( basePath, path );
-					return path.Replace( '\\', '/' );
-				}
-
-				static IEnumerable<string> EnumerateWildcardFiles( string path )
-				{
-					int index = path.IndexOf( '*' );
-					if( index < 0 )
-						return Enumerable.Repeat( path, 1 );
-					if( path.IndexOf( "**", index ) == index )
-						return Directory.EnumerateFiles( path.Substring( 0, index ), Path.GetFileName( path ), SearchOption.AllDirectories );
-					return Directory.EnumerateFiles( Path.GetDirectoryName( path ), Path.GetFileName( path ), SearchOption.TopDirectoryOnly );
-				}
-			}
-		}
-
-		class LibCompiler
+		public class LibCompiler
 		{
 			public readonly CompileFileParser Parser;
 			public readonly List<(string inPath, string outPath, string type)> CompileList;
@@ -221,11 +32,11 @@ namespace CommandLineTools
 				//CompilerPaths = new Dictionary<string, string>( StringComparer.CurrentCultureIgnoreCase );
 			}
 
-			public async Task<bool> CompileAsync( bool forceRecompile, bool singleThread )
+			public async Task<bool> CompileAsync( bool forceRecompile, bool singleTask )
 			{
 				Prepare( forceRecompile );
 
-				var hasChanges = await CompileSourcesAsync( singleThread );
+				var hasChanges = await CompileSourcesAsync( singleTask );
 				if( isCancelled )
 					return false;
 
@@ -249,7 +60,7 @@ namespace CommandLineTools
 				}
 			}
 
-			async Task<bool> CompileSourcesAsync( bool singleThread )
+			async Task<bool> CompileSourcesAsync( bool singleTask )
 			{
 				if( !Directory.Exists( tempPath ) )
 					Directory.CreateDirectory( tempPath );
@@ -258,7 +69,7 @@ namespace CommandLineTools
 				var defines = string.Join( " ", Parser.Defines.Select( i => "-D" + PrepareArg( i ) ) );
 				var args = $"{includes} {defines}";
 
-				if( singleThread )
+				if( singleTask )
 				{
 					return await CompileBatchAsync( CompileList, args );
 				}
@@ -343,11 +154,29 @@ namespace CommandLineTools
 
 				var flags = Parser.CompileFlags[ type ];
 
-				var appPath = Parser.PythonPath;// @"C:\emsdk\emsdk\python\3.13.3_64bit\python.exe";
-				var arguments = "\"" + Parser.EmscriptenFolder + @"\upstream\emscripten\emcc.py" + "\"";
-				arguments += $" {flags} {args} -o {outPath} -c -MD {inPath}";
+				bool result;
 
-				var result = await RunCmdAsync( appPath, arguments, Parser.RootPath );
+				if( Parser.Platform == "Web" )
+				{
+					var appPath = Parser.PythonPath;// @"C:\emsdk\emsdk\python\3.13.3_64bit\python.exe";
+					var arguments = "\"" + Parser.EmscriptenFolder + @"\upstream\emscripten\emcc.py" + "\"";
+					arguments += $" {flags} {args} -o {outPath} -c -MD {inPath}";
+					result = await RunCmdAsync( appPath, arguments, Parser.CompileFileDirectory );
+				}
+				else if( Parser.Platform == "macOS" )
+				{
+					var compiler = Path.GetExtension( inPath ).Equals( ".c", StringComparison.OrdinalIgnoreCase ) ? "clang" : "clang++";
+					var arguments = $"{flags} {args} -o {outPath} -c -MD {inPath}";
+					result = await RunCmdAsync( compiler, arguments, Parser.CompileFileDirectory );
+
+					//var compiler = "clang++";
+					//result = await RunCmdAsync( compiler, $"{flags} {args} -o {outPath} -c -MD {inPath}", Parser.CompileFileDirectory );
+				}
+				else
+				{
+					Console.WriteLine( "Platform not supported: " + Parser.Platform );
+					return false;
+				}
 
 				////var flags = Parser.CompileFlags[ type ];
 				////var compiler = CompilerPaths[ type ];
@@ -453,48 +282,6 @@ namespace CommandLineTools
 					return false;
 				}
 			}
-
-			////async Task<bool> RunCmdAsync( string appPath, string arguments, string workingDirectory )
-			////{
-			////	using Process process = new();
-			////	process.EnableRaisingEvents = true;
-			////	process.StartInfo = new()
-			////	{
-			////		WindowStyle = ProcessWindowStyle.Hidden,
-			////		WorkingDirectory = workingDirectory,
-			////		FileName = appPath,
-			////		Arguments = arguments
-			////	};
-
-			////	var tcs = new TaskCompletionSource();
-			////	process.Exited += ( sender, args ) =>
-			////	{
-			////		tcs.SetResult();
-			////		process.Dispose();
-			////	};
-
-			////	process.OutputDataReceived += ( s, ea ) => Console.WriteLine( ea.Data );
-			////	process.ErrorDataReceived += ( s, ea ) => Console.WriteLine( "[ERROR] " + ea.Data );
-			////	try
-			////	{
-			////		process.Start();
-
-			////		await tcs.Task;
-
-			////		if( process.ExitCode != 0 )
-			////		{
-			////			isCancelled = true;
-			////			return false;
-			////		}
-			////		return true;
-			////	}
-			////	catch( Exception e )
-			////	{
-			////		Console.WriteLine( e );
-			////		isCancelled = true;
-			////	}
-			////	return false;
-			////}
 
 			void SaveProperties()
 			{
@@ -711,7 +498,8 @@ namespace CommandLineTools
 						{
 							var parts = line.Split( Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries );
 							if( parts.Length != 2 ) continue;
-							if( !long.TryParse( parts[ 0 ].Trim(), out var binaryTimestamp ) ) return;
+							if( !long.TryParse( parts[ 0 ].Trim(), out var binaryTimestamp ) )
+								return;
 							var path = parts[ 1 ].Trim().Replace( '\\', '/' );
 							timestamps[ path ] = DateTime.FromBinary( binaryTimestamp );
 						}
@@ -859,53 +647,39 @@ namespace CommandLineTools
 			if( !SystemSettings.CommandLineParameters.TryGetValue( "-compile", out var compileFilePath ) )
 				return false;
 
-			//SystemSettings.CommandLineParameters.TryGetValue( "-buildServer", out var buildServer );
+			//bool forceRecompile = false;
+			//if( SystemSettings.CommandLineParameters.TryGetValue( "-forceRecompile", out var forceRecompileString ) )
+			//{
+			//	bool.TryParse( forceRecompileString, out forceRecompile );
+			//	if( forceRecompileString == "1" )
+			//		forceRecompile = true;
+			//}
 
-			//!!!!check update
-			bool forceRecompile = false;
-			if( SystemSettings.CommandLineParameters.TryGetValue( "-forceRecompile", out var forceRecompileString ) )
-			{
-				bool.TryParse( forceRecompileString, out forceRecompile );
-				if( forceRecompileString == "1" )
-					forceRecompile = true;
-			}
-			//bool forceRecompile = SystemSettings.CommandLineParameters.ContainsKey( "-force" );
-
-			//!!!!
-			bool singleThread = SystemSettings.CommandLineParameters.ContainsKey( "-no-tasks" );
+			bool singleTask = SystemSettings.CommandLineParameters.ContainsKey( "-no-tasks" );
 
 
-			//!!!!temp
-			forceRecompile = true;
+			//!!!!always force recompile for now
+			var forceRecompile = true;
 			//singleThread = true;
 
+			var executableDirectory = AppContext.BaseDirectory;
+			var compileFileFullPath = Path.GetFullPath( Path.Combine( executableDirectory, compileFilePath ) );
 
 			try
 			{
-				var parser = new CompileFileParser();
-				parser.Parse( compileFilePath );
+				var parser = new CompileFileParser( compileFileFullPath, false );
+				parser.Parse();
 				parser.Print();
 
-				if( forceRecompile )
-					Console.WriteLine( "Compiling with the -forceRecompile flag, all previous compilation results will be discarded." );
+				//if( forceRecompile )
+				//	Console.WriteLine( "Compiling with the -forceRecompile flag, all previous compilation results will be discarded." );
 
-				//if( !string.IsNullOrEmpty( buildServer ) )
-				//{
-				//	//var task = CompileOnBuildServer.Process( parser );
-				//	//task.Wait();
-				//	//return task.Result;
-
-				//	////return CompileOnBuildServer.Process( parser );
-				//}
-				//else
-				{
-					var compiler = new LibCompiler( parser );
-					return compiler.CompileAsync( forceRecompile, singleThread ).GetAwaiter().GetResult();
-				}
+				var compiler = new LibCompiler( parser );
+				return compiler.CompileAsync( forceRecompile, singleTask ).GetAwaiter().GetResult();
 			}
-			catch( Exception ex )
+			catch( Exception e )
 			{
-				Console.WriteLine( $"Error: {ex.Message}" );
+				Console.WriteLine( $"Error: {e.Message}" );
 			}
 
 			return false;

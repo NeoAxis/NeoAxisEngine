@@ -3454,6 +3454,23 @@ namespace bgfx
 				}
 				break;
 
+				//!!!!betauser
+			case CommandBuffer::CustomCommand:
+				{
+					BGFX_PROFILER_SCOPE("CustomCommand", 0xff2040ff);
+
+					int command;
+					_cmdbuf.read(command);
+
+					const Memory* mem;
+					_cmdbuf.read(mem);
+
+					m_renderCtx->customCommand(command, mem);
+
+					release(mem);
+				}
+				break;
+
 			default:
 				BX_ASSERT(false, "Invalid command: %d", command);
 				break;
@@ -5678,6 +5695,13 @@ namespace bgfx
 	{
 		BGFX_CHECK_API_THREAD();
 		s_ctx->requestScreenShot(_handle, _filePath);
+	}
+
+	//!!!!betauser
+	void customCommand(int _command, const Memory* _mem)
+	{
+		BX_ASSERT(NULL != _mem, "_mem can't be NULL");
+		return s_ctx->customCommand(_command, _mem);
 	}
 
 #undef BGFX_CHECK_ENCODER0

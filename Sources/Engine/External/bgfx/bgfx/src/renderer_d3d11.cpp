@@ -3861,6 +3861,11 @@ namespace bgfx { namespace d3d11
 			}
 		}
 
+		//!!!!betauser
+		void customCommand(int _command, const Memory* _mem) override
+		{
+		}
+
 		void* m_d3d9Dll;
 		void* m_d3d11Dll;
 		void* m_renderDocDll;

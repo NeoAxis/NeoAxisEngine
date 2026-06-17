@@ -9,6 +9,8 @@ using NeoAxis.Networking;
 using System.Reflection;
 using System.Linq;
 using System.ComponentModel;
+using System.Net.WebSockets;
+
 
 
 #if !NO_SERVER
@@ -33,6 +35,12 @@ namespace NeoAxis
 		public int CloudMethodMaxTimeInMinutes { get; set; } = 10;
 
 		public int FileRequestMaxItemCount { get; set; } = 1000;
+
+		public int ReceiveMessageDownloadFilesContentMaxSize { get; set; } = 1 * 1024 * 1024;
+		public int UploadFilesMaxBlockSize { get; set; } = 1 * 1024 * 1024;
+
+		//!!!!not used
+		//public int UploadFilesMaxQueueSize { get; set; } = 10;
 
 		//
 
@@ -64,6 +72,8 @@ namespace NeoAxis
 		MessageType getCloudMethodInfoAnswerMessage;
 		MessageType getCloudMethodsMessage;
 		MessageType getCloudMethodsAnswerMessage;
+		MessageType getCommonInfoMessage;
+		MessageType getCommonInfoAnswerMessage;
 
 		string fullPathToDatabase;
 		bool databaseReadOnly;
@@ -474,6 +484,8 @@ namespace NeoAxis
 			getCloudMethodInfoAnswerMessage = RegisterMessageType( "GetCloudMethodInfoAnswer", 26 );
 			getCloudMethodsMessage = RegisterMessageType( "GetCloudMethods", 27, ReceiveMessage_GetCloudMethods );
 			getCloudMethodsAnswerMessage = RegisterMessageType( "GetCloudMethodsAnswer", 28 );
+			getCommonInfoMessage = RegisterMessageType( "GetCommonInfo", 29, ReceiveMessage_GetCommonInfo );
+			getCommonInfoAnswerMessage = RegisterMessageType( "GetCommonInfoAnswer", 30 );
 
 			if( !string.IsNullOrEmpty( FullPathToDatabase ) )
 			{
@@ -1350,10 +1362,10 @@ namespace NeoAxis
 									//!!!!what about hashes
 
 									var hash = "";// GetOrCalculateFileHash( fileInfo );
-									resultValues[ n ] = ( fileInfo.Length, fileInfo.LastWriteTimeUtc, hash );
+									resultValues[ n ] = (fileInfo.Length, fileInfo.LastWriteTimeUtc, hash);
 								}
 								else
-									resultValues[ n ] = ( -1, new DateTime(), "" );
+									resultValues[ n ] = (-1, new DateTime(), "");
 							}
 
 							SendGetFilesInfoAnswer( sender, requestID, resultValues, null );
@@ -1387,7 +1399,7 @@ namespace NeoAxis
 							for( int n = 0; n < resultValues.Length; n++ )
 							{
 								var resultValue = result.Items[ n ];
-								resultValues[ n ] = ( resultValue.Size, resultValue.LastModified, "" );
+								resultValues[ n ] = (resultValue.Size, resultValue.LastModified, "");
 							}
 							SendGetFilesInfoAnswer( sender, requestID, resultValues, null );
 						}
@@ -1577,8 +1589,6 @@ namespace NeoAxis
 			SendMessage( client, downloadFileContentAnswerMessage, writer.AsArraySegment() );
 		}
 
-		public int ReceiveMessageDownloadFileContentMaxSize { get; set; } = 1 * 1024 * 1024;
-
 		bool ReceiveMessage_DownloadFileContent( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error )
 		{
 			const int maxPartCountInGroup = 10000;
@@ -1649,9 +1659,9 @@ namespace NeoAxis
 							totalRequestedDataSize += part.Size;
 						}
 					}
-					if( totalRequestedDataSize > ReceiveMessageDownloadFileContentMaxSize )
+					if( totalRequestedDataSize > ReceiveMessageDownloadFilesContentMaxSize )
 					{
-						SendDownloadFileContentAnswerError( sender, requestID, $"Max block size limit {ReceiveMessageDownloadFileContentMaxSize}." );
+						SendDownloadFileContentAnswerError( sender, requestID, $"Max block size limit {ReceiveMessageDownloadFilesContentMaxSize}." );
 						return;
 					}
 
@@ -1750,10 +1760,6 @@ namespace NeoAxis
 				get { return (int)( PartEnd - PartStart ); }
 			}
 		}
-
-		public int UploadFilesMaxBlockSize { get; set; } = 1 * 1024 * 1024;
-		//!!!!not used
-		public int UploadFilesMaxQueueSize { get; set; } = 10;
 
 		void SendUploadFileContentAnswer( ServerNode.Client client, long requestID, string error )
 		{
@@ -2508,6 +2514,21 @@ namespace NeoAxis
 			return true;
 		}
 
+		bool ReceiveMessage_GetCommonInfo( ServerNode.Client sender, MessageType messageType, ArrayDataReader reader, ref string error )
+		{
+			if( !reader.Complete() )
+				return false;
+
+			var block = new TextBlock();
+			block.SetAttribute( "UploadFilesMaxBlockSize", UploadFilesMaxBlockSize.ToString() );
+			block.SetAttribute( "ReceiveMessageDownloadFilesContentMaxSize", ReceiveMessageDownloadFilesContentMaxSize.ToString() );
+
+			var m = BeginMessage( sender, getCommonInfoAnswerMessage );
+			m.Writer.Write( block.DumpToString() );
+			m.End();
+
+			return true;
+		}
 	}
 #endif
 
@@ -2515,6 +2536,12 @@ namespace NeoAxis
 
 	public class ClientNetworkService_CloudFunctions : ClientService
 	{
+		public int DownloadFilesMaxBlockSize { get; set; } = 10 * 1024 * 1024;
+		public int UploadFilesMaxBlockSize { get; set; } = 10 * 1024 * 1024;
+
+		//!!!!not used
+		//public int DownloadFilesMaxQueueSize { get; set; } = 10;
+
 		MessageType saveStringMessage;
 		MessageType loadStringMessage;
 		MessageType stringAnswerMessage;
@@ -2543,6 +2570,8 @@ namespace NeoAxis
 		MessageType getCloudMethodInfoAnswerMessage;
 		MessageType getCloudMethodsMessage;
 		MessageType getCloudMethodsAnswerMessage;
+		MessageType getCommonInfoMessage;
+		MessageType getCommonInfoAnswerMessage;
 
 		long requestIdCounter;
 		ConcurrentDictionary<long, AnswerItem> answers = new ConcurrentDictionary<long, AnswerItem>();
@@ -2561,6 +2590,9 @@ namespace NeoAxis
 
 		List<Assembly> registeredCloudMethodAssemblies = new List<Assembly>();
 
+		volatile ServerCommonInfoClass serverCommonInfo;
+		public ServerCommonInfoClass ServerCommonInfo { get { return serverCommonInfo; } }
+
 		///////////////////////////////////////////////
 
 		public class SimpleResult
@@ -2572,6 +2604,15 @@ namespace NeoAxis
 		{
 			public string Error;
 			public DateTime CreationTime;
+		}
+
+		///////////////////////////////////////////////
+
+		//common info may be dynamic in the future
+		public class ServerCommonInfoClass
+		{
+			public int UploadFilesMaxBlockSize { get; internal set; }
+			public int ReceiveMessageDownloadFilesContentMaxSize { get; internal set; }
 		}
 
 		///////////////////////////////////////////////
@@ -2607,6 +2648,8 @@ namespace NeoAxis
 			getCloudMethodInfoAnswerMessage = RegisterMessageType( "GetCloudMethodInfoAnswer", 26, ReceiveMessage_GetCloudMethodInfoAnswer );
 			getCloudMethodsMessage = RegisterMessageType( "GetCloudMethods", 27 );
 			getCloudMethodsAnswerMessage = RegisterMessageType( "GetCloudMethodsAnswer", 28, ReceiveMessage_GetCloudMethodsAnswer );
+			getCommonInfoMessage = RegisterMessageType( "GetCommonInfo", 29 );
+			getCommonInfoAnswerMessage = RegisterMessageType( "GetCommonInfoAnswer", 30, ReceiveMessage_GetCommonInfoAnswer );
 
 			//register NeoAxis.Core.dll
 			RegisterAssemblyForCloudMethodTypes( typeof( Vector2 ).Assembly );
@@ -3884,10 +3927,6 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		//!!!!
-		//public int DownloadFilesMaxBlockSize { get; set; } = 1 * 1024 * 1024;
-		//public int DownloadFilesMaxQueueSize { get; set; } = 10;
-
 		class DownloadFileContentAnswerItem : AnswerItem
 		{
 			public Part[] Parts;
@@ -3900,8 +3939,7 @@ namespace NeoAxis
 
 		bool ReceiveMessage_DownloadFileContentAnswer( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
 		{
-			//!!!!
-			const int maxBlockSizeLimit = 1 * 1024 * 1024;
+			var maxBlockSizeLimit = DownloadFilesMaxBlockSize; // = 1 * 1024 * 1024;
 
 			const int maxPartCountInGroup = 10000;
 
@@ -4035,12 +4073,6 @@ namespace NeoAxis
 
 		public async Task<DownloadFilesResult> DownloadFilesAsync( DataSource source, string[] sourceFilePaths, string[] targetFullPaths, bool skipDownloadIfUpToDate, string anyData = null, DownloadFilesProgressCallback progressCallback = null, CancellationToken cancellationToken = default )
 		{
-			//!!!!
-			var maxBlockSize = 32768 * 2;
-			//var maxQueueSize = 10 * 1024 * 1024;
-			//var maxQueueSize = DownloadFilesMaxQueueSize;
-			const int maxPartCountInGroup = 10000;
-
 			//get files info
 			var getFilesResult = await GetFilesInfoAsync( source, sourceFilePaths, anyData, cancellationToken );
 			if( !string.IsNullOrEmpty( getFilesResult.Error ) )
@@ -4204,6 +4236,25 @@ namespace NeoAxis
 			}
 			else
 			{
+				var maxBlockSize = DownloadFilesMaxBlockSize;
+				{
+					//get max block size from the server
+
+					var serverCommonInfo = await GetServerCommonInfoAsync( cancellationToken );
+					if( !string.IsNullOrEmpty( serverCommonInfo.Error ) )
+						return new DownloadFilesResult { Error = serverCommonInfo.Error };
+
+					//!!!!need 0.95?
+					if( ServerCommonInfo.ReceiveMessageDownloadFilesContentMaxSize != 0 )
+						maxBlockSize = Math.Min( maxBlockSize, (int)( ServerCommonInfo.ReceiveMessageDownloadFilesContentMaxSize * 0.95f ) );
+					else
+						maxBlockSize = Math.Min( maxBlockSize, 32768 * 16 );
+				}
+				//var maxQueueSize = 10 * 1024 * 1024;
+				//var maxQueueSize = DownloadFilesMaxQueueSize;
+
+				const int maxPartCountInGroup = 10000;
+
 				var downloadParts = new List<DownloadPart>( toDownload.Length );
 
 				for( int n = 0; n < toDownload.Length; n++ )
@@ -4282,22 +4333,6 @@ namespace NeoAxis
 				foreach( var group in downloadGroups )
 					downloadGroupsDataSize += group.Size;
 
-
-				//!!!!queue. update websockets
-
-				//!!!!test very big file without queue
-				//!!!!!!test big amount of parts
-
-
-
-				//foreach( var group in downloadGroups )
-				//{
-				//	var requestID = GetRequestID();
-				//	group.RequestID = requestID;
-				//	var requestParts = group.Parts.ToArray();
-				//	SendDownloadFileContent( requestID, requestParts, anyData );
-				//}
-
 				progressCallback?.Invoke( totalSize, 0, 0, 0 );
 				var lastSentTotalDownloadedSize = 0L;
 				var lastSentPercentage = 0;
@@ -4310,12 +4345,6 @@ namespace NeoAxis
 					group.RequestID = requestID;
 					var requestParts = group.Parts.ToArray();
 					SendDownloadFileContent( requestID, requestParts, anyData );
-
-					//SendDownloadFileContent( requestID, requestParts, anyData );
-					//var requestID = group.RequestID;
-					////var requestID = GetRequestID();
-					//var requestParts = group.Parts.ToArray();// new DownloadPart[] { part };
-					////SendDownloadFileContent( requestID, requestParts, anyData );
 
 					while( true )
 					{
@@ -4925,12 +4954,6 @@ namespace NeoAxis
 			if( targetFilePaths.Length != sourceFullPaths.Length )
 				return new SimpleResult() { Error = "targetFilePaths.Length != sourceFullPaths.Length." };
 
-			//!!!!
-			var maxBlockSize = 32768 * 2;
-			//var maxQueueSize = 10 * 1024 * 1024;
-			//var maxQueueSize = DownloadFilesMaxQueueSize;
-			const int maxPartCountInGroup = 10000;
-
 			if( source == DataSource.Storage )
 			{
 				//send request to get upload urls
@@ -5114,6 +5137,25 @@ namespace NeoAxis
 			}
 			else
 			{
+				var maxBlockSize = UploadFilesMaxBlockSize;
+				{
+					//get max block size from the server
+
+					var serverCommonInfo = await GetServerCommonInfoAsync( cancellationToken );
+					if( !string.IsNullOrEmpty( serverCommonInfo.Error ) )
+						return new SimpleResult { Error = serverCommonInfo.Error };
+
+					//!!!!need 0.95?
+					if( ServerCommonInfo.UploadFilesMaxBlockSize != 0 )
+						maxBlockSize = Math.Min( maxBlockSize, (int)( ServerCommonInfo.UploadFilesMaxBlockSize * 0.95f ) );
+					else
+						maxBlockSize = Math.Min( maxBlockSize, 32768 * 16 );
+				}
+				//var maxQueueSize = 10 * 1024 * 1024;
+				//var maxQueueSize = UploadFilesMaxQueueSize;
+
+				const int maxPartCountInGroup = 10000;
+
 				var uploadParts = new List<UploadPart>();
 
 				for( int n = 0; n < sourceFullPaths.Length; n++ )
@@ -5190,25 +5232,13 @@ namespace NeoAxis
 				foreach( var group in uploadGroups )
 					uploadGroupsDataSize += group.Size;
 
-				//!!!!queue. update websockets
-
-				//!!!!test very big file without queue
-				//!!!!!!test big amount of parts
-
-
-				//foreach( var group in uploadGroups )
-				//{
-				//	var requestID = GetRequestID();
-				//	group.RequestID = requestID;
-				//	var requestParts = group.Parts.ToArray();
-				//	SendUploadFileContent( requestID, requestParts, anyData );
-				//}
-
 				progressCallback?.Invoke( uploadGroupsDataSize, 0, 0, 0 );
 				var callbackProgressLastTotalProcessedSize = 0L;
 				var callbackProgressLastPercentage = 0;
 
 				var totalUploadedSize = 0L;
+
+				//!!!!maybe be improved to send two groups without waiting answer for first group
 
 				foreach( var group in uploadGroups )
 				{
@@ -5869,6 +5899,57 @@ namespace NeoAxis
 			//	return type;
 
 			return null;
+		}
+
+		bool ReceiveMessage_GetCommonInfoAnswer( MessageType messageType, ArrayDataReader reader, ref string additionalErrorMessage )
+		{
+			var blockString = reader.ReadString();
+			if( !reader.Complete() )
+				return false;
+
+			try
+			{
+				var block = TextBlock.Parse( blockString, out var error );
+				if( !string.IsNullOrEmpty( error ) )
+				{
+					additionalErrorMessage = error;
+					return false;
+				}
+
+				var info = new ServerCommonInfoClass();
+				info.UploadFilesMaxBlockSize = int.Parse( block.GetAttribute( "UploadFilesMaxBlockSize", "0" ) );
+				info.ReceiveMessageDownloadFilesContentMaxSize = int.Parse( block.GetAttribute( "ReceiveMessageDownloadFilesContentMaxSize", "0" ) );
+				serverCommonInfo = info;
+			}
+			catch( Exception e )
+			{
+				additionalErrorMessage = e.Message;
+				return false;
+			}
+
+			return true;
+		}
+
+		public async Task<SimpleResult> GetServerCommonInfoAsync( CancellationToken cancellationToken )
+		{
+			if( serverCommonInfo == null )
+			{
+				//request
+				var m = BeginMessage( getCommonInfoMessage );
+				m.End();
+
+				//wait for answer
+				while( serverCommonInfo == null )
+				{
+					await Task.Delay( 1 );
+					if( cancellationToken.IsCancellationRequested )
+						return new SimpleResult { Error = "Operation was canceled." };
+					if( !string.IsNullOrEmpty( ConnectionErrorReceived ) )
+						return new SimpleResult() { Error = ConnectionErrorReceived };
+				}
+			}
+
+			return new SimpleResult();
 		}
 	}
 }

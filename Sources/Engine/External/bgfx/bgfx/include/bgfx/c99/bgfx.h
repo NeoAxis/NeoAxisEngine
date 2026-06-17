@@ -3433,6 +3433,8 @@ BGFX_C_API void bgfx_discard(uint8_t _flags);
  */
 BGFX_C_API void bgfx_blit(bgfx_view_id_t _id, bgfx_texture_handle_t _dst, uint8_t _dstMip, uint16_t _dstX, uint16_t _dstY, uint16_t _dstZ, bgfx_texture_handle_t _src, uint8_t _srcMip, uint16_t _srcX, uint16_t _srcY, uint16_t _srcZ, uint16_t _width, uint16_t _height, uint16_t _depth);
 
+BGFX_C_API void bgfx_custom_command(int _command, const bgfx_memory_t* _mem);
+
 /**/
 typedef enum bgfx_function_id
 {
@@ -3630,6 +3632,9 @@ typedef enum bgfx_function_id
     BGFX_FUNCTION_ID_DISPATCH_INDIRECT,
     BGFX_FUNCTION_ID_DISCARD,
     BGFX_FUNCTION_ID_BLIT,
+
+    //!!!!betauser
+    BGFX_CUSTOM_COMMAND,
 
     BGFX_FUNCTION_ID_COUNT
 
@@ -3832,6 +3837,9 @@ struct bgfx_interface_vtbl
     void (*dispatch_indirect)(bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint16_t _start, uint16_t _num, uint8_t _flags);
     void (*discard)(uint8_t _flags);
     void (*blit)(bgfx_view_id_t _id, bgfx_texture_handle_t _dst, uint8_t _dstMip, uint16_t _dstX, uint16_t _dstY, uint16_t _dstZ, bgfx_texture_handle_t _src, uint8_t _srcMip, uint16_t _srcX, uint16_t _srcY, uint16_t _srcZ, uint16_t _width, uint16_t _height, uint16_t _depth);
+
+    //!!!!betauser
+    void (*create_command)(int _command, const bgfx_memory_t* _mem);
 };
 
 /**/

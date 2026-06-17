@@ -708,6 +708,10 @@ namespace Internal.SharpBgfx
         [return: MarshalAs( UnmanagedType.U1 )]
         public unsafe static extern bool bgfx_get_last_warning( /*int bufferSize,*/ byte* result );
 
+        //!!!!betauser
+        [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
+        public static extern void bgfx_custom_command( int command, MemoryBlock.DataPtr* memory );
+
         ////!!!!betauser
         //[DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         //public static extern void bgfx_float4x4_mul( IntPtr result, IntPtr a, IntPtr b );

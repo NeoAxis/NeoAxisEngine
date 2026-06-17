@@ -43,6 +43,20 @@ namespace CommandLineTools
 				return true;
 			}
 
+			if( SystemSettings.CommandLineParameters.ContainsKey( "-platformServer" ) )
+			{
+				var result = PlatformServer.Init();
+				Environment.Exit( result ? 0 : -1 );
+				return true;
+			}
+
+			if( SystemSettings.CommandLineParameters.ContainsKey( "-compileRemote" ) )
+			{
+				var result = CompileRemote.Process();
+				Environment.Exit( result ? 0 : -1 );
+				return true;
+			}
+
 			return false;
 		}
 

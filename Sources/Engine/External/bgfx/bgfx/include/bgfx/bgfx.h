@@ -4253,6 +4253,9 @@ namespace bgfx
 		, const char* _filePath
 		);
 
+	//!!!!betauser
+	void customCommand(int _command, const Memory* _mem);
+
 } // namespace bgfx
 
 #endif // BGFX_H_HEADER_GUARD

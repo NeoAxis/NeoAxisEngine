@@ -50,6 +50,9 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="NETStandard21\**" />
+    <EmbeddedResource Remove="NETStandard21\**" />
+    <None Remove="NETStandard21\**" />
     <None Remove="obj\**" />
   </ItemGroup>
   <ItemGroup>
