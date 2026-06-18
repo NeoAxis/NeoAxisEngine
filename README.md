@@ -2,13 +2,11 @@
 
 ------
 
-04 June 2026.
+18 June 2026.
 
-<a href="https://cp.vdsina.com/">Our cloud provider is experiencing technical difficulties.</a>
+Our cloud provider is experiencing technical difficulties.
 
 <a href="https://neoaxis-la.us-east-1.linodeobjects.com/NeoX.exe">Download NeoX app to get NeoAxis Engine in compiled form.</a>
-
-<a href="https://www.neoaxis.cn/en/">Use an alternative website to learn more about the engine.</a>
 
 ------
 
