@@ -1,11 +1,11 @@
 SourceRootFolder: ..
 SourceFolder: NeoAxis.Core.Native
-SourceFolder: External\bgfx
-SourceFolder: External\FreeImage
-SourceFolder: External\FreeType
-SourceFolder: External\OggVorbisTheora
-SourceFolder: External\OpenALSoft
-SourceFolder: External\SDL
+SourceFolder: External/bgfx
+SourceFolder: External/FreeImage
+SourceFolder: External/FreeType
+SourceFolder: External/OggVorbisTheora
+SourceFolder: External/OpenALSoft
+SourceFolder: External/SDL
 
 SourceFileExtension: c
 SourceFileExtension: cpp
@@ -15,65 +15,19 @@ SourceFileExtension: h
 SourceFileExtension: hpp
 SourceFileExtension: inl
 SourceFileExtension: compile
+SourceFileExtension: vcxproj
 
 Source: NeoAxisCoreNative_x64.vcxproj
-Output: ..\..\..\Project\Sources\NeoAxis.Player.macOS\lib\NeoAxisCoreNative.a
-TempFolder: ..\..\..\_build\macOS\Emscripten\NeoAxisCoreNative.macOS
+Output: ../../../Project/Sources/NeoAxis.Player.macOS/lib/libNeoAxisCoreNative.a
+TempFolder: _build
+Te__mpFolder: ../../../_build/macOS/NeoAxisCoreNative.macOS
 
 Platform: macOS
-CFlags: -g -fno-omit-frame-pointer -fms-extensions -O0 -arch arm64
-CppFlags: -g -fno-omit-frame-pointer -fms-extensions -O0 -frtti -std=c++17 -arch arm64
+CFlags: -g -fno-omit-frame-pointer -fms-extensions -O0 -arch arm64 -target arm64-apple-macos11.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+CppFlags: -g -fno-omit-frame-pointer -fms-extensions -O0 -frtti -std=c++17 -arch arm64 -target arm64-apple-macos11.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
 
-Defines: __clang__,WEB,EMSCRIPTEN,__EMSCRIPTEN__,__SIZEOF_SIZE_T__=4,_LIBCPP_VERSION,_STLP_HASH_FUN_H,_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,NDEBUG,_MT,FREEIMAGE_LIB,OGRE_NONCLIENT_BUILD,OGRE_PARTICLEFXPLUGIN_EXPORTS,OGRE_MEMORY_TRACKER_DEBUG_MODE,_SECURE_SCL=0,NVTT_EXPORTS,NVTT_SHARED,_STLP_DONT_USE_AUTO_LINK,_STLP_DESIGNATED_DLL,OGRE_GCC_VISIBILITY,PLATFORM_WEB,PNG_ARM_NEON_OPT=0,NATIVEMEMORYMANAGER_EXPORTS,LIBOGG_EXPORTS,LIBVORBIS_EXPORTS,LIBVORBISFILE_EXPORTS,LIBTHEORA_EXPORTS,JPH_DOU___________BLE_PRECISION,JPH_DEBUG_RENDERER,JPH_FLOATING_POINT_EXCEPTIONS_ENABLED,_HAS_TR1_NAMESPACE,FT2_BUILD_LIBRARY,OPJ_STATIC,LIBRAW_NODLL,LIBRAW_LIBRARY_BUILD,USE_JPIP,DISABLE_PERF_MEASUREMENT,_HAS_AUTO_PTR_ETC=1,AL_BUILD_LIBRARY,AL_ALEXT_PROTOTYPES,_LARGEFILE_SOURCE,_LARGE_FILES,OpenAL_EXPORTS
+Defines: __clang__,__APPLE__,__MACH__,__arm64__,MACOS,__SIZEOF_SIZE_T__=8,_LIBCPP_VERSION,_STLP_HASH_FUN_H,_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,NDEBUG,_MT,FREEIMAGE_LIB,OGRE_NONCLIENT_BUILD,OGRE_PARTICLEFXPLUGIN_EXPORTS,OGRE_MEMORY_TRACKER_DEBUG_MODE,_SECURE_SCL=0,NVTT_EXPORTS,NVTT_SHARED,_STLP_DONT_USE_AUTO_LINK,_STLP_DESIGNATED_DLL,OGRE_GCC_VISIBILITY,PLATFORM_WEB,PNG_ARM_NEON_OPT=0,NATIVEMEMORYMANAGER_EXPORTS,LIBOGG_EXPORTS,LIBVORBIS_EXPORTS,LIBVORBISFILE_EXPORTS,LIBTHEORA_EXPORTS,JPH_DOUBLE_PRECISION,JPH_DEBUG_RENDERER,JPH_FLOATING_POINT_EXCEPTIONS_ENABLED,_HAS_TR1_NAMESPACE,FT2_BUILD_LIBRARY,OPJ_STATIC,LIBRAW_NODLL,LIBRAW_LIBRARY_BUILD,USE_JPIP,DISABLE_PERF_MEASUREMENT,_HAS_AUTO_PTR_ETC=1,AL_BUILD_LIBRARY,AL_ALEXT_PROTOTYPES,_LARGEFILE_SOURCE,_LARGE_FILES,OpenAL_EXPORTS
 
-ExcludeSource: ..\External\OpenALSoft\alc\*
-ExcludeSource: ..\External\OpenALSoft\al\*
 
-HeaderFolder: ..\include
-HeaderFolder: ..\..\PlugIns\ParticleFX\include
-HeaderFolder: ..\..\..\FreeImage\Source
-HeaderFolder: ..\..\..\FreeType\include
-HeaderFolder: ..\..\..\Stlport\stlport
-HeaderFolder: ..\..\..\NvidiaTextureTools\src
-HeaderFolder: ..\..\..\NvidiaTextureTools\project\vc8
-HeaderFolder: ..\..\RenderSystems\NULL\include
-HeaderFolder: ..\..\OgreNativeWrapper\src
-HeaderFolder: ..\External\OggVorbisTheora\libogg\include
-HeaderFolder: ..\External\OggVorbisTheora\libvorbis\include
-HeaderFolder: ..\External\OggVorbisTheora\libvorbis\lib
-HeaderFolder: ..\External\OggVorbisTheora\libtheora\include
-HeaderFolder: ./
+
 HeaderFolder: MemoryManager
-HeaderFolder: ..\External\FreeImage\Source
-HeaderFolder: NativeWrapper
-HeaderFolder: ImageLibrary
-HeaderFolder: ..\External\FreeType\include
-HeaderFolder: NeoAxis
-HeaderFolder: MaskedOcclusionCulling
-HeaderFolder: ..\External\FreeImage\Source\FreeImageToolkit
-HeaderFolder: ..\External\FreeImage\Source\LibJPEG
-HeaderFolder: include
-HeaderFolder: ..\External\FreeImage\Source\LibOpenJPEG
-HeaderFolder: ..\External\FreeImage\Source\LibPNG
-HeaderFolder: ..\External\FreeImage\Source\LibRawLite
-HeaderFolder: ..\External\FreeImage\Source\LibRawLite\dcraw
-HeaderFolder: ..\External\FreeImage\Source\LibRawLite\internal
-HeaderFolder: ..\External\FreeImage\Source\LibRawLite\libraw
-HeaderFolder: ..\External\FreeImage\Source\LibRawLite\src
-HeaderFolder: ..\External\FreeImage\Source\LibTIFF
-HeaderFolder: ..\External\FreeImage\Source\LibWebP
-HeaderFolder: ..\External\FreeImage\Source\OpenEXR
-HeaderFolder: ..\External\FreeImage\Source\OpenEXR\Half
-HeaderFolder: ..\External\FreeImage\Source\OpenEXR\Iex
-HeaderFolder: ..\External\FreeImage\Source\OpenEXR\IexMath
-HeaderFolder: ..\External\FreeImage\Source\OpenEXR\IlmImf
-HeaderFolder: ..\External\FreeImage\Source\OpenEXR\IlmThread
-HeaderFolder: ..\External\FreeImage\Source\OpenEXR\Imath
-HeaderFolder: ..\External\FreeImage\Source\ZLib
-HeaderFolder: ..\External\OpenALSoft
-HeaderFolder: ..\External\OpenALSoft\include
-HeaderFolder: ..\External\OpenALSoft\build
-HeaderFolder: ..\External\OpenALSoft\alc
-HeaderFolder: ..\External\OpenALSoft\common
-HeaderFolder: ..\External\OpenALSoft\al
-HeaderFolder: ..\External\SDL\include

@@ -94,7 +94,7 @@ namespace CommandLineTools
 			public void Parse()
 			{
 				if( !File.Exists( parser.CompileFileFullPath ) )
-					throw new FileNotFoundException( "File not found.", parser.CompileFileFullPath );
+					throw new FileNotFoundException( "File not found. " + parser.CompileFileFullPath );
 
 				var lines = File.ReadAllLines( parser.CompileFileFullPath );
 				foreach( var line in lines )

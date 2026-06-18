@@ -11,9 +11,11 @@ namespace CommandLineTools
 		public class LibCompiler
 		{
 			public readonly CompileFileParser Parser;
+			public PlatformServer.ClientData ClientData;
+
 			public readonly List<(string inPath, string outPath, string type)> CompileList;
 			public readonly List<string> FolderIncludes;
-			public IReadOnlyDictionary<string, DateTime> CachedTimestamps;
+			//public IReadOnlyDictionary<string, DateTime> CachedTimestamps;
 			//public readonly Dictionary<string, string> CompilerPaths;
 
 			string outputPath;
@@ -24,17 +26,18 @@ namespace CommandLineTools
 
 			//
 
-			public LibCompiler( CompileFileParser parser )
+			public LibCompiler( CompileFileParser parser, PlatformServer.ClientData clientData )
 			{
 				Parser = parser;
+				ClientData = clientData;
 				CompileList = new List<(string inPath, string outPath, string type)>();
 				FolderIncludes = new List<string>();
 				//CompilerPaths = new Dictionary<string, string>( StringComparer.CurrentCultureIgnoreCase );
 			}
 
-			public async Task<bool> CompileAsync( bool forceRecompile, bool singleTask )
+			public async Task<bool> CompileAsync( /*bool forceRecompile,*/ bool singleTask )
 			{
-				Prepare( forceRecompile );
+				Prepare();// forceRecompile );
 
 				var hasChanges = await CompileSourcesAsync( singleTask );
 				if( isCancelled )
@@ -42,15 +45,16 @@ namespace CommandLineTools
 
 				if( hasChanges )
 				{
-					Console.WriteLine( "Archiving the library" );
+					Console.WriteLine( "Making a library..." );
 					await MakeLibAsync();
-
 					if( isCancelled )
 						return false;
+					Console.WriteLine( "The library was created successfully." );
 
-					Console.WriteLine( "Saving the cache" );
-					SaveTimestamps();
-					SaveProperties();
+					//Console.WriteLine( "Saving the cache" );
+					//SaveTimestamps();
+					//SaveProperties();
+
 					return true;
 				}
 				else
@@ -93,42 +97,82 @@ namespace CommandLineTools
 
 			async Task MakeLibAsync()
 			{
-
-				//!!!!is not tested
-
-				var appPath = Parser.PythonPath;// @"C:\emsdk\emsdk\python\3.13.3_64bit\python.exe";
-				var emarArguments = "\"" + Parser.EmscriptenFolder + @"\upstream\emscripten\emar.py" + "\"";
-
-				var outputPath = this.outputPath;
-				if( File.Exists( outputPath ) )
-					File.Delete( outputPath );
-				else if( !Directory.Exists( Path.GetDirectoryName( outputPath ) ) )
-					Directory.CreateDirectory( Path.GetDirectoryName( outputPath ) );
-
-				const int maxCmdLen = 2000;
-				var sb = new StringBuilder();
-				int index = 0;
-
-				outputPath = PreparePath( outputPath );
-				sb.Append( $"rcs {outputPath}" );
-				while( index < CompileList.Count )
+				if( Parser.Platform == "Web" )
 				{
-					var fileName = CompileList[ index ].outPath;
-					if( sb.Length + fileName.Length > maxCmdLen )
-					{
-						await RunCmdAsync( appPath, emarArguments + " " + sb.ToString(), tempPath );
-						if( isCancelled )
-							return;
-						Console.WriteLine( $"Done {Math.Floor( index * 100 / (float)CompileList.Count )}%" );
 
-						sb.Clear();
-						sb.Append( $"rcs {outputPath}" );
+					//!!!!? find . -name "*.o" -exec emar rcs libmylibrary.a {} +
+					//!!!!? или типа -filelist
+
+					//!!!!is not tested
+
+					var appPath = Parser.PythonPath;// @"C:\emsdk\emsdk\python\3.13.3_64bit\python.exe";
+					var emarArguments = "\"" + Parser.EmscriptenFolder + @"\upstream\emscripten\emar.py" + "\"";
+
+					var outputPath = this.outputPath;
+					if( File.Exists( outputPath ) )
+						File.Delete( outputPath );
+					else if( !Directory.Exists( Path.GetDirectoryName( outputPath ) ) )
+						Directory.CreateDirectory( Path.GetDirectoryName( outputPath ) );
+
+					const int maxCmdLen = 2000;
+					var sb = new StringBuilder();
+					int index = 0;
+
+					outputPath = PreparePath( outputPath );
+					sb.Append( $"rcs {outputPath}" );
+					while( index < CompileList.Count )
+					{
+						var fileName = CompileList[ index ].outPath;
+						if( sb.Length + fileName.Length > maxCmdLen )
+						{
+							await RunCmdAsync( appPath, emarArguments + " " + sb.ToString(), tempPath );
+							if( isCancelled )
+								return;
+							Console.WriteLine( $"Done {Math.Floor( index * 100 / (float)CompileList.Count )}%" );
+
+							sb.Clear();
+							sb.Append( $"rcs {outputPath}" );
+						}
+						sb.Append( ' ' );
+						sb.Append( fileName );
+						index++;
 					}
-					sb.Append( ' ' );
-					sb.Append( fileName );
-					index++;
+					await RunCmdAsync( appPath, emarArguments + " " + sb.ToString(), tempPath );
 				}
-				await RunCmdAsync( appPath, emarArguments + " " + sb.ToString(), tempPath );
+				else if( Parser.Platform == "macOS" )
+				{
+					//write all .o files to list.txt
+					var listTextFullPath = Path.Combine( tempPath, "list.txt" );
+					using( var writer = new StreamWriter( listTextFullPath ) )
+					{
+						foreach( var info in CompileList )
+							writer.WriteLine( info.outPath );
+					}
+
+					//compile to root of task directory
+
+					if( ClientData != null )
+					{
+						var libFileName = Path.GetFileName( outputPath );
+						var taskFullDirectory = PlatformServer.GetTaskFullPathDirectory( ClientData.TaskID );
+						var libFullPath = Path.Combine( taskFullDirectory, libFileName );
+
+						//Console.WriteLine( $"Running libtool to create library 1 {libFileName}..." );
+						//Console.WriteLine( $"Running libtool to create library 2 {libFullPath}..." );
+
+						await RunCmdAsync( "libtool", $"-static -filelist {listTextFullPath} -o {libFullPath}", tempPath );
+					}
+					else
+					{
+						//no implementation
+						Console.WriteLine( "Running libtool to create library: no client data, no implementation." );
+						isCancelled = true;
+					}
+				}
+				else
+				{
+					Console.WriteLine( "Making library: Platform not supported: " + Parser.Platform );
+				}
 			}
 
 			async Task<bool> CompileBatchAsync( List<(string inPath, string outPath, string type)> batch, string args )
@@ -145,12 +189,23 @@ namespace CommandLineTools
 
 			async Task<bool> CompileFileAsync( string inPath, string outPath, string type, string args )
 			{
+
+				//!!!!temp
+				//Console.WriteLine( "COMPILE inPath: " + inPath );
+				//Console.WriteLine( "COMPILE outPath: " + outPath );
+
+
 				outPath = Parser.GetFullSourcePath( Path.Join( tempPath, outPath ) );
-				if( !ShouldCompileFile( inPath, outPath ) )
-					return false;
+				//if( !ShouldCompileFile( inPath, outPath ) )
+				//	return false;
 
 				inPath = PreparePath( inPath );
 				outPath = PreparePath( outPath );
+
+
+				//!!!!temp
+				//Console.WriteLine( "COMPILE outPath 2: " + outPath );
+
 
 				var flags = Parser.CompileFlags[ type ];
 
@@ -168,9 +223,6 @@ namespace CommandLineTools
 					var compiler = Path.GetExtension( inPath ).Equals( ".c", StringComparison.OrdinalIgnoreCase ) ? "clang" : "clang++";
 					var arguments = $"{flags} {args} -o {outPath} -c -MD {inPath}";
 					result = await RunCmdAsync( compiler, arguments, Parser.CompileFileDirectory );
-
-					//var compiler = "clang++";
-					//result = await RunCmdAsync( compiler, $"{flags} {args} -o {outPath} -c -MD {inPath}", Parser.CompileFileDirectory );
 				}
 				else
 				{
@@ -183,55 +235,58 @@ namespace CommandLineTools
 				////var result = await RunCmdAsync( compiler, $"{flags} {args} -o {outPath} -c -MD {inPath}", Parser.RootPath );
 
 				if( result )
-					Console.WriteLine( $"Compiled {inPath} as {outPath}" );
+				{
+					Console.WriteLine( $"Compiled: {inPath} as {outPath}" );
+					if( ClientData != null )
+						PlatformServer.SendShowMessageToClient( ClientData, $"Compiled: {inPath} as {outPath}" );
+				}
 
 				return true;
 			}
 
-			bool ShouldCompileFile( string inPath, string outPath )
-			{
-				if( CheckFileChanged( inPath ) )
-					return true;
+			//bool ShouldCompileFile( string inPath, string outPath )
+			//{
+			//	if( CheckFileChanged( inPath ) )
+			//		return true;
 
-				if( !File.Exists( outPath ) )
-					return true;
+			//	if( !File.Exists( outPath ) )
+			//		return true;
 
-				var depFile = Path.ChangeExtension( outPath, ".d" );
-				if( !File.Exists( depFile ) )
-					return true;
+			//	var depFile = Path.ChangeExtension( outPath, ".d" );
+			//	if( !File.Exists( depFile ) )
+			//		return true;
 
-				foreach( var line in File.ReadAllLines( depFile ) )
-				{
-					var str = line.Trim();
-					if( str.EndsWith( '\\' ) )
-						str = str.Substring( 0, str.Length - 1 ).Trim();
-					foreach( var arg in CommandLineParser.SplitCommandLineIntoArguments( str, true ) )
-					{
-						var sourcePath = arg.Trim();
-						if( sourcePath.EndsWith( ':' ) )
-							continue;
+			//	foreach( var line in File.ReadAllLines( depFile ) )
+			//	{
+			//		var str = line.Trim();
+			//		if( str.EndsWith( '\\' ) )
+			//			str = str.Substring( 0, str.Length - 1 ).Trim();
+			//		foreach( var arg in CommandLineParser.SplitCommandLineIntoArguments( str, true ) )
+			//		{
+			//			var sourcePath = arg.Trim();
+			//			if( sourcePath.EndsWith( ':' ) )
+			//				continue;
 
-						if( CheckFileChanged( sourcePath ) )
-							return true;
-					}
-				}
-				return false;
-			}
+			//			if( CheckFileChanged( sourcePath ) )
+			//				return true;
+			//		}
+			//	}
+			//	return false;
+			//}
 
-			bool CheckFileChanged( string path )
-			{
-				path = Parser.GetFullSourcePath( path ).Replace( '\\', '/' );
+			//bool CheckFileChanged( string path )
+			//{
+			//	path = Parser.GetFullSourcePath( path ).Replace( '\\', '/' );
 
-				if( !File.Exists( path ) )
-					return true;
+			//	if( !File.Exists( path ) )
+			//		return true;
 
-				if( !CachedTimestamps.TryGetValue( path, out var timestamp ) )
-					return true;
+			//	if( !CachedTimestamps.TryGetValue( path, out var timestamp ) )
+			//		return true;
 
-				var lastWriteTime = File.GetLastWriteTime( path );
-				return timestamp != lastWriteTime;
-			}
-
+			//	var lastWriteTime = File.GetLastWriteTime( path );
+			//	return timestamp != lastWriteTime;
+			//}
 
 			async Task<bool> RunCmdAsync( string appPath, string arguments, string workingDirectory )
 			{
@@ -256,7 +311,11 @@ namespace CommandLineTools
 				process.ErrorDataReceived += ( s, ea ) =>
 				{
 					if( !string.IsNullOrEmpty( ea.Data ) )
-						Console.WriteLine( "[ERROR] " + ea.Data );
+					{
+						Console.WriteLine( "ERROR: " + ea.Data );
+						if( ClientData != null )
+							PlatformServer.SendShowMessageToClient( ClientData, "ERROR: " + ea.Data );
+					}
 				};
 
 				try
@@ -283,91 +342,91 @@ namespace CommandLineTools
 				}
 			}
 
-			void SaveProperties()
-			{
-				var fullPath = Path.Combine( tempPath, "cache", "properties" );
-				if( !Directory.Exists( Path.GetDirectoryName( fullPath ) ) )
-					Directory.CreateDirectory( Path.GetDirectoryName( fullPath ) );
+			//void SaveProperties()
+			//{
+			//	var fullPath = Path.Combine( tempPath, "cache", "properties" );
+			//	if( !Directory.Exists( Path.GetDirectoryName( fullPath ) ) )
+			//		Directory.CreateDirectory( Path.GetDirectoryName( fullPath ) );
 
-				var sb = new StringBuilder();
+			//	var sb = new StringBuilder();
 
-				sb.Append( "Defines: " );
-				sb.AppendLine( string.Join( Path.PathSeparator, Parser.Defines ) );
+			//	sb.Append( "Defines: " );
+			//	sb.AppendLine( string.Join( Path.PathSeparator, Parser.Defines ) );
 
-				foreach( var pair in Parser.CompileFlags )
-				{
-					sb.Append( pair.Key );
-					sb.Append( "Flags: " );
-					sb.AppendLine( pair.Value );
-				}
+			//	foreach( var pair in Parser.CompileFlags )
+			//	{
+			//		sb.Append( pair.Key );
+			//		sb.Append( "Flags: " );
+			//		sb.AppendLine( pair.Value );
+			//	}
 
-				//foreach( var pair in Parser.Compilers )
-				//{
-				//	sb.Append( pair.Key );
-				//	sb.Append( "Compiler: " );
-				//	sb.AppendLine( pair.Value );
-				//}
+			//	//foreach( var pair in Parser.Compilers )
+			//	//{
+			//	//	sb.Append( pair.Key );
+			//	//	sb.Append( "Compiler: " );
+			//	//	sb.AppendLine( pair.Value );
+			//	//}
 
-				File.WriteAllText( fullPath, sb.ToString() );
-			}
+			//	File.WriteAllText( fullPath, sb.ToString() );
+			//}
 
-			void SaveTimestamps()
-			{
-				var sb = new StringBuilder();
-				var processed = new HashSet<string>( StringComparer.CurrentCultureIgnoreCase );
-				foreach( var info in CompileList )
-				{
-					var depFile = Path.ChangeExtension( Path.Combine( tempPath, info.outPath ), ".d" );
-					if( !File.Exists( depFile ) )
-					{
-						Console.WriteLine( "Unable to find dependencies file: " + depFile );
-						continue;
-					}
+			//void SaveTimestamps()
+			//{
+			//	var sb = new StringBuilder();
+			//	var processed = new HashSet<string>( StringComparer.CurrentCultureIgnoreCase );
+			//	foreach( var info in CompileList )
+			//	{
+			//		var depFile = Path.ChangeExtension( Path.Combine( tempPath, info.outPath ), ".d" );
+			//		if( !File.Exists( depFile ) )
+			//		{
+			//			Console.WriteLine( "Unable to find dependencies file: " + depFile );
+			//			continue;
+			//		}
 
-					foreach( var line in File.ReadAllLines( depFile ) )
-					{
-						var str = line.Trim();
-						if( str.EndsWith( '\\' ) )
-							str = str.Substring( 0, str.Length - 1 ).Trim();
-						foreach( var arg in CommandLineParser.SplitCommandLineIntoArguments( str, true ) )
-						{
-							var sourcePath = arg.Trim();
-							if( sourcePath.EndsWith( ':' ) )
-								continue;
-							sourcePath = Parser.GetFullSourcePath( sourcePath ).Replace( '\\', '/' );
-							if( processed.Add( sourcePath ) )
-							{
-								sb.Append( File.GetLastWriteTime( sourcePath ).ToBinary() );
-								sb.Append( Path.PathSeparator );
-								sb.AppendLine( sourcePath );
-							}
-						}
-					}
-				}
+			//		foreach( var line in File.ReadAllLines( depFile ) )
+			//		{
+			//			var str = line.Trim();
+			//			if( str.EndsWith( '\\' ) )
+			//				str = str.Substring( 0, str.Length - 1 ).Trim();
+			//			foreach( var arg in CommandLineParser.SplitCommandLineIntoArguments( str, true ) )
+			//			{
+			//				var sourcePath = arg.Trim();
+			//				if( sourcePath.EndsWith( ':' ) )
+			//					continue;
+			//				sourcePath = Parser.GetFullSourcePath( sourcePath ).Replace( '\\', '/' );
+			//				if( processed.Add( sourcePath ) )
+			//				{
+			//					sb.Append( File.GetLastWriteTime( sourcePath ).ToBinary() );
+			//					sb.Append( Path.PathSeparator );
+			//					sb.AppendLine( sourcePath );
+			//				}
+			//			}
+			//		}
+			//	}
 
-				var fullPath = Path.Combine( tempPath, "cache", "timestamps" );
-				if( !Directory.Exists( Path.GetDirectoryName( fullPath ) ) )
-					Directory.CreateDirectory( Path.GetDirectoryName( fullPath ) );
+			//	var fullPath = Path.Combine( tempPath, "cache", "timestamps" );
+			//	if( !Directory.Exists( Path.GetDirectoryName( fullPath ) ) )
+			//		Directory.CreateDirectory( Path.GetDirectoryName( fullPath ) );
 
-				File.WriteAllText( fullPath, sb.ToString() );
-			}
+			//	File.WriteAllText( fullPath, sb.ToString() );
+			//}
 
-			void Prepare( bool forceRecompile )
+			void Prepare()// bool forceRecompile )
 			{
 				FindTools();
 
 				outputPath = Parser.GetFullSourcePath( Parser.OutputFilePath );
 				tempPath = Parser.GetFullSourcePath( Parser.TempFolder );
 
-				if( forceRecompile || IsPropertiesChanged() )
+				//if( forceRecompile || IsPropertiesChanged() )
 				{
-					// Изменились параметры компиляции, по этому необходимо перекомпилировать все файлы
-					CachedTimestamps = new Dictionary<string, DateTime>();
+					//// Изменились параметры компиляции, по этому необходимо перекомпилировать все файлы
+					//CachedTimestamps = new Dictionary<string, DateTime>();
 
-					// Удаление файла с параметрами предыдущей компиляции, чтобы не возникало конфликтов, если компиляция была неожиданно приостановлена
-					var fullPath = Path.Combine( tempPath, "cache", "properties" );
-					if( File.Exists( fullPath ) )
-						File.Delete( fullPath );
+					//// Удаление файла с параметрами предыдущей компиляции, чтобы не возникало конфликтов, если компиляция была неожиданно приостановлена
+					//var fullPath = Path.Combine( tempPath, "cache", "properties" );
+					//if( File.Exists( fullPath ) )
+					//	File.Delete( fullPath );
 
 					//clear temp folder
 					if( Directory.Exists( tempPath ) )
@@ -377,25 +436,30 @@ namespace CommandLineTools
 					if( File.Exists( outputPath ) )
 						File.Delete( outputPath );
 				}
-				else
-				{
-					LoadTimestamps();
-				}
+				//else
+				//{
+				//	LoadTimestamps();
+				//}
 
 				Console.WriteLine( "Collecting sources" );
 				var sourcesCollector = new SourcesCollectContext( this );
 				sourcesCollector.Collect();
 				Console.WriteLine( $"Found {CompileList.Count} sources" );
+				if( ClientData != null )
+					PlatformServer.SendShowMessageToClient( ClientData, $"Found {CompileList.Count} sources" );
 
 				CollectFolderIncludes();
 			}
 
 			void FindTools()
 			{
-				var files = Directory.GetFiles( Parser.EmscriptenFolder, "python.exe", SearchOption.AllDirectories );
-				if( files.Length == 0 )
-					throw new Exception( "Unable to find python.exe in Emscripten folder" );
-				Parser.PythonPath = files[ 0 ];
+				if( Parser.Platform == "Web" )
+				{
+					var files = Directory.GetFiles( Parser.EmscriptenFolder, "python.exe", SearchOption.AllDirectories );
+					if( files.Length == 0 )
+						throw new Exception( "Unable to find python.exe in Emscripten folder" );
+					Parser.PythonPath = files[ 0 ];
+				}
 
 
 				//foreach( var pair in Parser.Compilers )
@@ -424,90 +488,90 @@ namespace CommandLineTools
 				//}
 			}
 
-			bool IsPropertiesChanged()
-			{
-				// Файл хранит в себе параметры, использованные в предыдущей компиляции
-				var fullPath = Path.Combine( tempPath, "cache", "properties" );
-				if( !File.Exists( fullPath ) )
-					return true;
-				var compileFlags = new Dictionary<string, string>();
-				var compilers = new Dictionary<string, string>();
-				foreach( var line in File.ReadAllLines( fullPath ) )
-				{
-					if( string.IsNullOrWhiteSpace( line ) ) continue;
+			//bool IsPropertiesChanged()
+			//{
+			//	// Файл хранит в себе параметры, использованные в предыдущей компиляции
+			//	var fullPath = Path.Combine( tempPath, "cache", "properties" );
+			//	if( !File.Exists( fullPath ) )
+			//		return true;
+			//	var compileFlags = new Dictionary<string, string>();
+			//	var compilers = new Dictionary<string, string>();
+			//	foreach( var line in File.ReadAllLines( fullPath ) )
+			//	{
+			//		if( string.IsNullOrWhiteSpace( line ) ) continue;
 
-					var separatorIndex = line.IndexOf( ':' );
-					if( separatorIndex < 0 ) continue;
+			//		var separatorIndex = line.IndexOf( ':' );
+			//		if( separatorIndex < 0 ) continue;
 
-					var prefix = line.Substring( 0, separatorIndex ).Trim().ToUpper();
-					var value = line.Substring( separatorIndex + 1 ).Trim();
-					switch( prefix )
-					{
-					case "DEFINES":
-						{
-							var defines = value.Split( Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries );
-							if( !Parser.Defines.SequenceEqual( defines ) )
-								return true;
-						}
-						break;
-					default:
-						if( prefix.EndsWith( "FLAGS", StringComparison.InvariantCultureIgnoreCase ) )
-						{
-							var ext = prefix.Substring( 0, prefix.Length - 5 ).ToLowerInvariant();
-							compileFlags[ ext ] = value;
-						}
-						if( prefix.EndsWith( "COMPILER", StringComparison.InvariantCultureIgnoreCase ) )
-						{
-							var ext = prefix.Substring( 0, prefix.Length - 8 ).ToLowerInvariant();
-							compilers[ ext ] = value;
-						}
-						break;
-					}
-				}
-				if( Parser.CompileFlags.Count != compileFlags.Count )
-				{
-					return true;
-				}
-				foreach( var pair in compileFlags )
-				{
-					if( !Parser.CompileFlags.TryGetValue( pair.Key, out var value ) || value != pair.Value )
-						return true;
-				}
-				//if( Parser.Compilers.Count != compilers.Count )
-				//	return true;
-				//foreach( var pair in compilers )
-				//{
-				//	if( !Parser.Compilers.TryGetValue( pair.Key, out var value ) || value != pair.Value )
-				//		return true;
-				//}
-				return false;
-			}
+			//		var prefix = line.Substring( 0, separatorIndex ).Trim().ToUpper();
+			//		var value = line.Substring( separatorIndex + 1 ).Trim();
+			//		switch( prefix )
+			//		{
+			//		case "DEFINES":
+			//			{
+			//				var defines = value.Split( Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries );
+			//				if( !Parser.Defines.SequenceEqual( defines ) )
+			//					return true;
+			//			}
+			//			break;
+			//		default:
+			//			if( prefix.EndsWith( "FLAGS", StringComparison.InvariantCultureIgnoreCase ) )
+			//			{
+			//				var ext = prefix.Substring( 0, prefix.Length - 5 ).ToLowerInvariant();
+			//				compileFlags[ ext ] = value;
+			//			}
+			//			if( prefix.EndsWith( "COMPILER", StringComparison.InvariantCultureIgnoreCase ) )
+			//			{
+			//				var ext = prefix.Substring( 0, prefix.Length - 8 ).ToLowerInvariant();
+			//				compilers[ ext ] = value;
+			//			}
+			//			break;
+			//		}
+			//	}
+			//	if( Parser.CompileFlags.Count != compileFlags.Count )
+			//	{
+			//		return true;
+			//	}
+			//	foreach( var pair in compileFlags )
+			//	{
+			//		if( !Parser.CompileFlags.TryGetValue( pair.Key, out var value ) || value != pair.Value )
+			//			return true;
+			//	}
+			//	//if( Parser.Compilers.Count != compilers.Count )
+			//	//	return true;
+			//	//foreach( var pair in compilers )
+			//	//{
+			//	//	if( !Parser.Compilers.TryGetValue( pair.Key, out var value ) || value != pair.Value )
+			//	//		return true;
+			//	//}
+			//	return false;
+			//}
 
-			void LoadTimestamps()
-			{
-				var timestamps = new Dictionary<string, DateTime>( StringComparer.CurrentCultureIgnoreCase );
+			//void LoadTimestamps()
+			//{
+			//	var timestamps = new Dictionary<string, DateTime>( StringComparer.CurrentCultureIgnoreCase );
 
-				// Файл хранит в себе временные метки всех файлов
-				var fullPath = Path.Combine( tempPath, "cache", "timestamps" );
-				if( File.Exists( fullPath ) )
-				{
-					foreach( var line in File.ReadAllLines( fullPath ) )
-					{
-						if( string.IsNullOrWhiteSpace( line ) ) continue;
-						try
-						{
-							var parts = line.Split( Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries );
-							if( parts.Length != 2 ) continue;
-							if( !long.TryParse( parts[ 0 ].Trim(), out var binaryTimestamp ) )
-								return;
-							var path = parts[ 1 ].Trim().Replace( '\\', '/' );
-							timestamps[ path ] = DateTime.FromBinary( binaryTimestamp );
-						}
-						catch { }
-					}
-				}
-				CachedTimestamps = timestamps;
-			}
+			//	// Файл хранит в себе временные метки всех файлов
+			//	var fullPath = Path.Combine( tempPath, "cache", "timestamps" );
+			//	if( File.Exists( fullPath ) )
+			//	{
+			//		foreach( var line in File.ReadAllLines( fullPath ) )
+			//		{
+			//			if( string.IsNullOrWhiteSpace( line ) ) continue;
+			//			try
+			//			{
+			//				var parts = line.Split( Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries );
+			//				if( parts.Length != 2 ) continue;
+			//				if( !long.TryParse( parts[ 0 ].Trim(), out var binaryTimestamp ) )
+			//					return;
+			//				var path = parts[ 1 ].Trim().Replace( '\\', '/' );
+			//				timestamps[ path ] = DateTime.FromBinary( binaryTimestamp );
+			//			}
+			//			catch { }
+			//		}
+			//	}
+			//	CachedTimestamps = timestamps;
+			//}
 
 			void CollectFolderIncludes()
 			{
@@ -594,10 +658,8 @@ namespace CommandLineTools
 							{
 								var includePath = attr.Value;
 								if( !Path.IsPathRooted( path ) )
-								{
 									includePath = Path.Join( basePath, includePath );
-								}
-								TryPickSource( includePath );
+								TryPickSource( PathUtility.NormalizePath( includePath ) );
 							}
 						}
 					}
@@ -612,7 +674,20 @@ namespace CommandLineTools
 					if( compiler.Parser.ExcludeSources.Contains( fullPath.Replace( '\\', '/' ) ) )
 						return;
 
-					if( !File.Exists( fullPath ) ) throw new Exception( "File not found: " + fullPath );
+
+					//!!!!temp
+					if( compiler.Parser.Platform == "macOS" )
+					{
+						if( !fullPath.Contains( "CRTMemoryManager.cpp" ) )
+							return;
+						//if( !fullPath.Contains( "MemoryManagerInternal.cpp" ) && !fullPath.Contains( "CRTMemoryManager.cpp" ) )
+						//	return;
+					}
+
+
+					if( !File.Exists( fullPath ) )
+						throw new Exception( "File not found: " + fullPath );
+
 					var ext = Path.GetExtension( path ).ToLower().Substring( 1 );
 					if( compiler.Parser.CompileFlags.ContainsKey( ext ) )
 						compiler.CompileList.Add( (fullPath, GetOutputName( fullPath ) + ".o", ext) );
@@ -640,7 +715,7 @@ namespace CommandLineTools
 			}
 		}
 
-		public static bool Process()
+		public static bool Process( PlatformServer.ClientData clientData )
 		{
 			Console.WriteLine( "CommandLineTools: Compile." );
 
@@ -657,10 +732,8 @@ namespace CommandLineTools
 
 			bool singleTask = SystemSettings.CommandLineParameters.ContainsKey( "-no-tasks" );
 
-
-			//!!!!always force recompile for now
-			var forceRecompile = true;
-			//singleThread = true;
+			//always force recompile for now
+			//var forceRecompile = true;
 
 			var executableDirectory = AppContext.BaseDirectory;
 			var compileFileFullPath = Path.GetFullPath( Path.Combine( executableDirectory, compileFilePath ) );
@@ -674,8 +747,8 @@ namespace CommandLineTools
 				//if( forceRecompile )
 				//	Console.WriteLine( "Compiling with the -forceRecompile flag, all previous compilation results will be discarded." );
 
-				var compiler = new LibCompiler( parser );
-				return compiler.CompileAsync( forceRecompile, singleTask ).GetAwaiter().GetResult();
+				var compiler = new LibCompiler( parser, clientData );
+				return compiler.CompileAsync( /*forceRecompile,*/ singleTask ).GetAwaiter().GetResult();
 			}
 			catch( Exception e )
 			{

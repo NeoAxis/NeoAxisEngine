@@ -20,7 +20,7 @@ namespace CommandLineTools
 
 		static CompileFileParser parser;
 
-		//static string helloFromServerMessage;
+		static string taskID;
 		static volatile bool exitRequested;
 
 		///////////////////////////////////////////////
@@ -61,8 +61,15 @@ namespace CommandLineTools
 				//parse compile file to get Source directories and source file extensions
 				parser = new CompileFileParser( compileFileFullPath, true );
 				parser.Parse();
-				parser.Print();
+				//parser.Print();
 				Console.WriteLine( "File to compile: " + compileFileFullPath );
+
+				//delete output file if exists
+				{
+					var outputFullPath = parser.GetFullSourcePath( parser.OutputFilePath );
+					if( File.Exists( outputFullPath ) )
+						File.Delete( outputFullPath );
+				}
 
 				//connect to server
 				Console.WriteLine( "Connecting to server " + serverAddress + "..." );
@@ -222,7 +229,7 @@ namespace CommandLineTools
 			try
 			{
 				//create task
-				string taskID;
+				//string taskID;
 				{
 					var cts = new CancellationTokenSource( new TimeSpan( 0, 0, 15 ) );
 					var callResult = await connectionNode.CloudFunctions.CallMethodAsync<string>( "PlatformServer", "CompileCreate", cts.Token );
@@ -276,7 +283,7 @@ namespace CommandLineTools
 						using( var zip = ZipFile.Open( tempFileName, ZipArchiveMode.Create ) )
 						{
 							for( int n = 0; n < sourceFullPaths.Count; n++ )
-								zip.CreateEntryFromFile( sourceFullPaths[ n ], targetFilePaths[ n ] );
+								zip.CreateEntryFromFile( sourceFullPaths[ n ], targetFilePaths[ n ].Replace( '\\', '/' ) );
 						}
 
 						Console.WriteLine( $"Uploading zip archive ({StringUtility.FormatSize( new FileInfo( tempFileName ).Length )})..." );
@@ -314,7 +321,6 @@ namespace CommandLineTools
 					Console.WriteLine( "Starting compilation..." );
 
 					var compileFileFullPath = parser.CompileFileFullPath;
-					//var compileFileFullPath = Path.GetFullPath( parser.CompileFilePath );
 					var compileFilePath = compileFileFullPath.Substring( parser.Remote_SourceRootFolder.Length ).TrimStart( '\\', '/' );
 
 					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
@@ -329,31 +335,31 @@ namespace CommandLineTools
 				}
 
 
-				//!!!!test download
-				{
-					Console.WriteLine( $"Test download zip archive" );
+				////!!!!test download
+				//{
+				//	Console.WriteLine( $"Test download zip archive" );
 
-					var sourceZipFilePath = Path.Combine( taskID, "Source.zip" );
-					var targetFullPath = @"C:\_______TestCompile\_Source.zip";
+				//	var sourceZipFilePath = Path.Combine( taskID, "Source.zip" );
+				//	var targetFullPath = @"C:\_______TestCompile\_Source.zip";
 
-					var cts = new CancellationTokenSource( new TimeSpan( 0, 20, 0 ) );
-					var callResult = await connectionNode.CloudFunctions.DownloadFileAsync( ClientNetworkService_CloudFunctions.DataSource.Project, sourceZipFilePath, targetFullPath, false, cancellationToken: cts.Token );
+				//	var cts = new CancellationTokenSource( new TimeSpan( 0, 20, 0 ) );
+				//	var callResult = await connectionNode.CloudFunctions.DownloadFileAsync( ClientNetworkService_CloudFunctions.DataSource.Project, sourceZipFilePath, targetFullPath, false, cancellationToken: cts.Token );
 
-					if( !string.IsNullOrEmpty( callResult.Error ) )
-					{
-						Console.WriteLine( "ERROR: " + callResult.Error );
-						exitRequested = true;
-						return;
-					}
+				//	if( !string.IsNullOrEmpty( callResult.Error ) )
+				//	{
+				//		Console.WriteLine( "ERROR: " + callResult.Error );
+				//		exitRequested = true;
+				//		return;
+				//	}
 
-					Console.WriteLine( "done" );
-				}
+				//	Console.WriteLine( "done" );
+				//}
 
 
 			}
 			catch( Exception e )
 			{
-				Console.WriteLine( "EXCEPTION: " + e.Message );
+				Console.WriteLine( "EXCEPTION: " + e.ToString() );
 				exitRequested = true;
 			}
 		}
@@ -361,21 +367,47 @@ namespace CommandLineTools
 		private static void Messages_ReceiveMessageString( ClientNetworkService_Messages sender, string message, string data )
 		{
 			if( message == "ShowMessage" )
-			{
-				Console.WriteLine( "Message from server: " + data );
-				//Console.WriteLine( "Message from server: " + data );
-			}
+				Console.WriteLine( data );
 
 			if( message == "CompileResult" )
 			{
 				bool.TryParse( data, out var success );
 
 				if( success )
+				{
 					Console.WriteLine( "Compilation completed successfully." );
-				else
-					Console.WriteLine( "Compilation failed." );
 
-				exitRequested = true;
+					//copy output file from the server to local disk
+					Task.Run( async delegate ()
+					{
+						var sourceFilePath = Path.Combine( taskID, Path.GetFileName( parser.OutputFilePath ) );
+
+						//var sourceFilePath = Path.Combine( taskID, parser.CompileFileDirectory, parser.TempFolder, Path.GetFileName( parser.OutputFilePath ) );
+						//var sourceFilePath = Path.Combine( taskID, parser.TempFolder, Path.GetFileName( parser.OutputFilePath ) );
+
+						var outputFullPath = parser.GetFullSourcePath( parser.OutputFilePath );
+
+						var cts = new CancellationTokenSource( new TimeSpan( 0, 5, 0 ) );
+						var callResult = await connectionNode.CloudFunctions.DownloadFileAsync( ClientNetworkService_CloudFunctions.DataSource.Project, sourceFilePath, outputFullPath, false, cancellationToken: cts.Token );
+
+						if( !string.IsNullOrEmpty( callResult.Error ) )
+						{
+							Console.WriteLine( "ERROR: " + callResult.Error );
+							exitRequested = true;
+							return;
+						}
+
+						Console.WriteLine( "Download completed." );
+						Console.WriteLine( "Output file: " + outputFullPath );
+						exitRequested = true;
+					} );
+				}
+				else
+				{
+					Console.WriteLine( "Compilation failed." );
+					exitRequested = true;
+					return;
+				}
 			}
 		}
 	}

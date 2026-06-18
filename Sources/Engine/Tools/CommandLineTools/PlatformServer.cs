@@ -269,7 +269,7 @@ namespace CommandLineTools
 			}
 			catch( Exception e )
 			{
-				approveResult.Reject( "Exception: " + e.Message );
+				approveResult.Reject( "Exception: " + e.ToString() );
 				return;
 			}
 		}
@@ -399,11 +399,11 @@ namespace CommandLineTools
 			}
 			catch( Exception e )
 			{
-				Log.Info( "DeleteTask exception: " + e.Message );
+				Log.Info( "DeleteTask exception: " + e.ToString() );
 			}
 		}
 
-		static string GetTaskFullPathDirectory( string taskID )
+		public static string GetTaskFullPathDirectory( string taskID )
 		{
 			return Path.Combine( serverNode.CloudFunctions.ProjectDirectory, taskID );
 		}
@@ -428,7 +428,7 @@ namespace CommandLineTools
 			return taskID;
 		}
 
-		static void SendShowMessageToClient( ClientData clientData, string message )
+		public static void SendShowMessageToClient( ClientData clientData, string message )
 		{
 			serverNode.Messages.SendToClient( clientData.Client, "ShowMessage", message );
 		}
@@ -463,7 +463,19 @@ namespace CommandLineTools
 				}
 			}
 
+			//!!!!temp
+			//{
+			//	Console.WriteLine( "Task directory: " + taskDirectory );
+			//	foreach( var file in Directory.GetFiles( taskDirectory, "*.*", SearchOption.AllDirectories ) )
+			//	{
+			//		Console.WriteLine( "- " + file );
+			//	}
+			//	Console.WriteLine( "END" );
+			//}
+
+
 			//load compile file
+			compileFilePath = PathUtility.NormalizePath( compileFilePath );
 			Console.WriteLine( "File to compile: " + compileFilePath );
 			var compileFileFullPath = Path.Combine( taskDirectory, compileFilePath );
 
@@ -482,8 +494,8 @@ namespace CommandLineTools
 				{
 					SendShowMessageToClient( clientData, "Start compilation..." );
 
-					var compiler = new Compile.LibCompiler( parser );
-					var success = await compiler.CompileAsync( true, singleTask );
+					var compiler = new Compile.LibCompiler( parser, clientData );
+					var success = await compiler.CompileAsync( singleTask );
 
 					serverNode.Messages.SendToClient( clientData.Client, "CompileResult", success.ToString() );
 				}
@@ -491,7 +503,7 @@ namespace CommandLineTools
 				{
 					try
 					{
-						SendShowMessageToClient( clientData, "EXCEPTION: " + e.Message );
+						SendShowMessageToClient( clientData, "EXCEPTION: " + e.ToString() );
 					}
 					catch { }
 				}

@@ -38,7 +38,7 @@ namespace CommandLineTools
 
 			if( SystemSettings.CommandLineParameters.ContainsKey( "-compile" ) )
 			{
-				var result = Compile.Process();
+				var result = Compile.Process( null );
 				Environment.Exit( result ? 0 : -1 );
 				return true;
 			}
