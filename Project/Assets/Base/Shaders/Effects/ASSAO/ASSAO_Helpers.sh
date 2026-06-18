@@ -1,4 +1,4 @@
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 
 void CalculateRadiusParameters(float startEffectRadius, float effectSamplingRadiusNearLimitRec, const float pixCenterLength, const vec2 pixelDirRBViewspaceSizeAtCenterZ, out float pixLookupRadiusMod, out float effectRadius, out float falloffCalcMulSq)
 {

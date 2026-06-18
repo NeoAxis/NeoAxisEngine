@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle( "SampleWidgetWPF" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "NeoAxis Group Ltd." )]
+[assembly: AssemblyCompany( "Ivan Efimov" )]
 [assembly: AssemblyProduct( "SampleWidgetWPF" )]
-[assembly: AssemblyCopyright( "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica." )]
+[assembly: AssemblyCopyright( "Copyright 2006–2026 Ivan Efimov. All rights reserved." )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 

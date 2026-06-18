@@ -1,6 +1,6 @@
 $input v_worldPosition, v_lodValue_visibilityDistance_receiveDecals, v_texCoord0, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, glPositionZ, v_colorParameter
 
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 #define SHADOW_CASTER 1
 #define SHADOW_CASTER_DEFAULT 1
 #include "Common.sh"

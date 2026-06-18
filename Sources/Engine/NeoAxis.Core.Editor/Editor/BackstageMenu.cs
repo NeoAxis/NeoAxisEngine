@@ -1,4 +1,4 @@
-﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -54,6 +54,8 @@ namespace NeoAxis.Editor
 		public BackstageMenu()
 		{
 			InitializeComponent();
+
+			kryptonLabel13.Values.Text = EngineInfo.Copyright;
 
 			//register config variables
 			EngineConfig.RegisterClassParameters( typeof( BackstageMenu ) );

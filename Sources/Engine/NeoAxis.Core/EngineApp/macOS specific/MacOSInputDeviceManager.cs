@@ -1,4 +1,4 @@
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 #if !ANDROID && !IOS && !WEB && !UWP
 using System;
 using System.Collections.Generic;
@@ -165,7 +165,7 @@ namespace NeoAxis
 //!!!!from 3.5:
 
 
-//// Copyright (C) NeoAxis Group Ltd. This is part of NeoAxis 3D Engine SDK.
+//// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 //using System;
 //using System.Collections.Generic;
 //using System.Text;

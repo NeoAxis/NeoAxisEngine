@@ -1,4 +1,4 @@
-﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -9,9 +9,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("NeoAxis.Widget")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany( "NeoAxis Group Ltd." )]
+[assembly: AssemblyCompany( "Ivan Efimov" )]
 [assembly: AssemblyProduct("NeoAxis.Widget")]
-[assembly: AssemblyCopyright( "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica." )]
+[assembly: AssemblyCopyright( "Copyright 2006–2026 Ivan Efimov. All rights reserved." )]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

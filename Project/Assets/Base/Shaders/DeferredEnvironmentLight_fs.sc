@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 //#define DEFERRED_ENVIRONMENT_LIGHT 1
 #include "Common.sh"
 #include "UniformsFragment.sh"

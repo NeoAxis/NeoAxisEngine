@@ -1,4 +1,4 @@
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 using System;
 using System.Reflection;
 
@@ -34,7 +34,7 @@ namespace NeoAxis
 
 		public static string Copyright
 		{
-			get { return "Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica."; }
+			get { return "Copyright 2006–2026 Ivan Efimov. All rights reserved."; }
 		}
 
 		public static bool SpecialAppMode { get; set; } = false;

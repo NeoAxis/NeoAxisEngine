@@ -2,7 +2,7 @@ NeoAxis Engine End User License Agreement
 
 1. LICENSE AGREEMENT
 
-This document is an agreement between NeoAxis Group Ltd, 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica ("Licensor") and Licensee (you) regarding the use of the NeoAxis Engine software and additional products (Technology) by Licensee.
+This document is an agreement between Ivan Efimov ("Licensor") and Licensee (you) regarding the use of the NeoAxis Engine software and additional products (Technology) by Licensee.
 
 It is a legal document that explains your rights and obligations related to your use of the Technology. By downloading, installing, or using this software, you are agreeing to be bound by the terms of this Agreement. If you do not or cannot agree to the terms of this Agreement, do not download, install, or use this software.
 
@@ -32,7 +32,7 @@ If you do not accept these conditions or they are not enforceable in your jurisd
 
 3. COPYRIGHT
 
-Except where otherwise noted, all the documentation and software included in the NeoAxis Engine are copyrighted by NeoAxis Group Ltd.
+Except where otherwise noted, all the documentation and software included in the NeoAxis Engine are copyrighted by Ivan Efimov.
 
 4. OWNERSHIP
 
@@ -48,9 +48,9 @@ Licensee agrees that use of the Software is at their own risk. In no event shall
 
 7. DEFINITIONS
 
-"Additional Content" is add-on software or content which is using the Engine Code that is provided for an additional fee or for free under this license through www.neoaxis.com or through authorized resellers of NeoAxis Group Ltd.
+"Additional Content" is add-on software or content which is using the Engine Code that is provided for an additional fee or for free under this license through www.neoaxis.com or through authorized resellers of Ivan Efimov.
 
-"Engine Code" means the Source Code and object code of the NeoAxis Engine software, including any future versions, as made available to you by NeoAxis Group Ltd under this Agreement, and any object code compiled from that Source Code.
+"Engine Code" means the Source Code and object code of the NeoAxis Engine software, including any future versions, as made available to you by Ivan Efimov under this Agreement, and any object code compiled from that Source Code.
 
 "Product" means any product developed under this Agreement that is made using the Technology or that combines the Technology with any other software or content.
 
@@ -60,13 +60,13 @@ Licensee agrees that use of the Software is at their own risk. In no event shall
 
 "Engine Logo" means one of 4 images placed in NeoAxis Engine software by paths "Assets\Base\UI\Images\NeoAxisLogo_DarkBackground.png", "Assets\Base\UI\Images\NeoAxisLogo_DarkBackground_Small.png", "Assets\Base\UI\Images\NeoAxisLogo_LightBackground.png", "Assets\Base\UI\Images\NeoAxisLogo_LightBackground_Small.png".
 
-"NeoX Service" is a cloud service provided by NeoAxis Group Ltd. The NeoX cloud service is provided through the neoaxis.com website. It is based on the NeoAxis Engine code and license terms of this Agreement.
+"NeoX Service" is a cloud service provided by Ivan Efimov. The NeoX cloud service is provided through the neoaxis.com website. It is based on the NeoAxis Engine code and license terms of this Agreement.
 
 8. MISCELLANEOUS
 
-This Agreement and any documents or information referred to in this Agreement constitute the entire agreement between you and NeoAxis Group Ltd relating to the subject matter covered by this Agreement. All other communications, proposals, and representations with respect to the subject matter covered by this Agreement are excluded.
+This Agreement and any documents or information referred to in this Agreement constitute the entire agreement between you and Ivan Efimov relating to the subject matter covered by this Agreement. All other communications, proposals, and representations with respect to the subject matter covered by this Agreement are excluded.
 
 If any provision in this Agreement is unenforceable or invalid, it shall not affect the rest of the Agreement. The Licensee agrees to replace any unenforceable or invalid provision with a valid provision that upholds the intent of the provision to the greatest extent possible.
 
-IBC NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
-http://www.neoaxis.com/
+Copyright 2006–2026 Ivan Efimov. All rights reserved.
+https://www.neoaxis.com/

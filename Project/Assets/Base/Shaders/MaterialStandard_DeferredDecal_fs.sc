@@ -1,6 +1,6 @@
 $input v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tangent, v_color0, v_eyeTangentSpace, v_normalTangentSpace, v_texCoord23, v_colorParameter, v_lodValue_visibilityDistance_receiveDecals
 
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 #define DEFERRED_DECAL 1
 #include "Common.sh"
 #include "UniformsFragment.sh"

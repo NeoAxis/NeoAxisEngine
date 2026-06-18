@@ -1,6 +1,6 @@
 $input v_worldPosition_depth, v_colorVisible, v_colorInvisible
 
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 #include "Common.sh"
 #include "FragmentFunctions.sh"
 

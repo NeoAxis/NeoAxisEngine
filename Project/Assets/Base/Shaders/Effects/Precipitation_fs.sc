@@ -1,6 +1,6 @@
 $input v_texCoord0
 
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 // Copyright: LGPL-3.0 license. https://github.com/jagracar/webgl-shader-examples/blob/master/shaders/frag-rain.glsl
 #include "../Common.sh"
 

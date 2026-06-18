@@ -669,7 +669,7 @@
 			this.kryptonLabel13.Name = "kryptonLabel13";
 			this.kryptonLabel13.Size = new System.Drawing.Size(502, 19);
 			this.kryptonLabel13.TabIndex = 0;
-			this.kryptonLabel13.Values.Text = "NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Common wealth of Dominica.";
+			this.kryptonLabel13.Values.Text = "";
 			// 
 			// kryptonLabel12
 			// 

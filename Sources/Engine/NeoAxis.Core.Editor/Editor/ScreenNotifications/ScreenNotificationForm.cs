@@ -1,4 +1,4 @@
-﻿// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+﻿// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 // Code originally retrieved from http://www.vbforums.com/showthread.php?t=547778 - no license information supplied
 using System;
 using System.Collections.Generic;

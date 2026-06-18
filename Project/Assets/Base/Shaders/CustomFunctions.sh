@@ -1,4 +1,4 @@
-// Copyright (C) NeoAxis Group Ltd. 8 Copthall, Roseau Valley, 00152 Commonwealth of Dominica.
+// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 
 //Vehicle specific. calculate emissive for lamps. the mask format is 2x1 (left, right).
 vec3 vehicleLamps( vec3 mask, vec3 emission, vec4 instanceParameter1, vec4 instanceParameter2, vec2 texCoord0 )
