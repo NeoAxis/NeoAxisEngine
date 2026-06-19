@@ -1,7 +1,7 @@
 // Copyright 2006Ц2026 Ivan Efimov. All rights reserved.
 #pragma once
 
-//!!!!было в 3.5
+//!!!!was in 3.5
 
 //#include <objc/Object.h>
 //#include <IOKit/IOKitLib.h>

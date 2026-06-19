@@ -55,13 +55,11 @@ namespace NeoAxis
 					//try
 					//{
 
-					//!!!!other platforms
+					//!!!!can optimize for other platforms
 
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					{
-#if !ANDROID && !IOS && !WEB
 						stream = new Win32HandleVirtualFileStream( realPath );
-#endif
 					}
 					//else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					//{

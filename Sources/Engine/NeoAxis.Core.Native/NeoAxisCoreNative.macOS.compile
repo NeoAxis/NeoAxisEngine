@@ -18,7 +18,8 @@ SourceFileExtension: compile
 SourceFileExtension: vcxproj
 
 Source: NeoAxisCoreNative_x64.vcxproj
-Output: ../../../Project/Sources/NeoAxis.Player.macOS/lib/libNeoAxisCoreNative.a
+Output: ../../../Project/Sources/NeoAxis.Player/libs/macOS/libNeoAxisCoreNative.a
+Ou__tput: ../../../Project/Sources/NeoAxis.Player.macOS/lib/libNeoAxisCoreNative.a
 TempFolder: _build
 Te__mpFolder: ../../../_build/macOS/NeoAxisCoreNative.macOS
 

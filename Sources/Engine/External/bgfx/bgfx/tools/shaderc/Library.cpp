@@ -315,6 +315,9 @@ extern "C" int override_vfprintf(FILE* _stream, const char* _format, va_list _ar
 
 EXPORT bool ShaderC_Compile(Instance* instance)
 {
+	//try
+	//{
+
 	_currentInstance = instance;
 
 
@@ -434,6 +437,13 @@ EXPORT bool ShaderC_Compile(Instance* instance)
 	_currentInstance = nullptr;
 
 	return compiled;
+
+	//}
+	//catch (std::exception& e)
+	//{
+	//	instance->error = ConvertStringToUTFWide(string_format("Exception: %s", e.what()));
+	//	return false;
+	//}
 }
 
 EXPORT wchar16* ShaderC_GetError(Instance* instance)

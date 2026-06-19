@@ -706,7 +706,10 @@ namespace NeoAxis
 						return true;
 					}
 
-					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+					//!!!!maybe for Linux, macOS another keys
+
+					//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+					if( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					{
 						switch( e.Key )
 						{

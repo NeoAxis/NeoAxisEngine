@@ -186,7 +186,6 @@ namespace OpenALSoundSystem
 
 			fileStreamRealChannels = new List<OpenALRealChannel>();
 
-
 			useThread = true;
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				useThread = false;
@@ -298,7 +297,6 @@ namespace OpenALSoundSystem
 			try
 			{
 				bool initialized;
-
 
 				//!!!!temp
 				//but maybe is good for mobile devices
@@ -598,9 +596,10 @@ namespace OpenALSoundSystem
 
 			if( active && Internal_SuspendWorkingWhenApplicationIsNotActive )
 			{
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+				//!!!!add uwp?
+				if( SystemSettings.DesktopDevice )
 				{
-					active = EngineApp.platform.ApplicationIsActivated();
+					active = EngineApp.platform.ApplicationIsActive();
 
 					//IntPtr h = hWnd;
 					//while( h != IntPtr.Zero )

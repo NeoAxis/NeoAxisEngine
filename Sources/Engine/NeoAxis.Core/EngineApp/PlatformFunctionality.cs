@@ -100,7 +100,7 @@ namespace Internal//NeoAxis
 		public abstract bool IsFocused();
 
 		//!!!!new
-		public abstract bool ApplicationIsActivated();
+		public abstract bool ApplicationIsActive();
 
 		public virtual IntPtr GetSystemCursorByFileName( string virtualFileName ) { return IntPtr.Zero; }
 
@@ -160,10 +160,8 @@ namespace Internal//NeoAxis
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					{
 #if !ANDROID && !IOS && !WEB && !UWP
-						Log.Fatal( "q" );
-#if __
-						instance = new MacOSPlatformFunctionality();
-#endif
+						//!!!!
+						//instance = new MacOSPlatformFunctionality();
 #endif
 					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )

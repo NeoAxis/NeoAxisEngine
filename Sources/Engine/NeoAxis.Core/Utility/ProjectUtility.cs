@@ -1,4 +1,5 @@
 ﻿// Copyright 2006–2026 Ivan Efimov. All rights reserved.
+using System;
 using System.IO;
 using System.Reflection;
 
@@ -71,6 +72,22 @@ namespace NeoAxis
 			}
 			else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
 			{
+				var dir = Path.GetDirectoryName( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ) );
+
+				if( Directory.Exists( dir ) )
+				{
+					projectDirectory = dir;
+					userSettingsDirectory = Path.Combine( dir, "User settings" );
+				}
+				else
+				{
+					Log.Fatal( $"Project directory is not exists \'{dir}\'." );
+				}
+			}
+			else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+			{
+				//!!!!check
+
 				var dir = Path.GetDirectoryName( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ) );
 
 				if( Directory.Exists( dir ) )

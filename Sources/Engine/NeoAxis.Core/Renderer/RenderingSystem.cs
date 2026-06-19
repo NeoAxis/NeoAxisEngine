@@ -281,17 +281,12 @@ namespace NeoAxis
 			if( !nativeDLLsPreloaded )
 			{
 				NativeUtility.PreloadLibrary( "libNeoAxisCoreNative" );
-				//NativeUtility.PreloadLibrary( Internal.SharpBgfx.NativeMethods.DllName );
 				nativeDLLsPreloaded = true;
 			}
 		}
 
-		internal static bool Init( bool startedAtFullScreen, bool multiMonitorMode, string fontManagerDefaultLanguage )//, Vec2I mainRenderTargetSize )
+		internal static bool Init( bool startedAtFullScreen, bool multiMonitorMode, string fontManagerDefaultLanguage )
 		{
-			//if( instance != null )
-			//	Log.Fatal( "RendererWorld: _Init: The instance is already initialized." );
-			//instance = new RendererWorld();
-
 			NativeDLLsPreload();
 
 			string saveCurrentDirectory = "";
@@ -301,7 +296,7 @@ namespace NeoAxis
 				Directory.SetCurrentDirectory( VirtualFileSystem.Directories.PlatformSpecific );
 			}
 
-			bool result = InitInternal( startedAtFullScreen, multiMonitorMode, fontManagerDefaultLanguage );//, isEditor );//, mainRenderTargetSize );
+			bool result = InitInternal( startedAtFullScreen, multiMonitorMode, fontManagerDefaultLanguage );
 
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 				Directory.SetCurrentDirectory( saveCurrentDirectory );
@@ -609,13 +604,16 @@ namespace NeoAxis
 			//set backend for iOS
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 			{
-				EngineApp.InitSettings.RendererBackend = RendererBackend.OpenGLES;
-				//EngineSettings.Init.RendererBackend = RendererBackend.Metal;
+				EngineApp.InitSettings.RendererBackend = RendererBackend.Metal;
+				//EngineApp.InitSettings.RendererBackend = RendererBackend.OpenGLES;
 				//EngineSettings.Init.RendererBackend = RendererBackend.Noop;
 			}
 			//set backend for Web
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				EngineApp.InitSettings.RendererBackend = RendererBackend.OpenGLES;
+			//set backend for macOS
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+				EngineApp.InitSettings.RendererBackend = RendererBackend.Metal;
 
 			unsafe
 			{
@@ -641,7 +639,7 @@ namespace NeoAxis
 				Backend = EngineApp.InitSettings.RendererBackend,
 				CallbackHandler = new CallbackHandler(),
 
-				////!!!!в релизе можно включить. в NeoAxis.DefaultSettings.config
+				////!!!!is possible to enable Debug in release. add to NeoAxis.DefaultSettings.config?
 				//Debug = true
 				//!!!!
 				//ResetFlags = ResetFlags.MSAA8x,

@@ -27,7 +27,12 @@ namespace NeoAxis
 
 		static bool Fix
 		{
-			get { return SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS; }
+			get
+			{
+				return SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows && SystemSettings.CurrentPlatform != SystemSettings.Platform.UWP;
+
+				//return SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS;
+			}
 		}
 
 		public static string GetFileNameWithoutExtension( string path )

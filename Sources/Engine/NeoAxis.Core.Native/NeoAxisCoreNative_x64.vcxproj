@@ -2638,6 +2638,7 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <None Include="Jolt\Physics\Body\MotionProperties.inl" />
     <None Include="MaskedOcclusionCulling\CompilerSpecific.inl" />
     <None Include="MaskedOcclusionCulling\MaskedOcclusionCullingCommon.inl" />
+    <None Include="NeoAxis\macOS\MacAppNativeWrapper.mm" />
     <None Include="NeoAxis\vhacd\src\FloatMath.inl" />
     <None Include="NeoAxis\vhacd\src\vhacdCircularList.inl" />
     <None Include="NeoAxis\vhacd\src\vhacdVector.inl" />

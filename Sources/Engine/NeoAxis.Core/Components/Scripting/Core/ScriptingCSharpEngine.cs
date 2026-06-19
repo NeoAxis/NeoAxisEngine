@@ -204,6 +204,18 @@ namespace Internal
 
 				}
 
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+				{
+					//!!!!
+					return false;
+				}
+
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+				{
+					//!!!!
+					return false;
+				}
+
 				return true;
 			}
 		}

@@ -389,7 +389,8 @@ namespace NeoAxis
 		{
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
 				SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ||
-				SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+				SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux ||
+				SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 				Directory.SetCurrentDirectory( Directories.Binaries );
 		}
 

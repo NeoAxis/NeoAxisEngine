@@ -1,5 +1,4 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
-#if !ANDROID && !IOS && !WEB && !UWP
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -2229,7 +2228,7 @@ namespace Internal
 			return GetFocus() == EngineApp.ApplicationWindowHandle;
 		}
 
-		public override bool ApplicationIsActivated()
+		public override bool ApplicationIsActive()
 		{
 			var activatedHandle = GetForegroundWindow();
 			if( activatedHandle == IntPtr.Zero )
@@ -2882,4 +2881,3 @@ namespace Internal
 		}
 	}
 }
-#endif

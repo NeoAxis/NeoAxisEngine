@@ -7224,6 +7224,9 @@
     <None Include="..\External\bgfx\bgfx\src\renderer_mtl.mm">
       <Filter>bgfx\bgfx</Filter>
     </None>
+    <None Include="NeoAxis\macOS\MacAppNativeWrapper.mm">
+      <Filter>NeoAxis\macOS</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\External\FreeImage\Source\LibJPEG\change.log">

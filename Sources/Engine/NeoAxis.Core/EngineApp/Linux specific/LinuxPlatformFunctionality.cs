@@ -2035,7 +2035,7 @@ namespace Internal//NeoAxis
 			//return GetFocus() == EngineApp.ApplicationWindowHandle;
 		}
 
-		public override bool ApplicationIsActivated()
+		public override bool ApplicationIsActive()
 		{
 			//!!!!
 

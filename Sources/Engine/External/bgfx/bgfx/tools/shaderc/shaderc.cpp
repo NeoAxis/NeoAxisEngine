@@ -1080,7 +1080,7 @@ namespace bgfx
 			//!!!!betauser
 			if (m_scratchPos >= sizeof(m_scratch))
 			{
-				FPRINTF(stderr, "Scratch buffer overflow! Increase size of m_scratch.\n");
+				FPRINTF(stderr, "Scratch buffer overflow! Increase size of m_scratch. But need to worry about the stack size.\n");
 				abort();
 			}
 
@@ -1099,7 +1099,7 @@ namespace bgfx
 		std::string m_input;
 		std::string m_preprocessed;
 		//!!!!betauser
-		char m_scratch[16<<16];
+		char m_scratch[16<<12];
 		//char m_scratch[16<<10];
 		uint32_t m_scratchPos;
 		uint32_t m_fgetsPos;

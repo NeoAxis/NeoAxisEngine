@@ -14,6 +14,7 @@ namespace NeoAxis
 		static Platform platform;
 		static bool limitedDevice;
 		static bool mobileDevice;
+		static bool desktopDevice;
 		static List<Vector2I> videoModes;
 
 		static NetRuntimeType netRuntime;
@@ -179,41 +180,23 @@ namespace NeoAxis
 
 		static SystemSettings()
 		{
-			//#if ANDROID
-			//			platform = Platform.Android;
-			//#elif IOS
+			//!!!!ios, web not here
 #if IOS
 			platform = Platform.iOS;
-
-//initialized from PlatformFunctionality.SetInstance
-//#elif UWP
-//			platform = Platform.UWP;
-
 #elif WEB
 			platform = Platform.Web;
 #else
-			if( RuntimeInformation.IsOSPlatform( OSPlatform.OSX ) ) //if( Environment.OSVersion.Platform == PlatformID.Unix )
-			{
+			if( RuntimeInformation.IsOSPlatform( OSPlatform.OSX ) )
 				platform = Platform.macOS;
-				//try
-				//{
-				//   if( AndroidAppNativeWrapper.IsAndroid() )
-				//      platform = Platforms.Android;
-				//}
-				//catch { }
-			}
 			else if( RuntimeInformation.IsOSPlatform( OSPlatform.Linux ) )
-			{
 				platform = Platform.Linux;
-			}
-			//else if( UWPHelper.IsRunningAsUwp() )
-			//	platform = Platform.UWP;
 			else
 				platform = Platform.Windows;
 #endif
 
 			limitedDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
 			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS;
+			desktopDevice = CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux;
 
 			netRuntime = Type.GetType( "Mono.Runtime", false ) != null ? NetRuntimeType.Mono : NetRuntimeType.Net;
 		}
@@ -224,6 +207,7 @@ namespace NeoAxis
 
 			limitedDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
 			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS;
+			desktopDevice = CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux;
 		}
 
 		public static Platform CurrentPlatform
@@ -462,6 +446,11 @@ namespace NeoAxis
 		//		return MobileDevice;
 		//	}
 		//} 
+
+		public static bool DesktopDevice
+		{
+			get { return desktopDevice; }
+		}
 
 		static bool IsRunningInAppContainerCheckRegistry()
 		{

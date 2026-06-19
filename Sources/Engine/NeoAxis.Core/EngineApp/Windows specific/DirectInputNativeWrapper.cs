@@ -1,5 +1,4 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
-#if !ANDROID && !IOS && !WEB
 using System;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -755,4 +754,3 @@ namespace DirectInput
 		public unsafe static extern int Release( void* /*IDirectInputEffect*/ _this );
 	}
 }
-#endif

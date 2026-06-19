@@ -1,5 +1,4 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
-#if !ANDROID && !IOS && !WEB
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -37,4 +36,3 @@ namespace NeoAxis
 		}
 	}
 }
-#endif

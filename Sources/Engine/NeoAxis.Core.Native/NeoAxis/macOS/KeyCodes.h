@@ -1,4 +1,5 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
+#ifdef PLATFORM_OSX
 #pragma once
 
 enum EKeys
@@ -1492,3 +1493,4 @@ bool IsSystemKey(int keyCode)
 
 	return false;
 }
+#endif

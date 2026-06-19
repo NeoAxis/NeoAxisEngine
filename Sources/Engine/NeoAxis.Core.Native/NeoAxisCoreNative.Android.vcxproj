@@ -1532,7 +1532,6 @@
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_lerc.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_stream.cxx" />
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_unix.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>

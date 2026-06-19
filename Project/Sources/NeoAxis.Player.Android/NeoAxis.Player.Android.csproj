@@ -17,6 +17,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <SupportedOSPlatformVersion>33.0</SupportedOSPlatformVersion>
+    <PublishTrimmed>False</PublishTrimmed>
     <RunAOTCompilation>false</RunAOTCompilation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

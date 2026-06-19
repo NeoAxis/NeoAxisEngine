@@ -1426,8 +1426,7 @@ namespace NeoAxis
 
 		static void Log_WarningHandler( string text, ref bool handled, ref bool dumpToLogFile )
 		{
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
-				SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			if( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 			{
 				if( !created )
 				{
@@ -1439,8 +1438,7 @@ namespace NeoAxis
 
 		static void Log_ErrorHandler( string text, ref bool handled, ref bool dumpToLogFile )
 		{
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
-				SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			if( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 			{
 				if( !created )
 				{
@@ -1452,8 +1450,7 @@ namespace NeoAxis
 
 		static void Log_FatalHandler( string text, string createdLogFilePath, ref bool handled )
 		{
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
-				SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			if( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 			{
 				if( createdInsideEngineWindow != null && WindowedMode == WindowedModeEnum.Fullscreen )
 					RestoreVideoModeAndMinimize();
@@ -1987,7 +1984,7 @@ namespace NeoAxis
 		{
 			bool show;
 
-			if( platform.ApplicationIsActivated() )//if( platform.IsFocused() )
+			if( platform.ApplicationIsActive() )//if( platform.IsFocused() )
 			{
 				show = ShowCursor;
 
