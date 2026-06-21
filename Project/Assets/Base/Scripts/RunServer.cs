@@ -39,6 +39,7 @@ namespace Project
 
 			error = "";
 
+#if !ANDROID && !IOS && !WEB && !UWP
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 			{
 				try
@@ -78,14 +79,13 @@ namespace Project
 					error = e.Message;
 					return false;
 				}
-			}
-			else
-			{
-				error = "RunServer: Start: impl.";
-				return false;
-			}
 
-			return true;
+				return true;
+			}
+#endif
+
+			error = "RunServer: The platform is not supported.";
+			return false;
 		}
 
 		public static void Stop()
@@ -96,11 +96,12 @@ namespace Project
 				{
 					//!!!!maybe send signal to app, wait to close by app
 
-					//process.CloseMainWindow();
-#if UWP || ANDROID
-					process.Kill();
-#else
+#if !ANDROID && !IOS && !WEB && !UWP
+					//#if UWP || ANDROID
+					//process.Kill();
+					//#else
 					process.Kill( true );
+					//#endifd
 #endif
 
 					process = null;

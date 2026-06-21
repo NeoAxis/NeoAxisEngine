@@ -146,23 +146,12 @@ namespace Internal//NeoAxis
 				if( instance == null )
 				{
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-					{
-#if !ANDROID && !IOS && !WEB && !UWP
 						instance = new WindowsPlatformFunctionality();
-#endif
-					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
-					{
-#if !ANDROID && !IOS && !WEB && !UWP
 						instance = new LinuxPlatformFunctionality();
-#endif
-					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					{
-#if !ANDROID && !IOS && !WEB && !UWP
-						//!!!!
-						//instance = new MacOSPlatformFunctionality();
-#endif
+						instance = new MacOSPlatformFunctionality();
 					}
 					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );

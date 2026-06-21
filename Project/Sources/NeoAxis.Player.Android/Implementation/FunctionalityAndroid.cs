@@ -1,11 +1,5 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
-using System.Threading;
-using System.Runtime.InteropServices;
-using Android.Util;
 using Internal;
 
 namespace NeoAxis
@@ -36,7 +30,6 @@ namespace NeoAxis
 
 		public override int GetScreenBitsPerPixel()
 		{
-			//!!!!
 			return 32;
 		}
 

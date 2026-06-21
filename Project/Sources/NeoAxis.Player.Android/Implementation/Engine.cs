@@ -21,12 +21,9 @@ namespace NeoAxis.Player.Android
 	{
 		public static MainActivity/*AppCompatActivity*/ activity;
 
-		//Thread engineMainThread;
 		public volatile static bool engineInitialized;
 
 		public static Queue<InputEventItem> inputEventQueue = new Queue<InputEventItem>();
-		//public static Queue<TouchEventItem> touchEventsQueue = new Queue<TouchEventItem>();
-		//public static Queue<KeyDownEventItem> keyDownEventsQueue = new Queue<KeyDownEventItem>();
 
 		static List<object> pointerIdentifiers = new List<object>();
 
@@ -77,11 +74,6 @@ namespace NeoAxis.Player.Android
 				Log.Handlers.InfoHandler += Log_InfoHandler;
 				Log.Handlers.WarningHandler += Log_WarningHandler;
 				Log.Handlers.ErrorHandler += Log_ErrorHandler;
-
-				//EngineApp.AppCreateBefore += EngineApp_AppCreateBefore;
-
-				//new PlatformFunctionalityAndroid();
-				//EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Simulation;
 
 				ExtractProjectZip( out var projectDir );
 
@@ -154,32 +146,8 @@ namespace NeoAxis.Player.Android
 			global::Android.Util.Log.WriteLine( global::Android.Util.LogPriority.Debug, "MyApp", "Error: " + text );
 		}
 
-		//static private void EngineApp_AppCreateBefore()
-		//{
-		//	//preload Project.dll
-		//	AssemblyUtility.RegisterAssembly( typeof( Project.SimulationApp ).Assembly, "" );
-		//}
-
 		static void UnzipFromStream( Stream zipStream, string outFolder )
 		{
-			// Plan (pseudocode):
-			// - Ensure `outFolder` exists.
-			// - Use `System.IO.Compression.ZipArchive` (modern API) over the input `zipStream`.
-			// - For each entry:
-			//   - Normalize entry path separators to '/' and reject unsafe paths:
-			//     - empty entries are allowed (directories)
-			//     - reject rooted paths, drive letters, and any path containing ".." segments
-			//   - Combine with `outFolder`, get full path, and ensure it is still under `outFolder` (Zip Slip protection).
-			//   - If directory entry: create directory.
-			//   - Else:
-			//     - create parent directory
-			//     - extract by copying entry stream to a newly created file (overwrite).
-			//     - (optional) set last write time if available.
-			//
-			// Notes:
-			// - Works on modern Android (.NET for Android) without external zip libs.
-			// - Keeps memory usage low (streaming copy).
-
 			if( zipStream == null )
 				throw new ArgumentNullException( nameof( zipStream ) );
 			if( string.IsNullOrEmpty( outFolder ) )
@@ -192,10 +160,7 @@ namespace NeoAxis.Player.Android
 			if( !outFolderFullPath.EndsWith( Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal ) )
 				outFolderFullPath += Path.DirectorySeparatorChar;
 
-			// IMPORTANT: If this file doesn't already have the using, add at top:
-			// using System.IO.Compression;
-
-			using( var archive = new ZipArchive( zipStream, System.IO.Compression.ZipArchiveMode.Read, leaveOpen: true ) )
+			using( var archive = new ZipArchive( zipStream, ZipArchiveMode.Read, leaveOpen: true ) )
 			{
 				foreach( var entry in archive.Entries )
 				{
@@ -278,53 +243,10 @@ namespace NeoAxis.Player.Android
 					catch { }
 				}
 			}
-
-
-			//using( var zipInputStream = new ZipInputStream( zipStream ) )
-			//{
-			//	while( zipInputStream.GetNextEntry() is ZipEntry zipEntry )
-			//	{
-			//		var entryFileName = zipEntry.Name;
-			//		// To remove the folder from the entry:
-			//		//var entryFileName = Path.GetFileName(entryFileName);
-			//		// Optionally match entrynames against a selection list here
-			//		// to skip as desired.
-			//		// The unpacked length is available in the zipEntry.Size property.
-
-			//		// 4K is optimum
-			//		var buffer = new byte[ 4096 ];
-
-			//		// Manipulate the output filename here as desired.
-			//		var fullZipToPath = Path.Combine( outFolder, entryFileName );
-			//		var directoryName = Path.GetDirectoryName( fullZipToPath );
-			//		if( directoryName.Length > 0 )
-			//			Directory.CreateDirectory( directoryName );
-
-			//		// Skip directory entry
-			//		if( Path.GetFileName( fullZipToPath ).Length == 0 )
-			//			continue;
-
-			//		// Unzip file in buffered chunks. This is just as fast as unpacking
-			//		// to a buffer the full size of the file, but does not waste memory.
-			//		// The "using" will close the stream even if an exception occurs.
-			//		using( FileStream streamWriter = File.Create( fullZipToPath ) )
-			//		{
-			//			ICSharpCode.SharpZipLib.Core.StreamUtils.Copy( zipInputStream, streamWriter, buffer );
-			//		}
-			//	}
-			//}
 		}
 
 		static string ReadAssetText( string assetName )
 		{
-			// Plan (pseudocode):
-			// - Open asset via AssetManager.
-			// - Read its bytes into MemoryStream (avoid StreamReader/ReadToEnd edge cases with encoding/BOM/partial reads).
-			// - Decode bytes:
-			//   - If UTF-8 BOM present, skip BOM and decode UTF-8.
-			//   - Else decode as UTF-8 without BOM.
-			// - Normalize line endings/trimming is done by the caller.
-
 			using( var stream = activity.Assets.Open( assetName ) )
 			using( var ms = new MemoryStream() )
 			{

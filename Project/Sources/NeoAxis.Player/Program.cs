@@ -49,7 +49,7 @@ namespace NeoAxis.Player
 			if( isServer )
 				logFileName = "user:Logs/Server.log";
 
-			ProjectUtility.GetDefaultProjectPaths( out string projectDirectory, out string userSettingsDirectory );
+			ProjectUtility.GetDefaultProjectPaths( out var projectDirectory, out var userSettingsDirectory );
 			if( !VirtualFileSystem.Init( logFileName, true, projectDirectory, userSettingsDirectory ) )
 				return;
 
@@ -98,20 +98,4 @@ namespace NeoAxis.Player
 				Process.Start( new ProcessStartInfo( Assembly.GetExecutingAssembly().Location, "" ) { UseShellExecute = true } );
 		}
 	}
-
-
-	///// <summary>
-	///// Defines an input point in the application.
-	///// </summary>
-	//static class Program
-	//{
-	//	/// <summary>
-	//	/// The main entry point for the application.
-	//	/// </summary>
-	//	[STAThread]
-	//	static void Main()
-	//	{
-	//		PlayerApp.Main();
-	//	}
-	//}
 }

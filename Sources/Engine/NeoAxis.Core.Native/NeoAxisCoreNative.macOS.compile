@@ -19,13 +19,15 @@ SourceFileExtension: vcxproj
 
 Source: NeoAxisCoreNative_x64.vcxproj
 Output: ../../../Project/Sources/NeoAxis.Player/libs/macOS/libNeoAxisCoreNative.a
-Ou__tput: ../../../Project/Sources/NeoAxis.Player.macOS/lib/libNeoAxisCoreNative.a
 TempFolder: _build
+
+Ou__tput: ../../../Project/Sources/NeoAxis.Player.macOS/lib/libNeoAxisCoreNative.a
 Te__mpFolder: ../../../_build/macOS/NeoAxisCoreNative.macOS
 
 Platform: macOS
 CFlags: -g -fno-omit-frame-pointer -fms-extensions -O0 -arch arm64 -target arm64-apple-macos11.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
 CppFlags: -g -fno-omit-frame-pointer -fms-extensions -O0 -frtti -std=c++17 -arch arm64 -target arm64-apple-macos11.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+MMFlags: -g -fno-omit-frame-pointer -fms-extensions -O0 -frtti -std=c++17 -arch arm64 -target arm64-apple-macos11.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
 
 Defines: __clang__,__APPLE__,__MACH__,__arm64__,MACOS,__SIZEOF_SIZE_T__=8,_LIBCPP_VERSION,_STLP_HASH_FUN_H,_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,NDEBUG,_MT,FREEIMAGE_LIB,OGRE_NONCLIENT_BUILD,OGRE_PARTICLEFXPLUGIN_EXPORTS,OGRE_MEMORY_TRACKER_DEBUG_MODE,_SECURE_SCL=0,NVTT_EXPORTS,NVTT_SHARED,_STLP_DONT_USE_AUTO_LINK,_STLP_DESIGNATED_DLL,OGRE_GCC_VISIBILITY,PLATFORM_WEB,PNG_ARM_NEON_OPT=0,NATIVEMEMORYMANAGER_EXPORTS,LIBOGG_EXPORTS,LIBVORBIS_EXPORTS,LIBVORBISFILE_EXPORTS,LIBTHEORA_EXPORTS,JPH_DOUBLE_PRECISION,JPH_DEBUG_RENDERER,JPH_FLOATING_POINT_EXCEPTIONS_ENABLED,_HAS_TR1_NAMESPACE,FT2_BUILD_LIBRARY,OPJ_STATIC,LIBRAW_NODLL,LIBRAW_LIBRARY_BUILD,USE_JPIP,DISABLE_PERF_MEASUREMENT,_HAS_AUTO_PTR_ETC=1,AL_BUILD_LIBRARY,AL_ALEXT_PROTOTYPES,_LARGEFILE_SOURCE,_LARGE_FILES,OpenAL_EXPORTS
 

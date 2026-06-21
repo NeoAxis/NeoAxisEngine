@@ -1,0 +1,119 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-ios</TargetFramework>
+    <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
+    <RootNamespace>NeoAxis.Player.iOS</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>IOS;DEPLOY;CLIENT</DefineConstants>
+    <DebugType>portable</DebugType>
+    <LangVersion>latest</LangVersion>
+    <Nullable>annotations</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>C:\_TestiOS\</OutputPath>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <PublishTrimmed>False</PublishTrimmed>
+	<Configurations>Release;Release-Simulator;Debug;Debug-Simulator</Configurations>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+    <Optimize>False</Optimize>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug-Simulator'">
+    <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release-Simulator'">
+    <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+    <Optimize>False</Optimize>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Resources\Project.zip" />
+    <None Remove="Resources\Project.zip.hash" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="Implementation\Engine.cs" />
+    <Compile Include="Implementation\FunctionalityIOS.cs" />
+    <Compile Include="Implementation\FunctionalityIOS.Input.cs" />
+    <Compile Include="Implementation\FunctionalityIOS.Utility.cs" />
+    <Compile Include="Implementation\FunctionalityIOS.Video.cs" />
+    <Compile Include="Implementation\LogPlatformFunctionalityIOS.cs" />
+    <Compile Include="Implementation\Metal.cs" />
+    <Compile Include="Implementation\PlatformSpecificUtilityIOS.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="SceneDelegate.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ClientUtility.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\RunServer.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\NetworkLogic.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\CloudServiceClient.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationAppClient.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationAppServer.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationApp.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MainMenuScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MenuWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\OptionsWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\ScenesWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\PlayScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\SplashScreen.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ProjectAssembly.cs" />
+    <Compile Include="Project\Assets\Base\UI\Styles\UIStyleEditor.cs" />
+    <Compile Include="Project\Assets\Base\UI\Styles\UIStyleSimple.cs" />
+    <Compile Include="Project\Assets\Base\UI\Windows\MessageBoxWindow.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
+    <Compile Include="Project\Assets\Samples\Simple Game\SimpleGameGUI.cs" />
+    <Compile Include="Project\Caches\CSharpScripts\CSharpScripts.cs" />
+    <Compile Include="Project\Assets\Base\WindowApp\WindowAppMainForm.cs" />
+    <Compile Include="Project\Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
+    <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameGUI.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\BasicSceneScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\EntranceScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\InGameContextScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\AvatarWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MatchesWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MatchWindow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NeoAxis.Core">
+      <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'ios-arm64'">
+    <NativeReference Include="libs\libNeoAxisCoreNative.a">
+      <Kind>Static</Kind>
+      <ForceLoad>True</ForceLoad>
+    </NativeReference>
+    <DirectPInvoke Include="libNeoAxisCoreNative" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'iossimulator-arm64'">
+    <NativeReference Include="libs\libNeoAxisCoreNativeSimulator.a">
+      <Kind>Static</Kind>
+      <ForceLoad>True</ForceLoad>
+    </NativeReference>
+    <DirectPInvoke Include="libNeoAxisCoreNative" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="if EXIST &quot;$(ProjectDir)..\..\Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.iOS.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot; ) )&#xD;&#xA;&#xD;&#xA;set Product=Base\Build\Demo iOS.product&#xD;&#xA;rem set Product=Base\Build\Simple Game iOS.product&#xD;&#xA;if exist &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -prepareProductAssets 1 -productFile &quot;%25Product%25&quot; -destinationFolder &quot;$(ProjectDir)Resources&quot; -platform iOS" />
+  </Target>
+  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
+  </Target>
+</Project>

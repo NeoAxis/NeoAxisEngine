@@ -1,5 +1,4 @@
-﻿#if !ANDROID
-// Copyright 2006–2026 Ivan Efimov. All rights reserved.
+﻿// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -51,4 +50,3 @@ using System.Runtime.InteropServices;
 
 //!!!!new
 [assembly: CLSCompliant( false )]
-#endif

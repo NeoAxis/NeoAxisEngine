@@ -57,6 +57,13 @@ namespace CommandLineTools
 				return true;
 			}
 
+			if( SystemSettings.CommandLineParameters.ContainsKey( "-synchronizeFiles" ) )
+			{
+				var result = SynchronizeFiles.Process();
+				Environment.Exit( result ? 0 : -1 );
+				return true;
+			}
+
 			return false;
 		}
 

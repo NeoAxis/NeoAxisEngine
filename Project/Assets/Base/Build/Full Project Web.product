@@ -1,0 +1,9 @@
+// Made with NeoAxis Engine 2021.3.
+
+.component NeoAxis.Product_Web
+{
+	Name = Full Project
+	SortOrder = -2800
+	FileCache = False
+	ShaderCache = False
+}

@@ -1,0 +1,33 @@
+SourceRootFolder: ..
+SourceFolder: NeoAxis.Core.Native
+SourceFolder: External/bgfx
+SourceFolder: External/FreeImage
+SourceFolder: External/FreeType
+SourceFolder: External/OggVorbisTheora
+SourceFolder: External/OpenALSoft
+SourceFolder: External/SDL
+
+SourceFileExtension: c
+SourceFileExtension: cpp
+SourceFileExtension: cxx
+SourceFileExtension: mm
+SourceFileExtension: h
+SourceFileExtension: hpp
+SourceFileExtension: inl
+SourceFileExtension: compile
+SourceFileExtension: vcxproj
+
+Source: NeoAxisCoreNative_x64.vcxproj
+Output: ../../../Project/Sources/NeoAxis.Player.iOS/libs/libNeoAxisCoreNative.a
+TempFolder: _build
+
+Platform: iOS
+CFlags: -g -fno-omit-frame-pointer -fms-extensions -O2 -arch arm64 -target arm64-apple-ios14.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
+CppFlags: -g -fno-omit-frame-pointer -fms-extensions -O2 -frtti -std=c++17 -arch arm64 -target arm64-apple-ios14.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
+MMFlags: -g -fno-omit-frame-pointer -fms-extensions -O2 -frtti -std=c++17 -arch arm64 -target arm64-apple-ios14.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
+
+Defines: __clang__,__APPLE__,__MACH__,__arm64__,IOS,__SIZEOF_SIZE_T__=8,_LIBCPP_VERSION,_STLP_HASH_FUN_H,_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,NDEBUG,_MT,FREEIMAGE_LIB,OGRE_NONCLIENT_BUILD,OGRE_PARTICLEFXPLUGIN_EXPORTS,OGRE_MEMORY_TRACKER_DEBUG_MODE,_SECURE_SCL=0,NVTT_EXPORTS,NVTT_SHARED,_STLP_DONT_USE_AUTO_LINK,_STLP_DESIGNATED_DLL,OGRE_GCC_VISIBILITY,PLATFORM_WEB,PNG_ARM_NEON_OPT=0,NATIVEMEMORYMANAGER_EXPORTS,LIBOGG_EXPORTS,LIBVORBIS_EXPORTS,LIBVORBISFILE_EXPORTS,LIBTHEORA_EXPORTS,JPH_DOUBLE_PRECISION,JPH_DEBUG_RENDERER,JPH_FLOATING_POINT_EXCEPTIONS_ENABLED,_HAS_TR1_NAMESPACE,FT2_BUILD_LIBRARY,OPJ_STATIC,LIBRAW_NODLL,LIBRAW_LIBRARY_BUILD,USE_JPIP,DISABLE_PERF_MEASUREMENT,_HAS_AUTO_PTR_ETC=1,AL_BUILD_LIBRARY,AL_ALEXT_PROTOTYPES,_LARGEFILE_SOURCE,_LARGE_FILES,OpenAL_EXPORTS
+
+
+
+HeaderFolder: MemoryManager

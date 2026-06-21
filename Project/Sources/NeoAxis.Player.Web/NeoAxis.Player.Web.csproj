@@ -1,0 +1,105 @@
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+  <PropertyGroup>
+    <TargetFramework>net10.0-browser</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <OutputType>Exe</OutputType>
+    <RuntimeIdentifier>browser-wasm</RuntimeIdentifier>
+    <RootNamespace>NeoAxis.Player.Web</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>WEB;DEPLOY;CLIENT</DefineConstants>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);RCS1090</NoWarn>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <EmccFlags>-sFULL_ES3=1 -lopenal -lGL -lm -Wl,--error-limit=0 -m32 -sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1</EmccFlags>
+    <WasmMainJSPath>wwwroot/main.js</WasmMainJSPath>
+    <WasmAllowUndefinedSymbols>true</WasmAllowUndefinedSymbols>
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+  <PropertyGroup>
+    <WasmBuildNative>true</WasmBuildNative>
+    <WasmDedup>true</WasmDedup>
+    <!-- Disable SIMD support as it's prerelease only on Safari -->
+    <WasmEnableSIMD>false</WasmEnableSIMD>
+    <!-- Normal,JustInterp,Full,FullInterp,Hybrid,LLVMOnly,LLVMOnlyInterp -->
+    <!-- <AOTMode>LLVMOnly</AOTMode> -->
+    <OutputPath>C:\_TestWeb\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
+    <WasmNativeStrip>false</WasmNativeStrip>
+    <WasmNativeDebugSymbols>true</WasmNativeDebugSymbols>
+    <WasmEmitSymbolMap>true</WasmEmitSymbolMap>
+    <WasmEmitSourceMap>true</WasmEmitSourceMap>
+    <WasmStripILAfterAOT>false</WasmStripILAfterAOT>
+    <EmccFlags>$(EmccFlags) -g</EmccFlags>
+    <!--<WasmResolveAssembliesBeforeBuild>true</WasmResolveAssembliesBeforeBuild>-->
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
+    <Optimize>False</Optimize>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <RunAOTCompilation>true</RunAOTCompilation>
+  </PropertyGroup>
+  <ItemGroup>
+    <NativeFileReference Include="Native/emscripten.c" ScanForPInvokes="true" />
+    <NativeFileReference Include="libs/libNeoAxisCoreNative.a" ScanForPInvokes="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Emscripten.cs" />
+    <Compile Include="Interop.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Implementation/Engine.cs" />
+    <Compile Include="Implementation/LogPlatformFunctionalityWeb.cs" />
+    <Compile Include="Implementation/PlatformFunctionalityWeb.cs" />
+    <Compile Include="Implementation/PlatformFunctionalityWeb_Input.cs" />
+    <Compile Include="Implementation/PlatformFunctionalityWeb_Utility.cs" />
+    <Compile Include="Implementation/PlatformFunctionalityWeb_Video.cs" />
+    <Compile Include="Implementation/PlatformSpecificUtilityWeb.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ClientUtility.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\RunServer.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\NetworkLogic.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\CloudServiceClient.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationAppClient.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationAppServer.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\SimulationApp.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MainMenuScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MenuWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\OptionsWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\ScenesWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\PlayScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\SplashScreen.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ProjectAssembly.cs" />
+    <Compile Include="Project\Assets\Base\UI\Styles\UIStyleEditor.cs" />
+    <Compile Include="Project\Assets\Base\UI\Styles\UIStyleSimple.cs" />
+    <Compile Include="Project\Assets\Base\UI\Windows\MessageBoxWindow.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
+    <Compile Include="Project\Assets\Samples\Simple Game\SimpleGameGUI.cs" />
+    <Compile Include="Project\Caches\CSharpScripts\CSharpScripts.cs" />
+    <Compile Include="Project\Assets\Base\WindowApp\WindowAppMainForm.cs" />
+    <Compile Include="Project\Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
+    <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameGUI.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\BasicSceneScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\EntranceScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\InGameContextScreen.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\AvatarWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MatchesWindow.cs" />
+    <Compile Include="Project\Assets\Base\UI\Screens\MatchWindow.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NeoAxis.Core">
+      <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="if EXIST &quot;$(ProjectDir)..\..\Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.Web.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot; ) )&#xD;&#xA;&#xD;&#xA;rem set Product=Base\Build\Demo Web.product&#xD;&#xA;set Product=Base\Build\Simple Game Web.product&#xD;&#xA;if exist &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -prepareProductAssets 1 -productFile &quot;%25Product%25&quot; -destinationFolder &quot;$(ProjectDir)wwwroot\Assets&quot; -platform Web" />
+  </Target>
+  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
+  </Target>
+</Project>

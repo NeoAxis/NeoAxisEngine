@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Player.iOS", "Sources\NeoAxis.Player.iOS\NeoAxis.Player.iOS.csproj", "{147E910F-7E64-1746-3261-50BAA3E29C35}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
+		Debug-Simulator|ARM64 = Debug-Simulator|ARM64
+		Release|ARM64 = Release|ARM64
+		Release-Simulator|ARM64 = Release-Simulator|ARM64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Debug|ARM64.Deploy.0 = Debug|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Debug-Simulator|ARM64.ActiveCfg = Debug-Simulator|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Debug-Simulator|ARM64.Build.0 = Debug-Simulator|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Debug-Simulator|ARM64.Deploy.0 = Debug-Simulator|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Release|ARM64.Build.0 = Release|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Release|ARM64.Deploy.0 = Release|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Release-Simulator|ARM64.ActiveCfg = Release-Simulator|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Release-Simulator|ARM64.Build.0 = Release-Simulator|Any CPU
+		{147E910F-7E64-1746-3261-50BAA3E29C35}.Release-Simulator|ARM64.Deploy.0 = Release-Simulator|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6E522168-8C78-4A11-AC73-7C972CDD275B}
+	EndGlobalSection
+EndGlobal

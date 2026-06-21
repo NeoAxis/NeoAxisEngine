@@ -1243,6 +1243,10 @@ namespace NeoAxis
 			if( filePath[ 0 ] == '.' || filePath[ 0 ] == '/' || filePath[ 0 ] == '\\' )
 				return false;
 
+			//!!!!new
+			if( Path.IsPathRooted( filePath ) )
+				return false;
+
 			if( filePath.Contains( ".." ) )
 				return false;
 
@@ -1275,16 +1279,6 @@ namespace NeoAxis
 				if( filePath.Length > maxLength )
 					return false;
 			}
-
-			//try
-			//{
-			//	if( Path.GetFileName( filePath ).Length >= 255 )
-			//		return false;
-			//}
-			//catch
-			//{
-			//	return false;
-			//}
 
 			return true;
 		}
@@ -5390,6 +5384,9 @@ namespace NeoAxis
 
 		public async Task<SimpleResult> UploadDirectoryAsync( DataSource source, string sourceFullPath, string targetDirectoryName, SearchOption searchOption, string anyData = null, UploadFilesProgressCallback progressCallback = null, CancellationToken cancellationToken = default )
 		{
+
+			//!!!!bool skipDownloadIfUpToDate, bool deleteExcessEntries
+
 			return await UploadObjectsAsync( source, new string[] { sourceFullPath }, new string[] { targetDirectoryName }, searchOption, anyData, progressCallback, cancellationToken );
 
 			//try
@@ -5537,6 +5534,9 @@ namespace NeoAxis
 
 		public async Task<SimpleResult> UploadObjectsAsync( DataSource source, string[] sourceFullPaths, string[] targetFilePaths, SearchOption searchOption, string anyData = null, UploadFilesProgressCallback progressCallback = null, CancellationToken cancellationToken = default )
 		{
+
+			//!!!!bool skipDownloadIfUpToDate, bool deleteExcessEntries
+
 			try
 			{
 				var totalSizeToUpload = 0L;
@@ -5847,7 +5847,7 @@ namespace NeoAxis
 					var item = objects[ n ];
 					if( item.IsDirectory )
 					{
-						var result = await DeleteDirectoryAsync( source, item.Path, true, true, anyData, cancellationToken );
+						var result = await DeleteDirectoryAsync( source, item.Path, true, false, anyData, cancellationToken );
 						if( !string.IsNullOrEmpty( result.Error ) )
 							return result;
 					}

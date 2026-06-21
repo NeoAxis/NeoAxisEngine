@@ -139,7 +139,7 @@ namespace CommandLineTools
 					}
 					await RunCmdAsync( appPath, emarArguments + " " + sb.ToString(), tempPath );
 				}
-				else if( Parser.Platform == "macOS" )
+				else if( Parser.Platform == "macOS" || Parser.Platform == "iOS" )
 				{
 					//write all .o files to list.txt
 					var listTextFullPath = Path.Combine( tempPath, "list.txt" );
@@ -218,7 +218,7 @@ namespace CommandLineTools
 					arguments += $" {flags} {args} -o {outPath} -c -MD {inPath}";
 					result = await RunCmdAsync( appPath, arguments, Parser.CompileFileDirectory );
 				}
-				else if( Parser.Platform == "macOS" )
+				else if( Parser.Platform == "macOS" || Parser.Platform == "iOS" )
 				{
 					var compiler = Path.GetExtension( inPath ).Equals( ".c", StringComparison.OrdinalIgnoreCase ) ? "clang" : "clang++";
 					var arguments = $"{flags} {args} -o {outPath} -c -MD {inPath}";
@@ -676,7 +676,7 @@ namespace CommandLineTools
 
 
 					//!!!!temp
-					if( compiler.Parser.Platform == "macOS" )
+					if( compiler.Parser.Platform == "macOS" || compiler.Parser.Platform == "iOS" )
 					{
 						if( !fullPath.Contains( "CRTMemoryManager.cpp" ) )
 							return;

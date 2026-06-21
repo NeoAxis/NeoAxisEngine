@@ -2361,36 +2361,13 @@ namespace Internal
 
 		public unsafe override void CreatedWindow_UpdateInputDevices()
 		{
-			//!!!!!всё тут проверить
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
-			//!!!!//ничего не обновлять, если отрублены?
-
-			Viewport viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];//App.CreatedInsideEngineWindow.Viewport;
-
-			//!!!!new
 			if( EngineApp.CreatedInsideEngineWindow != null && IsFocused() )
 				CreatedWindow_UpdateShowSystemCursor( false );
 
 			//mouse buttons
 			{
-				//!!!!
-
-				//List<ValueTuple<EMouseButtons, int>> buttons = new List<(EMouseButtons, int)>();
-				//buttons.Add( (EMouseButtons.Left, VK_LBUTTON) );
-				//buttons.Add( (EMouseButtons.Right, VK_RBUTTON) );
-				//buttons.Add( (EMouseButtons.Middle, VK_MBUTTON) );
-				//buttons.Add( (EMouseButtons.XButton1, VK_XBUTTON1) );
-				//buttons.Add( (EMouseButtons.XButton2, VK_XBUTTON2) );
-				//foreach( var tuple in buttons )
-				//{
-				//	if( viewport.IsMouseButtonPressed( tuple.Item1 ) && GetKeyState( tuple.Item2 ) >= 0 )
-				//	{
-				//		bool handled = false;
-				//		viewport.PerformMouseUp( tuple.Item1, ref handled );
-				//	}
-				//}
-
-
 				if( viewport.IsMouseButtonPressed( EMouseButtons.Left ) && GetKeyState( VK_LBUTTON ) >= 0 )
 				{
 					bool handled = false;
@@ -2487,11 +2464,10 @@ namespace Internal
 				}
 				else
 				{
-					//!!!!надо ли
+					//!!!!need?
 
 					if( !EngineApp.Closing && IsFocused() )
 						CreatedWindow_SetMousePosition( new Vector2F( .5f, .5f ) );
-					//App.MousePosition = new Vec2( .5f, .5f );
 				}
 			}
 		}
@@ -2680,7 +2656,7 @@ namespace Internal
 
 		public override void CreatedWindow_OnMouseRelativeModeChange()
 		{
-			Viewport viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];//App.CreatedInsideEngineWindow.Viewport;
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
 			if( viewport.MouseRelativeMode )
 			{

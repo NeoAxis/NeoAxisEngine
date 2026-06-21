@@ -1,4 +1,3 @@
-#if __
 // Copyright 2006Ц2026 Ivan Efimov. All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -19,18 +18,16 @@ namespace Internal
 	{
 		static MacOSPlatformFunctionality instance;
 
-		zz zz;
-		//!!!!fields are copied from WindowsPlatformFunctionality. maybe need to be redesigned.
-
-
 		KeyInfo[] keysInfo = new KeyInfo[ EngineApp.GetEKeysMaxIndex() + 1 ];
 
-		bool suspendModeTimerCreated;
+		//bool suspendModeTimerCreated;
 
 		bool intoMenuLoop;
-		bool resizingMoving;
+		//!!!!
+		//bool resizingMoving;
 
-		IntPtr hCursorArrow;
+		//!!!!
+		//IntPtr hCursorArrow;
 
 		Dictionary<string, IntPtr> loadedSystemCursors = new Dictionary<string, IntPtr>();
 
@@ -40,8 +37,9 @@ namespace Internal
 
 		double maxFPSLastRenderTime;
 
-		bool goingToWindowedMode;
-		bool goingToFullScreenMode;
+		WindowedModeEnum? goingToAnotherWindowedMode;
+		//bool goingToWindowedMode;
+		//bool goingToFullScreenMode;
 		bool goingToChangeWindowRectangle;
 
 		static List<SystemSettings.DisplayInfo> tempScreenList = new List<SystemSettings.DisplayInfo>();
@@ -50,14 +48,12 @@ namespace Internal
 
 		///////////////////////////////////////////
 
-		qqqq;
-
-
 		static MacAppNativeWrapper.CallbackMessageEvent messageEventdelegate = MessageEvent;
 		static MacAppNativeWrapper.CallbackLogInfo logInfoDelegate = LogInfo;
 		static MacAppNativeWrapper.CallbackLogWarning logWarningDelegate = LogWarning;
 		static MacAppNativeWrapper.CallbackLogFatal logFatalDelegate = LogFatal;
 
+		//!!!!
 		bool mustGoToFullscreenMinimizedMode;
 		int mustGoToFullscreenMinimizedModeStep;
 		bool fullscreenMinimizedMode;
@@ -84,8 +80,14 @@ namespace Internal
 			[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_FullscreenFadeIn", CallingConvention = Wrapper.convention )]
 			public static extern void FullscreenFadeIn( [MarshalAs( UnmanagedType.U1 )] bool exitApplication );
 
-			[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_InitApplicationWindow", CallingConvention = Wrapper.convention, CharSet = CharSet.Unicode )]
-			public static extern IntPtr InitApplicationWindow( [MarshalAs( UnmanagedType.U1 )] bool fullscreen, int windowSizeX, int windowSizeY, string title );
+			[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_CreateWindow", CallingConvention = Wrapper.convention, CharSet = CharSet.Unicode )]
+			public static extern IntPtr CreateWindow( WindowedModeEnum windowedMode, string title, int positionX, int positionY, int sizeX, int sizeY );
+
+			[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_DestroyWindow", CallingConvention = Wrapper.convention )]
+			public static extern void DestroyWindow();
+
+			//[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_InitApplicationWindow", CallingConvention = Wrapper.convention, CharSet = CharSet.Unicode )]
+			//public static extern IntPtr InitApplicationWindow( [MarshalAs( UnmanagedType.U1 )] bool fullscreen, int windowSizeX, int windowSizeY, string title );
 
 			[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_IsWindowVisible", CallingConvention = Wrapper.convention )]
 			[return: MarshalAs( UnmanagedType.U1 )]
@@ -127,8 +129,8 @@ namespace Internal
 			[return: MarshalAs( UnmanagedType.U1 )]
 			public static extern bool ProcessEvents();
 
-			[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_ShutdownApplicationWindow", CallingConvention = Wrapper.convention )]
-			public static extern void ShutdownApplicationWindow();
+			//[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_ShutdownApplicationWindow", CallingConvention = Wrapper.convention )]
+			//public static extern void ShutdownApplicationWindow();
 
 			[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_GetWindowState", CallingConvention = Wrapper.convention )]
 			public static extern int GetWindowState();
@@ -321,271 +323,171 @@ namespace Internal
 			return ( n & 0xffff );
 		}
 
-		static IntPtr CreatedWindow_ApplicationWindowProc( IntPtr hWnd, uint message, IntPtr wParam, IntPtr lParam )
+		static void CreatedWindow_ApplicationWindowProc( IntPtr hWnd, uint message, IntPtr wParam, IntPtr lParam )
 		{
-			//try
+
+			//!!!!what useful?
+
+
+			//switch( message )
 			//{
-
-			if( EngineApp.Instance == null || Log.FatalActivated )
-				return DefWindowProc( hWnd, message, wParam, lParam );
-
-			bool processMessageByEngine = true;
-			EngineApp.PerformWindowsWndProcEvent( message, wParam, lParam, ref processMessageByEngine );
-
-			Viewport viewport = null;
-			if( !RenderingSystem.Disposed && RenderingSystem.ApplicationRenderTarget != null )
-				viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];//App.CreatedInsideEngineWindow.Viewport;
-
-			if( processMessageByEngine )
-			{
-				switch( message )
-				{
-				case WM_CLOSE:
-					if( EngineApp.CreatedInsideEngineWindow.HideOnClose )
-						ShowWindow( hWnd, SW_HIDE );
-					else
-						PostQuitMessage( 0 );
-					return IntPtr.Zero;
-
-				case WM_ENTERSIZEMOVE:
-					instance.resizingMoving = true;
-					return IntPtr.Zero;
-
-				case WM_EXITSIZEMOVE:
-					instance.resizingMoving = false;
-					return IntPtr.Zero;
-
-				case WM_SIZE:
-					if( !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
-					{
-						EngineApp.CreatedWindowProcessResize();
-						return IntPtr.Zero;
-					}
-					break;
-
-				case WM_GETMINMAXINFO:
-					unsafe
-					{
-						MINMAXINFO* info = (MINMAXINFO*)lParam;
-						var size = new Vector2I( 100, 100 );
-						if( ProjectSettings.Initialized )
-						{
-							size = ProjectSettings.Get.General.WindowSizeMinimal.Value;
-							if( ProjectSettings.Get.General.WindowSizeApplySystemFontScale )
-								size = ( size.ToVector2() * SystemSettings.DPIScale ).ToVector2I();
-							info->ptMinTrackSize = size;
-						}
-						info->ptMinTrackSize = size;
-					}
-					return IntPtr.Zero;
-				}
-
-				if( EngineApp.Created && !EngineApp.Closing )
-				{
-					switch( message )
-					{
-
-					case WM_SETFOCUS:
-						{
-							instance.mustIgnoreOneMouseMoveAtRelativeMode = true;
-							instance.CreatedWindow_UpdateShowSystemCursor( true );
-							return IntPtr.Zero;
-						}
-					//break;
-
-					case WM_KILLFOCUS:
-						{
-							instance.mustIgnoreOneMouseMoveAtRelativeMode = true;
-							instance.CreatedWindow_UpdateShowSystemCursor( true );
-							return IntPtr.Zero;
-						}
-					//break;
-
-					case WM_ACTIVATE:
-						{
-							if( !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
-							{
-								bool activate = LOWORD( (int)wParam ) != WA_INACTIVE;
-
-								instance.mustIgnoreOneMouseMoveAtRelativeMode = true;
-
-								if( activate )
-								{
-									if( EngineApp.FullscreenEnabled )
-									{
-										if( EngineApp.FullscreenSize != instance.GetScreenSize() )
-											EngineApp.MustChangeVideoMode();
-									}
-								}
-								else
-								{
-									if( viewport.MouseRelativeMode )
-									{
-										ReleaseCapture();
-										ClipCursor( IntPtr.Zero );
-									}
-
-									//!!!!просто обновл€ем. ведь внутри и так проверка есть. еще можно зафорсить. но не будет ли так, 
-									//что отключитс€ слишком быстро? нужно там где включает ставить флаг -> ChangeVUdeMode.
-									EngineApp.EnginePauseUpdateState( false, true );
-									//if( App.SuspendWorkingWhenApplicationIsNotActive )
-									//   App.DoSystemPause( true, true );
-
-									if( EngineApp.FullscreenEnabled )
-									{
-										instance.SetWindowState( WindowState.Minimized );
-
-										if( !EngineApp.NeedExit )
-											SystemSettings.RestoreVideoMode();
-									}
-								}
-								return IntPtr.Zero;
-							}
-						}
-						break;
-
-					case WM_ENTERMENULOOP:
-						{
-							if( viewport.MouseRelativeMode )
-							{
-								ReleaseCapture();
-								ClipCursor( IntPtr.Zero );
-							}
-
-							//if( App.SuspendWorkingWhenApplicationIsNotActive )
-							//   App.DoSystemPause( true, true );
-							instance.intoMenuLoop = true;
-							EngineApp.EnginePauseUpdateState( false, true );
-
-							return IntPtr.Zero;
-						}
-					//break;
-
-					case WM_EXITMENULOOP:
-						instance.intoMenuLoop = false;
-						return IntPtr.Zero;
-
-					case WM_MOUSEMOVE:
-					case WM_NCMOUSEMOVE:
-						EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
-						return IntPtr.Zero;
-
-					case WM_TIMER:
-						if( (int)wParam == suspendModeTimerID )
-						{
-							if( EngineApp.DrawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
-							{
-								unsafe
-								{
-									InvalidateRect( hWnd, null, false );
-								}
-							}
-
-							if( !IsAllowApplicationIdle() )
-								EngineApp.CreatedWindowApplicationIdle( true );
-
-							return IntPtr.Zero;
-						}
-						break;
-
-					case WM_PAINT:
-
-						if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving && !instance.intoMenuLoop && !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
-						{
-							EngineApp.CreatedWindowApplicationIdle( false );
-						}
-						break;
-					}
-				}
-			}
-
-			if( applicationWindowProcNeedCallDefWindowProc )
-				return DefWindowProc( hWnd, message, wParam, lParam );
-			else
-				return IntPtr.Zero;
-
-			//}
-			//catch( Exception e )
-			//{
-			//	Log.Fatal( "WindowsPlatformFunctionality: CreatedWindow_ApplicationWindowProc: Exception: " + e.Message );
+			//case WM_ENTERSIZEMOVE:
+			//	instance.resizingMoving = true;
 			//	return IntPtr.Zero;
+
+			//case WM_EXITSIZEMOVE:
+			//	instance.resizingMoving = false;
+			//	return IntPtr.Zero;
+
+			//case WM_SIZE:
+			//	if( !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
+			//	{
+			//		EngineApp.CreatedWindowProcessResize();
+			//		return IntPtr.Zero;
+			//	}
+			//	break;
+
+			//case WM_GETMINMAXINFO:
+			//	unsafe
+			//	{
+			//		MINMAXINFO* info = (MINMAXINFO*)lParam;
+			//		var size = new Vector2I( 100, 100 );
+			//		if( ProjectSettings.Initialized )
+			//		{
+			//			size = ProjectSettings.Get.General.WindowSizeMinimal.Value;
+			//			if( ProjectSettings.Get.General.WindowSizeApplySystemFontScale )
+			//				size = ( size.ToVector2() * SystemSettings.DPIScale ).ToVector2I();
+			//			info->ptMinTrackSize = size;
+			//		}
+			//		info->ptMinTrackSize = size;
+			//	}
+			//	return IntPtr.Zero;
+			//}
+
+			//if( EngineApp.Created && !EngineApp.Closing )
+			//{
+			//	switch( message )
+			//	{
+
+			//	case WM_SETFOCUS:
+			//		{
+			//			instance.mustIgnoreOneMouseMoveAtRelativeMode = true;
+			//			instance.CreatedWindow_UpdateShowSystemCursor( true );
+			//			return IntPtr.Zero;
+			//		}
+			//	//break;
+
+			//	case WM_KILLFOCUS:
+			//		{
+			//			instance.mustIgnoreOneMouseMoveAtRelativeMode = true;
+			//			instance.CreatedWindow_UpdateShowSystemCursor( true );
+			//			return IntPtr.Zero;
+			//		}
+			//	//break;
+
+			//	case WM_ACTIVATE:
+			//		{
+			//			if( !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
+			//			{
+			//				bool activate = LOWORD( (int)wParam ) != WA_INACTIVE;
+
+			//				instance.mustIgnoreOneMouseMoveAtRelativeMode = true;
+
+			//				if( activate )
+			//				{
+			//					if( EngineApp.FullscreenEnabled )
+			//					{
+			//						if( EngineApp.FullscreenSize != instance.GetScreenSize() )
+			//							EngineApp.MustChangeVideoMode();
+			//					}
+			//				}
+			//				else
+			//				{
+			//					if( viewport.MouseRelativeMode )
+			//					{
+			//						ReleaseCapture();
+			//						ClipCursor( IntPtr.Zero );
+			//					}
+
+			//					//!!!!просто обновл€ем. ведь внутри и так проверка есть. еще можно зафорсить. но не будет ли так, 
+			//					//что отключитс€ слишком быстро? нужно там где включает ставить флаг -> ChangeVUdeMode.
+			//					EngineApp.EnginePauseUpdateState( false, true );
+			//					//if( App.SuspendWorkingWhenApplicationIsNotActive )
+			//					//   App.DoSystemPause( true, true );
+
+			//					if( EngineApp.FullscreenEnabled )
+			//					{
+			//						instance.SetWindowState( WindowState.Minimized );
+
+			//						if( !EngineApp.NeedExit )
+			//							SystemSettings.RestoreVideoMode();
+			//					}
+			//				}
+			//				return IntPtr.Zero;
+			//			}
+			//		}
+			//		break;
+
+			//	case WM_ENTERMENULOOP:
+			//		{
+			//			if( viewport.MouseRelativeMode )
+			//			{
+			//				ReleaseCapture();
+			//				ClipCursor( IntPtr.Zero );
+			//			}
+
+			//			//if( App.SuspendWorkingWhenApplicationIsNotActive )
+			//			//   App.DoSystemPause( true, true );
+			//			instance.intoMenuLoop = true;
+			//			EngineApp.EnginePauseUpdateState( false, true );
+
+			//			return IntPtr.Zero;
+			//		}
+			//	//break;
+
+			//	case WM_EXITMENULOOP:
+			//		instance.intoMenuLoop = false;
+			//		return IntPtr.Zero;
+
+			//	case WM_MOUSEMOVE:
+			//	case WM_NCMOUSEMOVE:
+			//		EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
+			//		return IntPtr.Zero;
+
+
+			//case WM_TIMER:
+			//	if( (int)wParam == suspendModeTimerID )
+			//	{
+			//		if( EngineApp.DrawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
+			//		{
+			//			unsafe
+			//			{
+			//				InvalidateRect( hWnd, null, false );
+			//			}
+			//		}
+
+			//		if( !IsAllowApplicationIdle() )
+			//			EngineApp.CreatedWindowApplicationIdle( true );
+
+			//		return IntPtr.Zero;
+			//	}
+			//	break;
+
+
+			//case WM_PAINT:
+
+			//	if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving && !instance.intoMenuLoop && !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
+			//	{
+			//		EngineApp.CreatedWindowApplicationIdle( false );
+			//	}
+			//	break;
+			//	}
 			//}
 		}
 
 		public override void CreatedWindow_ProcessMessageEvents()
 		{
 			//!!!!need process events?			
-		}
-
-		public override void CreatedWindow_RunMessageLoop()
-		{
-			zz zz;
-
-			while( true )
-			{
-				MSG msg = new MSG();
-
-				if( PeekMessage( ref msg, IntPtr.Zero, 0, 0, PM_REMOVE ) )
-				{
-					if( msg.message == WM_QUIT )
-						break;
-
-					TranslateMessage( ref msg );
-					DispatchMessage( ref msg );
-
-					continue;
-				}
-				else
-				{
-					if( EngineApp.NeedExit )
-						break;
-
-					if( IsAllowApplicationIdle() )
-					{
-						if( EngineApp.RenderVideoToFileData == null )
-							EngineApp.UpdateEngineTime();
-						double time = EngineApp.EngineTime;
-						bool needSleep = EngineApp.MaxFPS != 0 && time < maxFPSLastRenderTime + 1.0f / EngineApp.MaxFPS;
-
-						if( needSleep )
-						{
-							Thread.Sleep( 1 );
-						}
-						else
-						{
-							maxFPSLastRenderTime = time;
-
-							//finish switching to windowed mode
-							if( goingToWindowedMode )
-							{
-								SetWindowBorderStyle( PlatformFunctionality.WindowBorderStyle.Sizeable );
-								//!!!!было .VideoMode
-								Vector2I pos = ( GetScreenSize() - EngineApp.FullscreenSize ) / 2;
-								//!!!!было .VideoMode
-								Vector2I size = EngineApp.FullscreenSize - new Vector2I( 1, 1 );
-								SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, pos.X, pos.Y, size.X, size.Y, 0 );
-								goingToWindowedMode = false;
-								EngineApp.CreatedWindowProcessResize();
-							}
-
-							//finish switching to fullscreen mode
-							if( goingToFullScreenMode )
-							{
-								bool topMost = !Debugger.IsAttached;
-								SetWindowPos( EngineApp.ApplicationWindowHandle, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0,
-									EngineApp.FullscreenSize.X, EngineApp.FullscreenSize.Y, 0 );
-								goingToFullScreenMode = false;
-								EngineApp.CreatedWindowProcessResize();
-							}
-
-							EngineApp.CreatedWindowApplicationIdle( false );
-						}
-					}
-					else
-						WaitMessage();
-				}
-			}
-
 		}
 
 		public override bool IsIntoMenuLoop()
@@ -674,12 +576,9 @@ namespace Internal
 
 		public override void SetWindowState( WindowState value )
 		{
-			zz zz;
-
 			if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
 			{
-				//!!!!
-				if( EngineApp.FullscreenEnabled && value == WindowState.Minimized )
+				if( EngineApp.WindowedMode != WindowedModeEnum.Windowed && value == WindowState.Minimized )
 				{
 					if( !instance.fullscreenMinimizedMode )
 					{
@@ -693,57 +592,55 @@ namespace Internal
 			}
 		}
 
-		void SetWindowBorderStyle( WindowBorderStyle value )
-		{
-			zz zz;
+		//void SetWindowBorderStyle( WindowBorderStyle value )
+		//{
+		//	if( IntPtr.Size == 8 )
+		//	{
+		//		ulong style = (ulong)GetWindowLong( EngineApp.ApplicationWindowHandle, GWL_STYLE );
 
-			if( IntPtr.Size == 8 )
-			{
-				ulong style = (ulong)GetWindowLong( EngineApp.ApplicationWindowHandle, GWL_STYLE );
+		//		if( value == WindowBorderStyle.None )
+		//		{
+		//			unchecked
+		//			{
+		//				style &= ~(ulong)WS_OVERLAPPEDWINDOW;
+		//				style |= ( (ulong)WS_POPUP );
+		//			}
+		//		}
+		//		else if( value == WindowBorderStyle.Sizeable )
+		//		{
+		//			unchecked
+		//			{
+		//				style &= ~(ulong)WS_POPUP;
+		//				style |= ( (ulong)WS_OVERLAPPEDWINDOW );
+		//			}
+		//		}
 
-				if( value == WindowBorderStyle.None )
-				{
-					unchecked
-					{
-						style &= ~(ulong)WS_OVERLAPPEDWINDOW;
-						style |= ( (ulong)WS_POPUP );
-					}
-				}
-				else if( value == WindowBorderStyle.Sizeable )
-				{
-					unchecked
-					{
-						style &= ~(ulong)WS_POPUP;
-						style |= ( (ulong)WS_OVERLAPPEDWINDOW );
-					}
-				}
+		//		SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_STYLE, (IntPtr)style );
+		//	}
+		//	else
+		//	{
+		//		uint style = (uint)GetWindowLong( EngineApp.ApplicationWindowHandle, GWL_STYLE );
 
-				SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_STYLE, (IntPtr)style );
-			}
-			else
-			{
-				uint style = (uint)GetWindowLong( EngineApp.ApplicationWindowHandle, GWL_STYLE );
+		//		if( value == WindowBorderStyle.None )
+		//		{
+		//			unchecked
+		//			{
+		//				style &= ~(uint)WS_OVERLAPPEDWINDOW;
+		//				style |= ( (uint)WS_POPUP );
+		//			}
+		//		}
+		//		else if( value == WindowBorderStyle.Sizeable )
+		//		{
+		//			unchecked
+		//			{
+		//				style &= ~(uint)WS_POPUP;
+		//				style |= ( (uint)WS_OVERLAPPEDWINDOW );
+		//			}
+		//		}
 
-				if( value == WindowBorderStyle.None )
-				{
-					unchecked
-					{
-						style &= ~(uint)WS_OVERLAPPEDWINDOW;
-						style |= ( (uint)WS_POPUP );
-					}
-				}
-				else if( value == WindowBorderStyle.Sizeable )
-				{
-					unchecked
-					{
-						style &= ~(uint)WS_POPUP;
-						style |= ( (uint)WS_OVERLAPPEDWINDOW );
-					}
-				}
-
-				SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_STYLE, (IntPtr)(int)style );
-			}
-		}
+		//		SetWindowLong( EngineApp.ApplicationWindowHandle, GWL_STYLE, (IntPtr)(int)style );
+		//	}
+		//}
 
 		public override void SetWindowVisible( bool value )
 		{
@@ -771,52 +668,40 @@ namespace Internal
 			if( EngineApp.ApplicationWindowHandle == IntPtr.Zero )
 				return Vector2F.Zero;
 
-			qqqq;
+			MacAppNativeWrapper.GetClientRectangleCursorPosition( EngineApp.WindowedMode != WindowedModeEnum.Windowed, out var x, out var y );
 
-			Vector2I position;
-			GetCursorPos( out position );
-			ScreenToClient( EngineApp.ApplicationWindowHandle, ref position );
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+			return new Vector2(
+				(float)x / (float)( viewport.SizeInPixels.X - viewport.SizeInPixels.X % 2 ),
+				(float)y / (float)( viewport.SizeInPixels.Y - viewport.SizeInPixels.Y % 2 ) );
 
-			Viewport viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];//App.CreatedInsideEngineWindow.Viewport;
-			return new Vector2F(
-				(float)position.X / (float)( viewport.SizeInPixels.X - viewport.SizeInPixels.X % 2 ),
-				(float)position.Y / (float)( viewport.SizeInPixels.Y - viewport.SizeInPixels.Y % 2 ) );
+			//int x, y;
+			//MacAppNativeWrapper.GetClientRectangleCursorPosition( App.FullScreen, out x, out y );
 
-			qqqq;
-
-			int x, y;
-			MacAppNativeWrapper.GetClientRectangleCursorPosition( App.FullScreen, out x, out y );
-
-			return new Vec2(
-				(float)x / (float)( App.VideoMode.X - App.VideoMode.X % 2 ),
-				(float)y / (float)( App.VideoMode.Y - App.VideoMode.Y % 2 ) );
+			//return new Vec2(
+			//	(float)x / (float)( App.VideoMode.X - App.VideoMode.X % 2 ),
+			//	(float)y / (float)( App.VideoMode.Y - App.VideoMode.Y % 2 ) );
 		}
 
 		public override void CreatedWindow_SetMousePosition( Vector2 value )
 		{
 			if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
 			{
-				Viewport viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];//App.CreatedInsideEngineWindow.Viewport;
-				Vector2I position = new Vector2I(
+				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+				var position = new Vector2I(
 					(int)(float)( value.X * (float)viewport.SizeInPixels.X ),
 					(int)(float)( value.Y * (float)viewport.SizeInPixels.Y ) );
 
-				qqqqq;
+				MacAppNativeWrapper.SetClientRectangleCursorPosition( EngineApp.WindowedMode != WindowedModeEnum.Windowed, position.X, position.Y );
 
-				Vector2I globalPosition = position;
-				ClientToScreen( EngineApp.ApplicationWindowHandle, ref globalPosition );
-				SetCursorPos( globalPosition.X, globalPosition.Y );
 
-				qqqq;
-
-				if( App.WindowHandle != IntPtr.Zero )
-				{
-					Vec2I position = new Vec2I(
-						(int)(float)( value.X * (float)App.VideoMode.X ),
-						(int)(float)( value.Y * (float)App.VideoMode.Y ) );
-					MacAppNativeWrapper.SetClientRectangleCursorPosition( App.FullScreen, position.X, position.Y );
-				}
-
+				//if( App.WindowHandle != IntPtr.Zero )
+				//{
+				//	Vec2I position = new Vec2I(
+				//		(int)(float)( value.X * (float)App.VideoMode.X ),
+				//		(int)(float)( value.Y * (float)App.VideoMode.Y ) );
+				//	MacAppNativeWrapper.SetClientRectangleCursorPosition( EngineApp.WindowedMode != WindowedModeEnum.Windowed, position.X, position.Y );
+				//}
 
 				lastMousePositionForMouseMoveDelta = value;
 				lastMousePositionForCheckMouseOutsideWindow = value;
@@ -825,27 +710,14 @@ namespace Internal
 
 		public override bool IsFocused()
 		{
-			qqqq;
-
-			if( EngineApp.ApplicationWindowHandle == IntPtr.Zero )
-				return false;
-			return GetFocus() == EngineApp.ApplicationWindowHandle;
-
-			qqq;
 			return MacAppNativeWrapper.IsWindowFocused();
 		}
 
 		public override bool ApplicationIsActive()
 		{
-			var activatedHandle = GetForegroundWindow();
-			if( activatedHandle == IntPtr.Zero )
-				return false;// No window is currently activated
+			//!!!!good? it is same as CreatedWindow_IsWindowActive
 
-			var procId = Process.GetCurrentProcess().Id;
-			int activeProcId;
-			GetWindowThreadProcessId( activatedHandle, out activeProcId );
-
-			if( activeProcId != procId )
+			if( !MacAppNativeWrapper.IsWindowActive() )
 				return false;
 
 			if( GetWindowState() == WindowState.Minimized )
@@ -933,57 +805,40 @@ namespace Internal
 
 		public unsafe override void CreatedWindow_UpdateInputDevices()
 		{
-			//!!!!!всЄ тут проверить
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
-			//!!!!//ничего не обновл€ть, если отрублены?
+			MacAppNativeWrapper.UpdateAcceptsMouseMovedEventsFlag();
 
-			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];//App.CreatedInsideEngineWindow.Viewport;
-
-			//!!!!new
 			if( EngineApp.CreatedInsideEngineWindow != null && IsFocused() )
 				CreatedWindow_UpdateShowSystemCursor( false );
 
+			//!!!!old code. need?
+			//if( MacAppNativeWrapper.IsWindowFocused() && new Rectangle( 0, 0, 1, 1 ).Contains( App.MousePosition ) )
+			//	UpdateShowSystemCursor();
+
 			//mouse buttons
 			{
-				//!!!!
-
-				//List<ValueTuple<EMouseButtons, int>> buttons = new List<(EMouseButtons, int)>();
-				//buttons.Add( (EMouseButtons.Left, VK_LBUTTON) );
-				//buttons.Add( (EMouseButtons.Right, VK_RBUTTON) );
-				//buttons.Add( (EMouseButtons.Middle, VK_MBUTTON) );
-				//buttons.Add( (EMouseButtons.XButton1, VK_XBUTTON1) );
-				//buttons.Add( (EMouseButtons.XButton2, VK_XBUTTON2) );
-				//foreach( var tuple in buttons )
-				//{
-				//	if( viewport.IsMouseButtonPressed( tuple.Item1 ) && GetKeyState( tuple.Item2 ) >= 0 )
-				//	{
-				//		bool handled = false;
-				//		viewport.PerformMouseUp( tuple.Item1, ref handled );
-				//	}
-				//}
-
-
-				if( viewport.IsMouseButtonPressed( EMouseButtons.Left ) && GetKeyState( VK_LBUTTON ) >= 0 )
+				if( viewport.IsMouseButtonPressed( EMouseButtons.Left ) && !MacAppNativeWrapper.IsMouseButtonPressed( (int)EMouseButtons.Left ) )
 				{
 					bool handled = false;
 					viewport.PerformMouseUp( EMouseButtons.Left, ref handled );
 				}
-				if( viewport.IsMouseButtonPressed( EMouseButtons.Right ) && GetKeyState( VK_RBUTTON ) >= 0 )
+				if( viewport.IsMouseButtonPressed( EMouseButtons.Right ) && !MacAppNativeWrapper.IsMouseButtonPressed( (int)EMouseButtons.Right ) )
 				{
 					bool handled = false;
 					viewport.PerformMouseUp( EMouseButtons.Right, ref handled );
 				}
-				if( viewport.IsMouseButtonPressed( EMouseButtons.Middle ) && GetKeyState( VK_MBUTTON ) >= 0 )
+				if( viewport.IsMouseButtonPressed( EMouseButtons.Middle ) && !MacAppNativeWrapper.IsMouseButtonPressed( (int)EMouseButtons.Middle ) )
 				{
 					bool handled = false;
 					viewport.PerformMouseUp( EMouseButtons.Middle, ref handled );
 				}
-				if( viewport.IsMouseButtonPressed( EMouseButtons.XButton1 ) && GetKeyState( VK_XBUTTON1 ) >= 0 )
+				if( viewport.IsMouseButtonPressed( EMouseButtons.XButton1 ) && !MacAppNativeWrapper.IsMouseButtonPressed( (int)EMouseButtons.XButton1 ) )
 				{
 					bool handled = false;
 					viewport.PerformMouseUp( EMouseButtons.XButton1, ref handled );
 				}
-				if( viewport.IsMouseButtonPressed( EMouseButtons.XButton2 ) && GetKeyState( VK_XBUTTON2 ) >= 0 )
+				if( viewport.IsMouseButtonPressed( EMouseButtons.XButton2 ) && !MacAppNativeWrapper.IsMouseButtonPressed( (int)EMouseButtons.XButton2 ) )
 				{
 					bool handled = false;
 					viewport.PerformMouseUp( EMouseButtons.XButton2, ref handled );
@@ -993,15 +848,17 @@ namespace Internal
 			//keys
 			foreach( EKeys eKey in Viewport.AllKeys )
 			{
+				//!!!!need eKey != EKeys.Shift && eKey != EKeys.Control && eKey != EKeys.Alt && eKey != EKeys.Command?
+
+				//if( viewport.IsKeyPressed( eKey ) && eKey != EKeys.Shift && eKey != EKeys.Control && eKey != EKeys.Alt && eKey != EKeys.Command )
 				if( viewport.IsKeyPressed( eKey ) )
 				{
-					KeyInfo keyInfo = keysInfo[ (int)eKey ];
-
+					var keyInfo = keysInfo[ (int)eKey ];
 					if( keyInfo.keyCode != 0 )
 					{
-						if( GetKeyState( keyInfo.keyCode ) >= 0 )
+						if( !MacAppNativeWrapper.IsKeyPressed( eKey ) )
 						{
-							KeyEvent keyEvent = new KeyEvent( eKey );
+							var keyEvent = new KeyEvent( eKey );
 							bool handled = false;
 							viewport.PerformKeyUp( keyEvent, ref handled );
 						}
@@ -1031,39 +888,41 @@ namespace Internal
 				//clip cursor by window rectangle
 				if( IsFocused() )
 				{
-					SetCapture( EngineApp.ApplicationWindowHandle );
 
-					RectangleI rectangle = CreatedWindow_GetWindowRectangle();
-					rectangle.Left += 1;
-					rectangle.Top += 1;
-					rectangle.Right -= 1;
-					rectangle.Bottom -= 1;
-					ClipCursor( (IntPtr)( &rectangle ) );
+					//!!!!impl
+
+					//SetCapture( EngineApp.ApplicationWindowHandle );
+
+					//RectangleI rectangle = CreatedWindow_GetWindowRectangle();
+					//rectangle.Left += 1;
+					//rectangle.Top += 1;
+					//rectangle.Right -= 1;
+					//rectangle.Bottom -= 1;
+					//ClipCursor( (IntPtr)( &rectangle ) );
 				}
 
-				if( DirectInputMouseDevice.Instance != null )
-				{
-					DirectInputMouseDevice.State state = DirectInputMouseDevice.Instance.GetState();
-					if( state.Position.X != 0 || state.Position.Y != 0 )
-					{
-						Vector2F offset = new Vector2F(
-							(float)(int)state.Position.X / viewport.SizeInPixels.X,
-							(float)(int)state.Position.Y / viewport.SizeInPixels.Y );
+				//if( DirectInputMouseDevice.Instance != null )
+				//{
+				//	DirectInputMouseDevice.State state = DirectInputMouseDevice.Instance.GetState();
+				//	if( state.Position.X != 0 || state.Position.Y != 0 )
+				//	{
+				//		Vector2F offset = new Vector2F(
+				//			(float)(int)state.Position.X / viewport.SizeInPixels.X,
+				//			(float)(int)state.Position.Y / viewport.SizeInPixels.Y );
 
-						viewport.PerformMouseMove( offset );
+				//		viewport.PerformMouseMove( offset );
 
-						if( !EngineApp.Closing && IsFocused() )
-							CreatedWindow_SetMousePosition( new Vector2F( .5f, .5f ) );
-						//App.MousePosition = new Vec2( .5f, .5f );
-					}
-				}
-				else
+				//		if( !EngineApp.Closing && IsFocused() )
+				//			CreatedWindow_SetMousePosition( new Vector2F( .5f, .5f ) );
+				//		//App.MousePosition = new Vec2( .5f, .5f );
+				//	}
+				//}
+				//else
 				{
-					//!!!!надо ли
+					//!!!!need?
 
 					if( !EngineApp.Closing && IsFocused() )
 						CreatedWindow_SetMousePosition( new Vector2F( .5f, .5f ) );
-					//App.MousePosition = new Vec2( .5f, .5f );
 				}
 			}
 		}
@@ -1083,32 +942,28 @@ namespace Internal
 
 		public override void CreatedWindow_OnMouseRelativeModeChange()
 		{
-			qqqqq;
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
-			Viewport viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];//App.CreatedInsideEngineWindow.Viewport;
+			//!!!!impl
 
-			if( viewport.MouseRelativeMode )
-			{
-				if( DirectInputMouseDevice.Instance != null )
-					DirectInputMouseDevice.Instance.GetState();
-			}
-			else
-			{
-				ReleaseCapture();
-				ClipCursor( IntPtr.Zero );
-			}
+			//if( viewport.MouseRelativeMode )
+			//{
+			//	if( DirectInputMouseDevice.Instance != null )
+			//		DirectInputMouseDevice.Instance.GetState();
+			//}
+			//else
+			//{
+			//	ReleaseCapture();
+			//	ClipCursor( IntPtr.Zero );
+			//}
 
-			qqqq;//учесть
 			mustIgnoreOneMouseMoveAtRelativeMode = true;
 
-			qqqq;
 			MacAppNativeWrapper.ResetMouseMoveDelta( true );
 		}
 
 		public override void CreatedWindow_UpdateMouseRelativeMove( out Vector2 delta )
 		{
-			qqq;
-
 			if( !mustIgnoreOneMouseMoveAtRelativeMode )
 			{
 				delta = CreatedWindow_GetMousePosition() - lastMousePositionForMouseMoveDelta;
@@ -1119,15 +974,14 @@ namespace Internal
 				delta = Vector2F.Zero;
 			}
 
-			qqqq;
+			//!!!!
 
-			int x, y;
-			MacAppNativeWrapper.GetMouseMoveDelta( out x, out y );
-			if( App.VideoMode.X != 0 && App.VideoMode.Y != 0 )
-				delta = new Vec2( x, y ) / App.VideoMode.ToVec2();
-			else
-				delta = Vec2.Zero;
-			MacAppNativeWrapper.ResetMouseMoveDelta( false );
+			//MacAppNativeWrapper.GetMouseMoveDelta( out var x, out var y );
+			//if( App.VideoMode.X != 0 && App.VideoMode.Y != 0 )
+			//	delta = new Vec2( x, y ) / App.VideoMode.ToVec2();
+			//else
+			//	delta = Vec2.Zero;
+			//MacAppNativeWrapper.ResetMouseMoveDelta( false );
 
 		}
 
@@ -1139,57 +993,77 @@ namespace Internal
 		public override void ProcessChangingVideoMode()
 		{
 
+			//!!!!good?
 
-			qqq;
-
-			//change video mode
-			if( App.FullScreen )
+			if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen )
 			{
-				if( !DisplaySettings.ChangeVideoMode( App.VideoMode ) )
-					return;
-				App.lastFullScreenWindowSize = App.VideoMode;
-			}
-			else
-			{
-				DisplaySettings.RestoreVideoMode();
-			}
+				goingToAnotherWindowedMode = EngineApp.WindowedMode;
 
-			MacAppNativeWrapper.UpdateWindowForProcessChangingVideoMode();
-
-			App.DoResize();
-
-
-			qq;
-
-
-			if( EngineApp.FullscreenEnabled )
-			{
-				goingToFullScreenMode = true;
-
-				//minimize window
 				SetWindowState( WindowState.Minimized );
 
-				//!!!!!так?
 				//change video mode
-				if( !SystemSettings.ChangeVideoMode( EngineApp.FullscreenSize ) )
+				if( !SystemSettings.ChangeVideoMode( EngineApp.WindowedModeSize ) )
 					return;
-				//было
-				//App.lastFullScreenWindowSize = App.FullScreenSize;
-
-				//update window
-				bool topMost = !Debugger.IsAttached;
-				SetWindowBorderStyle( WindowBorderStyle.None );
-				SetWindowState( WindowState.Normal );
-				SetWindowPos( EngineApp.ApplicationWindowHandle, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, EngineApp.FullscreenSize.X, EngineApp.FullscreenSize.Y, 0 );
 			}
 			else
 			{
-				goingToWindowedMode = true;
+				goingToAnotherWindowedMode = EngineApp.WindowedMode;
 
-				//!!!!!так?
 				//change video mode
 				SystemSettings.RestoreVideoMode();
 			}
+
+
+
+
+			////change video mode
+			//if( App.FullScreen )
+			//{
+			//	if( !DisplaySettings.ChangeVideoMode( App.VideoMode ) )
+			//		return;
+			//	App.lastFullScreenWindowSize = App.VideoMode;
+			//}
+			//else
+			//{
+			//	DisplaySettings.RestoreVideoMode();
+			//}
+
+			//MacAppNativeWrapper.UpdateWindowForProcessChangingVideoMode();
+
+			//App.DoResize();
+
+
+
+
+
+			//if( EngineApp.FullscreenEnabled )
+			//{
+			//	goingToFullScreenMode = true;
+
+			//	//minimize window
+			//	SetWindowState( WindowState.Minimized );
+
+			//	//!!!!!так?
+			//	//change video mode
+			//	if( !SystemSettings.ChangeVideoMode( EngineApp.FullscreenSize ) )
+			//		return;
+			//	//было
+			//	//App.lastFullScreenWindowSize = App.FullScreenSize;
+
+			//	//update window
+			//	bool topMost = !Debugger.IsAttached;
+			//	SetWindowBorderStyle( WindowBorderStyle.None );
+			//	SetWindowState( WindowState.Normal );
+			//	SetWindowPos( EngineApp.ApplicationWindowHandle, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, EngineApp.FullscreenSize.X, EngineApp.FullscreenSize.Y, 0 );
+			//}
+			//else
+			//{
+			//	goingToWindowedMode = true;
+
+			//	//!!!!!так?
+			//	//change video mode
+			//	SystemSettings.RestoreVideoMode();
+			//}
 		}
 
 		unsafe public override IList<SystemSettings.DisplayInfo> GetAllDisplays()
@@ -1223,14 +1097,13 @@ namespace Internal
 		public override void CreatedWindow_SetWindowRectangle( RectangleI rectangle )
 		{
 			goingToChangeWindowRectangle = true;
+			//!!!!need?
+			//if( GetWindowState() == WindowState.Maximized )
+			//	SetWindowState( WindowState.Normal );
 			MacAppNativeWrapper.SetWindowRectangle( rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom );
 			goingToChangeWindowRectangle = false;
 
-			qqqq;
-			//!!!!!так?
 			EngineApp.CreatedWindowProcessResize();
-			qqqq;
-			App.DoResize();
 		}
 
 		public override void GetSystemLanguage( out string name, out string englishName )
@@ -1330,32 +1203,83 @@ namespace Internal
 			MacAppNativeWrapper.SetGamma( value );
 		}
 
-
-		zz zz;
-
-		//!!!!from 3.5:
-		//!!!!from 3.5:
-		//!!!!from 3.5:
-		//!!!!from 3.5:
-		//!!!!from 3.5:
-		//!!!!from 3.5:
-		//!!!!from 3.5:
-
-
-
 		public override IntPtr CreatedWindow_CreateWindow()
 		{
-			zz zz;
+			bool showMaximized = EngineApp.WindowedMode == WindowedModeEnum.Windowed && EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Maximized && !EngineApp.InitSettings.MultiMonitorMode.Value;
+			bool showMinimized = EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Minimized;
 
-			var handle = MacAppNativeWrapper.InitApplicationWindow( App.FullScreen, App.VideoMode.X, App.VideoMode.Y, App.WindowTitle );
-			return handle;
+			Vector2I position;
+			Vector2I size;
+			{
+				if( showMaximized )
+				{
+					size = new Vector2I( 800, 600 );
+					position = ( GetScreenSize() - size ) / 2;
+				}
+				else
+				{
+					if( EngineApp.WindowedMode == WindowedModeEnum.Windowed || EngineApp.InitSettings.MultiMonitorMode.Value )
+						position = EngineApp.InitSettings.CreateWindowPosition.Value;
+					else
+						position = Vector2I.Zero;
+					size = EngineApp.InitSettings.CreateWindowSize.Value;
+				}
+			}
+
+			//uint style = 0;
+			//uint exStyle = 0;
+			//{
+			//	if( !showMaximized )
+			//		style |= WS_VISIBLE;
+
+			//	if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen || EngineApp.WindowedMode == WindowedModeEnum.Borderless )
+			//		style |= WS_POPUP;
+			//	else
+			//		style |= WS_OVERLAPPEDWINDOW;
+
+			//	if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen )
+			//		exStyle |= WS_EX_TOPMOST;
+
+			//	if( IsServerWithoutRenderingBackend() )
+			//		exStyle |= WS_EX_COMPOSITED;
+			//}
+
+
+			//!!!!impl borderless
+
+
+			var windowHandle = MacAppNativeWrapper.CreateWindow( EngineApp.WindowedMode, EngineApp.CreatedInsideEngineWindow.Title, position.X, position.Y, size.X, size.Y );
+
+			if( SystemSettings.DarkMode )
+				SetDarkMode( windowHandle, true );
+
+			//!!!!impl
+
+			//if( showMaximized )
+			//	ShowWindow( windowHandle, SW_SHOWMAXIMIZED );
+			//if( showMinimized )
+			//	ShowWindow( windowHandle, SW_SHOWMINIMIZED );
+
+			//SetForegroundWindow( windowHandle );
+			//SetFocus( windowHandle );
+
+			////SetTimer( windowHandle, (IntPtr)suspendModeTimerID, 10, IntPtr.Zero );
+			////suspendModeTimerCreated = true;
+
+			return windowHandle;
+
+
+			//var handle = MacAppNativeWrapper.CreateWindow( App.FullScreen, App.VideoMode.X, App.VideoMode.Y, App.WindowTitle );
+
+			//var handle = MacAppNativeWrapper.InitApplicationWindow( App.FullScreen, App.VideoMode.X, App.VideoMode.Y, App.WindowTitle );
+			//return handle;
 		}
 
 		public override void CreatedWindow_DestroyWindow()
 		{
-			MacAppNativeWrapper.ShutdownApplicationWindow();
+			MacAppNativeWrapper.DestroyWindow();
 
-			zz zz;
+			//MacAppNativeWrapper.ShutdownApplicationWindow();
 		}
 
 
@@ -1374,8 +1298,6 @@ namespace Internal
 			Viewport viewport = null;
 			if( !RenderingSystem.Disposed && RenderingSystem.ApplicationRenderTarget != null )
 				viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
-
-			zz zz;
 
 			switch( messageType )
 			{
@@ -1411,9 +1333,10 @@ namespace Internal
 
 			case MessageTypes.MouseMove:
 				{
-					zz zz;
+					//!!!!
 
-					viewport.PerformMouseMove();
+					EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
+					//viewport.PerformMouseMove();
 				}
 				break;
 
@@ -1596,9 +1519,9 @@ namespace Internal
 					{
 						instance.fullscreenMinimizedMode = false;
 
-						zz zz;
+						MacAppNativeWrapper.RestoreFromFullscreenMinimizedMode( viewport.SizeInPixels.X, viewport.SizeInPixels.Y );
 
-						MacAppNativeWrapper.RestoreFromFullscreenMinimizedMode( App.VideoMode.X, App.VideoMode.Y );
+						//MacAppNativeWrapper.RestoreFromFullscreenMinimizedMode( App.VideoMode.X, App.VideoMode.Y );
 					}
 				}
 				break;
@@ -1608,7 +1531,7 @@ namespace Internal
 					if( !instance.mustGoToFullscreenMinimizedMode && !instance.fullscreenMinimizedMode )
 					{
 						if( !IsAllowApplicationIdle() )
-							App.ApplicationIdle( true );
+							EngineApp.CreatedWindowApplicationIdle( true );
 					}
 
 					//Alt+Tab
@@ -1621,50 +1544,114 @@ namespace Internal
 						}
 						else if( instance.mustGoToFullscreenMinimizedModeStep == 2 )
 						{
-							if( instance.GetWindowState() != WindowStates.Minimized )
+							if( instance.GetWindowState() != WindowState.Minimized )
 							{
 								MacAppNativeWrapper.MinimizeWindow();
 
-								if( instance.GetWindowState() == WindowStates.Minimized )
+								if( instance.GetWindowState() == WindowState.Minimized )
 								{
 									instance.mustGoToFullscreenMinimizedMode = false;
 									instance.fullscreenMinimizedMode = true;
 								}
 							}
 						}
-
-						break;
 					}
-
 				}
 				break;
-
 			}
 		}
 
-		public override void RunMessageLoop()
+		public override void CreatedWindow_RunMessageLoop()
 		{
 			while( MacAppNativeWrapper.ProcessEvents() )
 			{
-				if( App.IsNeedExit() )
+				if( EngineApp.NeedExit )
 					break;
 
 				if( IsAllowApplicationIdle() )
 				{
-					if( !instance.mustGoToFullscreenMinimizedMode && !instance.fullscreenMinimizedMode )
-					{
-						float time = EngineApp.Instance.Time;
-						bool needSleep = EngineApp.Instance.MaxFPS != 0 && time < maxFPSLastRenderTime + 1.0f / EngineApp.Instance.MaxFPS;
+					if( EngineApp.RenderVideoToFileData == null )
+						EngineApp.UpdateEngineTime();
+					double time = EngineApp.EngineTime;
+					bool needSleep = EngineApp.MaxFPS != 0 && time < maxFPSLastRenderTime + 1.0f / EngineApp.MaxFPS;
 
-						if( needSleep )
+					if( needSleep )
+					{
+						Thread.Sleep( 1 );
+					}
+					else
+					{
+						maxFPSLastRenderTime = time;
+
+						//finish switching to another windowed mode
+						var goingToAnotherWindowedMode2 = goingToAnotherWindowedMode;
+						if( goingToAnotherWindowedMode2 != null )
 						{
-							Thread.Sleep( 1 );
+
+							//!!!!
+
+							////windowed
+							//if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Windowed )
+							//{
+							//	SetWindowBorderStyle( WindowBorderStyle.Sizeable );
+
+							//	var pos = ( GetScreenSize() - EngineApp.WindowedModeSize ) / 2;
+							//	var size = EngineApp.WindowedModeSize - new Vector2I( 1, 1 );
+							//	SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, pos.X, pos.Y, size.X, size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+							//}
+
+							////borderless
+							//if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Borderless )
+							//{
+							//	SetWindowBorderStyle( WindowBorderStyle.None );
+
+							//	var monitorRect = GetWindowMonitorRectangle();
+
+							//	SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, monitorRect.Left, monitorRect.Top, monitorRect.Size.X, monitorRect.Size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+
+							//	//SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, 0, 0, EngineApp.WindowedModeSize.X, EngineApp.WindowedModeSize.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+							//}
+
+							////fullscreen
+							//if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Fullscreen )
+							//{
+							//	SetWindowBorderStyle( WindowBorderStyle.None );
+
+							//	var monitorRect = GetWindowMonitorRectangle();
+
+							//	SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_TOPMOST, monitorRect.Left, monitorRect.Top, monitorRect.Size.X, monitorRect.Size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+
+							//	//SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_TOPMOST, 0, 0, EngineApp.WindowedModeSize.X, EngineApp.WindowedModeSize.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
+							//}
+
+							////SetWindowState( WindowState.Normal );
+							//SetForegroundWindow( EngineApp.ApplicationWindowHandle );
+							//SetFocus( EngineApp.ApplicationWindowHandle );
+
+							//goingToAnotherWindowedMode = null;
+							//EngineApp.CreatedWindowProcessResize();
+
 						}
-						else
-						{
-							maxFPSLastRenderTime = time;
-							App.ApplicationIdle( false );
-						}
+
+
+						EngineApp.CreatedWindowApplicationIdle( false );
+
+						//!!!!useful?
+						//if( !instance.mustGoToFullscreenMinimizedMode && !instance.fullscreenMinimizedMode )
+						//{
+						//	float time = EngineApp.Instance.Time;
+						//	bool needSleep = EngineApp.Instance.MaxFPS != 0 && time < maxFPSLastRenderTime + 1.0f / EngineApp.Instance.MaxFPS;
+
+						//	if( needSleep )
+						//	{
+						//		Thread.Sleep( 1 );
+						//	}
+						//	else
+						//	{
+						//		maxFPSLastRenderTime = time;
+						//		App.ApplicationIdle( false );
+						//	}
+						//}
 					}
 				}
 				else
@@ -1711,57 +1698,6 @@ namespace Internal
 			Log.Fatal( result );
 		}
 
-		public override void UpdateInputDevices()
-		{
-			MacAppNativeWrapper.UpdateAcceptsMouseMovedEventsFlag();
-
-			if( MacAppNativeWrapper.IsWindowFocused() && new Rectangle( 0, 0, 1, 1 ).Contains( App.MousePosition ) )
-			{
-				UpdateShowSystemCursor();
-			}
-
-			//mouse
-			{
-				if( App.IsMouseButtonPressed( EMouseButtons.Left ) && !MacAppNativeWrapper.IsMouseButtonPressed( (int)EMouseButtons.Left ) )
-				{
-					App.DoMouseUp( EMouseButtons.Left );
-				}
-				if( App.IsMouseButtonPressed( EMouseButtons.Right ) && !MacAppNativeWrapper.IsMouseButtonPressed( (int)EMouseButtons.Right ) )
-				{
-					App.DoMouseUp( EMouseButtons.Right );
-				}
-				if( App.IsMouseButtonPressed( EMouseButtons.Middle ) && !MacAppNativeWrapper.IsMouseButtonPressed( (int)EMouseButtons.Middle ) )
-				{
-					App.DoMouseUp( EMouseButtons.Middle );
-				}
-				if( App.IsMouseButtonPressed( EMouseButtons.XButton1 ) && !MacAppNativeWrapper.IsMouseButtonPressed( (int)EMouseButtons.XButton1 ) )
-				{
-					App.DoMouseUp( EMouseButtons.XButton1 );
-				}
-				if( App.IsMouseButtonPressed( EMouseButtons.XButton2 ) && !MacAppNativeWrapper.IsMouseButtonPressed( (int)EMouseButtons.XButton2 ) )
-				{
-					App.DoMouseUp( EMouseButtons.XButton2 );
-				}
-			}
-
-			//keys
-			foreach( EKeys eKey in App.AllKeys )
-			{
-				if( App.IsKeyPressed( eKey ) && eKey != EKeys.Shift && eKey != EKeys.Control && eKey != EKeys.Alt && eKey != EKeys.Command )
-				{
-					if( !MacAppNativeWrapper.IsKeyPressed( eKey ) )
-					{
-						KeyEvent keyEvent = new KeyEvent( eKey );
-						App.DoKeyUp( keyEvent );
-					}
-				}
-			}
-
-			//mouse relative mode
-			if( App.MouseRelativeMode )
-				App.MousePosition = new Vec2( .5f, .5f );
-		}
-
 		public override void CreatedWindow_UpdateShowSystemCursor( bool forceUpdate )
 		{
 			bool show = EngineApp.IsRealShowSystemCursor();
@@ -1799,4 +1735,3 @@ namespace Internal
 		}
 	}
 }
-#endif

@@ -25,6 +25,8 @@ namespace CommandLineTools
 		public static bool ConnectionAllowReconnect = true;
 		public static string HelloFromServerMessage = "Hello from the server!";
 
+		static bool synchronizeFilesEnable;
+
 		static DateTime updateLastTime;
 
 		///////////////////////////////////////////////
@@ -119,6 +121,11 @@ namespace CommandLineTools
 					return false;
 				directModePassword = password;
 
+				if( !SystemSettings.CommandLineParameters.TryGetValue( "-synchronizeFilesEnable", out var synchronizeFilesEnableString ) )
+					return false;
+				if( !bool.TryParse( synchronizeFilesEnableString, out synchronizeFilesEnable ) )
+					synchronizeFilesEnable = synchronizeFilesEnableString == "1";
+
 				//create server
 				if( !CreateServer( out var error ) )
 				{
@@ -166,12 +173,22 @@ namespace CommandLineTools
 			var databaseReadOnly = true;
 
 			//create or clear project directory
-			var projectDirectory = Path.Combine( Path.GetTempPath(), "NeoAxisPlatformServer" );
+			string homePath = Environment.GetFolderPath( Environment.SpecialFolder.MyDocuments );
+			//string homePath = Environment.GetFolderPath( Environment.SpecialFolder.UserProfile );
+			var projectDirectory = Path.Combine( homePath, "NeoAxisPlatformServer" );
+			//var projectDirectory = Path.Combine( Path.GetTempPath(), "NeoAxisPlatformServer" );
 			if( Directory.Exists( projectDirectory ) )
 			{
 				try
 				{
-					IOUtility.ClearDirectory( projectDirectory );
+					//clear sub directories only with GUID names
+					foreach( var dir in Directory.GetDirectories( projectDirectory ) )
+					{
+						var dirName = Path.GetFileName( dir );
+						if( Guid.TryParse( dirName, out var guid ) )
+							Directory.Delete( dir, true );
+					}
+					//IOUtility.ClearDirectory( projectDirectory );
 				}
 				catch { }
 			}
@@ -349,36 +366,39 @@ namespace CommandLineTools
 
 			var clientData = GetClientData( client );
 
-			if( string.IsNullOrEmpty( clientData.TaskID ) )
+			if( !synchronizeFilesEnable )
 			{
-				allow = false;
-				error = "Client has no active request.";
-				return;
-			}
-
-			//!!!!more verifications
-
-			var invalidStrings = new[] { "..", ":", "*", "?", "\"", "<", ">", "|" };
-
-			foreach( var filePath in filePaths )
-			{
-				//check for invalid characters
-				foreach( var invalidString in invalidStrings )
-				{
-					if( filePath.Contains( invalidString ) )
-					{
-						allow = false;
-						error = $"Invalid character in file path: {filePath}";
-						return;
-					}
-				}
-
-				//check for task ID in path
-				if( !filePath.StartsWith( clientData.TaskID + Path.DirectorySeparatorChar ) )
+				if( string.IsNullOrEmpty( clientData.TaskID ) )
 				{
 					allow = false;
-					error = $"File path does not start with task ID: {filePath}";
+					error = "Client has no active request.";
 					return;
+				}
+
+				//!!!!more verifications
+
+				var invalidStrings = new[] { "..", ":", "*", "?", "\"", "<", ">", "|" };
+
+				foreach( var filePath in filePaths )
+				{
+					//check for invalid characters
+					foreach( var invalidString in invalidStrings )
+					{
+						if( filePath.Contains( invalidString ) )
+						{
+							allow = false;
+							error = $"Invalid character in file path: {filePath}";
+							return;
+						}
+					}
+
+					//check for task ID in path
+					if( !filePath.StartsWith( clientData.TaskID + Path.DirectorySeparatorChar ) )
+					{
+						allow = false;
+						error = $"File path does not start with task ID: {filePath}";
+						return;
+					}
 				}
 			}
 

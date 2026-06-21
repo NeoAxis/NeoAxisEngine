@@ -1,6 +1,8 @@
+// Made with NeoAxis Engine 2026.2.
+
 .component NeoAxis.UIControl
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1195, 842\"><KW V=\"1\" A=\"EEA741103C5C4955289CD8492690B2C0\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"A8D10A17BD5B46B7F8B70E6C6EA40D1E\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"EEA741103C5C4955289CD8492690B2C0\"><KP UN=\"EEA741103C5C4955289CD8492690B2C0\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"585704556160495E2B9FA9AE0A1C5B7F\" S=\"False\"><CPD ObjPath=\"$Button Do\\$C# Script\" /></KP><KP UN=\"B8D3A675B43A462049A1F5B6A8A8DBEB\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1199, 963\"><KW V=\"1\" A=\"EEA741103C5C4955289CD8492690B2C0\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"A8D10A17BD5B46B7F8B70E6C6EA40D1E\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"EEA741103C5C4955289CD8492690B2C0\"><KP UN=\"EEA741103C5C4955289CD8492690B2C0\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"585704556160495E2B9FA9AE0A1C5B7F\" S=\"False\"><CPD ObjPath=\"$Button Do\\$C# Script\" /></KP><KP UN=\"B8D3A675B43A462049A1F5B6A8A8DBEB\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	Size = Units 440 190
 	BackgroundColor = 0.5843138 0.5843138 0.5843138
 	EditorScrollPosition = -21.0046323218706 -12.6209876081335
@@ -38,10 +40,10 @@
 		Size = Units 200 40
 		Margin = Units 10 140 140 0
 		EditorScrollPosition = 0 0
-		.component NeoAxis.Component_CSharpScript
+		.component NeoAxis.CSharpScript
 		{
 			Name = C# Script
-			Code = "public void ButtonDo_Click(NeoAxis.UIButton sender)\r\n{\r\n\tvar parent = sender.Parent;\r\n\tvar link = parent.PropertyGet<string>(\"Learn Link\");\r\n\tSystem.Diagnostics.Process.Start( new System.Diagnostics.ProcessStartInfo( link ) { UseShellExecute = true } );\r\n}\r\n"
+			Code = "public void ButtonDo_Click(NeoAxis.UIButton sender)\r\n{\r\n#if !ANDROID && !IOS && !WEB && !UWP\r\n\tvar parent = sender.Parent;\r\n\tvar link = parent.PropertyGet<string>(\"Learn Link\");\r\n\tSystem.Diagnostics.Process.Start( new System.Diagnostics.ProcessStartInfo( link ) { UseShellExecute = true } );\r\n#endif\r\n}\r\n"
 			Exit
 			{
 			}
@@ -96,7 +98,7 @@
 			GetByReference = "Base\\Learning\\Book.png"
 		}
 	}
-	.component NeoAxis.Component_Property
+	.component NeoAxis.VirtualProperty
 	{
 		Name = Title
 		Type
@@ -104,7 +106,7 @@
 			GetByReference = System.String
 		}
 	}
-	.component NeoAxis.Component_Property
+	.component NeoAxis.VirtualProperty
 	{
 		Name = Description
 		Type
@@ -112,7 +114,7 @@
 			GetByReference = System.String
 		}
 	}
-	.component NeoAxis.Component_Property
+	.component NeoAxis.VirtualProperty
 	{
 		Name = Learn Link
 		Type
@@ -120,7 +122,7 @@
 			GetByReference = System.String
 		}
 	}
-	.component NeoAxis.Component_CSharpScript
+	.component NeoAxis.CSharpScript
 	{
 		Name = C# Script
 		Code = "public void _UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\r\n\tvar control = (UIControl)sender;\r\n\tcontrol.ColorMultiplier = control.ReadOnly ? new ColorValue(0.5, 0.5, 0.5) : new ColorValue(1, 1, 1);\r\n}\r\n"
