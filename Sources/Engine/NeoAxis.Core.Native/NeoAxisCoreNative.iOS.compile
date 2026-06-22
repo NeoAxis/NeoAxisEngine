@@ -26,8 +26,73 @@ CFlags: -g -fno-omit-frame-pointer -fms-extensions -O2 -arch arm64 -target arm64
 CppFlags: -g -fno-omit-frame-pointer -fms-extensions -O2 -frtti -std=c++17 -arch arm64 -target arm64-apple-ios14.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 MMFlags: -g -fno-omit-frame-pointer -fms-extensions -O2 -frtti -std=c++17 -arch arm64 -target arm64-apple-ios14.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk
 
-Defines: __clang__,__APPLE__,__MACH__,__arm64__,IOS,__SIZEOF_SIZE_T__=8,_LIBCPP_VERSION,_STLP_HASH_FUN_H,_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION,NDEBUG,_MT,FREEIMAGE_LIB,OGRE_NONCLIENT_BUILD,OGRE_PARTICLEFXPLUGIN_EXPORTS,OGRE_MEMORY_TRACKER_DEBUG_MODE,_SECURE_SCL=0,NVTT_EXPORTS,NVTT_SHARED,_STLP_DONT_USE_AUTO_LINK,_STLP_DESIGNATED_DLL,OGRE_GCC_VISIBILITY,PLATFORM_WEB,PNG_ARM_NEON_OPT=0,NATIVEMEMORYMANAGER_EXPORTS,LIBOGG_EXPORTS,LIBVORBIS_EXPORTS,LIBVORBISFILE_EXPORTS,LIBTHEORA_EXPORTS,JPH_DOUBLE_PRECISION,JPH_DEBUG_RENDERER,JPH_FLOATING_POINT_EXCEPTIONS_ENABLED,_HAS_TR1_NAMESPACE,FT2_BUILD_LIBRARY,OPJ_STATIC,LIBRAW_NODLL,LIBRAW_LIBRARY_BUILD,USE_JPIP,DISABLE_PERF_MEASUREMENT,_HAS_AUTO_PTR_ETC=1,AL_BUILD_LIBRARY,AL_ALEXT_PROTOTYPES,_LARGEFILE_SOURCE,_LARGE_FILES,OpenAL_EXPORTS
+Defines: __clang__,__APPLE__,__MACH__,__arm64__,IOS,__SIZEOF_SIZE_T__=8,_LIBCPP_VERSION,_STLP_HASH_FUN_H,NDEBUG,_MT,FREEIMAGE_LIB,OGRE_NONCLIENT_BUILD,OGRE_PARTICLEFXPLUGIN_EXPORTS,OGRE_MEMORY_TRACKER_DEBUG_MODE,_SECURE_SCL=0,NVTT_EXPORTS,NVTT_SHARED,_STLP_DONT_USE_AUTO_LINK,_STLP_DESIGNATED_DLL,OGRE_GCC_VISIBILITY,PLATFORM_IOS,PNG_ARM_NEON_OPT=0,NATIVEMEMORYMANAGER_EXPORTS,LIBOGG_EXPORTS,LIBVORBIS_EXPORTS,LIBVORBISFILE_EXPORTS,LIBTHEORA_EXPORTS,JPH_DOU___________BLE_PRECISION,JPH_DEBUG_RENDERER,_HAS_TR1_NAMESPACE,FT2_BUILD_LIBRARY,OPJ_STATIC,LIBRAW_NODLL,LIBRAW_LIBRARY_BUILD,USE_JPIP,DISABLE_PERF_MEASUREMENT,_HAS_AUTO_PTR_ETC=1,AL_BUILD_LIBRARY,AL_ALEXT_PROTOTYPES,_LARGEFILE_SOURCE,_LARGE_FILES,OpenAL_EXPORTS,INCLUDE_LIB_OPENEXR,INCLUDE_LIB_RAW,INCLUDE_LIB_WEBP,HAVE_PTHREAD=1,HAVE_POSIX_SEMAPHORES=1,BGFX_CONFIG_RENDERER_VUL___KAN=10,BX_CONFIG_DEBUG=0,BGFX_CONFIG_DEBUG=0,BGFX_CONFIG_DEBUG_UNIFORM=0
 
-
-
+HeaderFolder: ../include
+HeaderFolder: ../../PlugIns/ParticleFX/include
+HeaderFolder: ../../../FreeImage/Source
+HeaderFolder: ../../../FreeType/include
+HeaderFolder: ../../../Stlport/stlport
+HeaderFolder: ../../../NvidiaTextureTools/src
+HeaderFolder: ../../../NvidiaTextureTools/project/vc8
+HeaderFolder: ../../RenderSystems/NULL/include
+HeaderFolder: ../../NativeNativeWrapper/src
+HeaderFolder: ../External/OggVorbisTheora/libogg/include
+HeaderFolder: ../External/OggVorbisTheora/libvorbis/include
+HeaderFolder: ../External/OggVorbisTheora/libvorbis/lib
+HeaderFolder: ../External/OggVorbisTheora/libtheora/include
+HeaderFolder: ./
 HeaderFolder: MemoryManager
+HeaderFolder: ../External/FreeImage/Source
+HeaderFolder: NativeWrapper
+HeaderFolder: ImageLibrary
+HeaderFolder: ../External/FreeType/include
+HeaderFolder: NeoAxis
+HeaderFolder: MaskedOcclusionCulling
+HeaderFolder: ../External/FreeImage/Source/FreeImageToolkit
+HeaderFolder: ../External/FreeImage/Source/LibJPEG
+HeaderFolder: include
+HeaderFolder: ../External/FreeImage/Source/LibOpenJPEG
+HeaderFolder: ../External/FreeImage/Source/LibPNG
+HeaderFolder: ../External/FreeImage/Source/LibRawLite
+HeaderFolder: ../External/FreeImage/Source/LibRawLite/dcraw
+HeaderFolder: ../External/FreeImage/Source/LibRawLite/internal
+HeaderFolder: ../External/FreeImage/Source/LibRawLite/libraw
+HeaderFolder: ../External/FreeImage/Source/LibRawLite/src
+HeaderFolder: ../External/FreeImage/Source/LibTIFF
+HeaderFolder: ../External/FreeImage/Source/LibWebP
+HeaderFolder: ../External/FreeImage/Source/OpenEXR
+HeaderFolder: ../External/FreeImage/Source/OpenEXR/Half
+HeaderFolder: ../External/FreeImage/Source/OpenEXR/Iex
+HeaderFolder: ../External/FreeImage/Source/OpenEXR/IexMath
+HeaderFolder: ../External/FreeImage/Source/OpenEXR/IlmImf
+HeaderFolder: ../External/FreeImage/Source/OpenEXR/IlmThread
+HeaderFolder: ../External/FreeImage/Source/OpenEXR/Imath
+HeaderFolder: ../External/FreeImage/Source/ZLib
+HeaderFolder: ../External/OpenALSoft
+HeaderFolder: ../External/OpenALSoft/include
+HeaderFolder: ../External/OpenALSoft/build
+HeaderFolder: ../External/OpenALSoft/alc
+HeaderFolder: ../External/OpenALSoft/common
+HeaderFolder: ../External/OpenALSoft/al
+HeaderFolder: ../External/SDL/include
+HeaderFolder: ../External/bgfx/bx/include/compat/ios
+HeaderFolder: ../External/bgfx/bgfx/3rdparty
+HeaderFolder: ../External/bgfx/bx/include
+HeaderFolder: ../External/bgfx/bimg/include
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/khronos
+HeaderFolder: ../External/bgfx/bgfx/include
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/fcpp
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/glslang/glslang/Public
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/glslang/glslang/Include
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/glslang
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/glsl-optimizer/include
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/glsl-optimizer/src/glsl
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/spirv-cross
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/spirv-tools/include
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/glsl-optimizer/include/c99
+HeaderFolder: ../External/bgfx/bgfx/3rdparty/dxc/inc
+HeaderFolder: ../External/bgfx/bimg/3rdparty/astc-encoder
+HeaderFolder: ../External/bgfx/bimg/3rdparty/astc-encoder/include
+HeaderFolder: ../External/bgfx/../../NeoAxis.Core.Native/MemoryManager
+HeaderFolder: ../External/bgfx/bx/3rdparty

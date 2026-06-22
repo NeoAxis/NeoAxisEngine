@@ -12,6 +12,10 @@ namespace NeoAxis
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class RenderingEffect_Antialiasing : RenderingEffect
 	{
+		public static BasicTechniqueEnum? GlobalBasicTechnique;
+		public static AdditionalTechniqueEnum? GlobalAdditionalTechnique;
+		public static MotionTechniqueEnum? GlobalMotionTechnique;
+
 		/// <summary>
 		/// The intensity of the effect.
 		/// </summary>
@@ -158,12 +162,12 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		[Browsable( false )]
-		public BasicTechniqueEnum BasicTechniqueAfterLoading = BasicTechniqueEnum.Auto;
-		[Browsable( false )]
-		public AdditionalTechniqueEnum AdditionalTechniqueAfterLoading = AdditionalTechniqueEnum.Auto;
-		[Browsable( false )]
-		public MotionTechniqueEnum MotionTechniqueAfterLoading = MotionTechniqueEnum.Auto;
+		//[Browsable( false )]
+		//public BasicTechniqueEnum BasicTechniqueAfterLoading = BasicTechniqueEnum.Auto;
+		//[Browsable( false )]
+		//public AdditionalTechniqueEnum AdditionalTechniqueAfterLoading = AdditionalTechniqueEnum.Auto;
+		//[Browsable( false )]
+		//public MotionTechniqueEnum MotionTechniqueAfterLoading = MotionTechniqueEnum.Auto;
 
 		/////////////////////////////////////////
 
@@ -192,21 +196,23 @@ namespace NeoAxis
 			}
 		}
 
-		protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
-		{
-			if( !base.OnLoad( context, block, out error ) )
-				return false;
+		//protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
+		//{
+		//	if( !base.OnLoad( context, block, out error ) )
+		//		return false;
 
-			BasicTechniqueAfterLoading = BasicTechnique;
-			AdditionalTechniqueAfterLoading = AdditionalTechnique;
-			MotionTechniqueAfterLoading = MotionTechnique;
+		//	BasicTechniqueAfterLoading = BasicTechnique;
+		//	AdditionalTechniqueAfterLoading = AdditionalTechnique;
+		//	MotionTechniqueAfterLoading = MotionTechnique;
 
-			return true;
-		}
+		//	return true;
+		//}
 
 		public BasicTechniqueEnum GetBasicTechnique()
 		{
 			var result = BasicTechnique.Value;
+			if( GlobalBasicTechnique.HasValue )
+				result = GlobalBasicTechnique.Value;
 			if( result == BasicTechniqueEnum.Auto )
 			{
 				if( SystemSettings.LimitedDevice )
@@ -220,6 +226,8 @@ namespace NeoAxis
 		public AdditionalTechniqueEnum GetAdditionalTechnique()
 		{
 			var result = AdditionalTechnique.Value;
+			if( GlobalAdditionalTechnique.HasValue )
+				result = GlobalAdditionalTechnique.Value;
 			if( result == AdditionalTechniqueEnum.Auto )
 			{
 				var basicTechnique = GetBasicTechnique();
@@ -234,6 +242,8 @@ namespace NeoAxis
 		public MotionTechniqueEnum GetMotionTechnique()
 		{
 			var result = MotionTechnique.Value;
+			if( GlobalMotionTechnique.HasValue )
+				result = GlobalMotionTechnique.Value;
 			if( result == MotionTechniqueEnum.Auto )
 			{
 				if( SystemSettings.LimitedDevice )

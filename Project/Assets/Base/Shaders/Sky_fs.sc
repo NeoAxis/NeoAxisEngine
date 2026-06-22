@@ -229,11 +229,13 @@ void main()
 		float sun2 = min(sun * sun, 1.0);
 		vec3 color2 = v_skyColor + sun2;
 
+		/*
 #ifdef ACCURATE_SRGB_CORRECTION	
 		color2 = toGammaAccurate( color2 );
 #else
 		color2 = toGamma(color2);
 #endif
+		*/
 		
 		if(u_atmospherePreventBanding)
 		{

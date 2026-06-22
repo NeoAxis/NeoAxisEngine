@@ -333,19 +333,11 @@ namespace Project
 			}
 
 			sceneViewport = ParentContainer.Viewport;
-			scene.ViewportUpdateBegin += Scene_ViewportUpdateBegin;
 			scene.ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
 			sceneViewport.AttachedScene = scene;
 			sceneViewport.NotifyInstantCameraMovement();
 
 			GC.Collect( 2, GCCollectionMode.Forced, true );
-		}
-
-		private void Scene_ViewportUpdateBegin( Scene scene, Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
-		{
-			SimulationApp.UpdateSceneAntialiasingByAppSettings( scene );
-			SimulationApp.UpdateSceneResolutionUpscaleByAppSettings( scene );
-			SimulationApp.UpdateSceneSharpnessByAppSettings( scene );
 		}
 
 		private void Scene_ViewportUpdateGetCameraSettings( Scene scene, Viewport viewport, ref bool processed )
@@ -382,7 +374,6 @@ namespace Project
 				if( sceneViewport.AttachedScene == scene )
 					sceneViewport.AttachedScene = null;
 
-				scene.ViewportUpdateBegin -= Scene_ViewportUpdateBegin;
 				scene.ViewportUpdateGetCameraSettings -= Scene_ViewportUpdateGetCameraSettings;
 				sceneViewport = null;
 			}

@@ -12,6 +12,8 @@ namespace NeoAxis
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class RenderingEffect_Sharpen : RenderingEffect
 	{
+		public static double GlobalSharpness = 1.0;
+
 		/// <summary>
 		/// The intensity of the effect.
 		/// </summary>
@@ -53,20 +55,20 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		[Browsable( false )]
-		public double StrengthAfterLoading = 1.0;
+		//[Browsable( false )]
+		//public double StrengthAfterLoading = 1.0;
 
 		/////////////////////////////////////////
 
-		protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
-		{
-			if( !base.OnLoad( context, block, out error ) )
-				return false;
+		//protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
+		//{
+		//	if( !base.OnLoad( context, block, out error ) )
+		//		return false;
 
-			StrengthAfterLoading = Strength;
+		//	StrengthAfterLoading = Strength;
 
-			return true;
-		}
+		//	return true;
+		//}
 
 		//static float AU1_AF1( float a ) { return a; }
 		////unsafe static uint AU1_AF1( float a ) { return *(uint*)&a; }
@@ -119,7 +121,8 @@ namespace NeoAxis
 
 			shader.Parameters.Set( "intensity", (float)Intensity );
 
-			shader.Parameters.Set( "sharpStrength", (float)( Strength * 0.75 * upscaleFactor ) );
+			shader.Parameters.Set( "sharpStrength", (float)( Strength * 0.75 * upscaleFactor * GlobalSharpness ) );
+			//shader.Parameters.Set( "sharpStrength", (float)( Strength * 0.75 * upscaleFactor ) );
 
 
 			//from FSR

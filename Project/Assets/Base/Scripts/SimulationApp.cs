@@ -63,20 +63,99 @@ namespace Project
 			}
 		}
 
+		static string antialiasingBasic = "";
 		[EngineConfig]
-		public static string AntialiasingBasic { get; set; } = "";
-		[EngineConfig]
-		public static string AntialiasingAdditional { get; set; } = "";
-		[EngineConfig]
-		public static string AntialiasingMotion { get; set; } = "";
+		public static string AntialiasingBasic
+		{
+			get { return antialiasingBasic; }
+			set
+			{
+				antialiasingBasic = value;
+				if( Enum.TryParse<RenderingEffect_Antialiasing.BasicTechniqueEnum>( AntialiasingBasic.Replace( " ", "" ), true, out var basic ) )
+					RenderingEffect_Antialiasing.GlobalBasicTechnique = basic;
+				else
+					RenderingEffect_Antialiasing.GlobalBasicTechnique = null;
+			}
+		}
 
+		static string antialiasingAdditional = "";
 		[EngineConfig]
-		public static string ResolutionUpscaleMode { get; set; } = "";
-		[EngineConfig]
-		public static string ResolutionUpscaleTechnique { get; set; } = "";
+		public static string AntialiasingAdditional
+		{
+			get { return antialiasingAdditional; }
+			set
+			{
+				antialiasingAdditional = value;
+				if( Enum.TryParse<RenderingEffect_Antialiasing.AdditionalTechniqueEnum>( AntialiasingAdditional.Replace( " ", "" ), true, out var additional ) )
+					RenderingEffect_Antialiasing.GlobalAdditionalTechnique = additional;
+				else
+					RenderingEffect_Antialiasing.GlobalAdditionalTechnique = null;
+			}
+		}
 
+		static string antialiasingMotion = "";
 		[EngineConfig]
-		public static double Sharpness { get; set; } = -1.0;
+		public static string AntialiasingMotion
+		{
+			get { return antialiasingMotion; }
+			set
+			{
+				antialiasingMotion = value;
+				if( Enum.TryParse<RenderingEffect_Antialiasing.MotionTechniqueEnum>( AntialiasingMotion.Replace( " ", "" ), true, out var motion ) )
+					RenderingEffect_Antialiasing.GlobalMotionTechnique = motion;
+				else
+					RenderingEffect_Antialiasing.GlobalMotionTechnique = null;
+			}
+		}
+
+		static string resolutionUpscaleMode = "";
+		[EngineConfig]
+		public static string ResolutionUpscaleMode
+		{
+			get { return resolutionUpscaleMode; }
+			set
+			{
+				resolutionUpscaleMode = value;
+				if( Enum.TryParse<RenderingEffect_ResolutionUpscale.ModeEnum>( ResolutionUpscaleMode.Replace( " ", "" ), true, out var mode ) )
+					RenderingEffect_ResolutionUpscale.GlobalMode = mode;
+				else
+					RenderingEffect_ResolutionUpscale.GlobalMode = null;
+			}
+		}
+
+		static string resolutionUpscaleTechnique = "";
+		[EngineConfig]
+		public static string ResolutionUpscaleTechnique
+		{
+			get { return resolutionUpscaleTechnique; }
+			set
+			{
+				resolutionUpscaleTechnique = value;
+
+				var techniqueString = ResolutionUpscaleTechnique;
+				if( techniqueString == "Lanczos 2" )
+					techniqueString = "Lanczos2";
+				if( techniqueString == "AMD FSR 1.0" )
+					techniqueString = "AMDFSR1";
+
+				if( Enum.TryParse<RenderingEffect_ResolutionUpscale.TechniqueEnum>( techniqueString, true, out var technique ) )
+					RenderingEffect_ResolutionUpscale.GlobalTechnique = technique;
+				else
+					RenderingEffect_ResolutionUpscale.GlobalTechnique = null;
+			}
+		}
+
+		static double sharpness = 1.0;
+		[EngineConfig]
+		public static double Sharpness
+		{
+			get { return sharpness; }
+			set
+			{
+				sharpness = value;
+				RenderingEffect_Sharpen.GlobalSharpness = Sharpness;
+			}
+		}
 
 		[EngineConfig]
 		public static bool DisplayFrameInfo { get; set; }
@@ -88,12 +167,34 @@ namespace Project
 		public static Vector2I VideoMode { get; set; }
 		[EngineConfig]
 		public static WindowedModeEnum WindowedMode { get; set; } = WindowedModeEnum.Fullscreen;
-		//[EngineConfig]
-		//public static bool Fullscreen { get; set; } = true;
 		[EngineConfig]
 		public static bool VerticalSync { get; set; } = true;
 		[EngineConfig]
 		public static bool DisplayBackgroundScene { get; set; } = true;
+
+		static double brightness = 0.0;
+		[EngineConfig]
+		public static double Brightness
+		{
+			get { return brightness; }
+			set
+			{
+				brightness = value;
+				RenderingEffect_ToneMapping.GlobalBrightness = Brightness;
+			}
+		}
+
+		static double exposure = 1.0;
+		[EngineConfig]
+		public static double Exposure
+		{
+			get { return exposure; }
+			set
+			{
+				exposure = value;
+				RenderingEffect_ToneMapping.GlobalExposure = Exposure;
+			}
+		}
 
 		static double lodScale = 1.0;
 		[EngineConfig]
@@ -347,15 +448,6 @@ namespace Project
 			if( WindowedMode == WindowedModeEnum.Windowed && VideoMode != Vector2I.Zero )
 				EngineApp.InitSettings.CreateWindowSize = VideoMode;
 
-			//if( !Fullscreen )
-			//	EngineApp.InitSettings.CreateWindowFullscreen = false;
-			//if( VideoMode != Vector2I.Zero && ( SystemSettings.VideoModeExists( VideoMode ) || !Fullscreen ) )
-			//{
-			//	EngineApp.InitSettings.CreateWindowSize = VideoMode;
-			//	if( !Fullscreen )
-			//		EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
-			//}
-
 			if( !VerticalSync )
 				EngineApp.InitSettings.SimulationVSync = false;
 
@@ -373,7 +465,6 @@ namespace Project
 							case ProjectSettingsPage_General.WindowStateEnum.Normal:
 								{
 									EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Windowed;
-									//EngineApp.InitSettings.CreateWindowFullscreen = false;
 									EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Normal;
 
 									var windowSizeString = ProjectSettings.ReadParameterDirectly( "General", "WindowSize", ProjectSettingsPage_General.WindowSizeDefault.ToString() );
@@ -400,13 +491,11 @@ namespace Project
 
 							case ProjectSettingsPage_General.WindowStateEnum.Minimized:
 								EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Windowed;
-								//EngineApp.InitSettings.CreateWindowFullscreen = false;
 								EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Minimized;
 								break;
 
 							case ProjectSettingsPage_General.WindowStateEnum.Maximized:
 								EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Windowed;
-								//EngineApp.InitSettings.CreateWindowFullscreen = false;
 								EngineApp.InitSettings.CreateWindowState = EngineApp.WindowStateEnum.Maximized;
 								break;
 
@@ -416,7 +505,6 @@ namespace Project
 
 							case ProjectSettingsPage_General.WindowStateEnum.Fullscreen:
 								EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Fullscreen;
-								//EngineApp.InitSettings.CreateWindowFullscreen = true;
 								break;
 							}
 						}
@@ -975,75 +1063,6 @@ namespace Project
 			{
 				foreach( var viewport in RenderingSystem.ApplicationRenderTarget.Viewports )
 					viewport.NotifyInstantCameraMovement();
-			}
-		}
-
-		public static void UpdateSceneAntialiasingByAppSettings( Scene scene )
-		{
-			var pipeline = scene.RenderingPipeline.Value;
-			if( pipeline != null )
-			{
-				var effect = pipeline.GetComponent<RenderingEffect_Antialiasing>( true );
-				if( effect != null )
-				{
-					if( Enum.TryParse<RenderingEffect_Antialiasing.BasicTechniqueEnum>( AntialiasingBasic.Replace( " ", "" ), true, out var basic ) )
-						effect.BasicTechnique = basic;
-					else
-						effect.BasicTechnique = effect.BasicTechniqueAfterLoading;
-
-					if( Enum.TryParse<RenderingEffect_Antialiasing.AdditionalTechniqueEnum>( AntialiasingAdditional.Replace( " ", "" ), true, out var additional ) )
-						effect.AdditionalTechnique = additional;
-					else
-						effect.AdditionalTechnique = effect.AdditionalTechniqueAfterLoading;
-
-					if( Enum.TryParse<RenderingEffect_Antialiasing.MotionTechniqueEnum>( AntialiasingMotion.Replace( " ", "" ), true, out var motion ) )
-						effect.MotionTechnique = motion;
-					else
-						effect.MotionTechnique = effect.MotionTechniqueAfterLoading;
-				}
-			}
-		}
-
-		public static void UpdateSceneResolutionUpscaleByAppSettings( Scene scene )
-		{
-			var pipeline = scene.RenderingPipeline.Value;
-			if( pipeline != null )
-			{
-				var effect = pipeline.GetComponent<RenderingEffect_ResolutionUpscale>( true );
-				if( effect != null )
-				{
-					if( Enum.TryParse<RenderingEffect_ResolutionUpscale.ModeEnum>( ResolutionUpscaleMode.Replace( " ", "" ), true, out var mode ) )
-						effect.Mode = mode;
-					else
-						effect.Mode = effect.ModeAfterLoading;
-
-					var techniqueString = ResolutionUpscaleTechnique;
-					if( techniqueString == "Lanczos 2" )
-						techniqueString = "Lanczos2";
-					if( techniqueString == "AMD FSR 1.0" )
-						techniqueString = "AMDFSR1";
-
-					if( Enum.TryParse<RenderingEffect_ResolutionUpscale.TechniqueEnum>( techniqueString, true, out var technique ) )
-						effect.Technique = technique;
-					else
-						effect.Technique = effect.TechniqueAfterLoading;
-				}
-			}
-		}
-
-		public static void UpdateSceneSharpnessByAppSettings( Scene scene )
-		{
-			var pipeline = scene.RenderingPipeline.Value;
-			if( pipeline != null )
-			{
-				var effect = pipeline.GetComponent<RenderingEffect_Sharpen>( true );
-				if( effect != null )
-				{
-					if( Sharpness >= 0 )
-						effect.Strength = Sharpness;
-					else
-						effect.Strength = effect.StrengthAfterLoading;
-				}
 			}
 		}
 	}

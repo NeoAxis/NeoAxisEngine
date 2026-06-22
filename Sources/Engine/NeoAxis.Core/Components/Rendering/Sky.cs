@@ -105,7 +105,7 @@ namespace NeoAxis
 		public event Action<Sky> ProceduralAtmosphereChanged;
 		ReferenceField<double> _proceduralAtmosphere = 1.0;
 
-		[DefaultValue( "0.6 0.7 1" )]
+		[DefaultValue( "0.7 0.8 1" )] //[DefaultValue( "0.6 0.7 1" )]
 		[ColorValueNoAlpha]
 		[Category( "Atmosphere" )]
 		public Reference<ColorValuePowered> ProceduralLuminance
@@ -115,7 +115,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="ProceduralLuminance"/> property value changes.</summary>
 		public event Action<Sky> ProceduralLuminanceChanged;
-		ReferenceField<ColorValuePowered> _proceduralLuminance = new ColorValuePowered( 0.6, 0.7, 1 );
+		ReferenceField<ColorValuePowered> _proceduralLuminance = new ColorValuePowered( 0.7, 0.8, 1 ); //new ColorValuePowered( 0.6, 0.7, 1 );
 
 		[DefaultValue( true )]
 		[Category( "Atmosphere" )]
@@ -164,7 +164,7 @@ namespace NeoAxis
 		public event Action<Sky> ProceduralSunBloomChanged;
 		ReferenceField<double> _proceduralSunBloom = 3.0;
 
-		[DefaultValue( 0.1 )]
+		[DefaultValue( 0.3 )] // 0.1
 		[Category( "Atmosphere" )]
 		[Range( 0.0, 1, RangeAttribute.ConvenientDistributionEnum.Exponential )]
 		public Reference<double> ProceduralExposition
@@ -174,7 +174,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="ProceduralExposition"/> property value changes.</summary>
 		public event Action<Sky> ProceduralExpositionChanged;
-		ReferenceField<double> _proceduralExposition = 0.1;
+		ReferenceField<double> _proceduralExposition = 0.3; // 0.1
 
 		[DefaultValue( true )]
 		[Category( "Atmosphere" )]

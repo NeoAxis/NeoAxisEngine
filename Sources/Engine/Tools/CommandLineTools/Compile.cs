@@ -236,9 +236,16 @@ namespace CommandLineTools
 
 				if( result )
 				{
-					Console.WriteLine( $"Compiled: {inPath} as {outPath}" );
+					var inPathFileName = Path.GetFileName( inPath );
+					var outPathFileName = Path.GetFileName( outPath );
+
+					Console.WriteLine( $"Compiled: {inPathFileName} as {outPathFileName}" );
 					if( ClientData != null )
-						PlatformServer.SendShowMessageToClient( ClientData, $"Compiled: {inPath} as {outPath}" );
+						PlatformServer.SendShowMessageToClient( ClientData, $"Compiled: {inPathFileName} as {outPathFileName}" );
+
+					//Console.WriteLine( $"Compiled: {inPath} as {outPath}" );
+					//if( ClientData != null )
+					//	PlatformServer.SendShowMessageToClient( ClientData, $"Compiled: {inPath} as {outPath}" );
 				}
 
 				return true;
@@ -675,14 +682,14 @@ namespace CommandLineTools
 						return;
 
 
-					//!!!!temp
-					if( compiler.Parser.Platform == "macOS" || compiler.Parser.Platform == "iOS" )
-					{
-						if( !fullPath.Contains( "CRTMemoryManager.cpp" ) )
-							return;
-						//if( !fullPath.Contains( "MemoryManagerInternal.cpp" ) && !fullPath.Contains( "CRTMemoryManager.cpp" ) )
-						//	return;
-					}
+					////!!!!temp
+					//if( compiler.Parser.Platform == "macOS" || compiler.Parser.Platform == "iOS" )
+					//{
+					//	if( !fullPath.Contains( "CRTMemoryManager.cpp" ) )
+					//		return;
+					//	//if( !fullPath.Contains( "MemoryManagerInternal.cpp" ) && !fullPath.Contains( "CRTMemoryManager.cpp" ) )
+					//	//	return;
+					//}
 
 
 					if( !File.Exists( fullPath ) )

@@ -53,6 +53,7 @@ namespace Project
 				}
 
 				list.ItemMouseDoubleClick += List_ItemMouseDoubleClick;
+				list.KeyDown += List_KeyDown;
 
 				if( list.SelectedIndex != 0 )
 					list.EnsureVisible( list.SelectedIndex );
@@ -83,7 +84,7 @@ namespace Project
 			var list = GetComponent<UIList>( "List" );
 			if( list != null && list.SelectedIndex != -1 )
 			{
-				var playFile = fullPaths[ list.SelectedIndex ];//list.SelectedItem;
+				var playFile = fullPaths[ list.SelectedIndex ];
 				SimulationApp.PlayFile( playFile );
 			}
 		}
@@ -91,6 +92,12 @@ namespace Project
 		private void List_ItemMouseDoubleClick( UIControl sender, EMouseButtons button, ref bool handled )
 		{
 			ButtonLoad_Click( null );
+		}
+
+		private void List_KeyDown( UIControl sender, KeyEvent e, ref bool handled )
+		{
+			if( e.Key == EKeys.Return )
+				ButtonLoad_Click( null );
 		}
 
 		protected override bool OnKeyDown( KeyEvent e )

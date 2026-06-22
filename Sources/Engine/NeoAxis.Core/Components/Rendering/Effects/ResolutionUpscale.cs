@@ -12,6 +12,9 @@ namespace NeoAxis
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class RenderingEffect_ResolutionUpscale : RenderingEffect
 	{
+		public static ModeEnum? GlobalMode;
+		public static TechniqueEnum? GlobalTechnique;
+
 		///// <summary>
 		///// The intensity of the effect.
 		///// </summary>
@@ -90,10 +93,10 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		[Browsable( false )]
-		public ModeEnum ModeAfterLoading = ModeEnum.Auto;
-		[Browsable( false )]
-		public TechniqueEnum TechniqueAfterLoading = TechniqueEnum.AMDFSR1;
+		//[Browsable( false )]
+		//public ModeEnum ModeAfterLoading = ModeEnum.Auto;
+		//[Browsable( false )]
+		//public TechniqueEnum TechniqueAfterLoading = TechniqueEnum.AMDFSR1;
 
 		/////////////////////////////////////////
 
@@ -117,6 +120,9 @@ namespace NeoAxis
 		public ModeEnum GetMode()
 		{
 			var result = Mode.Value;
+			if( GlobalMode.HasValue )
+				result = GlobalMode.Value;
+
 			if( result == ModeEnum.Auto )
 			{
 				if( SystemSettings.LimitedDevice )
@@ -130,6 +136,9 @@ namespace NeoAxis
 		public TechniqueEnum GetTechnique()
 		{
 			var result = Technique.Value;
+			if( GlobalTechnique.HasValue )
+				result = GlobalTechnique.Value;
+
 			if( result == TechniqueEnum.Auto )
 			{
 				if( SystemSettings.LimitedDevice )
@@ -145,16 +154,16 @@ namespace NeoAxis
 			return result;
 		}
 
-		protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
-		{
-			if( !base.OnLoad( context, block, out error ) )
-				return false;
+		//protected override bool OnLoad( Metadata.LoadContext context, TextBlock block, out string error )
+		//{
+		//	if( !base.OnLoad( context, block, out error ) )
+		//		return false;
 
-			ModeAfterLoading = Mode;
-			TechniqueAfterLoading = Technique;
+		//	ModeAfterLoading = Mode;
+		//	TechniqueAfterLoading = Technique;
 
-			return true;
-		}
+		//	return true;
+		//}
 
 		public virtual Vector2 GetResolutionMultiplier()
 		{

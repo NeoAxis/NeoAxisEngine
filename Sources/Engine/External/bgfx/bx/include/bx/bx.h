@@ -7,7 +7,11 @@
 #define BX_H_HEADER_GUARD
 
 //!!!!betauser
+#ifdef WIN32
 #include "alloca_bx.h" // alloca
+#else
+#include <alloca.h> // alloca
+#endif
 //#include <alloca.h> // alloca
 
 #include <stdarg.h> // va_list

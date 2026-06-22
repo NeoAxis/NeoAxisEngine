@@ -13,6 +13,9 @@ namespace NeoAxis
 	[Editor.WhenCreatingShowWarningIfItAlreadyExists]
 	public class RenderingEffect_ToneMapping : RenderingEffect
 	{
+		public static double GlobalBrightness;
+		public static double GlobalExposure = 1;
+
 		/// <summary>
 		/// The intensity of the effect.
 		/// </summary>
@@ -29,20 +32,19 @@ namespace NeoAxis
 		public event Action<RenderingEffect_ToneMapping> IntensityChanged;
 		ReferenceField<double> _intensity = 1;
 
-		///// <summary>
-		///// The input gamma of the tone mapping.
-		///// </summary>
-		//[DefaultValue( 0.5 )]
-		//[Serialize]
-		//[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		//public Reference<double> GammaInput
-		//{
-		//	get { if( _gammaInput.BeginGet() ) GammaInput = _gammaInput.Get( this ); return _gammaInput.value; }
-		//	set { if( _gammaInput.BeginSet( this, ref value ) ) { try { GammaInputChanged?.Invoke( this ); } finally { _gammaInput.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="GammaInput"/> property value changes.</summary>
-		//public event Action<RenderingEffect_ToneMapping> GammaInputChanged;
-		//ReferenceField<double> _gammaInput = 0.5;
+		/// <summary>
+		/// The brightness of the tone mapping.
+		/// </summary>
+		[DefaultValue( 0.0 )]
+		[Range( -1, 1 )]
+		public Reference<double> Brightness
+		{
+			get { if( _brightness.BeginGet() ) Brightness = _brightness.Get( this ); return _brightness.value; }
+			set { if( _brightness.BeginSet( this, ref value ) ) { try { BrightnessChanged?.Invoke( this ); } finally { _brightness.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Brightness"/> property value changes.</summary>
+		public event Action<RenderingEffect_ToneMapping> BrightnessChanged;
+		ReferenceField<double> _brightness = 0.0;
 
 		/// <summary>
 		/// The level of exposure.
@@ -96,19 +98,19 @@ namespace NeoAxis
 		ReferenceField<string> _customCode = customCodeDefault;
 
 		///// <summary>
-		///// The output gamma of the tone mapping.
+		///// The gamma of the tone mapping.
 		///// </summary>
 		//[DefaultValue( 2.2 )]
 		//[Serialize]
 		//[Range( 0.1, 10, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		//public Reference<double> GammaOutput
+		//public Reference<double> Gamma
 		//{
-		//	get { if( _gammaOutput.BeginGet() ) GammaOutput = _gammaOutput.Get( this ); return _gammaOutput.value; }
-		//	set { if( _gammaOutput.BeginSet( this, ref value ) ) { try { GammaOutputChanged?.Invoke( this ); } finally { _gammaOutput.EndSet(); } } }
+		//	get { if( _gamma.BeginGet() ) Gamma = _gamma.Get( this ); return _gamma.value; }
+		//	set { if( _gamma.BeginSet( this, ref value ) ) { try { GammaChanged?.Invoke( this ); } finally { _gamma.EndSet(); } } }
 		//}
-		///// <summary>Occurs when the <see cref="GammaOutput"/> property value changes.</summary>
-		//public event Action<RenderingEffect_ToneMapping> GammaOutputChanged;
-		//ReferenceField<double> _gammaOutput = 2.2;
+		///// <summary>Occurs when the <see cref="Gamma"/> property value changes.</summary>
+		//public event Action<RenderingEffect_ToneMapping> GammaChanged;
+		//ReferenceField<double> _gamma = 2.2;
 
 		/////////////////////////////////////////
 
@@ -147,8 +149,9 @@ namespace NeoAxis
 			shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, actualTexture,
 				TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.None ) );
 
-			shader.Parameters.Set( "u_tonemapping_parameters", new Vector4F( (float)Intensity, 0, (float)Exposure, 0 ) );
-			//shader.Parameters.Set( "u_tonemapping_parameters", new Vector4F( (float)Intensity, (float)GammaInput, (float)Exposure, (float)GammaOutput ) );
+			var brightness = Brightness + GlobalBrightness;
+			var exposure = Exposure * GlobalExposure;
+			shader.Parameters.Set( "u_tonemapping_parameters", new Vector4( Intensity, brightness, exposure, 0 ).ToVector4F() );
 
 			shader.Defines.Add( new CanvasRenderer.ShaderItem.DefineItem( $"TONEMAPPING_METHOD_{Method.Value.ToString().ToUpper()}" ) );
 			if( Method.Value == MethodEnum.Custom )

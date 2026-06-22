@@ -6,9 +6,9 @@ $input v_texCoord0
 SAMPLER2D(s_sourceTexture, 0);
 uniform vec4 u_tonemapping_parameters;
 #define intensity u_tonemapping_parameters.x
-//#define gammaInput u_tonemapping_parameters.y
+#define brightness u_tonemapping_parameters.y
 #define exposure u_tonemapping_parameters.z
-//#define gammaOutput u_tonemapping_parameters.w
+//#define gamma u_tonemapping_parameters.w
 
 //////////////////////////////////////////////////////////
 //Neutral
@@ -86,11 +86,11 @@ CUSTOM_CODE
 void main()
 {
 	vec4 sourceColor = texture2D(s_sourceTexture, v_texCoord0);
-
 	vec3 color = sourceColor.rgb;
 
-	//// Gamma input
-	//color = pow(color,vec3_splat(1.0/gammaInput));
+	//brightness
+	color += vec3_splat( brightness );
+	color = clamp( color, vec3_splat( 0 ), vec3_splat( 10000 ) );
 		
 	// Exposure Adjustment
 	color *= exposure;
@@ -112,7 +112,6 @@ void main()
 #else
 	color = toGamma( color );
 #endif
-	//color = pow(color,vec3_splat(1.0/gammaOutput));
 
 	gl_FragColor = lerp(sourceColor, vec4(color, sourceColor.w), intensity);
 }

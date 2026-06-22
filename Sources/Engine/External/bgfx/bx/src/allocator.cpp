@@ -5,7 +5,13 @@
 
 #include <bx/allocator.h>
 
+//!!!!betauser
+#ifdef _WIN32
 #include <malloc.h>
+#else
+#include <stdlib.h>
+#endif
+//#include <malloc.h>
 
 //!!!!betauser
 #if BX_PLATFORM_WINDOWS //#ifndef __ANDROID__
