@@ -35,7 +35,7 @@
 #ifdef _WIN32
 	#include <malloc.h>
 #endif
-#if (defined(IOS) || defined(__EMSCRIPTEN__))
+#if (defined(IOS) || defined(__EMSCRIPTEN__) || defined(MACOS))
     #include <string.h>
 #endif
 #include <stdio.h>

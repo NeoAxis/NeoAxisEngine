@@ -17,7 +17,15 @@
 #	include "crt0.h"
 #else
 #	if BX_CONFIG_CRT_DIRECTORY_READER
+
+//!!!!betauser
+#ifdef MACOS
+#		include <dirent.h>
+#else
 #		include <dirent_bx.h>
+#endif
+//#		include <dirent_bx.h>
+
 #	endif // BX_CONFIG_CRT_DIRECTORY_READER
 #	include <stdio.h>      // remove
 #	include <sys/stat.h>   // stat, mkdir
@@ -140,7 +148,7 @@ namespace bx
 			}
 
 			//!!!!betauser
-#if defined(__ANDROID__) || defined(IOS) || defined(LINUX) || defined(__EMSCRIPTEN__)
+#if defined(__ANDROID__) || defined(IOS) || defined(LINUX) || defined(__EMSCRIPTEN__) || defined(MACOS)
 			m_file = fopen(_filePath.getCPtr(), "rb");
 #else
 			wchar_t wfilePath[PATH_MAX + 1];
@@ -242,7 +250,7 @@ namespace bx
 			}
 
 			//!!!!betauser
-#if defined(__ANDROID__) || defined(IOS) || defined(LINUX) || defined(__EMSCRIPTEN__)
+#if defined(__ANDROID__) || defined(IOS) || defined(LINUX) || defined(__EMSCRIPTEN__) || defined(MACOS)
 			m_file = fopen(_filePath.getCPtr(), _append ? "ab" : "wb");
 #else
 			wchar_t wfilePath[PATH_MAX + 1];

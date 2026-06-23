@@ -626,7 +626,7 @@ namespace Project
 			var comboWindowedMode = GetComboWindowedMode();
 			var comboVideoMode = GetComboVideoMode();
 			if( comboWindowedMode != null && comboVideoMode != null )
-				comboVideoMode.ReadOnly = (WindowedModeEnum)comboWindowedMode.SelectedIndex == WindowedModeEnum.Borderless;
+				comboVideoMode.ReadOnly = (WindowedModeEnum)comboWindowedMode.SelectedIndex == WindowedModeEnum.Borderless || SystemSettings.MobileDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
 		}
 	}
 }

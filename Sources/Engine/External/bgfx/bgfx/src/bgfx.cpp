@@ -28,6 +28,12 @@
 #include <cstring>
 //#include <bx/float4x4_t.h>
 
+//!!!!betauser
+#if BX_PLATFORM_OSX || BX_PLATFORM_IOS
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+
 ////!!!!betauser
 //#ifdef __ANDROID__
 //#include <android/log.h>
@@ -2719,11 +2725,17 @@ namespace bgfx
 		{ d3d11::rendererCreate, d3d11::rendererDestroy, BGFX_RENDERER_DIRECT3D11_NAME, !!BGFX_CONFIG_RENDERER_DIRECT3D11 }, // Direct3D11
 		{ d3d12::rendererCreate, d3d12::rendererDestroy, BGFX_RENDERER_DIRECT3D12_NAME, !!BGFX_CONFIG_RENDERER_DIRECT3D12 }, // Direct3D12
 		{ gnm::rendererCreate,   gnm::rendererDestroy,   BGFX_RENDERER_GNM_NAME,        !!BGFX_CONFIG_RENDERER_GNM        }, // GNM
+
+		//!!!!betauser
+		{ noop::rendererCreate,  noop::rendererDestroy,  BGFX_RENDERER_NOOP_NAME,       false                             }, // Noop
+		/*
 #if BX_PLATFORM_OSX || BX_PLATFORM_IOS
 		{ mtl::rendererCreate,   mtl::rendererDestroy,   BGFX_RENDERER_METAL_NAME,      !!BGFX_CONFIG_RENDERER_METAL      }, // Metal
 #else
 		{ noop::rendererCreate,  noop::rendererDestroy,  BGFX_RENDERER_NOOP_NAME,       false                             }, // Noop
 #endif // BX_PLATFORM_OSX || BX_PLATFORM_IOS
+		*/
+
 		{ nvn::rendererCreate,    nvn::rendererDestroy,    BGFX_RENDERER_NVN_NAME,        !!BGFX_CONFIG_RENDERER_NVN        }, // NVN
 		{ gl::rendererCreate,    gl::rendererDestroy,    BGFX_RENDERER_OPENGL_NAME,     !!BGFX_CONFIG_RENDERER_OPENGLES   }, // OpenGLES
 		{ gl::rendererCreate,    gl::rendererDestroy,    BGFX_RENDERER_OPENGL_NAME,     !!BGFX_CONFIG_RENDERER_OPENGL     }, // OpenGL
@@ -6076,6 +6088,9 @@ void Fatal2(const char* text)
 	CFUserNotificationDisplayAlert(0, kCFUserNotificationStopAlertLevel, NULL, NULL, NULL,
 		CFSTR("Fatal"), textRef, CFSTR("OK"), NULL, NULL, NULL);
 	CFRelease(textRef);
+#elif BX_PLATFORM_IOS
+	//!!!!good?
+	std::fprintf(stderr, "Fatal: %s\n", text ? text : "");
 #elif BX_PLATFORM_WINRT || BX_PLATFORM_XBOXONE
 	bx::debugOutput(text);
 	bx::debugBreak();

@@ -380,26 +380,35 @@ namespace CommandLineTools
 					//copy output file from the server to local disk
 					Task.Run( async delegate ()
 					{
-						var sourceFilePath = Path.Combine( taskID, Path.GetFileName( parser.OutputFilePath ) );
-
-						//var sourceFilePath = Path.Combine( taskID, parser.CompileFileDirectory, parser.TempFolder, Path.GetFileName( parser.OutputFilePath ) );
-						//var sourceFilePath = Path.Combine( taskID, parser.TempFolder, Path.GetFileName( parser.OutputFilePath ) );
-
-						var outputFullPath = parser.GetFullSourcePath( parser.OutputFilePath );
-
-						var cts = new CancellationTokenSource( new TimeSpan( 0, 5, 0 ) );
-						var callResult = await connectionNode.CloudFunctions.DownloadFileAsync( ClientNetworkService_CloudFunctions.DataSource.Project, sourceFilePath, outputFullPath, false, cancellationToken: cts.Token );
-
-						if( !string.IsNullOrEmpty( callResult.Error ) )
+						try
 						{
-							Console.WriteLine( "ERROR: " + callResult.Error );
-							exitRequested = true;
-							return;
-						}
+							var sourceFilePath = Path.Combine( taskID, Path.GetFileName( parser.OutputFilePath ) );
 
-						Console.WriteLine( "Download completed." );
-						Console.WriteLine( "Output file: " + outputFullPath );
-						exitRequested = true;
+							//var sourceFilePath = Path.Combine( taskID, parser.CompileFileDirectory, parser.TempFolder, Path.GetFileName( parser.OutputFilePath ) );
+							//var sourceFilePath = Path.Combine( taskID, parser.TempFolder, Path.GetFileName( parser.OutputFilePath ) );
+
+							var outputFullPath = parser.GetFullSourcePath( parser.OutputFilePath );
+
+							Console.WriteLine( "Downloading output file..." );
+
+							var cts = new CancellationTokenSource( new TimeSpan( 0, 5, 0 ) );
+							var callResult = await connectionNode.CloudFunctions.DownloadFileAsync( ClientNetworkService_CloudFunctions.DataSource.Project, sourceFilePath, outputFullPath, false, cancellationToken: cts.Token );
+
+							if( !string.IsNullOrEmpty( callResult.Error ) )
+							{
+								Console.WriteLine( "ERROR: " + callResult.Error );
+								exitRequested = true;
+								return;
+							}
+
+							Console.WriteLine( "Download completed." );
+							Console.WriteLine( "Output file: " + outputFullPath );
+							exitRequested = true;
+						}
+						catch( Exception e )
+						{
+							Console.WriteLine( "EXCEPTION: " + e.ToString() );
+						}
 					} );
 				}
 				else

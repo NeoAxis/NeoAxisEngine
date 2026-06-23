@@ -36,7 +36,9 @@
 #	if OGRE_PLATFORM == OGRE_PLATFORM_EMSCRIPTEN //check OGRE_PLATFORM not OGRE_COMPILER
 #       define FORCEINLINE __inline__
 #	elif OGRE_COMPILER == OGRE_COMPILER_CLANG
-#		define FORCEINLINE __attribute__((always_inline))
+//!!!!betauser
+#		define FORCEINLINE inline __attribute__((always_inline))
+//#		define FORCEINLINE __attribute__((always_inline))
 #	elif OGRE_COMPILER == OGRE_COMPILER_GNUC
 #		define FORCEINLINE inline
 #   else

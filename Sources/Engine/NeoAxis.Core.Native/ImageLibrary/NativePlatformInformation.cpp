@@ -87,78 +87,91 @@ namespace Native {
 
     //---------------------------------------------------------------------
     // Detect whether CPU supports CPUID instruction, returns non-zero if supported.
+
+//!!!!betauser
 	static int _isSupportCpuid(void)
 	{
-#if OGRE_COMPILER == OGRE_COMPILER_MSVC
-		// Visual Studio 2005 & 64-bit compilers always supports __cpuid intrinsic
-		// note that even though this is a build rather than runtime setting, all
-		// 64-bit CPUs support this so since binary is 64-bit only we're ok
-#if _MSC_VER >= 1400 && defined(_M_X64)
+#if defined(_WIN32) || defined(LINUX)
 		return true;
 #else
-		// If we can modify flag register bit 21, the cpu is supports CPUID instruction
-		__asm
-		{
-			// Read EFLAG
-			pushfd
-			pop     eax
-			mov     ecx, eax
-
-			// Modify bit 21
-			xor     eax, 0x200000
-			push    eax
-			popfd
-
-			// Read back EFLAG
-			pushfd
-			pop     eax
-
-			// Restore EFLAG
-			push    ecx
-			popfd
-
-			// Check bit 21 modifiable
-			xor     eax, ecx
-			neg     eax
-			sbb     eax, eax
-
-			// Return values in eax, no return statement requirement here for VC.
-		}
-#endif
-#elif (OGRE_COMPILER == OGRE_COMPILER_GNUC || OGRE_COMPILER == OGRE_COMPILER_CLANG) && OGRE_PLATFORM != OGRE_PLATFORM_NACL && OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
-#if OGRE_ARCH_TYPE == OGRE_ARCHITECTURE_64
-		return true;
-#else
-		unsigned oldFlags, newFlags;
-		__asm__
-		(
-			"pushfl         \n\t"
-			"pop    %0      \n\t"
-			"mov    %0, %1  \n\t"
-			"xor    %2, %0  \n\t"
-			"push   %0      \n\t"
-			"popfl          \n\t"
-			"pushfl         \n\t"
-			"pop    %0      \n\t"
-			"push   %1      \n\t"
-			"popfl          \n\t"
-			: "=r" (oldFlags), "=r" (newFlags)
-			: "n" (0x200000)
-		);
-		return oldFlags != newFlags;
-#endif // 64
-#else
-		// TODO: Supports other compiler
 		return false;
 #endif
 	}
 
+//!!!!betauser
+//	static int _isSupportCpuid(void)
+//	{
+//#if OGRE_COMPILER == OGRE_COMPILER_MSVC
+//		// Visual Studio 2005 & 64-bit compilers always supports __cpuid intrinsic
+//		// note that even though this is a build rather than runtime setting, all
+//		// 64-bit CPUs support this so since binary is 64-bit only we're ok
+//#if _MSC_VER >= 1400 && defined(_M_X64)
+//		return true;
+//#else
+//		// If we can modify flag register bit 21, the cpu is supports CPUID instruction
+//		__asm
+//		{
+//			// Read EFLAG
+//			pushfd
+//			pop     eax
+//			mov     ecx, eax
+//
+//			// Modify bit 21
+//			xor     eax, 0x200000
+//			push    eax
+//			popfd
+//
+//			// Read back EFLAG
+//			pushfd
+//			pop     eax
+//
+//			// Restore EFLAG
+//			push    ecx
+//			popfd
+//
+//			// Check bit 21 modifiable
+//			xor     eax, ecx
+//			neg     eax
+//			sbb     eax, eax
+//
+//			// Return values in eax, no return statement requirement here for VC.
+//		}
+//#endif
+//#elif (OGRE_COMPILER == OGRE_COMPILER_GNUC || OGRE_COMPILER == OGRE_COMPILER_CLANG) && OGRE_PLATFORM != OGRE_PLATFORM_NACL && OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
+//#if OGRE_ARCH_TYPE == OGRE_ARCHITECTURE_64
+//		return true;
+//#else
+//		unsigned oldFlags, newFlags;
+//		__asm__
+//		(
+//			"pushfl         \n\t"
+//			"pop    %0      \n\t"
+//			"mov    %0, %1  \n\t"
+//			"xor    %2, %0  \n\t"
+//			"push   %0      \n\t"
+//			"popfl          \n\t"
+//			"pushfl         \n\t"
+//			"pop    %0      \n\t"
+//			"push   %1      \n\t"
+//			"popfl          \n\t"
+//			: "=r" (oldFlags), "=r" (newFlags)
+//			: "n" (0x200000)
+//		);
+//		return oldFlags != newFlags;
+//#endif // 64
+//#else
+//		// TODO: Supports other compiler
+//		return false;
+//#endif
+//	}
+
     //---------------------------------------------------------------------
     // Performs CPUID instruction with 'query', fill the results, and return value of eax.
+
+//!!!!betauser
 	static uint _performCpuid(int query, CpuidResult& result)
 	{
-#if OGRE_COMPILER == OGRE_COMPILER_MSVC
-#if _MSC_VER >= 1400 
+#if defined(_WIN32) || defined(LINUX)
 		int CPUInfo[4];
 		__cpuid(CPUInfo, query);
 		result._eax = CPUInfo[0];
@@ -167,42 +180,59 @@ namespace Native {
 		result._edx = CPUInfo[3];
 		return result._eax;
 #else
-		__asm
-		{
-			mov     edi, result
-			mov     eax, query
-			cpuid
-			mov[edi]._eax, eax
-			mov[edi]._ebx, ebx
-			mov[edi]._edx, edx
-			mov[edi]._ecx, ecx
-			// Return values in eax, no return statement requirement here for VC.
-		}
-#endif
-#elif (OGRE_COMPILER == OGRE_COMPILER_GNUC || OGRE_COMPILER == OGRE_COMPILER_CLANG) && OGRE_PLATFORM != OGRE_PLATFORM_NACL && OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
-#if OGRE_ARCH_TYPE == OGRE_ARCHITECTURE_64
-		__asm__
-		(
-			"cpuid": "=a" (result._eax), "=b" (result._ebx), "=c" (result._ecx), "=d" (result._edx) : "a" (query)
-		);
-#else
-		__asm__
-		(
-			"pushl  %%ebx           \n\t"
-			"cpuid                  \n\t"
-			"movl   %%ebx, %%edi    \n\t"
-			"popl   %%ebx           \n\t"
-			: "=a" (result._eax), "=D" (result._ebx), "=c" (result._ecx), "=d" (result._edx)
-			: "a" (query)
-		);
-#endif // OGRE_ARCHITECTURE_64
-		return result._eax;
-
-#else
-		// TODO: Supports other compiler
 		return 0;
 #endif
 	}
+
+//!!!!betauser
+//	static uint _performCpuid(int query, CpuidResult& result)
+//	{
+//#if OGRE_COMPILER == OGRE_COMPILER_MSVC
+//#if _MSC_VER >= 1400 
+//		int CPUInfo[4];
+//		__cpuid(CPUInfo, query);
+//		result._eax = CPUInfo[0];
+//		result._ebx = CPUInfo[1];
+//		result._ecx = CPUInfo[2];
+//		result._edx = CPUInfo[3];
+//		return result._eax;
+//#else
+//		__asm
+//		{
+//			mov     edi, result
+//			mov     eax, query
+//			cpuid
+//			mov[edi]._eax, eax
+//			mov[edi]._ebx, ebx
+//			mov[edi]._edx, edx
+//			mov[edi]._ecx, ecx
+//			// Return values in eax, no return statement requirement here for VC.
+//		}
+//#endif
+//#elif (OGRE_COMPILER == OGRE_COMPILER_GNUC || OGRE_COMPILER == OGRE_COMPILER_CLANG) && OGRE_PLATFORM != OGRE_PLATFORM_NACL && OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
+//#if OGRE_ARCH_TYPE == OGRE_ARCHITECTURE_64
+//		__asm__
+//		(
+//			"cpuid": "=a" (result._eax), "=b" (result._ebx), "=c" (result._ecx), "=d" (result._edx) : "a" (query)
+//		);
+//#else
+//		__asm__
+//		(
+//			"pushl  %%ebx           \n\t"
+//			"cpuid                  \n\t"
+//			"movl   %%ebx, %%edi    \n\t"
+//			"popl   %%ebx           \n\t"
+//			: "=a" (result._eax), "=D" (result._ebx), "=c" (result._ecx), "=d" (result._edx)
+//			: "a" (query)
+//		);
+//#endif // OGRE_ARCHITECTURE_64
+//		return result._eax;
+//
+//#else
+//		// TODO: Supports other compiler
+//		return 0;
+//#endif
+//	}
 
 #if OGRE_COMPILER == OGRE_COMPILER_MSVC
 #pragma warning(pop)
@@ -210,75 +240,92 @@ namespace Native {
 
     //---------------------------------------------------------------------
     // Detect whether or not os support Streaming SIMD Extension.
-#if OGRE_COMPILER == OGRE_COMPILER_GNUC && OGRE_PLATFORM != OGRE_PLATFORM_NACL
-    #if OGRE_ARCH_TYPE == OGRE_ARCHITECTURE_32
-    static jmp_buf sIllegalJmpBuf;
-    static void _illegalHandler(int x)
-    {
-        (void)(x); // Unused
-        longjmp(sIllegalJmpBuf, 1);
-    }
-#endif
-#endif
-    static bool _checkOperatingSystemSupportSSE(void)
-    {
-#if OGRE_COMPILER == OGRE_COMPILER_MSVC
-        /*
-            The FP part of SSE introduces a new architectural state and therefore
-            requires support from the operating system. So even if CPUID indicates
-            support for SSE FP, the application might not be able to use it. If
-            CPUID indicates support for SSE FP, check here whether it is also
-            supported by the OS, and turn off the SSE FP feature bit if there
-            is no OS support for SSE FP.
 
-            Operating systems that do not support SSE FP return an illegal
-            instruction exception if execution of an SSE FP instruction is performed.
-            Here, a sample SSE FP instruction is executed, and is checked for an
-            exception using the (non-standard) __try/__except mechanism
-            of Microsoft Visual C/C++.
-        */
-		// Visual Studio 2005, Both AMD and Intel x64 support SSE
-		// note that even though this is a build rather than runtime setting, all
-		// 64-bit CPUs support this so since binary is 64-bit only we're ok
-	#if _MSC_VER >= 1400 && defined(_M_X64)
+//!!!!betauser
+//#if OGRE_COMPILER == OGRE_COMPILER_GNUC && OGRE_PLATFORM != OGRE_PLATFORM_NACL
+//    #if OGRE_ARCH_TYPE == OGRE_ARCHITECTURE_32
+//    static jmp_buf sIllegalJmpBuf;
+//    static void _illegalHandler(int x)
+//    {
+//        (void)(x); // Unused
+//        longjmp(sIllegalJmpBuf, 1);
+//    }
+//#endif
+//#endif
+
+
+	//!!!!betauser
+	static bool _checkOperatingSystemSupportSSE(void)
+	{
+		#if _MSC_VER >= 1400 && defined(_M_X64)
 			return true;
-	#else
-        __try
-        {
-            __asm orps  xmm0, xmm0
-            return true;
-        }
-        __except(EXCEPTION_EXECUTE_HANDLER)
-        {
-            return false;
-        }
-	#endif
-#elif (OGRE_COMPILER == OGRE_COMPILER_GNUC || OGRE_COMPILER == OGRE_COMPILER_CLANG) && OGRE_PLATFORM != OGRE_PLATFORM_NACL && OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
-        #if OGRE_ARCH_TYPE == OGRE_ARCHITECTURE_64
-            return true;
-        #else
-        // Does gcc have __try/__except similar mechanism?
-        // Use signal, setjmp/longjmp instead.
-        void (*oldHandler)(int);
-        oldHandler = signal(SIGILL, _illegalHandler);
+		#elif LINUX
+			return true;
+		#else
+			return false;
+		#endif
+	}
 
-        if (setjmp(sIllegalJmpBuf))
-        {
-            signal(SIGILL, oldHandler);
-            return false;
-        }
-        else
-        {
-            __asm__ __volatile__ ("orps %xmm0, %xmm0");
-            signal(SIGILL, oldHandler);
-            return true;
-        }
-       #endif
-#else
-        // TODO: Supports other compiler, assumed is supported by default
-        return true;
-#endif
-    }
+//!!!!betauser
+//    static bool _checkOperatingSystemSupportSSE(void)
+//    {
+//#if OGRE_COMPILER == OGRE_COMPILER_MSVC
+//        /*
+//            The FP part of SSE introduces a new architectural state and therefore
+//            requires support from the operating system. So even if CPUID indicates
+//            support for SSE FP, the application might not be able to use it. If
+//            CPUID indicates support for SSE FP, check here whether it is also
+//            supported by the OS, and turn off the SSE FP feature bit if there
+//            is no OS support for SSE FP.
+//
+//            Operating systems that do not support SSE FP return an illegal
+//            instruction exception if execution of an SSE FP instruction is performed.
+//            Here, a sample SSE FP instruction is executed, and is checked for an
+//            exception using the (non-standard) __try/__except mechanism
+//            of Microsoft Visual C/C++.
+//        */
+//		// Visual Studio 2005, Both AMD and Intel x64 support SSE
+//		// note that even though this is a build rather than runtime setting, all
+//		// 64-bit CPUs support this so since binary is 64-bit only we're ok
+//	#if _MSC_VER >= 1400 && defined(_M_X64)
+//			return true;
+//	#else
+//        __try
+//        {
+//            __asm orps  xmm0, xmm0
+//            return true;
+//        }
+//        __except(EXCEPTION_EXECUTE_HANDLER)
+//        {
+//            return false;
+//        }
+//	#endif
+//#elif (OGRE_COMPILER == OGRE_COMPILER_GNUC || OGRE_COMPILER == OGRE_COMPILER_CLANG) && OGRE_PLATFORM != OGRE_PLATFORM_NACL && OGRE_PLATFORM != OGRE_PLATFORM_EMSCRIPTEN
+//        #if OGRE_ARCH_TYPE == OGRE_ARCHITECTURE_64
+//            return true;
+//        #else
+//        // Does gcc have __try/__except similar mechanism?
+//        // Use signal, setjmp/longjmp instead.
+//        void (*oldHandler)(int);
+//        oldHandler = signal(SIGILL, _illegalHandler);
+//
+//        if (setjmp(sIllegalJmpBuf))
+//        {
+//            signal(SIGILL, oldHandler);
+//            return false;
+//        }
+//        else
+//        {
+//            __asm__ __volatile__ ("orps %xmm0, %xmm0");
+//            signal(SIGILL, oldHandler);
+//            return true;
+//        }
+//       #endif
+//#else
+//        // TODO: Supports other compiler, assumed is supported by default
+//        return true;
+//#endif
+//    }
 
     //---------------------------------------------------------------------
     // Compiler-independent routines
@@ -391,9 +438,12 @@ namespace Native {
 						features |= PlatformInformation::CPU_FEATURE_SSE;
 					if (result._edx & CPUID_STD_SSE2)
 						features |= PlatformInformation::CPU_FEATURE_SSE2;
-
 					if (result._ecx & CPUID_STD_SSE3)
 						features |= PlatformInformation::CPU_FEATURE_SSE3;
+					if (result._ecx & CPUID_STD_SSE41)
+						features |= PlatformInformation::CPU_FEATURE_SSE41;
+					if (result._ecx & CPUID_STD_SSE42)
+						features |= PlatformInformation::CPU_FEATURE_SSE42;
 
 					// Has extended feature ?
 					const uint maxExtensionFunctionSupport = _performCpuid(CPUID_FUNC_EXTENSION_QUERY, result);

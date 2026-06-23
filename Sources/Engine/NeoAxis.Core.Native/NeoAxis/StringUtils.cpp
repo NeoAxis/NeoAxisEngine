@@ -22,7 +22,7 @@
 #	include <codecvt>
 #endif
 
-#if defined(PLATFORM_IOS) || defined(PLATFORM_WEB)
+#if defined(PLATFORM_IOS) || defined(PLATFORM_WEB) || defined(PLATFORM_MACOS)
 	#include <iconv.h>	
 #endif
 

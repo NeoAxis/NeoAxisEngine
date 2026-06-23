@@ -16,15 +16,21 @@
 #       define PLATFORM_WINDOWS
 #   endif
 #elif defined(IOS)
+#ifndef PLATFORM_IOS
 #define PLATFORM_IOS
+#endif
 #elif defined( __APPLE_CC__)
+#ifndef PLATFORM_MACOS
 #define PLATFORM_MACOS
+#endif
 #elif defined(__ANDROID__)
 #ifndef PLATFORM_ANDROID
 #define PLATFORM_ANDROID
 #endif
 #elif defined(__linux__)
+#ifndef PLATFORM_LINUX
 #define PLATFORM_LINUX
+#endif
 #elif defined(__EMSCRIPTEN__)
 #ifndef PLATFORM_WEB
 #define PLATFORM_WEB
@@ -149,8 +155,10 @@
 /* #undef HAVE_PTHREAD_NP_H */
 
 #ifndef PLATFORM_IOS
+#ifndef PLATFORM_MACOS
 /* Define if we have malloc.h */
 #define HAVE_MALLOC_H
+#endif
 #endif
 
 /* Define if we have dirent.h */

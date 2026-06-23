@@ -47,7 +47,7 @@ ReturnCode fpp_openfile(struct Global *global, char *filename)
     fp = global->openfile(filename, "r", global->userdata);
   else {
     //!!!!betauser
-#if defined(__ANDROID__) || defined(IOS) || defined(LINUX) || defined(__EMSCRIPTEN__)
+#if defined(__ANDROID__) || defined(IOS) || defined(LINUX) || defined(__EMSCRIPTEN__) || defined(MACOS)
     fp = fopen(filename, "r");
 #else
     wchar_t wfileName[PATH_MAX + 1];

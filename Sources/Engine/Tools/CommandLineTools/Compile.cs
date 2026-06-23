@@ -139,7 +139,7 @@ namespace CommandLineTools
 					}
 					await RunCmdAsync( appPath, emarArguments + " " + sb.ToString(), tempPath );
 				}
-				else if( Parser.Platform == "macOS" || Parser.Platform == "iOS" )
+				else if( /*Parser.Platform == "macOS" ||*/ Parser.Platform == "iOS" )
 				{
 					//write all .o files to list.txt
 					var listTextFullPath = Path.Combine( tempPath, "list.txt" );
@@ -157,10 +157,36 @@ namespace CommandLineTools
 						var taskFullDirectory = PlatformServer.GetTaskFullPathDirectory( ClientData.TaskID );
 						var libFullPath = Path.Combine( taskFullDirectory, libFileName );
 
-						//Console.WriteLine( $"Running libtool to create library 1 {libFileName}..." );
-						//Console.WriteLine( $"Running libtool to create library 2 {libFullPath}..." );
-
 						await RunCmdAsync( "libtool", $"-static -filelist {listTextFullPath} -o {libFullPath}", tempPath );
+					}
+					else
+					{
+						//no implementation
+						Console.WriteLine( "Running libtool to create library: no client data, no implementation." );
+						isCancelled = true;
+					}
+				}
+				else if( Parser.Platform == "macOS" )
+				{
+					//write all .o files to list.txt
+					var listTextFullPath = Path.Combine( tempPath, "list.txt" );
+					using( var writer = new StreamWriter( listTextFullPath ) )
+					{
+						foreach( var info in CompileList )
+							writer.WriteLine( info.outPath );
+					}
+
+					//compile to root of task directory
+
+					if( ClientData != null )
+					{
+						var libFileName = Path.GetFileName( outputPath );
+						var taskFullDirectory = PlatformServer.GetTaskFullPathDirectory( ClientData.TaskID );
+						var libFullPath = Path.Combine( taskFullDirectory, libFileName );
+
+						await RunCmdAsync( "clang++", $"-dynamiclib -filelist {listTextFullPath} -framework CoreFoundation -framework Foundation -liconv -o {libFullPath}", tempPath );
+
+						//await RunCmdAsync( "libtool", $"-static -filelist {listTextFullPath} -o {libFullPath}", tempPath );
 					}
 					else
 					{
@@ -242,10 +268,6 @@ namespace CommandLineTools
 					Console.WriteLine( $"Compiled: {inPathFileName} as {outPathFileName}" );
 					if( ClientData != null )
 						PlatformServer.SendShowMessageToClient( ClientData, $"Compiled: {inPathFileName} as {outPathFileName}" );
-
-					//Console.WriteLine( $"Compiled: {inPath} as {outPath}" );
-					//if( ClientData != null )
-					//	PlatformServer.SendShowMessageToClient( ClientData, $"Compiled: {inPath} as {outPath}" );
 				}
 
 				return true;

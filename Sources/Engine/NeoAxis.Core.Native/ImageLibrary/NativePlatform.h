@@ -279,10 +279,11 @@ namespace Native {
 
 #endif
 
-//For apple, we always have a custom config.h file
-#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
-#    include "MacOS/config_mac.h"
-#endif
+//!!!!betauser
+////For apple, we always have a custom config.h file
+//#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
+//#    include "MacOS/config_mac.h"
+//#endif
 
 //----------------------------------------------------------------------------
 // Android Settings
