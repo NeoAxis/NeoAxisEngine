@@ -33,29 +33,36 @@ THE SOFTWARE.
 #include "NativeStringConverter.h"
 
 #if OGRE_COMPILER == OGRE_COMPILER_MSVC
-#include <excpt.h>      // For SEH values
+	#include <excpt.h>      // For SEH values
     #if _MSC_VER >= 1400
         #include <intrin.h>
     #endif
-#elif (OGRE_COMPILER == OGRE_COMPILER_GNUC || OGRE_COMPILER == OGRE_COMPILER_CLANG) && OGRE_PLATFORM != OGRE_PLATFORM_NACL
-#include <signal.h>
-#include <setjmp.h>
+//!!!!betauser
+//#elif (OGRE_COMPILER == OGRE_COMPILER_GNUC || OGRE_COMPILER == OGRE_COMPILER_CLANG) && OGRE_PLATFORM != OGRE_PLATFORM_NACL
+//#include <signal.h>
+//#include <setjmp.h>
+//
+//	//#if OGRE_CPU == OGRE_CPU_ARM 
+//	#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
+//		//#include <cpu-features.h>
+//  #elif OGRE_CPU == OGRE_CPU_ARM 
+//        #include <sys/sysctl.h>
+//        #if __MACH__
+//            #include <mach/machine.h>
+//            #ifndef CPU_SUBTYPE_ARM64_V8
+//                #define CPU_SUBTYPE_ARM64_V8 ((cpu_subtype_t) 1)
+//            #endif
+//            #ifndef CPU_SUBTYPE_ARM_V8
+//                #define CPU_SUBTYPE_ARM_V8 ((cpu_subtype_t) 13)
+//            #endif
+//        #endif
+//    #endif
+#endif
 
-	//#if OGRE_CPU == OGRE_CPU_ARM 
-	#if OGRE_PLATFORM == OGRE_PLATFORM_ANDROID
-		//#include <cpu-features.h>
-  #elif OGRE_CPU == OGRE_CPU_ARM 
-        #include <sys/sysctl.h>
-        #if __MACH__
-            #include <mach/machine.h>
-            #ifndef CPU_SUBTYPE_ARM64_V8
-                #define CPU_SUBTYPE_ARM64_V8 ((cpu_subtype_t) 1)
-            #endif
-            #ifndef CPU_SUBTYPE_ARM_V8
-                #define CPU_SUBTYPE_ARM_V8 ((cpu_subtype_t) 13)
-            #endif
-        #endif
-    #endif
+//!!!!betauser
+#ifdef LINUX
+	#include <stdio.h>
+	#include <cpuid.h>
 #endif
 
 // Yes, I know, this file looks very ugly, but there aren't other ways to do it better.
@@ -171,9 +178,17 @@ namespace Native {
 //!!!!betauser
 	static uint _performCpuid(int query, CpuidResult& result)
 	{
-#if defined(_WIN32) || defined(LINUX)
+#if defined(_WIN32)
 		int CPUInfo[4];
 		__cpuid(CPUInfo, query);
+		result._eax = CPUInfo[0];
+		result._ebx = CPUInfo[1];
+		result._ecx = CPUInfo[2];
+		result._edx = CPUInfo[3];
+		return result._eax;
+#elif defined(LINUX)
+		uint CPUInfo[4];
+		__get_cpuid(query, &CPUInfo[0], &CPUInfo[1], &CPUInfo[2], &CPUInfo[3]);
 		result._eax = CPUInfo[0];
 		result._ebx = CPUInfo[1];
 		result._ecx = CPUInfo[2];
