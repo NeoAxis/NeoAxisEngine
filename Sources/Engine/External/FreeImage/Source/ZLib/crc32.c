@@ -497,12 +497,13 @@ local void write_table64(out, table, k)
                 n == k - 1 ? "" : (n % 3 == 2 ? ",\n" : ", "));
 }
 
-/* Actually do the deed. */
-int main()
-{
-    make_crc_table();
-    return 0;
-}
+//!!!!betauser
+///* Actually do the deed. */
+//int main()
+//{
+//    make_crc_table();
+//    return 0;
+//}
 
 #endif /* MAKECRCH */
 
