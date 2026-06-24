@@ -255,6 +255,10 @@ namespace CommandLineTools
 						return;
 					}
 					var serverItems = getDirectoryInfoResult.Items;
+
+					//skip invalid files with invalid names
+					serverItems = serverItems.Where( i => !i.PathNormalized.Contains( ".." ) ).ToArray();
+
 					serverFileItems = serverItems.Where( i => !i.IsDirectory ).ToArray();
 					serverDirectoryItems = serverItems.Where( i => i.IsDirectory ).ToArray();
 				}
@@ -277,6 +281,10 @@ namespace CommandLineTools
 				var localFilesDictionary = new Dictionary<string, FileInfo>();
 				foreach( var localFile in localFiles )
 				{
+					//skip invalid files with invalid names
+					if( localFile.FullName.Contains( ".." ) )
+						continue;
+
 					var relativePath = localFile.FullName.Substring( sourceDirectoryFullPath.Length ).TrimStart( '\\', '/' );
 					localFilesDictionary[ relativePath ] = localFile;
 				}
@@ -291,6 +299,10 @@ namespace CommandLineTools
 				//get files to copy
 				foreach( var localFileItem in localFiles )
 				{
+					//skip invalid files with invalid names
+					if( localFileItem.FullName.Contains( ".." ) )
+						continue;
+
 					var relativePath = localFileItem.FullName.Substring( sourceDirectoryFullPath.Length ).TrimStart( '\\', '/' );
 
 					var exists = serverFilesDictionary.TryGetValue( relativePath, out var serverItem );

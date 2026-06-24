@@ -10,9 +10,9 @@
     <LangVersion>latest</LangVersion>
     <Nullable>annotations</Nullable>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>C:\_TestiOS\</OutputPath>
+    <OutputPath>_Test</OutputPath>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-    <PublishTrimmed>False</PublishTrimmed>
+    <PublishTrimmed>True</PublishTrimmed>
 	<Configurations>Release;Release-Simulator;Debug;Debug-Simulator</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -29,6 +29,7 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug-Simulator'">
     <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
     <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
+    <EnableCodeSigning>false</EnableCodeSigning>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release-Simulator'">
     <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
@@ -36,6 +37,20 @@
     <Optimize>False</Optimize>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>
+    <EnableCodeSigning>false</EnableCodeSigning>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OptimizePNGs>False</OptimizePNGs>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Simulator|AnyCPU'">
+    <OptimizePNGs>False</OptimizePNGs>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OptimizePNGs>False</OptimizePNGs>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Simulator|AnyCPU'">
+    <OptimizePNGs>False</OptimizePNGs>
+    <MtouchLink>None</MtouchLink>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Resources\Project.zip" />

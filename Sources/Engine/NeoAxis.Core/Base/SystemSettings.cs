@@ -20,7 +20,7 @@ namespace NeoAxis
 		static NetRuntimeType netRuntime;
 
 		static Vector2I? videoModeChanged;
-		static float? gammaChanged;
+		//static float? gammaChanged;
 
 		static Dictionary<string, string> commandLineParameters;
 
@@ -326,20 +326,20 @@ namespace NeoAxis
 			}
 		}
 
-		public static void SetGamma( float value )
-		{
-			PlatformFunctionality.Instance.SetGamma( value );
-			gammaChanged = value;
-		}
+		//public static void SetGamma( float value )
+		//{
+		//	PlatformFunctionality.Instance.SetGamma( value );
+		//	gammaChanged = value;
+		//}
 
-		public static void ResetGamma()
-		{
-			if( gammaChanged != null )
-			{
-				PlatformFunctionality.Instance.SetGamma( 1 );
-				gammaChanged = null;
-			}
-		}
+		//public static void ResetGamma()
+		//{
+		//	if( gammaChanged != null )
+		//	{
+		//		PlatformFunctionality.Instance.SetGamma( 1 );
+		//		gammaChanged = null;
+		//	}
+		//}
 
 		public static NetRuntimeType NetRuntime
 		{

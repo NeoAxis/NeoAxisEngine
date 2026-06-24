@@ -220,8 +220,8 @@ namespace Internal
 			[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_UpdateWindowForProcessChangingVideoMode", CallingConvention = Wrapper.convention )]
 			public static extern void UpdateWindowForProcessChangingVideoMode();
 
-			[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_SetGamma", CallingConvention = Wrapper.convention )]
-			public static extern void SetGamma( float value );
+			//[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_SetGamma", CallingConvention = Wrapper.convention )]
+			//public static extern void SetGamma( float value );
 
 			[DllImport( Wrapper.library, EntryPoint = "MacAppNativeWrapper_FreeOutString", CallingConvention = Wrapper.convention )]
 			public static extern void FreeOutString( IntPtr pointer );
@@ -1198,10 +1198,10 @@ namespace Internal
 			return MacAppNativeWrapper.IsKeyLocked( key );
 		}
 
-		public override void SetGamma( float value )
-		{
-			MacAppNativeWrapper.SetGamma( value );
-		}
+		//public override void SetGamma( float value )
+		//{
+		//	//MacAppNativeWrapper.SetGamma( value );
+		//}
 
 		public override IntPtr CreatedWindow_CreateWindow()
 		{
@@ -1245,10 +1245,12 @@ namespace Internal
 			//}
 
 
-			//!!!!impl borderless
+			//!!!!impl WindowedMode.Borderless
 
 
 			var windowHandle = MacAppNativeWrapper.CreateWindow( EngineApp.WindowedMode, EngineApp.CreatedInsideEngineWindow.Title, position.X, position.Y, size.X, size.Y );
+			if( windowHandle == IntPtr.Zero )
+				Console.WriteLine( "MacAppNativeWrapper: CreateWindow: Failed to create window." );
 
 			if( SystemSettings.DarkMode )
 				SetDarkMode( windowHandle, true );

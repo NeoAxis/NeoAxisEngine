@@ -1576,8 +1576,8 @@ namespace NeoAxis
 			//	viewport.MouseRelativeMode = false;
 			//}
 
-			SystemSettings.ResetGamma();
-			//Gamma = 1.0f;
+			//SystemSettings.ResetGamma();
+			////Gamma = 1.0f;
 
 			AppDestroy?.Invoke();
 			//instance.OnDestroy();
@@ -1617,7 +1617,7 @@ namespace NeoAxis
 
 			WindowDestroyOrDetach();
 
-			SystemSettings.ResetGamma();
+			//SystemSettings.ResetGamma();
 
 			ResourceManager.Shutdown();
 

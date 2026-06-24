@@ -17,9 +17,13 @@
 #elif defined( __APPLE__)
 	#include <TargetConditionals.h>
 	#if TARGET_OS_IPHONE
+		#ifndef PLATFORM_IOS
 		#define PLATFORM_IOS
+		#endif
 	#elif TARGET_OS_MAC
+		#ifndef PLATFORM_OSX
 		#define PLATFORM_OSX
+		#endif
 	#else
 		#error "Unknown Apple platform"
 	#endif

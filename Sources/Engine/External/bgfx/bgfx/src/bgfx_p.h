@@ -12,7 +12,11 @@
 #	error "BX_CONFIG_DEBUG must be defined in build script!"
 #endif // BX_CONFIG_DEBUG
 
+//!!!!betauser
+#ifndef BGFX_CONFIG_DEBUG
 #define BGFX_CONFIG_DEBUG BX_CONFIG_DEBUG
+#endif
+//#define BGFX_CONFIG_DEBUG BX_CONFIG_DEBUG
 
 #if BX_CONFIG_DEBUG
 #	define BX_TRACE  _BGFX_TRACE
@@ -25,7 +29,7 @@
 
 #include <inttypes.h>
 
- //!!!!betauser
+//!!!!betauser
 #ifdef __ANDROID__
 #include <android/log.h>
 #define LOG_ANDROID_INFO(T) __android_log_print(ANDROID_LOG_INFO, "bgfx", T)

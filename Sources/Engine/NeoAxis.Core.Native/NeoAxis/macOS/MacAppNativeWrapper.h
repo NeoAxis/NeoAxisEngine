@@ -77,9 +77,9 @@ enum WindowedModeEnum
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint16* CreateOutString(const char* str);
-uint16* CreateOutString(const std::wstring& str);
-uint16* CreateOutString(const NSString* str);
+//uint16* CreateOutString(const char* str);
+//uint16* CreateOutString(const std::wstring& str);
+//uint16* CreateOutString(const NSString* str);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -146,21 +146,25 @@ int initialScreenSizeX = 0;
 int initialScreenSizeY = 0;
 int initialScreenBPP = 0;
 
-bool initialGammaInitialized = false;
-CGGammaValue initialGammaRedTable[256];
-CGGammaValue initialGammaGreenTable[256];
-CGGammaValue initialGammaBlueTable[256];
+//bool initialGammaInitialized = false;
+//CGGammaValue initialGammaRedTable[256];
+//CGGammaValue initialGammaGreenTable[256];
+//CGGammaValue initialGammaBlueTable[256];
 
-CGLContextObj fullscreenMinimizedMode_CGLContextObj = NULL;
+//!!!!was in 3.5
+//CGLContextObj fullscreenMinimizedMode_CGLContextObj = NULL;
+
+//!!!!new
+bool isCursorVisible = true;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void InitGamma();
+//void InitGamma();
 EXPORT bool ChangeVideoMode(int width, int height, int bpp);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint16* CreateOutString(const char* str)
+uint16* CreateOutString_Char(const char* str)
 {
 	int length = strlen(str);
 
@@ -172,7 +176,7 @@ uint16* CreateOutString(const char* str)
 	return result;
 }
 
-uint16* CreateOutString(const std::wstring& str)
+uint16* CreateOutString_WString(const std::wstring& str)
 {
 	int length = str.length();
 
@@ -184,7 +188,7 @@ uint16* CreateOutString(const std::wstring& str)
 	return result;
 }
 
-uint16* CreateOutString(const NSString* str)
+uint16* CreateOutString_NSString(const NSString* str)
 {
 	int length = [str length];
 
@@ -208,32 +212,32 @@ void MessageEvent(MessageTypes messageType, int parameterA = 0, int parameterB =
 
 void LogInfo(const char* text)
 {
-	callbackLogInfo(CreateOutString(text));
+	callbackLogInfo(CreateOutString_Char(text));
 }
 
 void LogInfo(const NSString* text)
 {
-	callbackLogInfo(CreateOutString(text));
+	callbackLogInfo(CreateOutString_NSString(text));
 }
 
 void LogWarning(const char* text)
 {
-	callbackLogWarning(CreateOutString(text));
+	callbackLogWarning(CreateOutString_Char(text));
 }
 
 void LogWarning(const NSString* text)
 {
-	callbackLogWarning(CreateOutString(text));
+	callbackLogWarning(CreateOutString_NSString(text));
 }
 
 void LogFatal(const char* text)
 {
-	callbackLogFatal(CreateOutString(text));
+	callbackLogFatal(CreateOutString_Char(text));
 }
 
 void LogFatal(const NSString* text)
 {
-	callbackLogFatal(CreateOutString(text));
+	callbackLogFatal(CreateOutString_NSString(text));
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -246,15 +250,15 @@ struct Recti
 	int bottom;
 };
 
-Recti ConvertToRecti(NSRect nsRect)
-{
-	Recti result;
-	result.left = (int)nsRect.origin.x;
-	result.top = (int)nsRect.origin.y;
-	result.right = result.left + (int)nsRect.size.width;
-	result.bottom = result.top + (int)nsRect.size.height;
-	return result;
-}
+//Recti ConvertToRecti(NSRect nsRect)
+//{
+//	Recti result;
+//	result.left = (int)nsRect.origin.x;
+//	result.top = (int)nsRect.origin.y;
+//	result.right = result.left + (int)nsRect.size.width;
+//	result.bottom = result.top + (int)nsRect.size.height;
+//	return result;
+//}
 
 Recti ConvertToRecti(CGRect cgRect)
 {
@@ -283,18 +287,18 @@ enum WindowBorderStyles
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void GetOSVersion(int* major, int* minor, int* bugFix)
-{
-	SInt32 nmajor = 0;
-	SInt32 nminor = 0;
-	SInt32 nbugFix = 0;
-	Gestalt(gestaltSystemVersionMajor, &nmajor);
-	Gestalt(gestaltSystemVersionMinor, &nminor);
-	Gestalt(gestaltSystemVersionBugFix, &nbugFix);
-	*major = nmajor;
-	*minor = nminor;
-	*bugFix = nbugFix;
-}
+//void GetOSVersion(int* major, int* minor, int* bugFix)
+//{
+//	SInt32 nmajor = 0;
+//	SInt32 nminor = 0;
+//	SInt32 nbugFix = 0;
+//	Gestalt(gestaltSystemVersionMajor, &nmajor);
+//	Gestalt(gestaltSystemVersionMinor, &nminor);
+//	Gestalt(gestaltSystemVersionBugFix, &nbugFix);
+//	*major = nmajor;
+//	*minor = nminor;
+//	*bugFix = nbugFix;
+//}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -332,9 +336,10 @@ EXPORT void MacAppNativeWrapper_MessageBox(const uint16* text, const uint16* cap
 	if (needRestoreVideoMode)
 		ChangeVideoMode(initialScreenSizeX, initialScreenSizeY, initialScreenBPP);
 
-	CGLContextObj contextObj = CGLGetCurrentContext();
-	CGLSetCurrentContext(NULL);
-	CGLClearDrawable(contextObj);
+	//!!!!was in 3.5
+	//CGLContextObj contextObj = CGLGetCurrentContext();
+	//CGLSetCurrentContext(NULL);
+	//CGLClearDrawable(contextObj);
 
 	CGReleaseAllDisplays();
 
@@ -345,19 +350,29 @@ EXPORT void MacAppNativeWrapper_MessageBox(const uint16* text, const uint16* cap
 		NSString* nsText = GetNSStringFromUTF16(text);
 		NSString* nsCaption = GetNSStringFromUTF16(caption);
 
-		bool cursorVisible = CGCursorIsVisible();
+		bool cursorVisible = isCursorVisible;// CGCursorIsVisible();
 		if (!cursorVisible)
+		{
 			CGDisplayShowCursor(kCGDirectMainDisplay);
+			isCursorVisible = true;
+		}
 
 		NSAlert* alert = [[NSAlert alloc]init];
 		[alert setMessageText : nsCaption] ;
-		[alert setAlertStyle : NSCriticalAlertStyle] ;
+
+		//!!!!new
+		[alert setAlertStyle:NSAlertStyleCritical] ;
+		//[alert setAlertStyle : NSCriticalAlertStyle] ;
+
 		[alert setInformativeText : nsText] ;
 		[alert runModal] ;
 		//[alert release];
 
 		if (!cursorVisible)
+		{
 			CGDisplayHideCursor(kCGDirectMainDisplay);
+			isCursorVisible = false;
+		}
 
 		//[nsText release];
 		//[nsCaption release];
@@ -433,19 +448,13 @@ void InitEKeyToKeyCodeArray()
 //!!!!new
 EXPORT void* MacAppNativeWrapper_CreateWindow(WindowedModeEnum windowedMode, const uint16* title, int positionX, int positionY, int sizeX, int sizeY)
 {
-
-	//!!!!new
-
 	NSApplication* app = [NSApplication sharedApplication];
 
 	// Set the activation policy (turn the process into a regular windowed application)
 	if ([app activationPolicy] == NSApplicationActivationPolicyProhibited)
-	{
 		[app setActivationPolicy:NSApplicationActivationPolicyRegular] ;
-	}
 
-	// create window
-	//if (mainWindow == nil)
+	//create window
 	{
 		NSRect initialRect = NSMakeRect(positionX, positionY, sizeX, sizeY);
 		NSUInteger styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable;
@@ -457,15 +466,21 @@ EXPORT void* MacAppNativeWrapper_CreateWindow(WindowedModeEnum windowedMode, con
 	}
 
 
-
 	InitEKeyToKeyCodeArray();
 	ResetKeyPressedFlags();
 
-	//!!!!
+	//!!!!was in 3.5. before window was created by native app
 	//mainWindow = [[NSApp delegate]window];
 
-	[NSApp setDelegate:[[[AppDelegate alloc]initDelegate] autorelease] ] ;
-	[mainWindow setDelegate:[NSApp delegate] ] ;
+	//!!!!new
+	AppDelegate* delegate = [[[AppDelegate alloc]init] autorelease];
+	[NSApp setDelegate:delegate] ;
+	[mainWindow setDelegate:delegate] ;
+
+	//!!!!was in 3.5
+	//[NSApp setDelegate:[[[AppDelegate alloc]initDelegate] autorelease] ] ;
+	//[mainWindow setDelegate:[NSApp delegate] ] ;
+
 
 	NSString* nsTitle = GetNSStringFromUTF16(title);
 	[mainWindow setTitle:nsTitle] ;
@@ -487,17 +502,17 @@ EXPORT void* MacAppNativeWrapper_CreateWindow(WindowedModeEnum windowedMode, con
 
 	if(windowedMode == WindowedModeEnum_Windowed) //if (!fullscreen)
 	{
-		if (windowSizeX == screenSize.width && windowSizeY == screenSize.height)
+		//if (sizeX == screenSize.width && sizeY == screenSize.height)
+		//{
+		//	if ([mainWindow isZoomed] == NO)
+		//		[mainWindow zoom:nil];
+		//}
+		//else
 		{
-			if ([mainWindow isZoomed] == NO)
-				[mainWindow zoom:nil];
-		}
-		else
-		{
-			int windowPositionX = (screenSize.width - windowSizeX) / 2;
-			int windowPositionY = (screenSize.height - windowSizeY) / 2;
+			int windowPositionX = (screenSize.width - sizeX) / 2;
+			int windowPositionY = (screenSize.height - sizeY) / 2;
 
-			NSRect frameRect = NSMakeRect(windowPositionX, windowPositionY, windowSizeX, windowSizeY);
+			NSRect frameRect = NSMakeRect(windowPositionX, windowPositionY, sizeX, sizeY);
 			[mainWindow setFrame:frameRect display : YES] ;
 		}
 	}
@@ -505,16 +520,17 @@ EXPORT void* MacAppNativeWrapper_CreateWindow(WindowedModeEnum windowedMode, con
 	{
 		[mainWindow setLevel:NSMainMenuWindowLevel + 1] ;
 
-		int major;
-		int minor;
-		int bugFix;
-		GetOSVersion(&major, &minor, &bugFix);
-		if (major == 10 && minor <= 5)
-			SetSystemUIMode(kUIModeAllHidden, 0);
-		else
-			[mainWindow setStyleMask:NSBorderlessWindowMask];
+		//!!!!was in 3.5
+		//int major;
+		//int minor;
+		//int bugFix;
+		//GetOSVersion(&major, &minor, &bugFix);
+		//if (major == 10 && minor <= 5)
+		//	SetSystemUIMode(kUIModeAllHidden, 0);
+		//else
+		[mainWindow setStyleMask:NSBorderlessWindowMask];
 
-		if (major == 10 && minor >= 7 || (major > 10))
+		//if (major == 10 && minor >= 7 || (major > 10))
 		{
 			const int _NSApplicationPresentationAutoHideDock = 1 << 0;
 			const int _NSApplicationPresentationAutoHideMenuBar = 1 << 2;
@@ -539,8 +555,8 @@ EXPORT void* MacAppNativeWrapper_CreateWindow(WindowedModeEnum windowedMode, con
 
 	[NSEvent startPeriodicEventsAfterDelay:0.0f withPeriod : 0.01f] ;
 
-	//!!!!need?
-	InitGamma();
+	////!!!!need?
+	//InitGamma();
 
 	//!!!!new
 	[app activateIgnoringOtherApps:YES] ;
@@ -729,13 +745,25 @@ EXPORT void MacAppNativeWrapper_ShowSystemCursor(bool show)
 {
 	if (show)
 	{
-		if (!CGCursorIsVisible())
+		if (!isCursorVisible)
+		{
 			CGDisplayShowCursor(kCGDirectMainDisplay);
+			isCursorVisible = true;
+		}
+
+		//if (!CGCursorIsVisible())
+		//	CGDisplayShowCursor(kCGDirectMainDisplay);
 	}
 	else
 	{
-		if (CGCursorIsVisible())
+		if (isCursorVisible)
+		{
 			CGDisplayHideCursor(kCGDirectMainDisplay);
+			isCursorVisible = false;
+		}
+
+		//if (CGCursorIsVisible())
+		//	CGDisplayHideCursor(kCGDirectMainDisplay);
 	}
 
 	//if(visible)
@@ -1320,7 +1348,7 @@ EXPORT bool MacAppNativeWrapper_IsSystemKey(EKeys eKey)
 
 EXPORT bool MacAppNativeWrapper_IsMouseButtonPressed(int buttonCode)
 {
-	return CGEventSourceButtonState(kCGEventSourceStateCombinedSessionState, buttonCode);
+	return CGEventSourceButtonState(kCGEventSourceStateCombinedSessionState, (CGMouseButton)buttonCode);
 }
 
 EXPORT void MacAppNativeWrapper_FreeMemory(void* buffer)
@@ -1397,21 +1425,26 @@ EXPORT void MacAppNativeWrapper_ResetMouseMoveDelta(bool resetIgnoreCounter)
 		ignoreMouseMoveDeltaCounter = 3;
 }
 
-EXPORT void* MacAppNativeWrapper_LoadLibrary(const uint16* path)
-{
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc]init];
-
-	NSString* nsPath = GetNSStringFromUTF16(path);
-	void* handle = dlopen((char*)[nsPath cStringUsingEncoding : NSUTF8StringEncoding], RTLD_LAZY | RTLD_GLOBAL);
-
-	[pool release] ;
-
-	return handle;
-}
-//EXPORT void* MacAppNativeWrapper_LoadLibrary(char* path)
+//EXPORT int MacAppNativeWrapper_Test()
 //{
-//	return dlopen( path, RTLD_LAZY | RTLD_GLOBAL);
+//	return 77;
 //}
+
+//EXPORT void* MacAppNativeWrapper_LoadLibrary(const uint16* path)
+//{
+//	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc]init];
+//
+//	NSString* nsPath = GetNSStringFromUTF16(path);
+//	void* handle = dlopen((char*)[nsPath cStringUsingEncoding : NSUTF8StringEncoding], RTLD_LAZY | RTLD_GLOBAL);
+//
+//	[pool release] ;
+//
+//	return handle;
+//}
+////EXPORT void* MacAppNativeWrapper_LoadLibrary(char* path)
+////{
+////	return dlopen( path, RTLD_LAZY | RTLD_GLOBAL);
+////}
 
 EXPORT void* MacAppNativeWrapper_CallCustomPlatformSpecificMethod(const uint16* message, void* param)
 {
@@ -1424,7 +1457,7 @@ EXPORT void* MacAppNativeWrapper_CallCustomPlatformSpecificMethod(const uint16* 
 		NSArray* languages = [NSLocale preferredLanguages];
 		NSString* languageName = [languages objectAtIndex : 0];
 
-		uint16* result = CreateOutString(languageName);
+		uint16* result = CreateOutString_NSString(languageName);
 
 		[pool release] ;
 
@@ -1440,7 +1473,7 @@ EXPORT void* MacAppNativeWrapper_CallCustomPlatformSpecificMethod(const uint16* 
 		NSLocale* usLocale = [[[NSLocale alloc]initWithLocaleIdentifier:@"en_US"] autorelease];
 		NSString* displayName = [usLocale displayNameForKey : NSLocaleIdentifier value : languageName];
 
-		uint16* result = CreateOutString(displayName);
+		uint16* result = CreateOutString_NSString(displayName);
 
 		[pool release] ;
 
@@ -1473,7 +1506,7 @@ EXPORT void MacAppNativeWrapper_GetLoadedBundleNames(void*** outList, int* outCo
 		CFURLRef bundleURL = CFBundleCopyBundleURL(bundle);
 		NSString* bundlePath = (NSString*)CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
 
-		list[n] = CreateOutString(bundlePath);
+		list[n] = CreateOutString_NSString(bundlePath);
 	}
 
 	*outList = list;
@@ -1505,34 +1538,43 @@ EXPORT void MacAppNativeWrapper_MinimizeWindow()
 
 EXPORT void MacAppNativeWrapper_ActivateFullscreenMinimizedMode()
 {
-	int major;
-	int minor;
-	int bugFix;
-	GetOSVersion(&major, &minor, &bugFix);
-	if (major == 10 && minor <= 5)
-		SetSystemUIMode(kUIModeNormal, 0);
+	//!!!!was in 3.5
+	//int major;
+	//int minor;
+	//int bugFix;
+	//GetOSVersion(&major, &minor, &bugFix);
+	//if (major == 10 && minor <= 5)
+	//	SetSystemUIMode(kUIModeNormal, 0);
 
 	if (needRestoreVideoMode)
 		ChangeVideoMode(initialScreenSizeX, initialScreenSizeY, initialScreenBPP);
 
-	fullscreenMinimizedMode_CGLContextObj = CGLGetCurrentContext();
-	CGLSetCurrentContext(NULL);
-	CGLClearDrawable(fullscreenMinimizedMode_CGLContextObj);
+	//!!!!was in 3.5
+	//fullscreenMinimizedMode_CGLContextObj = CGLGetCurrentContext();
+	//CGLSetCurrentContext(NULL);
+	//CGLClearDrawable(fullscreenMinimizedMode_CGLContextObj);
 
 	CGReleaseAllDisplays();
 
-	if (!CGCursorIsVisible())
+	if (!isCursorVisible)
+	{
 		CGDisplayShowCursor(kCGDirectMainDisplay);
+		isCursorVisible = true;
+	}
+
+	//if (!CGCursorIsVisible())
+	//	CGDisplayShowCursor(kCGDirectMainDisplay);
 }
 
 EXPORT void MacAppNativeWrapper_RestoreFromFullscreenMinimizedMode(int width, int height)
 {
-	int major;
-	int minor;
-	int bugFix;
-	GetOSVersion(&major, &minor, &bugFix);
-	if (major == 10 && minor <= 5)
-		SetSystemUIMode(kUIModeAllHidden, 0);
+	//!!!!was in 3.5
+	//int major;
+	//int minor;
+	//int bugFix;
+	//GetOSVersion(&major, &minor, &bugFix);
+	//if (major == 10 && minor <= 5)
+	//	SetSystemUIMode(kUIModeAllHidden, 0);
 
 	CGCaptureAllDisplays();
 
@@ -1543,54 +1585,55 @@ EXPORT void MacAppNativeWrapper_RestoreFromFullscreenMinimizedMode(int width, in
 		bpp = MacAppNativeWrapper_GetScreenBitsPerPixel();
 	ChangeVideoMode(width, height, bpp);
 
-	if (fullscreenMinimizedMode_CGLContextObj != NULL)
-	{
-		CGLSetCurrentContext(fullscreenMinimizedMode_CGLContextObj);
-		CGLSetFullScreen(fullscreenMinimizedMode_CGLContextObj);
-		fullscreenMinimizedMode_CGLContextObj = NULL;
-	}
+	//!!!!was in 3.5
+	//if (fullscreenMinimizedMode_CGLContextObj != NULL)
+	//{
+	//	CGLSetCurrentContext(fullscreenMinimizedMode_CGLContextObj);
+	//	CGLSetFullScreen(fullscreenMinimizedMode_CGLContextObj);
+	//	fullscreenMinimizedMode_CGLContextObj = NULL;
+	//}
 
 	NSRect screenRect = [[NSScreen mainScreen]frame];
 	[mainWindow setLevel : NSMainMenuWindowLevel + 1] ;
 	[mainWindow setFrame : screenRect display : YES] ;
 }
 
-void InitGamma()
-{
-	CGDisplayRestoreColorSyncSettings();
+//void InitGamma()
+//{
+//	CGDisplayRestoreColorSyncSettings();
+//
+//	uint32_t count;
+//	CGError cgError = CGGetDisplayTransferByTable(kCGDirectMainDisplay, 256, initialGammaRedTable, initialGammaGreenTable, initialGammaBlueTable, &count);
+//	if (cgError == kCGErrorSuccess)
+//		initialGammaInitialized = true;
+//}
 
-	uint32_t count;
-	CGError cgError = CGGetDisplayTransferByTable(kCGDirectMainDisplay, 256, initialGammaRedTable, initialGammaGreenTable, initialGammaBlueTable, &count);
-	if (cgError == kCGErrorSuccess)
-		initialGammaInitialized = true;
-}
-
-EXPORT void MacAppNativeWrapper_SetGamma(float value)
-{
-	CGError cgError;
-
-	if (value != 1.0f)
-	{
-		if (initialGammaInitialized)
-		{
-			CGGammaValue redTable[256];
-			CGGammaValue greenTable[256];
-			CGGammaValue blueTable[256];
-			for (int n = 0; n < 256; n++)
-			{
-				redTable[n] = initialGammaRedTable[n] * value;
-				greenTable[n] = initialGammaGreenTable[n] * value;
-				blueTable[n] = initialGammaBlueTable[n] * value;
-			}
-
-			CGSetDisplayTransferByTable(kCGDirectMainDisplay, 256, redTable, greenTable, blueTable);
-		}
-	}
-	else
-	{
-		CGDisplayRestoreColorSyncSettings();
-	}
-}
+//EXPORT void MacAppNativeWrapper_SetGamma(float value)
+//{
+//	CGError cgError;
+//
+//	if (value != 1.0f)
+//	{
+//		if (initialGammaInitialized)
+//		{
+//			CGGammaValue redTable[256];
+//			CGGammaValue greenTable[256];
+//			CGGammaValue blueTable[256];
+//			for (int n = 0; n < 256; n++)
+//			{
+//				redTable[n] = initialGammaRedTable[n] * value;
+//				greenTable[n] = initialGammaGreenTable[n] * value;
+//				blueTable[n] = initialGammaBlueTable[n] * value;
+//			}
+//
+//			CGSetDisplayTransferByTable(kCGDirectMainDisplay, 256, redTable, greenTable, blueTable);
+//		}
+//	}
+//	else
+//	{
+//		CGDisplayRestoreColorSyncSettings();
+//	}
+//}
 
 EXPORT int MacAppNativeWrapper_GetActiveDisplayList(int bufferLength, uint* buffer)
 {
@@ -1605,8 +1648,9 @@ EXPORT void MacAppNativeWrapper_GetDisplayInfo(uint display, uint16** deviceName
 	Recti rect = ConvertToRecti(CGDisplayBounds(display));
 
 	char name[256];
-	sprintf(name, "%d", (int)CGDisplayUnitNumber(display));
-	*deviceName = CreateOutString(name);
+	snprintf(name, sizeof(name), "%d", (int)CGDisplayUnitNumber(display));
+	//sprintf(name, "%d", (int)CGDisplayUnitNumber(display));
+	*deviceName = CreateOutString_Char(name);
 	*bounds = rect;
 	*workingArea = rect;
 	*primary = CGDisplayIsMain(display);

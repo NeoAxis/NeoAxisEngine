@@ -2464,32 +2464,30 @@ namespace Internal//NeoAxis
 			//ChangeDisplaySettings( IntPtr.Zero, 0 );
 		}
 
-		public override void SetGamma( float value )
-		{
-			//!!!!
+		//public override void SetGamma( float value )
+		//{
+		//	//RAMP gamma;
+		//	//IntPtr hWnd = GetDesktopWindow();
+		//	//IntPtr hdc = GetDC( hWnd );
+		//	//if( GetDeviceGammaRamp( hdc, out gamma ) != 0 )
+		//	//{
+		//	//	for( int n = 0; n < 256; n++ )
+		//	//	{
+		//	//		ushort g = (ushort)( 255 * (ushort)( 255.0f * MathEx.Pow( (float)n / 255.0f, 1.0f / value ) ) );
+		//	//		gamma.red[ n ] = g;
+		//	//		gamma.green[ n ] = g;
+		//	//		gamma.blue[ n ] = g;
+		//	//	}
+		//	//	if( SetDeviceGammaRamp( hdc, ref gamma ) == 0 )
+		//	//	{
+		//	//		//Error
+		//	//		//ReleaseDC(hWnd, hdc);
+		//	//		//return;
+		//	//	}
+		//	//}
 
-			//RAMP gamma;
-			//IntPtr hWnd = GetDesktopWindow();
-			//IntPtr hdc = GetDC( hWnd );
-			//if( GetDeviceGammaRamp( hdc, out gamma ) != 0 )
-			//{
-			//	for( int n = 0; n < 256; n++ )
-			//	{
-			//		ushort g = (ushort)( 255 * (ushort)( 255.0f * MathEx.Pow( (float)n / 255.0f, 1.0f / value ) ) );
-			//		gamma.red[ n ] = g;
-			//		gamma.green[ n ] = g;
-			//		gamma.blue[ n ] = g;
-			//	}
-			//	if( SetDeviceGammaRamp( hdc, ref gamma ) == 0 )
-			//	{
-			//		//Error
-			//		//ReleaseDC(hWnd, hdc);
-			//		//return;
-			//	}
-			//}
-
-			//ReleaseDC( hWnd, hdc );
-		}
+		//	//ReleaseDC( hWnd, hdc );
+		//}
 
 		public override bool ShowMessageBoxYesNoQuestion( string text, string caption )
 		{

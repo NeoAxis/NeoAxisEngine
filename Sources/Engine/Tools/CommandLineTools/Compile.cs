@@ -184,7 +184,7 @@ namespace CommandLineTools
 						var taskFullDirectory = PlatformServer.GetTaskFullPathDirectory( ClientData.TaskID );
 						var libFullPath = Path.Combine( taskFullDirectory, libFileName );
 
-						await RunCmdAsync( "clang++", $"-dynamiclib -filelist {listTextFullPath} -framework CoreFoundation -framework Foundation -liconv -o {libFullPath}", tempPath );
+						await RunCmdAsync( "clang++", $"-dynamiclib -filelist {listTextFullPath} -framework CoreFoundation -framework Foundation -framework AppKit -framework CoreGraphics -liconv -o {libFullPath}", tempPath );
 
 						//await RunCmdAsync( "libtool", $"-static -filelist {listTextFullPath} -o {libFullPath}", tempPath );
 					}

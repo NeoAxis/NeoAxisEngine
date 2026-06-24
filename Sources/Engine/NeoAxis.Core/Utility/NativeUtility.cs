@@ -7,6 +7,7 @@ using System.IO;
 using Internal;
 using System.Runtime.CompilerServices;
 using System.Reflection;
+using System.Xml.Schema;
 
 namespace NeoAxis
 {
@@ -258,143 +259,34 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		//Linux
-		//#if !UWP && !ANDROID && !WEB
+		//for macOS, Linux
 		static bool dllImportResolverInitialized;
-
-
-		// Reflection cache. Keep minimal and safe for .NET Standard 2.1 (where NativeLibrary may not exist).
-		static MethodInfo nativeLibraryTryLoadMethod;
-
-		static bool TryLoadReflection( string libraryPath, out IntPtr handle )
-		{
-			handle = IntPtr.Zero;
-
-			try
-			{
-				// Resolve System.Runtime.InteropServices.NativeLibrary.TryLoad(string, out IntPtr)
-				if( nativeLibraryTryLoadMethod == null )
-				{
-					var nativeLibraryType = Type.GetType( "System.Runtime.InteropServices.NativeLibrary, System.Runtime.InteropServices", throwOnError: false );
-					if( nativeLibraryType == null )
-						nativeLibraryType = Type.GetType( "System.Runtime.InteropServices.NativeLibrary", throwOnError: false );
-					if( nativeLibraryType == null )
-						return false;
-
-					var methods = nativeLibraryType.GetMethods( BindingFlags.Public | BindingFlags.Static );
-					for( int i = 0; i < methods.Length; i++ )
-					{
-						var m = methods[ i ];
-						if( m.Name != "TryLoad" )
-							continue;
-
-						var p = m.GetParameters();
-						if( p.Length != 2 )
-							continue;
-						if( p[ 0 ].ParameterType != typeof( string ) )
-							continue;
-						if( !p[ 1 ].IsOut || p[ 1 ].ParameterType != typeof( IntPtr ).MakeByRefType() )
-							continue;
-
-						nativeLibraryTryLoadMethod = m;
-						break;
-					}
-
-					if( nativeLibraryTryLoadMethod == null )
-						return false;
-				}
-
-				object[] args = new object[] { libraryPath, IntPtr.Zero };
-				var result = nativeLibraryTryLoadMethod.Invoke( null, args );
-				if( result is bool ok && ok )
-				{
-					handle = (IntPtr)args[ 1 ];
-					return handle != IntPtr.Zero;
-				}
-			}
-			catch { }
-
-			return false;
-		}
-
-		public delegate IntPtr DllImportResolverReflection( string libraryName, Assembly assembly, DllImportSearchPath? searchPath );
-
-		static void SetDllImportResolverReflection( Assembly assembly, DllImportResolverReflection resolver )
-		{
-			try
-			{
-				var nativeLibraryType = Type.GetType( "System.Runtime.InteropServices.NativeLibrary, System.Runtime.InteropServices", throwOnError: false );
-				if( nativeLibraryType == null )
-					nativeLibraryType = Type.GetType( "System.Runtime.InteropServices.NativeLibrary", throwOnError: false );
-				if( nativeLibraryType == null )
-					return;
-
-				// Find NativeLibrary.SetDllImportResolver(Assembly, DllImportResolver).
-				var methods = nativeLibraryType.GetMethods( BindingFlags.Public | BindingFlags.Static );
-				MethodInfo setResolverMethod = null;
-				for( int i = 0; i < methods.Length; i++ )
-				{
-					var m = methods[ i ];
-					if( m.Name != "SetDllImportResolver" )
-						continue;
-
-					var p = m.GetParameters();
-					if( p.Length != 2 )
-						continue;
-					if( p[ 0 ].ParameterType != typeof( Assembly ) )
-						continue;
-
-					setResolverMethod = m;
-					break;
-				}
-
-				if( setResolverMethod == null )
-					return;
-
-				// Create delegate instance of the exact DllImportResolver type expected by runtime.
-				var resolverParamType = setResolverMethod.GetParameters()[ 1 ].ParameterType; // System.Runtime.InteropServices.DllImportResolver
-				var invoke = resolverParamType.GetMethod( "Invoke" );
-				if( invoke == null )
-					return;
-
-				// Ensure signature matches (string, Assembly, Nullable<DllImportSearchPath>) -> IntPtr.
-				var invokeParams = invoke.GetParameters();
-				if( invokeParams.Length != 3 ||
-					invokeParams[ 0 ].ParameterType != typeof( string ) ||
-					invokeParams[ 1 ].ParameterType != typeof( Assembly ) ||
-					invoke.ReturnType != typeof( IntPtr ) )
-					return;
-
-				// Rebind our resolver to the required delegate type.
-				var typedResolver = Delegate.CreateDelegate( resolverParamType, resolver.Target, resolver.Method );
-				setResolverMethod.Invoke( null, new object[] { assembly, typedResolver } );
-			}
-			catch { }
-		}
-
-
 
 		static IntPtr DllImportResolver( string libraryName, Assembly assembly, DllImportSearchPath? searchPath )
 		{
-			IntPtr libHandle = IntPtr.Zero;
+			var handle = IntPtr.Zero;
 
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+			if( libraryName.Contains( "NeoAxisCoreNative" ) )
 			{
-				if( libraryName == "libNeoAxisCoreNative" )
-				{
-					var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, libraryName + ".so" );
-					TryLoadReflection( path, out libHandle );
-					//NativeLibrary.TryLoad( path, out libHandle );
-				}
+				var path = "";
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+					path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "libNeoAxisCoreNative.dylib" );
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+					path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "libNeoAxisCoreNative.so" );
 
-				//if( libraryName == "NeoAxisCoreNative" || libraryName == "bgfx" )
-				//{
-				//	var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "lib" + libraryName + ".so" );
-				//	TryLoadReflection( path, out libHandle );
-				//	//NativeLibrary.TryLoad( path, out libHandle );
-				//}
+				NativeLibrary.TryLoad( path, out handle );
 			}
-			return libHandle;
+
+			//!!!!other libs?
+
+			////if( libraryName == "NeoAxisCoreNative" )
+			////{
+			////	var path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "lib" + libraryName + ".so" );
+			////	TryLoadReflection( path, out libHandle );
+			////	//NativeLibrary.TryLoad( path, out libHandle );
+			////}
+
+			return handle;
 		}
 
 		static void InitDllImportResolver()
@@ -402,12 +294,9 @@ namespace NeoAxis
 			if( !dllImportResolverInitialized )
 			{
 				dllImportResolverInitialized = true;
-
-				SetDllImportResolverReflection( typeof( NativeUtility ).Assembly, DllImportResolver );
-				//NativeLibrary.SetDllImportResolver( typeof( NativeUtility ).Assembly, DllImportResolver );
+				NativeLibrary.SetDllImportResolver( typeof( NativeUtility ).Assembly, DllImportResolver );
 			}
 		}
-		//#endif
 
 		public static IntPtr PreloadLibrary( string baseName, string overrideSetCurrentDirectory = "", bool errorFatal = true )
 		{
@@ -420,6 +309,8 @@ namespace NeoAxis
 				}
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 				{
+					InitDllImportResolver();
+
 					//remove ".dll"
 					if( Path.GetExtension( baseName ) != ".dll" )
 						baseName = Path.ChangeExtension( baseName, null );
@@ -432,18 +323,14 @@ namespace NeoAxis
 				}
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
 				{
-					//#if !UWP && !ANDROID && !WEB
 					InitDllImportResolver();
-					//#endif
+					//return IntPtr.Zero;
 
-					//!!!!
-					return IntPtr.Zero;
+					//remove ".dll"
+					if( Path.GetExtension( baseName ) != ".dll" )
+						baseName = Path.ChangeExtension( baseName, null );
 
-					////remove ".dll"
-					//if( Path.GetExtension( baseName ) != ".dll" )
-					//	baseName = Path.ChangeExtension( baseName, null );
-
-					//baseName += ".so";
+					baseName += ".so";
 				}
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
 				{
@@ -469,42 +356,75 @@ namespace NeoAxis
 
 				if( loadedNativeLibraries.TryGetValue( baseName, out var pointer2 ) )
 					return pointer2;
-				//if( loadedNativeLibraries.ContainsKey( baseName ) )
-				//	return;
 
 				loadedNativeLibraries[ baseName ] = IntPtr.Zero;
 
-				string saveCurrentDirectory = Directory.GetCurrentDirectory();
+				var saveCurrentDirectory = Directory.GetCurrentDirectory();
+				var pointer = IntPtr.Zero;
 
-				//Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, additionalPath )
-				if( !string.IsNullOrEmpty( overrideSetCurrentDirectory ) )
-					Directory.SetCurrentDirectory( overrideSetCurrentDirectory );
-				else
-					Directory.SetCurrentDirectory( VirtualFileSystem.Directories.PlatformSpecific );
-
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
-					SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+				try
 				{
+					//set current directory to the platform specific directory. This is needed for loading dependent libraries.
+					if( !string.IsNullOrEmpty( overrideSetCurrentDirectory ) )
+						Directory.SetCurrentDirectory( overrideSetCurrentDirectory );
+					else
+						Directory.SetCurrentDirectory( VirtualFileSystem.Directories.PlatformSpecific );
+
+					//set dll directory for dependent libraries
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+					{
+						try
+						{
+							SetDllDirectory( VirtualFileSystem.Directories.PlatformSpecific );
+						}
+						catch { }
+					}
+
+
+					var fullPath = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, baseName );
+
+					//////in macOS the library must be in the same directory as the executable
+					////if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+					////	fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, baseName );
+
+
+					//standard way to load library
+					var errorMessage = "";
 					try
 					{
-						SetDllDirectory( VirtualFileSystem.Directories.PlatformSpecific );
+						pointer = NativeLibrary.Load( fullPath );
 					}
-					catch { }
+					catch( Exception e )
+					{
+						errorMessage = e.Message;
+					}
+
+					////second way to load library, because first way doesn't work on macOS
+					//if( pointer == IntPtr.Zero )
+					//	pointer = PlatformSpecificUtility.Instance.LoadLibrary( fullPath );
+
+					//can't load library
+					if( pointer == IntPtr.Zero )
+					{
+						if( errorFatal )
+						{
+							var text = $"NativeLibraryManager: PreloadLibrary: Loading native library failed ({fullPath}).";
+							////if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+							////	text += " Note: On macOS, the library must be in the same directory as the executable.";
+							if( !string.IsNullOrEmpty( errorMessage ) )
+								text += $" Exception: {errorMessage}";
+
+							Log.Fatal( text );
+						}
+						return IntPtr.Zero;
+					}
+
+					loadedNativeLibraries[ baseName ] = pointer;
 				}
-
-				string fullPath = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, baseName );
-
-				var pointer = PlatformSpecificUtility.Instance.LoadLibrary( fullPath );
-				if( pointer == IntPtr.Zero )
+				finally
 				{
-					if( errorFatal )
-						Log.Fatal( "NativeLibraryManager: PreloadLibrary: Loading native library failed ({0}).", fullPath );
-					return IntPtr.Zero;
+					Directory.SetCurrentDirectory( saveCurrentDirectory );
 				}
-
-				loadedNativeLibraries[ baseName ] = pointer;
-
-				Directory.SetCurrentDirectory( saveCurrentDirectory );
 
 				return pointer;
 			}

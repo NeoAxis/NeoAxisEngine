@@ -83,14 +83,6 @@
     <Optimize>False</Optimize>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Configuration)' == 'Release-macOS' Or '$(Configuration)' == 'Debug-macOS'">
-    <NativeReference Include="libs\macOS\libNeoAxisCoreNative.a">
-      <Kind>Static</Kind>
-      <ForceLoad>True</ForceLoad>
-    </NativeReference>
-    <DirectPInvoke Include="libNeoAxisCoreNative" />
-  </ItemGroup>
-
   <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
     <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
   </Target>

@@ -1839,7 +1839,9 @@ namespace NeoAxis
 						var part = parts[ n ]; //ref var part = ref parts[ n ];
 						if( !IsValidVirtualPath( part.FileName, false ) )
 						{
-							SendUploadFileContentAnswer( sender, requestID, "Invalid file path." );
+							//!!!!new
+							SendUploadFileContentAnswer( sender, requestID, $"Invalid file path. File name: {part.FileName}" );
+							//SendUploadFileContentAnswer( sender, requestID, "Invalid file path." );
 							return;
 						}
 						if( part.Size < 0 )

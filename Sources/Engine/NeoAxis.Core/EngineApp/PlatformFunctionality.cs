@@ -119,8 +119,8 @@ namespace Internal//NeoAxis
 		public abstract bool ChangeVideoMode( Vector2I mode );
 		public abstract void RestoreVideoMode();
 
-		//gamma
-		public abstract void SetGamma( float value );
+		////gamma
+		//public abstract void SetGamma( float value );
 
 		////Android
 		//public virtual void MainModule_WindowMessage( IntPtr data ) { }

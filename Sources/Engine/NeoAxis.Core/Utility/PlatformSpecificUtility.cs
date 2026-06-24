@@ -63,7 +63,7 @@ namespace NeoAxis
 		///////////////////////////////////////////////
 
 		public abstract string GetExecutableDirectoryPath();
-		public abstract IntPtr LoadLibrary( string path );
+		//public abstract IntPtr LoadLibrary( string path );
 
 		public abstract Task<string> GetClipboardTextAsync();
 		public abstract void SetClipboardText( string text );
@@ -81,8 +81,8 @@ namespace NeoAxis
 		[DllImport( "kernel32.dll", CharSet = CharSet.Unicode )]
 		static extern int GetModuleFileName( IntPtr hModule, StringBuilder buffer, int length );
 
-		[DllImport( "kernel32.dll", EntryPoint = "LoadLibrary", CharSet = CharSet.Unicode )]
-		static extern IntPtr Win32LoadLibrary( string lpLibFileName );
+		//[DllImport( "kernel32.dll", EntryPoint = "LoadLibrary", CharSet = CharSet.Unicode )]
+		//static extern IntPtr Win32LoadLibrary( string lpLibFileName );
 
 		[DllImport( "kernel32.dll" )]
 		static extern uint GetLastError();
@@ -122,10 +122,10 @@ namespace NeoAxis
 			return result;
 		}
 
-		public override IntPtr LoadLibrary( string path )
-		{
-			return Win32LoadLibrary( path );
-		}
+		//public override IntPtr LoadLibrary( string path )
+		//{
+		//	return Win32LoadLibrary( path );
+		//}
 
 		///////////////////////////////////////////////
 
@@ -2180,26 +2180,26 @@ namespace NeoAxis
 			return result;
 		}
 
-		public override IntPtr LoadLibrary( string path )
-		{
-			var result = IntPtr.Zero;
+		//public override IntPtr LoadLibrary( string path )
+		//{
+		//	var result = IntPtr.Zero;
 
-			//Console.WriteLine( "LoadLibrary: " + path );
+		//	//Console.WriteLine( "LoadLibrary: " + path );
 
-			//if( !NativeLibrary.TryLoad( path, out result ) )
-			//{
-			//	//try with "lib" prefix
-			//	var newPath = Path.Combine( Path.GetDirectoryName( path ), "lib" + Path.GetFileName( path ) );
+		//	//if( !NativeLibrary.TryLoad( path, out result ) )
+		//	//{
+		//	//	//try with "lib" prefix
+		//	//	var newPath = Path.Combine( Path.GetDirectoryName( path ), "lib" + Path.GetFileName( path ) );
 
-			//	Console.WriteLine( "second: " + newPath );
+		//	//	Console.WriteLine( "second: " + newPath );
 
-			//	NativeLibrary.TryLoad( newPath, out result );
-			//}
+		//	//	NativeLibrary.TryLoad( newPath, out result );
+		//	//}
 
-			//Console.WriteLine( "LoadLibrary Result: " + result.ToString() );
+		//	//Console.WriteLine( "LoadLibrary Result: " + result.ToString() );
 
-			return result;
-		}
+		//	return result;
+		//}
 
 		///////////////////////////////////////////////
 
@@ -2224,8 +2224,13 @@ namespace NeoAxis
 
 	class MacOSPlatformSpecificUtility : PlatformSpecificUtility
 	{
-		[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_LoadLibrary", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
-		public static extern IntPtr MacLoadLibrary( string name );
+
+		////!!!!test
+		//[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_Test", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
+		//public static extern int TestPInvoke();
+
+		//[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_LoadLibrary", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
+		//public static extern IntPtr MacLoadLibrary( string name );
 
 		public async override Task<string> GetClipboardTextAsync()
 		{
@@ -2248,10 +2253,15 @@ namespace NeoAxis
 			//return Path.GetDirectoryName( codeBaseURI.Replace( "file://", "" ) );
 		}
 
-		public override IntPtr LoadLibrary( string path )
-		{
-			return MacLoadLibrary( path );
-		}
+		//public override IntPtr LoadLibrary( string path )
+		//{
+		//	//!!!!test
+		//	Console.WriteLine( "LoadLibrary: " + path );
+		//	var result = TestPInvoke();
+		//	Console.WriteLine( "TestPInvoke: " + result.ToString() );
+
+		//	return MacLoadLibrary( path );
+		//}
 
 		public override void SetClipboardText( string text )
 		{
