@@ -60,7 +60,7 @@ namespace bgfx
 
 
 //!!!!betauser
-#ifdef SRIRV
+#ifdef SPIRV
 #define SHADERC_CONFIG_HAS_GLSLANG_SPIRV_ONLY 1
 #endif
 

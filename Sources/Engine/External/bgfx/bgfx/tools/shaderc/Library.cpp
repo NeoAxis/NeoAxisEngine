@@ -221,6 +221,13 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 		case ShaderType_Fragment:instance->options.profile = "spirv15-12"; break;
 		case ShaderType_Compute:instance->options.profile = "spirv15-12"; break;
 
+
+		//need spirv output
+		//case ShaderType_Vertex:instance->options.profile = "s_6_0"; break;
+		//case ShaderType_Fragment:instance->options.profile = "s_6_0"; break;
+		//case ShaderType_Compute:instance->options.profile = "s_6_0"; break;
+
+
 		//case ShaderType_Vertex:instance->options.profile = "spirv"; break;
 		//case ShaderType_Fragment:instance->options.profile = "spirv"; break;
 		//case ShaderType_Compute:instance->options.profile = "spirv"; break;

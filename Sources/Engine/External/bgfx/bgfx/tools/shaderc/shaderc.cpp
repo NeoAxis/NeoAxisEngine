@@ -1404,7 +1404,7 @@ namespace bgfx
 			}
 			else
 			{
-			preprocessor.setDefine(glslDefine);
+				preprocessor.setDefine(glslDefine);
 				preprocessor.setDefine(esslDefine);
 			}
 		}
@@ -1419,7 +1419,7 @@ namespace bgfx
 			preprocessor.setDefine("BX_PLATFORM_LINUX=1");
 
 			if (profile->lang == ShadingLang::SpirV)
-		{
+			{
 				preprocessor.setDefine("BGFX_SHADER_LANGUAGE_SPIRV=1");
 			}
 			else if (profile->lang == ShadingLang::WGSL)
@@ -1438,7 +1438,7 @@ namespace bgfx
 			    )
 		{
 			if (0 == bx::strCmpI(platform, "osx"))
-		{
+			{
 				preprocessor.setDefine("BX_PLATFORM_OSX=1");
 			}
 			else if (0 == bx::strCmpI(platform, "visionos"))

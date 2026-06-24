@@ -786,38 +786,38 @@ namespace bgfx { namespace spirv
 							name = name.substr(0, name.length() - 7);
 						}
 
-							uint32_t binding_index = refl.get_decoration(resource.id, spv::Decoration::DecorationBinding);
+						uint32_t binding_index = refl.get_decoration(resource.id, spv::Decoration::DecorationBinding);
 
-							auto imageType = refl.get_type(resource.base_type_id).image;
-							auto componentType = refl.get_type(imageType.type).basetype;
+						auto imageType = refl.get_type(resource.base_type_id).image;
+						auto componentType = refl.get_type(imageType.type).basetype;
 
-							bool isCompareSampler = false;
-							for (auto& sampler : resourcesrefl.separate_samplers)
+						bool isCompareSampler = false;
+						for (auto& sampler : resourcesrefl.separate_samplers)
+						{
+							if (binding_index + 16 == refl.get_decoration(sampler.id, spv::Decoration::DecorationBinding) )
 							{
-								if (binding_index + 16 == refl.get_decoration(sampler.id, spv::Decoration::DecorationBinding) )
-								{
-									std::string samplerName = refl.get_name(sampler.id);
-									isCompareSampler = refl.variable_is_depth_or_compare(sampler.id) || samplerName.find("Comparison") != std::string::npos;
-									break;
-								}
+								std::string samplerName = refl.get_name(sampler.id);
+								isCompareSampler = refl.variable_is_depth_or_compare(sampler.id) || samplerName.find("Comparison") != std::string::npos;
+								break;
 							}
+						}
 
-							Uniform un;
+						Uniform un;
 						un.name = name;
-							un.type = UniformType::Enum(UniformType::Sampler
-									| kUniformSamplerBit
-									| (isCompareSampler ? kUniformCompareBit : 0)
-									);
+						un.type = UniformType::Enum(UniformType::Sampler
+								| kUniformSamplerBit
+								| (isCompareSampler ? kUniformCompareBit : 0)
+								);
 
 						un.texComponent = textureComponentTypeToId(SpirvCrossBaseTypeToFormatType(componentType, imageType.depth) );
 						un.texDimension = textureDimensionToId(SpirvDimToTextureViewDimension(imageType.dim, imageType.arrayed) );
 						un.texFormat = uint16_t(s_textureFormats[imageType.format]);
 
 						un.regIndex = uint16_t(binding_index);
-							un.regCount = 0; // unused
+						un.regCount = 0; // unused
 
-							uniforms.push_back(un);
-						}
+						uniforms.push_back(un);
+					}
 
 					// Loop through the storage_images, and extract the uniform names:
 					for (auto &resource : resourcesrefl.storage_images)
@@ -834,9 +834,9 @@ namespace bgfx { namespace spirv
 								? UniformType::Enum(kUniformReadOnlyBit | UniformType::End)
 								: UniformType::End;
 
-							Uniform un;
+						Uniform un;
 						un.name = name;
-							un.type = type;
+						un.type = type;
 
 						un.texComponent = textureComponentTypeToId(SpirvCrossBaseTypeToFormatType(componentType, imageType.depth) );
 						un.texDimension = textureDimensionToId(SpirvDimToTextureViewDimension(imageType.dim, imageType.arrayed) );
@@ -845,8 +845,8 @@ namespace bgfx { namespace spirv
 						un.regIndex = uint16_t(binding_index);
 						un.regCount = descriptorTypeToId(DescriptorType::StorageImage);
 
-							uniforms.push_back(un);
-						}
+						uniforms.push_back(un);
+					}
 
 					bx::Error err;
 
@@ -870,14 +870,14 @@ namespace bgfx { namespace spirv
 						un.regCount = descriptorTypeToId(DescriptorType::StorageBuffer);
 
 						uniforms.push_back(un);
-						}
+					}
 
 					uint16_t size = writeUniformArray(_shaderWriter, uniforms, _options.shaderType == 'f');
 
-						uint32_t shaderSize = (uint32_t)spirv.size() * sizeof(uint32_t);
+					uint32_t shaderSize = (uint32_t)spirv.size() * sizeof(uint32_t);
 					bx::write(_shaderWriter, shaderSize, &err);
 					bx::write(_shaderWriter, spirv.data(), shaderSize, &err);
-						uint8_t nul = 0;
+					uint8_t nul = 0;
 					bx::write(_shaderWriter, nul, &err);
 
 					const uint8_t numAttr = (uint8_t)program->getNumLiveAttributes();
@@ -913,6 +913,11 @@ namespace bgfx { namespace spirv
 
 	bool compileSPIRVShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _shaderWriter, bx::WriterI* _messageWriter)
 	{
+		////!!!!betauser
+		//std::string code2 = "#version 400\n" + _code;
+		////std::string code2 = "#version 450\n" + _code;
+		//return spirv::compile(_options, _version, code2, _shaderWriter, _messageWriter, true);
+
 		return spirv::compile(_options, _version, _code, _shaderWriter, _messageWriter, true);
 	}
 
