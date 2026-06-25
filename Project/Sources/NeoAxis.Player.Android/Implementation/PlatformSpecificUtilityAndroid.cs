@@ -24,10 +24,10 @@ namespace NeoAxis
 			//return Application.Context.FilesDir?.AbsolutePath ?? string.Empty;
 		}
 
-		public override IntPtr LoadLibrary( string path )
-		{
-			return IntPtr.Zero;
-		}
+		//public override IntPtr LoadLibrary( string path )
+		//{
+		//	return IntPtr.Zero;
+		//}
 
 		static ClipboardManager? GetClipboardManager()
 		{

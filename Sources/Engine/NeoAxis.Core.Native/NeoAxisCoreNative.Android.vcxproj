@@ -2301,6 +2301,13 @@
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_type.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validation_state.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\timer_bx.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslAttributes.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslGrammar.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslOpMap.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseables.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseHelper.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslScanContext.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslTokenStream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\OggVorbisTheora\libogg\include\ogg\ogg.h" />
