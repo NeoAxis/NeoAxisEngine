@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2016-2018 Google, Inc.
 // Copyright (C) 2016 LunarG, Inc.
@@ -4496,3 +4499,6 @@ const char* HlslGrammar::getTypeString(EHlslTokenClass tokenClass) const
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

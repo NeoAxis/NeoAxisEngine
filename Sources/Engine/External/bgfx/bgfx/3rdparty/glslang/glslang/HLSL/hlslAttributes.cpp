@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2016 LunarG, Inc.
 //
@@ -149,3 +152,6 @@ namespace glslang {
     }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

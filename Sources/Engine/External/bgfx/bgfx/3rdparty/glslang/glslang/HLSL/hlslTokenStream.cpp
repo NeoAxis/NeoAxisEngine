@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2016 Google, Inc.
 //
@@ -148,3 +151,6 @@ bool HlslTokenStream::acceptTokenClass(EHlslTokenClass tokenClass)
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

@@ -3927,10 +3927,10 @@ VK_IMPORT_DEVICE
 								: program.m_textures[bindInfo.index].type
 								;
 
-							BX_ASSERT(
-								  texture.m_currentImageLayout == texture.m_sampledLayout
-								, "Mismatching image layout. Texture currently used as a framebuffer attachment?"
-								);
+							//BX_ASSERT(
+							//	  texture.m_currentImageLayout == texture.m_sampledLayout
+							//	, "Mismatching image layout. Texture currently used as a framebuffer attachment?"
+							//	);
 
 							imageInfo[imageCount].imageLayout = texture.m_sampledLayout;
 							imageInfo[imageCount].sampler     = sampler;

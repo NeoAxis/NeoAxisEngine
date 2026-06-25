@@ -4169,6 +4169,27 @@
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\OSDependent\Unix\ossource_unix.cpp">
       <Filter>bgfx\3rdparty\glslang</Filter>
     </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslAttributes.cpp">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslGrammar.cpp">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslOpMap.cpp">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseables.cpp">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseHelper.cpp">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslScanContext.cpp">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslTokenStream.cpp">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryManager\MemoryManager.h">
@@ -6968,6 +6989,33 @@
     <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\MachineIndependent\glslang_tab.cpp.h">
       <Filter>bgfx\3rdparty\glslang</Filter>
     </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslAttributes.h">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslGrammar.h">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslOpMap.h">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseables.h">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseHelper.h">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslScanContext.h">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslTokens.h">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslTokenStream.h">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\pch.h">
+      <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MemoryManager">
@@ -7074,6 +7122,9 @@
     </Filter>
     <Filter Include="bgfx\3rdparty\spirv-tools">
       <UniqueIdentifier>{9270a456-ba54-41db-9dcb-9875a46632e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="bgfx\3rdparty\glslang\HLSL">
+      <UniqueIdentifier>{d28caf76-d9ea-45e7-b3de-3035627adfa3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

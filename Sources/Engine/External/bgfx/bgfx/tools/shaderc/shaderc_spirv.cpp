@@ -546,7 +546,9 @@ namespace bgfx { namespace spirv
 					end   = start + 20;
 				}
 
-				printCode(_code.c_str(), bx::satSub<uint32_t>(line, 1u), start, end, column);
+				//!!!!betauser
+				printCode2(_code.c_str());
+				//printCode(_code.c_str(), bx::satSub<uint32_t>(line, 1u), start, end, column);
 
 				bx::write(_messageWriter, &messageErr, "%s\n", log);
 			}
@@ -585,63 +587,63 @@ namespace bgfx { namespace spirv
 
 					bx::LineReader reader(_code.c_str() );
 					while (!reader.isDone() )
-						{
+					{
 						bx::StringView strLine = reader.next();
 
-							bool moved = false;
+						bool moved = false;
 
 						bx::StringView str = strFind(strLine, "uniform ");
 						if (!str.isEmpty() )
+						{
+							bool found = false;
+							bool sampler = false;
+							std::string name = "";
+
+							// add to samplers
+
+							for (uint32_t ii = 0; ii < BX_COUNTOF(s_samplerTypes); ++ii)
 							{
-								bool found = false;
-								bool sampler = false;
-								std::string name = "";
-
-								// add to samplers
-
-								for (uint32_t ii = 0; ii < BX_COUNTOF(s_samplerTypes); ++ii)
-								{
 								if (!bx::findIdentifierMatch(strLine, s_samplerTypes[ii]).isEmpty() )
 								{
 									found = true;
-										sampler = true;
+									sampler = true;
+									break;
+								}
+							}
+
+							if (!found)
+							{
+								for (int32_t ii = 0, num = program->getNumLiveUniformVariables(); ii < num; ++ii)
+								{
+									// matching lines like:  uniform u_name;
+									// we want to replace "uniform" with "static" so that it's no longer
+									// included in the uniform blob that the application must upload
+									// we can't just remove them, because unused functions might still reference
+									// them and cause a compile error when they're gone
+									if (!bx::findIdentifierMatch(strLine, program->getUniformName(ii) ).isEmpty() )
+									{
+										found = true;
+										name = program->getUniformName(ii);
 										break;
 									}
 								}
+							}
 
-								if (!found)
-								{
-									for (int32_t ii = 0, num = program->getNumLiveUniformVariables(); ii < num; ++ii)
-									{
-										// matching lines like:  uniform u_name;
-										// we want to replace "uniform" with "static" so that it's no longer
-										// included in the uniform blob that the application must upload
-										// we can't just remove them, because unused functions might still reference
-										// them and cause a compile error when they're gone
-									if (!bx::findIdentifierMatch(strLine, program->getUniformName(ii) ).isEmpty() )
-										{
-											found = true;
-											name = program->getUniformName(ii);
-											break;
-										}
-									}
-								}
-
-								if (!found)
-								{
+							if (!found)
+							{
 								output.append(strLine.getPtr(), str.getPtr() );
 								output += "static ";
 								output.append(str.getTerm(), strLine.getTerm() );
 								output += "\n";
 								moved = true;
-								}
-								else if (!sampler)
-								{
-									Uniform uniform;
-									uniform.name = name;
+							}
+							else if (!sampler)
+							{
+								Uniform uniform;
+								uniform.name = name;
 								uniform.decl = std::string(strLine.getPtr(), strLine.getTerm() );
-									uniforms.push_back(uniform);
-									moved = true;
+								uniforms.push_back(uniform);
+								moved = true;
 							}
 						}
 
@@ -857,10 +859,10 @@ namespace bgfx { namespace spirv
 
 						uint32_t binding_index = refl.get_decoration(resource.id, spv::Decoration::DecorationBinding);
 
-								spirv_cross::Bitset flags = refl.get_buffer_block_flags(resource.id);
-								UniformType::Enum type = flags.get(spv::DecorationNonWritable)
-									? UniformType::Enum(kUniformReadOnlyBit | UniformType::End)
-									: UniformType::End;
+						spirv_cross::Bitset flags = refl.get_buffer_block_flags(resource.id);
+						UniformType::Enum type = flags.get(spv::DecorationNonWritable)
+							? UniformType::Enum(kUniformReadOnlyBit | UniformType::End)
+							: UniformType::End;
 
 						Uniform un;
 						un.name = name;
@@ -913,11 +915,6 @@ namespace bgfx { namespace spirv
 
 	bool compileSPIRVShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _shaderWriter, bx::WriterI* _messageWriter)
 	{
-		////!!!!betauser
-		//std::string code2 = "#version 400\n" + _code;
-		////std::string code2 = "#version 450\n" + _code;
-		//return spirv::compile(_options, _version, code2, _shaderWriter, _messageWriter, true);
-
 		return spirv::compile(_options, _version, _code, _shaderWriter, _messageWriter, true);
 	}
 

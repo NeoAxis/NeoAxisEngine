@@ -85,7 +85,7 @@ std::string ConvertStringToUTF8(const std::wstring& str)
 			if(WideCharToMultiByte(CP_UTF8, 0, str.c_str(), -1, aString, size, NULL, NULL) != 0)
 				result = aString;
 		}
-#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX) || defined(__EMSCRIPTEN__)
+#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX)
 
 		std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
 		result = myconv.to_bytes(str);
@@ -126,7 +126,7 @@ std::wstring ConvertStringToUTFWide(const std::string& str)
 			if(MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, wString, size) != 0)
 				result = wString;
 		}
-#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX) || defined(__EMSCRIPTEN__)
+#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_LINUX)
 
 		//!!!!
 		//for (int n = 0; n < str.length(); n++)

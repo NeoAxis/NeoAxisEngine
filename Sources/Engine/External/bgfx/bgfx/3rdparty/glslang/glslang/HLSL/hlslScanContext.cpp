@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2016 Google, Inc.
 // Copyright (C) 2016 LunarG, Inc.
@@ -1036,3 +1039,6 @@ EHlslTokenClass HlslScanContext::reservedWord()
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

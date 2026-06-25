@@ -876,6 +876,26 @@ namespace bgfx
 		FPRINTF(stderr, "---\n");
 	}
 
+	//!!!!betauser
+	void printCode2(const char* _code)
+	{
+		FPRINTF(stderr, "Code:\n---\n");
+
+		std::string code = _code;
+
+		//split to lines and add line numbers before each line
+		std::istringstream stream(code);
+		std::string line;
+		int lineNumber = 1;
+		while (std::getline(stream, line))
+		{
+			FPRINTF(stderr, "%4d: %s\n", lineNumber++, line.c_str());
+		}
+
+		//FPRINTF(stderr, "%s", _code);
+		FPRINTF(stderr, "---\n");
+	}
+
 	void writeFile(const char* _filePath, const void* _data, int32_t _size)
 	{
 		bx::FileWriter out;

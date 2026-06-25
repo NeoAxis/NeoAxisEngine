@@ -37,18 +37,17 @@ namespace bgfx
 //#endif // SHADERC_CONFIG_HLSL
 
 
-//!!!!betauser. disabled SHADERC_CONFIG_HAS_DXC for Linux
-//|| BX_PLATFORM_LINUX       \
-
-// DXIL compilation support (Shader Model 6.0+):
-// - Windows: Native DXC (dxcompiler.dll)
-// - Linux: DXC (libdxcompiler.so) via directx-headers
-// - macOS: Not supported (no DXC dynamic library available)
-#ifndef SHADERC_CONFIG_HAS_DXC
-#	define SHADERC_CONFIG_HAS_DXC (0  \
-		|| BX_PLATFORM_WINDOWS     \
-		)
-#endif // SHADERC_CONFIG_HAS_DXC
+//!!!!betauser. SHADERC_CONFIG_HAS_DXC is disabled
+//// DXIL compilation support (Shader Model 6.0+):
+//// - Windows: Native DXC (dxcompiler.dll)
+//// - Linux: DXC (libdxcompiler.so) via directx-headers
+//// - macOS: Not supported (no DXC dynamic library available)
+//#ifndef SHADERC_CONFIG_HAS_DXC
+//#	define SHADERC_CONFIG_HAS_DXC (0  \
+//		|| BX_PLATFORM_WINDOWS     \
+//		|| BX_PLATFORM_LINUX       \
+//		)
+//#endif // SHADERC_CONFIG_HAS_DXC
 
 #ifndef SHADERC_CONFIG_HAS_TINT
 #	if __has_include(<tint/api/tint.h>)
@@ -207,6 +206,9 @@ namespace bgfx
 	typedef std::vector<Uniform> UniformArray;
 
 	void printCode(const char* _code, int32_t _line = 0, int32_t _start = 0, int32_t _end = INT32_MAX, int32_t _column = -1);
+	//!!!!betauser
+	void printCode2(const char* _code);
+
 	void strReplace(char* _str, const char* _find, const char* _replace);
 	int32_t writef(bx::WriterI* _writer, const char* _format, ...);
 	void writeFile(const char* _filePath, const void* _data, int32_t _size);

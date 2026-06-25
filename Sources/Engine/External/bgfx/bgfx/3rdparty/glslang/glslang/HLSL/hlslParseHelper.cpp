@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2017-2018 Google, Inc.
 // Copyright (C) 2017 LunarG, Inc.
@@ -10309,3 +10312,6 @@ void HlslParseContext::finish()
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

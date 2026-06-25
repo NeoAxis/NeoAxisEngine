@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2016 LunarG, Inc.
 //
@@ -1257,3 +1260,6 @@ void TBuiltInParseablesHlsl::identifyBuiltIns(int /*version*/, EProfile /*profil
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif

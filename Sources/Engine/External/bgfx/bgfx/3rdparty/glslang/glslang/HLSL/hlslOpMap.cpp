@@ -1,3 +1,6 @@
+//!!!!betauser
+#ifdef SPIRV
+
 //
 // Copyright (C) 2016 Google, Inc.
 //
@@ -171,3 +174,6 @@ PrecedenceLevel HlslOpMap::precedenceLevel(TOperator op)
 }
 
 } // end namespace glslang
+
+//!!!!betauser
+#endif
