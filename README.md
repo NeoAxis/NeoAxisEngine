@@ -16,7 +16,7 @@ Alternative website: <a href="https://www.neoaxis.cn/en/">www.neoaxis.cn/en/</a>
 <h2>Target supported platforms</h2>
 <ul>
 <li>Windows 10+</li>
-<li>Android 13.0+ ARM64, ARM32</li>
+<li>Android ARM64, ARM32</li>
 <li>UWP (Universal Windows Platform, Xbox)</li>
 <li>Linux. For a server, no rendering (coming soon).</li>
 <li>(Coming soon) Web</li>
@@ -34,7 +34,8 @@ Alternative website: <a href="https://www.neoaxis.cn/en/">www.neoaxis.cn/en/</a>
 How to compile for Windows:
 <ul>
 <li>Install Visual Studio 2026 Community or an equivalent IDE.</li>
-<li>Use NeoAxis.Managed.sln with the Release-Windows-x64 configuration to compile the managed assemblies. The native code is already precompiled.</li>
+<li>Use NeoAxis.Managed.sln with the Release-Windows-x64 configuration to compile the managed assemblies.</li>
+<li>The native code is already precompiled.</li>
 </ul>
 
 More:
