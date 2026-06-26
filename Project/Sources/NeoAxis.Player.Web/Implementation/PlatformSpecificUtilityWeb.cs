@@ -17,10 +17,10 @@ namespace NeoAxis
 			return "";
 		}
 
-		public override IntPtr LoadLibrary( string path )
-		{
-			return IntPtr.Zero;
-		}
+		//public override IntPtr LoadLibrary( string path )
+		//{
+		//	return IntPtr.Zero;
+		//}
 
 		public override async Task<string> GetClipboardTextAsync()
 		{
