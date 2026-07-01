@@ -9,7 +9,6 @@ uniform vec4/*float*/ intensity;
 uniform vec4 u_paramColor;
 #ifndef GLSL
 	SAMPLER2D(s_linearSamplerFragment, 9);
-	//SAMPLER2D(s_linearSamplerFragment, 10);
 #endif
 
 #ifdef FRAGMENT_CODE_PARAMETERS

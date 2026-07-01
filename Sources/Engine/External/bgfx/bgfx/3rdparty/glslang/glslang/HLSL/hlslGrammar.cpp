@@ -1,5 +1,6 @@
 //!!!!betauser
 #ifdef SPIRV
+#ifdef ENABLE_HLSL
 
 //
 // Copyright (C) 2016-2018 Google, Inc.
@@ -4501,4 +4502,5 @@ const char* HlslGrammar::getTypeString(EHlslTokenClass tokenClass) const
 } // end namespace glslang
 
 //!!!!betauser
+#endif
 #endif

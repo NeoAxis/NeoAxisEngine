@@ -55,7 +55,7 @@ vec3 unpackColor( float f )
 }
 */
 
-#if HLSL || SPIRV
+#if HLSL || SPIRV_HLSL
 
 float packTwoHalfs( vec2 v )
 {

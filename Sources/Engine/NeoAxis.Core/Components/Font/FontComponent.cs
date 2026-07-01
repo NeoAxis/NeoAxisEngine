@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
@@ -1418,7 +1419,23 @@ namespace NeoAxis
 
 					Point[] points = null;
 
-					var success = FreeType.GetGlyphContours( freeTypeLibrary, freeTypeFace, character, delegate ( int pointCount, IntPtr points2 )
+					bool success;
+					int drawOffsetX, drawOffsetY, advance;
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+					{
+						unsafe
+						{
+							success = FreeType.GetGlyphContoursWeb( freeTypeLibrary, freeTypeFace, character,
+								(delegate* unmanaged[Cdecl]< int, Point*, void >)&GlyphContoursCallback,
+								out drawOffsetX, out drawOffsetY, out advance );
+						}
+
+						points = glyphContoursCallbackPoints;
+						glyphContoursCallbackPoints = null;
+					}
+					else
+					{
+						success = FreeType.GetGlyphContours( freeTypeLibrary, freeTypeFace, character, delegate ( int pointCount, IntPtr points2 )
 					{
 						unsafe
 						{
@@ -1428,7 +1445,8 @@ namespace NeoAxis
 							for( int nPoint = 0; nPoint < pointCount; nPoint++ )
 								points[ nPoint ] = points3[ nPoint ];
 						}
-					}, out int drawOffsetX, out int drawOffsetY, out var advance );
+						}, out drawOffsetX, out drawOffsetY, out advance );
+					}
 
 					if( success && points != null )
 					{
@@ -1491,7 +1509,23 @@ namespace NeoAxis
 
 					Point[] points = null;
 
-					var success = FreeType.GetGlyphContours( freeTypeLibrary, freeTypeFace, character, delegate ( int pointCount, IntPtr points2 )
+					bool success;
+					int drawOffsetX, drawOffsetY, advance;
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+					{
+						unsafe
+						{
+							success = FreeType.GetGlyphContoursWeb( freeTypeLibrary, freeTypeFace, character,
+								(delegate* unmanaged[Cdecl]< int, Point*, void >)&GlyphContoursCallback,
+								out drawOffsetX, out drawOffsetY, out advance );
+						}
+
+						points = glyphContoursCallbackPoints;
+						glyphContoursCallbackPoints = null;
+					}
+					else
+					{
+						success = FreeType.GetGlyphContours( freeTypeLibrary, freeTypeFace, character, delegate ( int pointCount, IntPtr points2 )
 					{
 						unsafe
 						{
@@ -1501,7 +1535,8 @@ namespace NeoAxis
 							for( int nPoint = 0; nPoint < pointCount; nPoint++ )
 								points[ nPoint ] = points3[ nPoint ];
 						}
-					}, out int drawOffsetX, out int drawOffsetY, out var advance );
+						}, out drawOffsetX, out drawOffsetY, out advance );
+					}
 
 					contourData.Advance = advance / (double)GetContourFontHeight();
 
@@ -1639,6 +1674,15 @@ namespace NeoAxis
 			}
 
 			return contourData;
+		}
+
+		private static Point[] glyphContoursCallbackPoints = null;
+		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
+		private static unsafe void GlyphContoursCallback( int pointCount, Point* points )
+		{
+			glyphContoursCallbackPoints = new Point[ pointCount ];
+			new Span<Point>( points, pointCount )
+				.CopyTo( glyphContoursCallbackPoints );
 		}
 	}
 }

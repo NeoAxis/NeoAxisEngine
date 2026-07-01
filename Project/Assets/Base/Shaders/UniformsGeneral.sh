@@ -74,11 +74,10 @@ uniform vec4 u_fogSettings[3];
 #define u_fogAffectBackground u_fogSettings[2].z
 #endif
 
-//!!!!cbuffer
-#if GLOBAL_CUT_VOLUME_MAX_AMOUNT > 0
-uniform vec4 u_viewportCutVolumeSettings;
-uniform mat4 u_viewportCutVolumeData[GLOBAL_CUT_VOLUME_MAX_AMOUNT];
-#endif
+//#if GLOBAL_CUT_VOLUME_MAX_AMOUNT > 0
+//uniform vec4 u_viewportCutVolumeSettings;
+//uniform mat4 u_viewportCutVolumeData[GLOBAL_CUT_VOLUME_MAX_AMOUNT];
+//#endif
 
 //!!!!cbuffer
 #ifdef SHADOW_CASTER

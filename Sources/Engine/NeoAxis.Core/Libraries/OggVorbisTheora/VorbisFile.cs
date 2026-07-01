@@ -52,21 +52,21 @@ namespace NeoAxis.OggVorbisTheora
 		///////////////////////////////////////////
 
 		[StructLayout( LayoutKind.Sequential )]
-		public unsafe struct ov_callbacks
+		public unsafe struct ov_callbacksWeb
 		{
-#if WEB
-			qq qq;
-
 			public void* read_func;
 			public void* seek_func;
 			public void* close_func;
 			public void* tell_func;
-#else
+		}
+
+		[StructLayout( LayoutKind.Sequential )]
+		public unsafe struct ov_callbacks
+		{
 			public ov_callbacks_read_func read_func;
 			public ov_callbacks_seek_func seek_func;
 			public ov_callbacks_close_func close_func;
 			public ov_callbacks_tell_func tell_func;
-#endif
 		}
 
 		///////////////////////////////////////////
@@ -82,6 +82,9 @@ namespace NeoAxis.OggVorbisTheora
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
 		static extern int ov_open_callbacks( IntPtr datasource, IntPtr vf, IntPtr initial, int ibytes, ov_callbacks callbacks );
+
+		[DllImport( library, EntryPoint = nameof( ov_open_callbacks ), CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
+		static extern int ov_open_callbacksWeb( IntPtr datasource, IntPtr vf, IntPtr initial, int ibytes, ov_callbacksWeb callbacks );
 
 		[DllImport( library, CallingConvention = convention ), SuppressUnmanagedCodeSecurity]
 		static extern long ov_pcm_total( IntPtr vf, int i );
@@ -124,6 +127,11 @@ namespace NeoAxis.OggVorbisTheora
 			public int open_callbacks( IntPtr datasource, IntPtr initial, int ibytes, ov_callbacks callbacks )
 			{
 				return ov_open_callbacks( datasource, native, initial, ibytes, callbacks );
+			}
+
+			public int open_callbacksWeb( IntPtr datasource, IntPtr initial, int ibytes, ov_callbacksWeb callbacks )
+			{
+				return ov_open_callbacksWeb( datasource, native, initial, ibytes, callbacks );
 			}
 
 			public long pcm_total( int i )

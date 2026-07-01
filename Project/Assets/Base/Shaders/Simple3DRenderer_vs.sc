@@ -28,7 +28,7 @@ void main()
 	renderOperationData[7] = vec4_splat(0);	
 	//vec4 renderOperationData = vec4(0,0,u_billboardMode,0);
 	vec4 billboardRotation;
-	billboardRotateWorldMatrix(renderOperationData, worldMatrix, false, vec3_splat(0), billboardRotation);
+	billboardRotateWorldMatrix(renderOperationData[0], worldMatrix, false, vec3_splat(0), billboardRotation);
 	
 	vec4 worldPosition = mul(worldMatrix, vec4(a_position, 1.0));
 

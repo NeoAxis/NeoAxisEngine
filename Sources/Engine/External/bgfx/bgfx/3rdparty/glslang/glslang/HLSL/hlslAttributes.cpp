@@ -1,5 +1,6 @@
 //!!!!betauser
 #ifdef SPIRV
+#ifdef ENABLE_HLSL
 
 //
 // Copyright (C) 2016 LunarG, Inc.
@@ -154,4 +155,5 @@ namespace glslang {
 } // end namespace glslang
 
 //!!!!betauser
+#endif
 #endif

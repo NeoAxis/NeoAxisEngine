@@ -651,7 +651,7 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="OpacityDitheringLimitedDevice"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Rendering> OpacityDitheringLimitedDeviceChanged;
 		ReferenceField<bool> _opacityDitheringLimitedDevice = false;
-		
+
 		/// <summary>
 		/// Whether to allow using the motion vectors to enable a motion blur or a temporal antialiasing.
 		/// </summary>
@@ -718,7 +718,7 @@ namespace NeoAxis
 		[Category( "Rendering: Basic Device" )]
 		[DisplayName( "Cut Volume Max Amount (Restart to apply changes)" )]
 		[DefaultValue( 4 )]
-		[Range( 0, 10 )]
+		[Range( 0, 4 )] // 10
 		public Reference<int> CutVolumeMaxAmount
 		{
 			get { if( _cutVolumeMaxAmount.BeginGet() ) CutVolumeMaxAmount = _cutVolumeMaxAmount.Get( this ); return _cutVolumeMaxAmount.value; }
@@ -734,7 +734,7 @@ namespace NeoAxis
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Cut Volume Max Amount" )]
 		[DefaultValue( 0 )]
-		[Range( 0, 10 )]
+		[Range( 0, 4 )] //10
 		public Reference<int> CutVolumeMaxAmountLimitedDevice
 		{
 			get { if( _cutVolumeMaxAmountLimitedDevice.BeginGet() ) CutVolumeMaxAmountLimitedDevice = _cutVolumeMaxAmountLimitedDevice.Get( this ); return _cutVolumeMaxAmountLimitedDevice.value; }

@@ -5,14 +5,13 @@ $input v_worldPosition, v_lodValue_visibilityDistance_receiveDecals, v_texCoord0
 #define SHADOW_CASTER_DEFAULT 1
 #include "Common.sh"
 
-uniform vec4 u_renderOperationData[8];
+//uniform vec4 u_renderOperationData[8];
 
 #if defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)
 	SAMPLER2D(s_voxelData, 2);
 #endif
-//#if defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED)
-//	SAMPLER2D(s_virtualizedData, 11);
-//#endif
+SAMPLER2D(s_drawBufferTexture, 5);
+#include "DrawBuffer.sh"
 
 #include "FragmentFunctions.sh"
 #include "FragmentVoxel.sh"
@@ -24,12 +23,10 @@ void main()
 	vec4 fragCoord = getFragCoord();
 
 #if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
-	float voxelDataMode = u_renderOperationData[ 1 ].w;
+	float voxelDataMode = d_renderOperationData1.w;
 #else
 	const float voxelDataMode = 0.0;
 #endif
-
-	//float virtualizedDataMode = u_renderOperationData[3].w;
 
 	//lod
 #ifdef GLOBAL_SMOOTH_LOD
@@ -49,9 +46,7 @@ void main()
 	int materialIndex = 0;
 	float depthOffset = 0.0;
 #if defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)
-	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex, v_colorParameter);
-//#elif defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED)
-//	virtualizedDataModeCalculateParametersF(virtualizedDataMode, s_virtualizedData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, gl_PrimitiveID, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex);
+	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, d_renderOperationData0, d_renderOperationData5, d_renderOperationData6, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex, v_colorParameter);
 #endif
 	worldPosition += fromCameraDirection * depthOffset;
 
@@ -132,7 +127,7 @@ void main()
 #endif
 
 	//!!!!special for mobile
-#ifdef GLSL
+#ifdef LIMITED_DEVICE //#ifdef GLSL
 	#ifndef LIGHT_TYPE_POINT
 		depth = glPositionZ;
 	#endif

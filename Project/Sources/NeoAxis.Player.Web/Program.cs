@@ -73,6 +73,11 @@ namespace NeoAxis.Player.Web
 				{
 					Emscripten.RequestAnimationFrameLoop( (delegate* unmanaged< double, nint, int >)&Frame, nint.Zero );
 				}
+
+				while( !EngineApp.NeedExit )
+				{
+					await Task.Yield();
+				}
 			}
 			else
 			{

@@ -412,6 +412,8 @@ namespace bgfx
 		, keepIntermediate(false)
 		, optimize(false)
 		, optimizationLevel(3)
+		//!!!!betauser
+		, compileToSpirv(false)
 	{
 	}
 
@@ -1413,7 +1415,8 @@ namespace bgfx
 
 		if (0 == bx::strCmpI(platform, "android") )
 		{
-			preprocessor.setDefine("BX_PLATFORM_ANDROID=1");
+			//!!!!betauser
+			//preprocessor.setDefine("BX_PLATFORM_ANDROID=1");
 			if (profile->lang == ShadingLang::SpirV)
 			{
 				preprocessor.setDefine("BGFX_SHADER_LANGUAGE_SPIRV=1");
@@ -1436,7 +1439,8 @@ namespace bgfx
 		}
 		else if (0 == bx::strCmpI(platform, "linux") )
 		{
-			preprocessor.setDefine("BX_PLATFORM_LINUX=1");
+			//!!!!betauser
+			//preprocessor.setDefine("BX_PLATFORM_LINUX=1");
 
 			if (profile->lang == ShadingLang::SpirV)
 			{
@@ -1457,18 +1461,19 @@ namespace bgfx
 			 ||  0 == bx::strCmpI(platform, "visionos")
 			    )
 		{
-			if (0 == bx::strCmpI(platform, "osx"))
-			{
-				preprocessor.setDefine("BX_PLATFORM_OSX=1");
-			}
-			else if (0 == bx::strCmpI(platform, "visionos"))
-			{
-				preprocessor.setDefine("BX_PLATFORM_VISIONOS=1");
-			}
-			else
-			{
-				preprocessor.setDefine("BX_PLATFORM_IOS=1");
-			}
+			//!!!!betauser
+			//if (0 == bx::strCmpI(platform, "osx"))
+			//{
+			//	preprocessor.setDefine("BX_PLATFORM_OSX=1");
+			//}
+			//else if (0 == bx::strCmpI(platform, "visionos"))
+			//{
+			//	preprocessor.setDefine("BX_PLATFORM_VISIONOS=1");
+			//}
+			//else
+			//{
+			//	preprocessor.setDefine("BX_PLATFORM_IOS=1");
+			//}
 
 			if (profile->lang != ShadingLang::Metal)
 			{
@@ -1487,7 +1492,8 @@ namespace bgfx
 		}
 		else if (0 == bx::strCmpI(platform, "windows") )
 		{
-			preprocessor.setDefine("BX_PLATFORM_WINDOWS=1");
+			//!!!!betauser
+			//preprocessor.setDefine("BX_PLATFORM_WINDOWS=1");
 			if (profile->lang == ShadingLang::HLSL
 			||  profile->lang == ShadingLang::Dxil)
 			{
@@ -2166,6 +2172,92 @@ namespace bgfx
 						}
 					}
 				}
+
+
+
+				//!!!!betauser
+#ifndef ENABLE_HLSL
+				else if (profile->lang == ShadingLang::SpirV)
+				{
+					int inputCounter = 0;
+					for (InOut::const_iterator it = shaderInputs.begin(), itEnd = shaderInputs.end(); it != itEnd; ++it)
+					{
+						VaryingMap::const_iterator varyingIt = varyingMap.find(*it);
+						if (varyingIt != varyingMap.end())
+						{
+							const Varying& var = varyingIt->second;
+							const char* name = var.m_name.c_str();
+
+							if (0 == bx::strCmp(name, "a_", 2) || 0 == bx::strCmp(name, "i_", 2))
+							{
+								preprocessor.writef(
+									"layout(location = %d) in %s %s %s %s;\n"
+									, inputCounter++
+									, var.m_precision.c_str()
+									, var.m_interpolation.c_str()
+									, var.m_type.c_str()
+									, name
+								);
+
+								//preprocessor.writef(
+								//	"attribute %s %s %s %s;\n"
+								//	, var.m_precision.c_str()
+								//	, var.m_interpolation.c_str()
+								//	, var.m_type.c_str()
+								//	, name
+								//);
+							}
+							else
+							{
+								//!!!!?
+
+								preprocessor.writef(
+									"layout(location = %d) in %s %s %s %s;\n"
+									, inputCounter++
+									, var.m_interpolation.c_str()
+									, var.m_precision.c_str()
+									, var.m_type.c_str()
+									, name
+								);
+
+								//preprocessor.writef(
+								//	"%s varying %s %s %s;\n"
+								//	, var.m_interpolation.c_str()
+								//	, var.m_precision.c_str()
+								//	, var.m_type.c_str()
+								//	, name
+								//);
+							}
+						}
+					}
+
+					int outputCounter = 0;
+					for (InOut::const_iterator it = shaderOutputs.begin(), itEnd = shaderOutputs.end(); it != itEnd; ++it)
+					{
+						VaryingMap::const_iterator varyingIt = varyingMap.find(*it);
+						if (varyingIt != varyingMap.end())
+						{
+							const Varying& var = varyingIt->second;
+
+							preprocessor.writef("layout(location = %d) out %s %s %s;\n"
+								, outputCounter++
+								, var.m_interpolation.c_str()
+								, var.m_type.c_str()
+								, var.m_name.c_str()
+							);
+
+							//preprocessor.writef("%s varying %s %s;\n"
+							//	, var.m_interpolation.c_str()
+							//	, var.m_type.c_str()
+							//	, var.m_name.c_str()
+							//);
+						}
+					}
+
+				}
+#endif
+
+
 				else
 				{
 					if (profile->lang == ShadingLang::PSSL)

@@ -856,7 +856,13 @@ namespace NeoAxis
 		{
 			var v = DefaultSettingsConfig.GetAttribute( "RendererBackend" );
 			if( !string.IsNullOrEmpty( v ) )
+			{
 				EngineApp.InitSettings.RendererBackend = (RendererBackend)Enum.Parse( typeof( RendererBackend ), v );
+
+				//!!!!temp consider Vulkan as limited device
+				if( EngineApp.InitSettings.RendererBackend == RendererBackend.Vulkan )
+					SystemSettings._UpdateDeviceProperties();
+			}
 
 			v = DefaultSettingsConfig.GetAttribute( "SimulationVSync" );
 			if( !string.IsNullOrEmpty( v ) )

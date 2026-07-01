@@ -27,22 +27,22 @@ uvec3 getVoxelNearestIndexFromValue256( float value )
 	return uvec3( x, y, z );
 }
 
-void voxelDataModeCalculateParametersF( float voxelDataMode, sampler2D voxelData, vec4 fragCoord, vec3 voxelObjectSpacePosition, vec3 voxelCameraPositionObjectSpace, vec4 worldMatrix0, vec4 worldMatrix1, vec4 worldMatrix2, vec4 renderOperationData[8], vec3 fromCameraDirection, inout vec3 inputWorldNormal, inout vec4 tangent, inout vec2 texCoord0, inout vec2 texCoord1, inout vec2 texCoord2, inout vec4 color0, inout float voxelLengthInside, inout int materialIndex, vec4 colorParameter )
+void voxelDataModeCalculateParametersF( float voxelDataMode, sampler2D voxelData, vec4 fragCoord, vec3 voxelObjectSpacePosition, vec3 voxelCameraPositionObjectSpace, vec4 worldMatrix0, vec4 worldMatrix1, vec4 worldMatrix2, vec4 renderOperationData0, vec4 renderOperationData5, vec4 renderOperationData6, vec3 fromCameraDirection, inout vec3 inputWorldNormal, inout vec4 tangent, inout vec2 texCoord0, inout vec2 texCoord1, inout vec2 texCoord2, inout vec4 color0, inout float voxelLengthInside, inout int materialIndex, vec4 colorParameter )
 {
 	BRANCH
 	if( voxelDataMode != 0.0 )
 	{
 		//get voxel data info
-		vec3 gridSizeF = renderOperationData[ 5 ].xyz;
-		float fillHolesDistance = abs( renderOperationData[ 5 ].w );
-		bool fullFormat = renderOperationData[ 5 ].w < 0.0;
-		//vec2 formatAndFillHolesDistance = unpackHalf2x16(asuint(renderOperationData[5].w));
+		vec3 gridSizeF = renderOperationData5.xyz;
+		float fillHolesDistance = abs( renderOperationData5.w );
+		bool fullFormat = renderOperationData5.w < 0.0;
+		//vec2 formatAndFillHolesDistance = unpackHalf2x16(asuint(renderOperationData5.w));
 		//bool fullFormat = formatAndFillHolesDistance.x > 0.5;
 		//float fillHolesDistance = formatAndFillHolesDistance.y;
-		vec3 boundsMin = renderOperationData[ 6 ].xyz;
-		float cellSize = abs( renderOperationData[ 6 ].w );
-		bool bakedOpacity = renderOperationData[ 6 ].w < 0.0;
-		//float cellSize = renderOperationData[ 6 ].w;
+		vec3 boundsMin = renderOperationData6.xyz;
+		float cellSize = abs( renderOperationData6.w );
+		bool bakedOpacity = renderOperationData6.w < 0.0;
+		//float cellSize = renderOperationData6.w;
 		
 		ivec3 gridSize = ivec3( gridSizeF );
 		vec3 boundsMax = boundsMin + gridSizeF * cellSize;
@@ -241,13 +241,14 @@ void voxelDataModeCalculateParametersF( float voxelDataMode, sampler2D voxelData
 #ifndef SHADOW_CASTER_DEFAULT
 
 				//get material data
-				int frameMaterialIndex = uint( renderOperationData[ 0 ].x );
+				int frameMaterialIndex = uint( renderOperationData0.x );
 			#ifdef MULTI_MATERIAL_COMBINED_PASS
-				uint localGroupMaterialIndex = uint( materialIndex ) - uint( u_multiMaterialCombinedInfo.x );
-				//BRANCH
-				//if( localGroupMaterialIndex < 0 || localGroupMaterialIndex >= uint( u_multiMaterialCombinedInfo.y ) )
-				//	discard;
-				frameMaterialIndex = int( u_multiMaterialCombinedMaterials[ localGroupMaterialIndex / 4 ][ localGroupMaterialIndex % 4 ] );
+				uint localGroupMaterialIndex = uint( materialIndex ) - uint( d_multiMaterialCombinedInfo.x );
+				////BRANCH
+				////if( localGroupMaterialIndex < 0 || localGroupMaterialIndex >= uint( u_multiMaterialCombinedInfo.y ) )
+				////	discard;
+				frameMaterialIndex = int( d_multiMaterialCombinedMaterials_get( localGroupMaterialIndex ) );
+				//frameMaterialIndex = int( u_multiMaterialCombinedMaterials[ localGroupMaterialIndex / 4 ][ localGroupMaterialIndex % 4 ] );
 			#endif
 				//vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ];
 				//getMaterialData( s_materials, frameMaterialIndex, materialStandardFragment );
@@ -261,10 +262,10 @@ void voxelDataModeCalculateParametersF( float voxelDataMode, sampler2D voxelData
 					
 					vec2 texCoord0 = vec2_splat(0);//dummy
 					vec2 unwrappedUVBeforeDisplacement = vec2_splat(0);//dummy
-					vec4 customParameter1 = u_materialCustomParameters[0];
-					vec4 customParameter2 = u_materialCustomParameters[1];
-					vec4 instanceParameter1 = u_objectInstanceParameters[0];
-					vec4 instanceParameter2 = u_objectInstanceParameters[1];
+					vec4 customParameter1 = d_materialCustomParameters0;
+					vec4 customParameter2 = d_materialCustomParameters1;
+					vec4 instanceParameter1 = d_objectInstanceParameters0;
+					vec4 instanceParameter2 = d_objectInstanceParameters1;
 
 					//float rayTracingReflection = 0.0;
 					//int shadingModel = 0;

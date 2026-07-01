@@ -1,5 +1,6 @@
 //!!!!betauser
 #ifdef SPIRV
+#ifdef ENABLE_HLSL
 
 //
 // Copyright (C) 2016 Google, Inc.
@@ -153,4 +154,5 @@ bool HlslTokenStream::acceptTokenClass(EHlslTokenClass tokenClass)
 } // end namespace glslang
 
 //!!!!betauser
+#endif
 #endif

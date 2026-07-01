@@ -120,12 +120,12 @@ mat3 lookAt( vec3 direction, vec3 up )
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void billboardRotateWorldMatrix(vec4 renderOperationData[8], inout mat4 worldMatrix, bool shadowCaster, vec3 shadowCasterCameraPosition, out vec4 billboardRotation )
+void billboardRotateWorldMatrix(vec4 renderOperationData0, inout mat4 worldMatrix, bool shadowCaster, vec3 shadowCasterCameraPosition, out vec4 billboardRotation )
 {
 	billboardRotation = vec4_splat(0);
 	
 	BRANCH
-	if(renderOperationData[0].z != 0.0)
+	if(renderOperationData0.z != 0.0)
 	{
 		//get rotation value and restore matrix
 		float rotationAngle = getValue(worldMatrix, 1, 0);
@@ -140,7 +140,7 @@ void billboardRotateWorldMatrix(vec4 renderOperationData[8], inout mat4 worldMat
 		
 		//face to camera
 		{
-			int mode = int(renderOperationData[0].z);
+			int mode = int(renderOperationData0.z);
 			
 			mat3 rotationMatrix2;
 			switch(mode)
@@ -161,7 +161,7 @@ void billboardRotateWorldMatrix(vec4 renderOperationData[8], inout mat4 worldMat
 			}
 
 			//!!!!
-			//float voxelDataMode = renderOperationData[1].w;
+			//float voxelDataMode = renderOperationData1.w;
 			//BRANCH
 			//if(voxelDataMode == 0.0)
 			//{
@@ -190,7 +190,7 @@ void billboardRotateWorldMatrix(vec4 renderOperationData[8], inout mat4 worldMat
 #ifdef SHADOW_CASTER
 		//add offset to shadow caster
 		BRANCH
-		if(shadowCaster && renderOperationData[0].w != 0.0)
+		if(shadowCaster && renderOperationData0.w != 0.0)
 		{
 			vec3 worldPosition = getTranslate(worldMatrix);
 			
@@ -198,7 +198,7 @@ void billboardRotateWorldMatrix(vec4 renderOperationData[8], inout mat4 worldMat
 			float scaleFloat = max(max(scale.x, scale.y), scale.z);
 			
 			vec3 direction = normalize(worldPosition - shadowCasterCameraPosition);
-			vec3 offset = direction * renderOperationData[0].w * scaleFloat;
+			vec3 offset = direction * renderOperationData0.w * scaleFloat;
 			worldPosition += offset;
 
 			setTranslate(worldMatrix, worldPosition);
@@ -212,9 +212,9 @@ void billboardRotateWorldMatrix(vec4 renderOperationData[8], inout mat4 worldMat
 
 #if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
 
-void voxelOrVirtualizedDataModeCalculateParametersV(vec4 renderOperationData[8], mat4 worldMatrix, vec3 cameraPosition, inout vec3 cameraPositionObjectSpace, inout vec4 worldMatrix0, inout vec4 worldMatrix1, inout vec4 worldMatrix2 )//, inout vec4 worldMatrixRotation, inout vec3 worldMatrixScale)
+void voxelOrVirtualizedDataModeCalculateParametersV(vec4 renderOperationData1, mat4 worldMatrix, vec3 cameraPosition, inout vec3 cameraPositionObjectSpace, inout vec4 worldMatrix0, inout vec4 worldMatrix1, inout vec4 worldMatrix2 )//, inout vec4 worldMatrixRotation, inout vec3 worldMatrixScale)
 {
-	float voxelDataMode = renderOperationData[1].w;
+	float voxelDataMode = renderOperationData1.w;
 	
 	BRANCH
 	if( voxelDataMode != 0.0 )

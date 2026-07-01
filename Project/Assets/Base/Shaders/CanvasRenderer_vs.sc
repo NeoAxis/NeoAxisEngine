@@ -9,7 +9,8 @@ uniform vec4 u_canvasOcclusionDepthCheck;
 
 #ifndef MOBILE
 	SAMPLER2D( s_depthTexture, 1 );
-	#include "FragmentFunctions.sh"
+	#include "VertexFunctions.sh"
+//	#include "FragmentFunctions.sh"
 #endif
 
 void main()

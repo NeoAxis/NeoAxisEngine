@@ -3,7 +3,6 @@ $output v_texCoord0
 
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 #include "Common.sh"
-#include "UniformsVertex.sh"
 
 void main()
 {

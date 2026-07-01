@@ -2,9 +2,9 @@ $input v_texCoord0
 
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 #include "Common.sh"
-#ifdef GI_GRID
-	#include "GICommon.sh"
-#endif
+//#ifdef GI_GRID
+//	#include "GICommon.sh"
+//#endif
 #include "UniformsFragment.sh"
 #include "FragmentFunctions.sh"
 
@@ -22,6 +22,7 @@ SAMPLER2D(s_brdfLUT, 8);
 	SAMPLER3D(s_lightGrid, 15);
 #endif
 
+/*
 #ifdef GI_GRID
 	USAMPLER3D(s_giGrid1, 9);
 	SAMPLER3D(s_giGrid2, 10);
@@ -30,6 +31,7 @@ SAMPLER2D(s_brdfLUT, 8);
 //	uniform vec4 showRenderTargetGI1;	
 	#include "GIGrid.sh"
 #endif
+*/
 
 #ifdef SHADOW_MAP
 	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4

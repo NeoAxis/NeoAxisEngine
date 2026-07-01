@@ -15,8 +15,6 @@ namespace NeoAxis
 
 		Material.CompiledMaterialData owner;
 		GpuLinkedProgram linkedProgram;
-		//GpuProgram vertexProgram;
-		//GpuProgram fragmentProgram;
 
 		//bool lighting = false;
 
@@ -57,6 +55,12 @@ namespace NeoAxis
 		//public bool _tempAlphaToCoverage;
 		//public void SettempAlphaToCoverage( bool value ) { _tempAlphaToCoverage = value; needUpdate = true; }
 
+
+
+		//compute rendering
+		GpuProgram geometryProgram;
+
+
 		////////////
 
 		////!!!!struct?
@@ -87,15 +91,14 @@ namespace NeoAxis
 		public GpuMaterialPass( Material.CompiledMaterialData owner, GpuProgram vertexProgram, GpuProgram fragmentProgram )
 		{
 			this.owner = owner;
-
-			//!!!!может не сразу получать
 			linkedProgram = GpuProgramManager.GetLinkedProgram( vertexProgram, fragmentProgram );
 		}
 
-		//internal unsafe GpuMaterialPass( GpuLinkedProgram linkedProgram )
-		//{
-		//	this.linkedProgram = linkedProgram;
-		//}
+		public GpuMaterialPass( Material.CompiledMaterialData owner, bool computeRendering, GpuProgram geometryProgram )//, GpuProgram fragmentProgram )
+		{
+			this.owner = owner;
+			this.geometryProgram = geometryProgram;
+		}
 
 		public Material.CompiledMaterialData Owner
 		{
@@ -534,6 +537,15 @@ namespace NeoAxis
 		//{
 		//	get { return constantParameterValues; }
 		//}
+
+
+		public GpuProgram GeometryProgram
+		{
+			get { return geometryProgram; }
+		}
+
+
+		///////////////////////////////////////////////
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		static RenderState ConvertBlendFactor( SceneBlendFactor factor )

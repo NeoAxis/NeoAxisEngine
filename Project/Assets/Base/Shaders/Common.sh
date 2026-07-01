@@ -5,20 +5,6 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*
-#if BGFX_SHADER_TYPE_VERTEX
-#define VERTEX 1
-#endif
-
-#if BGFX_SHADER_TYPE_FRAGMENT
-#define FRAGMENT 1
-#endif
-
-#if BGFX_SHADER_TYPE_COMPUTE
-#define COMPUTE 1
-#endif
-*/
-
 #if BGFX_SHADER_LANGUAGE_GLSL
 	#define MOBILE 1
 #endif
@@ -26,7 +12,6 @@
 #ifdef MOBILE
 	#define HIGHP highp
 	#define MEDIUMP mediump
-	//#define MEDIUMP highp
 	#define LOWP lowp
 #else
 	#define HIGHP
@@ -85,7 +70,7 @@ vec3 expand(vec3 v)
 
 mat3 toMat3(mat4 m)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	return mat3(m);
 #else
 	return (mat3)m;
@@ -94,7 +79,7 @@ mat3 toMat3(mat4 m)
 
 bool any2(vec4 v)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	return v.x != 0.0 || v.y != 0.0 || v.z != 0.0 || v.w != 0.0;
 #else
 	return any(v);
@@ -103,7 +88,7 @@ bool any2(vec4 v)
 
 bool any2(vec3 v)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	return v.x != 0.0 || v.y != 0.0 || v.z != 0.0;
 #else
 	return any(v);
@@ -112,7 +97,7 @@ bool any2(vec3 v)
 
 bool any2(vec2 v)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	return v.x != 0.0 || v.y != 0.0;
 #else
 	return any(v);
@@ -121,7 +106,7 @@ bool any2(vec2 v)
 
 vec4 pow2(vec4 x, float y)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	return vec4(pow(x.x, y), pow(x.y, y), pow(x.z, y), pow(x.w, y));
 #else
 	return pow(x, y);
@@ -135,7 +120,7 @@ float degreeToRadian( float v )
 
 float getValue(mat3 m, int x, int y)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	return m[y][x];
 #else
 	return m[x][y];
@@ -144,7 +129,7 @@ float getValue(mat3 m, int x, int y)
 
 void setValue(inout mat3 m, int x, int y, float v)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	m[y][x] = v;
 #else
 	m[x][y] = v;
@@ -153,7 +138,7 @@ void setValue(inout mat3 m, int x, int y, float v)
 
 float getValue(mat4 m, int x, int y)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	return m[y][x];
 #else
 	return m[x][y];
@@ -162,7 +147,7 @@ float getValue(mat4 m, int x, int y)
 
 void setValue(inout mat4 m, int x, int y, float v)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	m[y][x] = v;
 #else
 	m[x][y] = v;
@@ -171,7 +156,7 @@ void setValue(inout mat4 m, int x, int y, float v)
 
 vec3 getTranslate(mat4 m)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	return vec3(m[3][0], m[3][1], m[3][2]);
 #else	
 	return vec3(m[0][3], m[1][3], m[2][3]);
@@ -180,7 +165,7 @@ vec3 getTranslate(mat4 m)
 
 void setTranslate(inout mat4 m, vec3 translate)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	m[3][0] = translate[0];
 	m[3][1] = translate[1];
 	m[3][2] = translate[2];
@@ -193,7 +178,7 @@ void setTranslate(inout mat4 m, vec3 translate)
 
 void addTranslate(inout mat4 m, vec3 translate)
 {
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 	m[3][0] += translate[0];
 	m[3][1] += translate[1];
 	m[3][2] += translate[2];
@@ -304,8 +289,13 @@ vec4 textureNoTile( sampler2D samp, vec2 uv )
     vec2 f = fract( uv );
 	
     // derivatives (for correct mipmapping)
+#ifdef FRAGMENT
     vec2 ddx2 = dFdx( uv );
     vec2 ddy2 = dFdy( uv );
+#else
+    vec2 ddx2 = vec2_splat(0);
+    vec2 ddy2 = vec2_splat(0);
+#endif
 
     // voronoi contribution
     vec4 va = vec4_splat( 0.0 );
@@ -524,7 +514,7 @@ mat4 matInverse( mat4 m )
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //!!!!
-//#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_renderOperationData[3].z)
+//#define CODE_BODY_TEXTURE2D_MASK_OPACITY(_sampler, _uv) texture2DMaskOpacity(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_rende__rOperationData[3].z)
 //#ifdef GLSL
 //vec4 texture2DMaskOpacity(sampler2D tex, vec2 uv, float isLayer, int primitiveID)
 //#else
@@ -589,4 +579,108 @@ vec4 decodePackedInstanceColor( float rgba, uint exp )
 	
 	float exponent = float( exp ) - 128.0; //float exponent = _rgbe8.w * 255.0 - 128.0;
 	return rgba2 * exp2( exponent );
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+vec2 vogelDiskSample(int sampleIndex, int sampleCount, float angle)
+{
+	const float goldenAngle = 2.399963f;
+	float r = sqrt(float(sampleIndex) + 0.5f) / sqrt(float(sampleCount));
+	float theta = float(sampleIndex) * goldenAngle + angle;
+	float sine, cosine;
+	sincos(theta, sine, cosine);
+	return vec2(cosine, sine) * r;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float toClipSpaceDepth(float depthTextureValue)
+{
+#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
+	return depthTextureValue;
+#else
+	return depthTextureValue * 2.0 - 1.0;
+#endif
+}
+
+float getDepthFromClipSpaceDepth(float depthTextureValue)
+{
+#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
+	return depthTextureValue;
+#else
+	return (depthTextureValue + 1.0) * 0.5;
+#endif
+}
+
+float getDepthValue(float depthTextureValue, float near, float far)
+{
+	//!!!!
+//#ifdef REVERSEDZ	
+//	depthTextureValue = 1.0 - depthTextureValue;
+//#endif
+
+
+	float clipDepth = toClipSpaceDepth(depthTextureValue);
+	
+	float result;
+	
+#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
+	result = near * far / (far - clipDepth * (far - near));
+#else
+	result = near * far / (far + near - clipDepth * (far - near));
+	//return 2.0 * near * far / (far + near - clipDepth * (far - near));
+#endif
+
+	return result;
+}
+
+//!!!!not works
+//float getDepthValue2(vec2 texCoord, float rawDepth, float near, float far, mat4 invProj)
+//{
+//	vec3 clip = vec3(texCoord * 2.0 - 1.0, toClipSpaceDepth(rawDepth));
+//	#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
+//		clip.y = -clip.y;
+//	#endif	
+//	vec4 posVS = mul(invProj, vec4(clip, 1.0));
+//
+//	float depth = (posVS.z - near) / (far - near);
+//	
+//	return depth;
+//}
+
+float getRawDepthValue(float depth, float near, float far)
+{
+#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
+	float clipDepth = (far - (near * far) / depth) / (far - near);
+#else
+	float clipDepth = (far + near - (near * far) / depth) / (far - near);
+#endif
+	
+	float rawDepth = getDepthFromClipSpaceDepth(clipDepth);
+	
+	//!!!!
+//#ifdef REVERSEDZ
+//	rawDepth = 1.0 - rawDepth;
+//#endif
+	
+	return rawDepth;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+vec3 reconstructWorldPosition(mat4 invView, mat4 invProj, vec2 texCoord, float rawDepth)
+{
+	//!!!!
+//#ifdef REVERSEDZ
+//	rawDepth = 1.0 - rawDepth;
+//#endif
+	
+	vec3 clip = vec3(texCoord * 2.0 - 1.0, toClipSpaceDepth(rawDepth));
+	#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
+		clip.y = -clip.y;
+	#endif	
+	vec4 posVS = mul(invProj, vec4(clip, 1.0));
+	vec3 posNDC = posVS.xyz / posVS.w;
+	return mul(invView, vec4(posNDC, 1.0)).xyz;
 }

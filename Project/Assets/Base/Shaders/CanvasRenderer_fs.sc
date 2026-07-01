@@ -17,28 +17,7 @@ void main()
 		discard;
 	
 	vec4 rgba = texture2D(s_baseTexture, v_texCoord0);
-	
-	//!!!!test antialiasing. vogel is good?
-	/*
-#ifndef MOBILE
-	if( capsLock )
-	{
-		rgba = vec4_splat( 0 );		
-		const int sampleCount = 32;	
-		for( int n = 0; n < sampleCount; n++ )
-		{
-			//!!!!
-			vec2 scale = u_viewTexel.xy * 5;
-			
-			vec2 texCoord = v_texCoord0 + vogelDiskSample( n, sampleCount, 0.0 ) * scale;			
-			vec4 rgba2 = texture2D( s_baseTexture, texCoord );
-			rgba += rgba2;
-		}		
-		rgba /= float( sampleCount );
-	}
-#endif
-	*/
-	
+
 #ifndef MOBILE
 	BRANCH
 	if(u_bc5UNorm_L.x > 0.0)
@@ -52,6 +31,20 @@ void main()
 	
 	if(u_bc5UNorm_L.y > 0.0)
 		rgba = vec4(rgba.x, rgba.x, rgba.x, 1.0);
+
+	
+	//!!!!
+	#if SPIRV_GLSL
+	if(capsLock)
+	{
+		rgba = vec4(1,0,0,1);
+
+		//gl_FragColor = texelFetch( s_baseTexture, ivec2( getFragCoord().xy ), 0 );		
+		//gl_FragColor = texture2D(s_baseTexture, v_texCoord0);
+		//return;
+	}
+	#endif
+	
 	
 	gl_FragColor = rgba * v_color0;
 }

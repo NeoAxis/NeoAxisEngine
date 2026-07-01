@@ -1,5 +1,6 @@
 //!!!!betauser
 #ifdef SPIRV
+#ifdef ENABLE_HLSL
 
 //
 // Copyright (C) 2017-2018 Google, Inc.
@@ -10314,4 +10315,5 @@ void HlslParseContext::finish()
 } // end namespace glslang
 
 //!!!!betauser
+#endif
 #endif

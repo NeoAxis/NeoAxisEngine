@@ -461,8 +461,6 @@ namespace NeoAxis
 		public event Action<Light> ShadowTextureSizeValueChanged;
 		ReferenceField<ShadowTextureSizeEnum> _shadowTextureSizeValue = ShadowTextureSizeEnum._1024;
 
-		//!!!!lflflf
-
 		/// <summary>
 		/// Whether to use worst lod, usually voxel, for the shadow generation step. Use for not important light sources.
 		/// </summary>

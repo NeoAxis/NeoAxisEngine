@@ -1,5 +1,6 @@
 //!!!!betauser
 #ifdef SPIRV
+#ifdef ENABLE_HLSL
 
 //
 // Copyright (C) 2016 LunarG, Inc.
@@ -1262,4 +1263,5 @@ void TBuiltInParseablesHlsl::identifyBuiltIns(int /*version*/, EProfile /*profil
 } // end namespace glslang
 
 //!!!!betauser
+#endif
 #endif

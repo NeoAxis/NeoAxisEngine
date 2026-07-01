@@ -7,6 +7,7 @@ using Internal.SharpBgfx;
 using System.Security.Cryptography;
 using NeoAxis.Editor;
 using Internal;
+using System.Runtime.CompilerServices;
 
 namespace NeoAxis
 {
@@ -1413,45 +1414,45 @@ namespace NeoAxis
 
 				if( nativeObject != null && needUpdateNative )
 				{
-					var d = data;// newData.Set( null );
-					if( d != null )
+					var data2 = data;
+					if( data2 != null )
 					{
 						needUpdateNative = false;
 
 						//write to native
-						foreach( var item in d )
+						foreach( var item in data2 )
 						{
 							switch( TextureType )
 							{
 							case ImageComponent.TypeEnum._2D:
 								{
-									//!!!!
-									int pitch = ushort.MaxValue;
+									var size = new Vector3I( ResultSize, ResultDepth );
+									for( int n = 0; n < item.MipLevel; n++ )
+										size /= 2;
 
-
-									//!!!!var size =  как в _3D
-
+									var bytesPerPixel = PixelFormatUtility.GetNumElemBytes( resultFormat );
+									if( item.Data.Count != bytesPerPixel * size.X * size.Y )
+										Log.Fatal( "GpuTexture: PrepareNativeObject: item.Data.Count != size.X * size.Y * bytesPerPixel." );
 
 									var memory = MemoryBlock.FromArray( item.Data );
-									//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( item.Data );
-									nativeObject.Update2D( item.ArrayLayer, item.MipLevel, 0, 0, ResultSize.X, ResultSize.Y, memory, pitch );
+									nativeObject.Update2D( item.ArrayLayer, item.MipLevel, 0, 0, size.X, size.Y, memory, ushort.MaxValue );
+									//nativeObject.Update2D( item.ArrayLayer, item.MipLevel, 0, 0, ResultSize.X, ResultSize.Y, memory, ushort.MaxValue );
 								}
 								break;
 
 							case ImageComponent.TypeEnum.Cube:
 								{
-									//!!!!check face order
+									var size = new Vector3I( ResultSize, ResultDepth );
+									for( int n = 0; n < item.MipLevel; n++ )
+										size /= 2;
 
-									//!!!!
-									int pitch = ushort.MaxValue;
-
-
-									//!!!!var size =  как в _3D
-
+									var bytesPerPixel = PixelFormatUtility.GetNumElemBytes( resultFormat );
+									if( item.Data.Count != bytesPerPixel * size.X * size.Y )
+										Log.Fatal( "GpuTexture: PrepareNativeObject: item.Data.Count != size.X * size.Y * bytesPerPixel." );
 
 									var memory = MemoryBlock.FromArray( item.Data );
-									//var memory = RendererMemoryUtility.AllocateAutoReleaseMemoryBlock( item.Data );
-									nativeObject.UpdateCube( (CubeMapFace)item.Face, item.ArrayLayer, item.MipLevel, 0, 0, ResultSize.X, ResultSize.Y, memory, pitch );
+									nativeObject.UpdateCube( (CubeMapFace)item.Face, item.ArrayLayer, item.MipLevel, 0, 0, size.X, size.Y, memory, ushort.MaxValue );
+									//nativeObject.UpdateCube( (CubeMapFace)item.Face, item.ArrayLayer, item.MipLevel, 0, 0, ResultSize.X, ResultSize.Y, memory, ushort.MaxValue );
 								}
 								break;
 
@@ -1472,13 +1473,75 @@ namespace NeoAxis
 								break;
 							}
 						}
+					}
+				}
+			}
+		}
 
-						//foreach( var pair in d )
-						//{
-						//	var buffer = GetBuffer( pair.Key.face, pair.Key.mipmap );
-						//	if( buffer != null )
-						//		buffer.SetData( pair.Value );
-						//}
+		public void PrepareNativeObjectDirect( MemoryBlock memory, int arrayLayer = 0, int mipLevel = 0 )
+		{
+			if( Disposed )
+				return;
+
+			if( mode == ModeEnum.Create )
+			{
+				if( nativeObject == null )
+					CreateNativeObject();
+
+				if( nativeObject != null ) // && needUpdateNative )
+				{
+					needUpdateNative = false;
+
+					//write to native
+					{
+						switch( TextureType )
+						{
+						case ImageComponent.TypeEnum._2D:
+							{
+								var size = new Vector3I( ResultSize, ResultDepth );
+								for( int n = 0; n < mipLevel; n++ )
+									size /= 2;
+
+								var bytesPerPixel = PixelFormatUtility.GetNumElemBytes( resultFormat );
+								if( memory.Size != bytesPerPixel * size.X * size.Y )
+									Log.Fatal( "GpuTexture: PrepareNativeObjectDirect: memoryBlock.Size != size.X * size.Y * bytesPerPixel." );
+
+								nativeObject.Update2D( arrayLayer, mipLevel, 0, 0, size.X, size.Y, memory, ushort.MaxValue );
+							}
+							break;
+
+						//case ImageComponent.TypeEnum.Cube:
+						//	{
+						//		//!!!!check face order
+
+						//		//!!!!
+						//		int pitch = ushort.MaxValue;
+
+
+						//		//!!!!var size =  как в _3D
+
+
+						//		var memory = MemoryBlock.FromArray( item.Data );
+						//		nativeObject.UpdateCube( (CubeMapFace)item.Face, item.ArrayLayer, item.MipLevel, 0, 0, ResultSize.X, ResultSize.Y, memory, pitch );
+						//	}
+						//	break;
+
+						//case ImageComponent.TypeEnum._3D:
+						//	{
+						//		var memory = MemoryBlock.FromArray( item.Data );
+
+						//		var size = new Vector3I( ResultSize, ResultDepth );
+						//		for( int n = 0; n < item.MipLevel; n++ )
+						//			size /= 2;
+
+						//		nativeObject.Update3D( item.MipLevel, 0, 0, 0, size.X, size.Y, size.Z, memory );
+						//	}
+						//	break;
+
+						default:
+							Log.Fatal( "GpuTexture: PrepareNativeObjectDirect: TextureType impl." );
+							break;
+						}
 					}
 				}
 			}
@@ -1523,6 +1586,7 @@ namespace NeoAxis
 		//	}
 		//}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Texture GetNativeObject( bool withUpdate )
 		{
 			if( nativeObject == null && withUpdate && nativeObjectUnloaded )

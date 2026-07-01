@@ -2487,7 +2487,7 @@ namespace NeoAxis
 
 						//!!!!impl mobile
 						//bind depth texture
-						if( !SystemSettings.MobileDevice )
+						if( !SystemSettings.LimitedDevice ) //if( !SystemSettings.MobileDevice )
 						{
 							context.BindTexture( 1/* "depthTexture"*/, depthTexture ?? ResourceUtility.WhiteTexture2D, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point, 0, false );
 						}

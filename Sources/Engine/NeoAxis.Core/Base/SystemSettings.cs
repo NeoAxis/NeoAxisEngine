@@ -210,6 +210,18 @@ namespace NeoAxis
 			desktopDevice = CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux;
 		}
 
+		//!!!!temp consider Vulkan as limited device
+		internal static void _UpdateDeviceProperties()
+		{
+			limitedDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
+			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS;
+			desktopDevice = CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux;
+
+			//consider Vulkan as limited device
+			if( EngineApp.InitSettings.RendererBackend == Internal.SharpBgfx.RendererBackend.Vulkan )
+				limitedDevice = true;
+		}
+
 		public static Platform CurrentPlatform
 		{
 			get { return platform; }

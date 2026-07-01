@@ -2,9 +2,9 @@ $input v_texCoord0
 
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 #include "../Common.sh"
-#ifdef HLSL
-	#include "../GICommon.sh"
-#endif
+//#ifdef HLSL
+//	#include "../GICommon.sh"
+//#endif
 #include "../UniformsFragment.sh"
 #include "../FragmentFunctions.sh"
 

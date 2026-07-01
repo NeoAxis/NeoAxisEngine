@@ -490,6 +490,7 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_metal.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_pssl.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_spirv.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_spirv_glsl.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_wgsl.cpp" />
     <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_averages_and_directions.cpp" />
     <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_block_sizes.cpp" />

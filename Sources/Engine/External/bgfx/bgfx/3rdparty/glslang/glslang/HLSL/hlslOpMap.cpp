@@ -1,5 +1,6 @@
 //!!!!betauser
 #ifdef SPIRV
+#ifdef ENABLE_HLSL
 
 //
 // Copyright (C) 2016 Google, Inc.
@@ -176,4 +177,5 @@ PrecedenceLevel HlslOpMap::precedenceLevel(TOperator op)
 } // end namespace glslang
 
 //!!!!betauser
+#endif
 #endif

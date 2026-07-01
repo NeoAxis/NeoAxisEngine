@@ -10,17 +10,14 @@ $input v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tange
 //#include "Common/bgfx_compute.sh"
 //#endif
 
-uniform vec4 u_renderOperationData[8];
-uniform vec4 u_materialCustomParameters[2];
-uniform vec4 u_objectInstanceParameters[2];
+//uniform vec4 u_renderOperationData[8];
+//uniform vec4 u_materialCustomParameters[2];
+//uniform vec4 u_objectInstanceParameters[2];
 
 SAMPLER2D(s_materials, 1);
 #if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
 	SAMPLER2D(s_voxelData, 2);
 #endif
-//#ifdef GLOBAL_VIRTUALIZED_GEOMETRY
-//	SAMPLER2D(s_virtualizedData, 11);
-//#endif
 
 #include "CustomFunctions.sh"
 
@@ -47,6 +44,7 @@ SAMPLER2D(s_materials, 1);
 SAMPLERCUBE(s_environmentTexture1, 3);
 SAMPLERCUBE(s_environmentTexture2, 4);
 
+/*
 uniform vec4 u_forwardEnvironmentData[5];
 #define u_forwardEnvironmentDataRotation1 u_forwardEnvironmentData[0]
 #define u_forwardEnvironmentDataMultiplierAndAffect1 u_forwardEnvironmentData[1]
@@ -55,22 +53,31 @@ uniform vec4 u_forwardEnvironmentData[5];
 #define u_forwardEnvironmentDataBlendingFactor u_forwardEnvironmentData[4].x
 uniform vec4 u_forwardEnvironmentIrradiance1[9];
 uniform vec4 u_forwardEnvironmentIrradiance2[9];
+*/
 
-SAMPLER2D(s_colorDepthTextureCopy, 5);
+SAMPLER2D(s_drawBufferTexture, 5);
+#include "DrawBuffer.sh"
+//!!!!5 is used by s_drawBufferTexture. binded in s_linearSamplerFragment
+//SAMPLER2D(s_colorDepthTextureCopy, 5);
+
 SAMPLER2D(s_brdfLUT, 6);
 SAMPLER2D(s_lightsTexture, 7);
 #ifdef GLOBAL_LIGHT_GRID
 	SAMPLER3D(s_lightGrid, 8);
 #endif
 
-//!!!!not need? use from s_brdfLUT? wrap, clamp?
-#ifndef GLSL
+#ifndef LIMITED_DEVICE
 	SAMPLER2D(s_linearSamplerFragment, 9);
+	//!!!!5 is used by s_drawBufferTexture. binded in s_linearSamplerFragment
+	#define s_colorDepthTextureCopy s_linearSamplerFragment
+#else
+	//!!!!5 is used by s_drawBufferTexture. binded in s_linearSamplerFragment
+	#define s_colorDepthTextureCopy s_brdfLUT
 #endif
 
 #ifdef SHADOW_MAP
-	#ifdef GLSL
-		//mobile specific. light grid is disabled, reused by shadows and masks because of samplers limit
+	#ifdef LIMITED_DEVICE
+		//limited device specific. light grid is disabled, reused by shadows and masks because of samplers limit
 
 		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
 			SAMPLER2DARRAY(s_shadowMapShadowDirectional, 8);
@@ -109,8 +116,8 @@ SAMPLER2D(s_lightsTexture, 7);
 	#endif	
 #endif
 
-//mobile specific. on limited devices masks and shadow maps are managed inside one shadow map array
-#ifndef GLSL
+//on limited devices masks and shadow maps are managed inside one shadow map array
+#ifndef LIMITED_DEVICE
 #ifdef GLOBAL_LIGHT_MASK
 	SAMPLER2DARRAY(s_lightMaskDirectional, 13);
 	SAMPLER2DARRAY(s_lightMaskSpot, 14);
@@ -182,12 +189,10 @@ void main()
 	vec4 fragCoord = getFragCoord();
 	
 #if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
-	float voxelDataMode = u_renderOperationData[ 1 ].w;
+	float voxelDataMode = d_renderOperationData1.w;
 #else
 	const float voxelDataMode = 0.0;
 #endif
-
-	//float virtualizedDataMode = u_renderOperationData[3].w;
 
 	//lod for opaque
 #ifdef GLOBAL_SMOOTH_LOD
@@ -200,7 +205,7 @@ void main()
 	vec2 texCoord0 = v_texCoord01.xy;
 	vec2 texCoord1 = v_texCoord01.zw;
 	vec2 texCoord2 = v_texCoord23.xy;
-	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2, u_renderOperationData[3].x);
+	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2, d_renderOperationData3.x);
 	vec3 inputWorldNormal = v_worldNormal_materialIndex.xyz;
 	vec4 tangent = v_tangent;
 	vec4 color0 = v_color0;
@@ -210,11 +215,8 @@ void main()
 	int materialIndex = int(round(v_worldNormal_materialIndex.w));
 	float depthOffset = 0.0;
 #if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
-	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex, v_colorParameter);
+	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, d_renderOperationData0, d_renderOperationData5, d_renderOperationData6, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex, v_colorParameter);
 #endif
-//#ifdef GLOBAL_VIRTUALIZED_GEOMETRY
-//	virtualizedDataModeCalculateParametersF(virtualizedDataMode, s_virtualizedData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, gl_PrimitiveID, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex);
-//#endif
 	worldPosition += fromCameraDirection * depthOffset;
 
 	float cameraDistance = length(worldPosition - u_viewportOwnerCameraPosition);
@@ -263,7 +265,7 @@ void main()
 	#undef CODE_BODY_TEXTURE2D
 #endif
 
-	int frameMaterialIndex = int( u_renderOperationData[ 0 ].x );
+	int frameMaterialIndex = int( d_renderOperationData0.x );
 	////get material data
 	//vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ];
 	//getMaterialData( s_materials, uint( u_renderOperationData[ 0 ].x ), materialStandardFragment );
@@ -304,10 +306,10 @@ void main()
 	//float rayTracingReflection = u_materialRayTracingReflection;
 	vec3 emissive = u_materialEmissive;
 	float softParticlesDistance = u_materialSoftParticlesDistance;
-	vec4 customParameter1 = u_materialCustomParameters[0];
-	vec4 customParameter2 = u_materialCustomParameters[1];
-	vec4 instanceParameter1 = u_objectInstanceParameters[0];
-	vec4 instanceParameter2 = u_objectInstanceParameters[1];
+	vec4 customParameter1 = d_materialCustomParameters0;
+	vec4 customParameter2 = d_materialCustomParameters1;
+	vec4 instanceParameter1 = d_objectInstanceParameters0;
+	vec4 instanceParameter2 = d_objectInstanceParameters1;
 
 	//get material parameters (procedure generated code)
 	vec2 texCoord0BeforeDisplacement = texCoord0;
@@ -567,7 +569,7 @@ void main()
 					dir = mul( d_lightMaskMatrix, vec4( dir, 0 ) ).xyz;
 					//flipped cubemaps, already applied in lightMaskTextureMatrixArray.
 					//dir = float3(-dir.y, dir.z, dir.x);
-					#ifdef GLSL
+					#ifdef LIMITED_DEVICE
 						#ifdef SHADOW_MAP
 							lightMaskMultiplier = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( dir, lightMaskIndex ), 0 ).rgb;
 						#endif
@@ -578,7 +580,7 @@ void main()
 				else if( lightType == ENUM_LIGHT_TYPE_SPOTLIGHT )
 				{
 					vec4 texCoord = mul( d_lightMaskMatrix, vec4( worldPosition, 1 ) );
-					#ifdef GLSL
+					#ifdef LIMITED_DEVICE
 						#ifdef SHADOW_MAP
 							lightMaskMultiplier = texture2DArrayLod( s_shadowMapShadowSpot, vec3( texCoord.xy / texCoord.w, lightMaskIndex ), 0 ).rgb;
 						#endif
@@ -591,7 +593,7 @@ void main()
 #endif
 				{
  					vec2 texCoord = mul( d_lightMaskMatrix, vec4( worldPosition, 1 ) ).xy;
-					#ifdef GLSL
+					#ifdef LIMITED_DEVICE
 						#ifdef SHADOW_MAP
 							lightMaskMultiplier = texture2DArrayLod( s_shadowMapShadowDirectional, vec3( texCoord, lightMaskIndex ), 0 ).rgb;
 						#endif
@@ -726,7 +728,7 @@ void main()
 				#endif
 
 				ShadingParams shading;
-				getPBRFilamentShadingParams(material, tangent.xyz, bitangent, normal, inputWorldNormal, normal/*toLight*/, -fromCameraDirection/*toCamera*/, gl_FrontFacing, shading);
+				getPBRFilamentShadingParams(material, tangent.xyz, bitangent, normal, inputWorldNormal, normal, -fromCameraDirection, gl_FrontFacing, shading);
 				
 				shadingView = shading.view;
 				shadingNoV = shading.NoV;
@@ -735,12 +737,12 @@ void main()
 				getPBRFilamentPixelParams(material, shading, pixel);
 
 				EnvironmentTextureData data1;
-				data1.rotation = u_forwardEnvironmentDataRotation1;
-				data1.multiplierAndAffect = u_forwardEnvironmentDataMultiplierAndAffect1;
+				data1.rotation = d_forwardEnvironmentDataRotation1;
+				data1.multiplierAndAffect = d_forwardEnvironmentDataMultiplierAndAffect1;
 				
 				EnvironmentTextureData data2;
-				data2.rotation = u_forwardEnvironmentDataRotation2;
-				data2.multiplierAndAffect = u_forwardEnvironmentDataMultiplierAndAffect2;
+				data2.rotation = d_forwardEnvironmentDataRotation2;
+				data2.multiplierAndAffect = d_forwardEnvironmentDataMultiplierAndAffect2;
 
 				vec4 screenSpaceReflection = vec4_splat( 0 );		
 				//!!!!sampler limit
@@ -757,22 +759,30 @@ void main()
 			//#endif
 				*/
 				
+				//!!!!use ibl texture. need bindless
+				vec4 forwardEnvironmentIrradiance1[ 9 ];
+				for( int n = 0; n < 9; n++ )
+					forwardEnvironmentIrradiance1[ n ] = d_forwardEnvironmentIrradiance1_get( n );
+				vec4 forwardEnvironmentIrradiance2[ 9 ];
+				for( int n = 0; n < 9; n++ )
+					forwardEnvironmentIrradiance2[ n ] = d_forwardEnvironmentIrradiance2_get( n );				
+				
 				vec3 color1 = 
-					iblDiffuse(material, pixel, shading, u_forwardEnvironmentIrradiance1, data1, s_environmentTexture1, data1, true, true) +
-					iblSpecular(material, pixel, shading, screenSpaceReflection.xyz, screenSpaceReflection.w/*vec3_splat(0), 0.0*/, s_environmentTexture1, data1);
+					iblDiffuse(material, pixel, shading, forwardEnvironmentIrradiance1, data1, s_environmentTexture1, data1, true, true) +
+					iblSpecular(material, pixel, shading, screenSpaceReflection.xyz, screenSpaceReflection.w, s_environmentTexture1, data1);
 #ifdef GLOBAL_ENVIRONMENT_MAP_MIXING
 				BRANCH
-				if( u_forwardEnvironmentDataBlendingFactor < 1.0 )
+				if( d_forwardEnvironmentDataBlendingFactor < 1.0 )
 				{
 					vec3 color2 = 
-						iblDiffuse(material, pixel, shading, u_forwardEnvironmentIrradiance2, data2, s_environmentTexture2, data2, true, true) + 
-						iblSpecular(material, pixel, shading, screenSpaceReflection.xyz, screenSpaceReflection.w/*vec3_splat(0), 0.0*/, s_environmentTexture2, data2);					
-					resultColor.rgb += mix( color2, color1, u_forwardEnvironmentDataBlendingFactor ) * lightColor;
+						iblDiffuse(material, pixel, shading, forwardEnvironmentIrradiance2, data2, s_environmentTexture2, data2, true, true) + 
+						iblSpecular(material, pixel, shading, screenSpaceReflection.xyz, screenSpaceReflection.w, s_environmentTexture2, data2);					
+					resultColor.rgb += mix( color2, color1, d_forwardEnvironmentDataBlendingFactor ) * lightColor;
 				}
 				else
 					resultColor.rgb += color1 * lightColor;
 #else
-				resultColor.rgb += color1 * u_forwardEnvironmentDataBlendingFactor * lightColor;
+				resultColor.rgb += color1 * d_forwardEnvironmentDataBlendingFactor * lightColor;
 #endif
 				
 
@@ -827,7 +837,7 @@ void main()
 	//lod for transparent
 #ifdef GLOBAL_SMOOTH_LOD
 	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)
-		bool isLayer = u_renderOperationData[3].z != 0.0;
+		bool isLayer = d_renderOperationData3.z != 0.0;
 		if(isLayer)
 			smoothLOD(fragCoord, lodValue);
 		else

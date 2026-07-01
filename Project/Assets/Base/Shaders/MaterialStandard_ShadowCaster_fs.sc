@@ -5,20 +5,18 @@ $input v_texCoord01, v_color0, v_texCoord23, v_colorParameter, v_worldPosition_d
 #include "Common.sh"
 #include "UniformsFragment.sh"
 
-uniform vec4 u_renderOperationData[8];
-uniform vec4 u_materialCustomParameters[2];
-uniform vec4 u_objectInstanceParameters[2];
+//uniform vec4 u_renderOperationData[8];
+//uniform vec4 u_materialCustomParameters[2];
+//uniform vec4 u_objectInstanceParameters[2];
 
 SAMPLER2D(s_materials, 1);
 #if defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)
 	SAMPLER2D(s_voxelData, 2);
 #endif
-//#if defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED)
-//	SAMPLER2D(s_virtualizedData, 11);
-//#endif
+SAMPLER2D(s_drawBufferTexture, 5);
+#include "DrawBuffer.sh"
 #ifndef GLSL
 	SAMPLER2D(s_linearSamplerFragment, 9);
-	//SAMPLER2D(s_linearSamplerFragment, 10);
 #endif
 
 #include "CustomFunctions.sh"
@@ -44,10 +42,10 @@ SAMPLER2D(s_materials, 1);
 	MATERIAL_INDEX_CODE_SHADER_SCRIPTS
 #endif
 
-#ifdef MULTI_MATERIAL_COMBINED_PASS
-	uniform vec4 u_multiMaterialCombinedInfo;
-	uniform vec4 u_multiMaterialCombinedMaterials[4];
-#endif
+//#ifdef MULTI_MATERIAL_COMBINED_PASS
+//	uniform vec4 u_multiMaterialCombinedInfo;
+//	uniform vec4 u_multiMaterialCombinedMaterials[4];
+//#endif
 
 #include "FragmentFunctions.sh"
 #include "FragmentVoxel.sh"
@@ -59,13 +57,11 @@ void main()
 	vec4 fragCoord = getFragCoord();
 
 #if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
-	float voxelDataMode = u_renderOperationData[ 1 ].w;
+	float voxelDataMode = d_renderOperationData1.w;
 #else
 	const float voxelDataMode = 0.0;
 #endif
 
-	//float virtualizedDataMode = u_renderOperationData[3].w;
-	
 	//lod
 #ifdef GLOBAL_SMOOTH_LOD
 	float lodValue = v_lodValue_visibilityDistance_receiveDecals.x;
@@ -75,7 +71,7 @@ void main()
 	vec2 texCoord0 = v_texCoord01.xy;
 	vec2 texCoord1 = v_texCoord01.zw;
 	vec2 texCoord2 = v_texCoord23.xy;
-	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2, u_renderOperationData[3].x);
+	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2, d_renderOperationData3.x);
 	MEDIUMP vec3 inputWorldNormal = v_worldNormal_materialIndex.xyz;
 	MEDIUMP vec4 tangent = vec4_splat(0);
 	MEDIUMP vec4 color0 = v_color0;
@@ -85,9 +81,7 @@ void main()
 	int materialIndex = 0;
 	float depthOffset = 0.0;
 #if defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)
-	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex, v_colorParameter);
-//#elif defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED)
-//	virtualizedDataModeCalculateParametersF(virtualizedDataMode, s_virtualizedData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, u_renderOperationData, gl_PrimitiveID, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex);
+	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, d_renderOperationData0, d_renderOperationData5, d_renderOperationData6, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex, v_colorParameter);
 #else
 	materialIndex = int(round(v_worldNormal_materialIndex.w));
 #endif
@@ -140,13 +134,14 @@ void main()
 #endif
 
 	//get material data
-	int frameMaterialIndex = int( u_renderOperationData[ 0 ].x );
+	int frameMaterialIndex = int( d_renderOperationData0.x );
 #ifdef MULTI_MATERIAL_COMBINED_PASS
-	uint localGroupMaterialIndex = uint( materialIndex ) - uint( u_multiMaterialCombinedInfo.x );
+	uint localGroupMaterialIndex = uint( materialIndex ) - uint( d_multiMaterialCombinedInfo.x );
 	BRANCH
-	if( localGroupMaterialIndex < 0 || localGroupMaterialIndex >= uint( u_multiMaterialCombinedInfo.y ) )
+	if( localGroupMaterialIndex < 0 || localGroupMaterialIndex >= uint( d_multiMaterialCombinedInfo.y ) )
 		discard;
-	frameMaterialIndex = int( u_multiMaterialCombinedMaterials[ localGroupMaterialIndex / 4 ][ localGroupMaterialIndex % 4 ] );
+	frameMaterialIndex = int( d_multiMaterialCombinedMaterials_get( localGroupMaterialIndex ) );
+	//frameMaterialIndex = int( u_multiMaterialCombinedMaterials[ localGroupMaterialIndex / 4 ][ localGroupMaterialIndex % 4 ] );
 #endif
 	//vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ];
 	//getMaterialData( s_materials, frameMaterialIndex, materialStandardFragment );
@@ -177,11 +172,11 @@ void main()
 	//vec2 texCoord0 = geometryTexCoord0;// - displacementOffset;
 	//vec2 texCoord1 = geometryTexCoord1;// - displacementOffset;
 	//vec2 texCoord2 = geometryTexCoord2;// - displacementOffset;
-	//vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2, u_renderOperationData[3].x);
-	vec4 customParameter1 = u_materialCustomParameters[0];
-	vec4 customParameter2 = u_materialCustomParameters[1];
-	vec4 instanceParameter1 = u_objectInstanceParameters[0];
-	vec4 instanceParameter2 = u_objectInstanceParameters[1];
+	//vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2, d_renderOperationData3.x);
+	vec4 customParameter1 = d_materialCustomParameters0;
+	vec4 customParameter2 = d_materialCustomParameters1;
+	vec4 instanceParameter1 = d_objectInstanceParameters0;
+	vec4 instanceParameter2 = d_objectInstanceParameters1;
 	
 #ifdef FRAGMENT_CODE_BODY
 	#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
@@ -358,7 +353,7 @@ void main()
 #endif
 
 	//!!!!special for mobile
-#ifdef GLSL
+#ifdef LIMITED_DEVICE //#ifdef GLSL
 	#ifndef LIGHT_TYPE_POINT
 		depth = glPositionZ;
 	#endif

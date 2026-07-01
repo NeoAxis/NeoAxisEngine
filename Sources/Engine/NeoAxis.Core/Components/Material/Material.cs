@@ -2009,24 +2009,210 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		protected virtual string OnCheckGISupport( CompiledMaterialData compiledData )
-		{
-			if( !RenderingSystem.GlobalIllumination )
-				return "Global settings";
+		//protected virtual string OnCheckGISupport( CompiledMaterialData compiledData )
+		//{
+		//	if( !RenderingSystem.GlobalIllumination )
+		//		return "Global settings";
 
-			return "";
+		//	return "";
+		//}
+
+		//public delegate void CheckGISupportEventDelegate( Material sender, CompiledMaterialData compiledData, ref string reason );
+		//public event CheckGISupportEventDelegate CheckGISupportEvent;
+
+		//public string PerformCheckGISupport( CompiledMaterialData compiledData = null )
+		//{
+		//	string reason = OnCheckGISupport( compiledData );
+		//	if( !string.IsNullOrEmpty( reason ) )
+		//		return reason;
+		//	CheckGISupportEvent?.Invoke( this, compiledData, ref reason );
+		//	return reason;
+		//}
+
+		/////////////////////////////////////////
+
+		public void NewObjectCreateShaderGraph( NewMaterialData data = null )
+		{
+			var graph = CreateComponent<FlowGraph>();
+			graph.Name = "Shader graph";
+			graph.Specialization = ReferenceUtility.MakeReference(
+				MetadataManager.GetTypeOfNetType( typeof( FlowGraphSpecialization_Shader ) ).Name + "|Instance" );
+
+			{
+				var node = graph.CreateComponent<FlowGraphNode>();
+				if( !string.IsNullOrEmpty( Name ) )
+					node.Name = "Node " + Name;
+				else
+					node.Name = "Node";
+				node.Position = new Vector2I( 10, -7 );
+				node.ControlledObject = ReferenceUtility.MakeThisReference( node, this );
+			}
+
+			//configure
+			if( data != null )
+			{
+				const int step = 9;
+				Vector2I position = new Vector2I( -20, -data.GetTextureCount() * step / 2 );
+
+				//BaseColor
+				if( !string.IsNullOrEmpty( data.BaseColorTexture ) )
+				{
+					var node = graph.CreateComponent<FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "BaseColor";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<ImageComponent>( null, data.BaseColorTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					BaseColor = ReferenceUtility.MakeThisReference( this, sample, "RGBA" );
+				}
+				//else if( data.BaseColor.HasValue )
+				//	BaseColor = data.BaseColor.Value;
+
+				//Metallic
+				if( !string.IsNullOrEmpty( data.MetallicTexture ) )
+				{
+					var node = graph.CreateComponent<FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Metallic";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<ImageComponent>( null, data.MetallicTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Metallic = ReferenceUtility.MakeThisReference( this, sample, "R" );
+				}
+
+				//Roughness
+				if( !string.IsNullOrEmpty( data.RoughnessTexture ) )
+				{
+					var node = graph.CreateComponent<FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Roughness";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<ImageComponent>( null, data.RoughnessTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Roughness = ReferenceUtility.MakeThisReference( this, sample, "R" );
+				}
+
+				//Normal
+				if( !string.IsNullOrEmpty( data.NormalTexture ) )
+				{
+					var node = graph.CreateComponent<FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Normal";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<ImageComponent>( null, data.NormalTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Normal = ReferenceUtility.MakeThisReference( this, sample, "RGBA" );
+				}
+
+				//Displacement
+				if( !string.IsNullOrEmpty( data.DisplacementTexture ) )
+				{
+					var node = graph.CreateComponent<FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Displacement";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<ImageComponent>( null, data.DisplacementTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Displacement = ReferenceUtility.MakeThisReference( this, sample, "R" );
+				}
+
+				//AmbientOcclusion
+				if( !string.IsNullOrEmpty( data.AmbientOcclusionTexture ) )
+				{
+					var node = graph.CreateComponent<FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "AmbientOcclusion";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<ImageComponent>( null, data.AmbientOcclusionTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					AmbientOcclusion = ReferenceUtility.MakeThisReference( this, sample, "R" );
+				}
+
+				//Emissive
+				if( !string.IsNullOrEmpty( data.EmissiveTexture ) )
+				{
+					var node = graph.CreateComponent<FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Emissive";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<ImageComponent>( null, data.EmissiveTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Emissive = ReferenceUtility.MakeThisReference( this, sample, "RGBA" );
+				}
+
+				//Opacity
+				if( !string.IsNullOrEmpty( data.OpacityTexture ) )
+				{
+					var node = graph.CreateComponent<FlowGraphNode>();
+					node.Name = "Node Texture Sample " + "Opacity";
+					node.Position = position;
+					position.Y += step;
+
+					var sample = node.CreateComponent<ShaderTextureSample>();
+					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
+					sample.Texture = new Reference<ImageComponent>( null, data.OpacityTexture );
+
+					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
+
+					Opacity = ReferenceUtility.MakeThisReference( this, sample, "R" );
+
+					BlendMode = BlendModeEnum.Masked;
+				}
+			}
+
+			if( Parent == null )
+			{
+				var toSelect = new Component[] { this, graph };
+				EditorDocumentConfiguration = EditorAPI.CreateEditorDocumentXmlConfiguration( toSelect, graph );
+			}
 		}
 
-		public delegate void CheckGISupportEventDelegate( Material sender, CompiledMaterialData compiledData, ref string reason );
-		public event CheckGISupportEventDelegate CheckGISupportEvent;
-
-		public string PerformCheckGISupport( CompiledMaterialData compiledData = null )
+		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow )
 		{
-			string reason = OnCheckGISupport( compiledData );
-			if( !string.IsNullOrEmpty( reason ) )
-				return reason;
-			CheckGISupportEvent?.Invoke( this, compiledData, ref reason );
-			return reason;
+			//don't create another shader graph if already exists in a base type
+			if( !createdFromNewObjectWindow && GetComponent<FlowGraph>( "Shader graph" ) == null )
+				NewObjectCreateShaderGraph();
+		}
+
+		public void EditorUpdateWhenDocumentModified()
+		{
+			if( EditorAutoUpdate )
+				PerformResultCompile();
 		}
 
 		/////////////////////////////////////////
@@ -2085,9 +2271,9 @@ namespace NeoAxis
 			result.decalSupportReason = PerformCheckDecalSupport( result );
 			result.decalSupport = string.IsNullOrEmpty( result.decalSupportReason );
 
-			//gi
-			result.giSupportReason = PerformCheckGISupport( result );
-			result.giSupport = string.IsNullOrEmpty( result.giSupportReason );
+			////gi
+			//result.giSupportReason = PerformCheckGISupport( result );
+			//result.giSupport = string.IsNullOrEmpty( result.giSupportReason );
 
 			result.staticShadows = StaticShadows;
 
@@ -2100,6 +2286,9 @@ namespace NeoAxis
 
 			//!!!!what else?
 			bool needSpecialShadowCaster = PositionOffset.ReferenceSpecified || blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */|| blendMode == BlendModeEnum.Transparent || AdvancedScripting || ( extensionData != null && ( extensionData.shadowCasterVertexShaderProperties.Count != 0 || extensionData.shadowCasterMaterialIndexShaderProperties.Count != 0 || extensionData.shadowCasterFragmentShaderProperties.Count != 0 ) ) || specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass || specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass || DepthOffsetMode.Value != DepthOffsetModeEnum.None;
+
+			if( RenderingSystem.ShadowTechnique == ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None )
+				needSpecialShadowCaster = false;
 
 			//shader generation
 			if( shaderGenerationCompile )
@@ -2114,7 +2303,6 @@ namespace NeoAxis
 			{
 				var collecting = nCompileIteration == 0;
 				var programsToCompile = new List<GpuProgramManager.GetProgramItem>();
-
 
 				//forward passes
 				if( specialMode != CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
@@ -3173,282 +3361,282 @@ namespace NeoAxis
 					}
 				}
 
-				//gi
-				if( result.giSupport )
-				{
+				////gi
+				//if( result.giSupport )
+				//{
 
-					bool unlit = ShadingModel.Value == ShadingModelEnum.Unlit;
+				//	bool unlit = ShadingModel.Value == ShadingModelEnum.Unlit;
 
-					var receiveShadows = ReceiveShadows.Value && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
-
-
-					//!!!!
-					var nPassType = 1;
-					//for( int nPassType = 0; nPassType < 3; nPassType++ )//for( int nPassType = 0; nPassType < 4; nPassType++ )
-					//{
-					var voxelPass = nPassType == 1;
-					var billboardPass = nPassType == 2;
-
-					//generate compile arguments
-					var defines = new List<(string, string)>( 8 );
-					{
-						defines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
-						defines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
-						defines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
-						//!!!!
-						//if( TwoSided && TwoSidedFlipNormals )
-						//	fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
-						if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
-							defines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
-						if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
-							defines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
-
-						//!!!!
-						//if( ShadingModel.Value == ShadingModelEnum.Lit )
-						//{
-						//	if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
-						//		fragmentDefines.Add( ("MATERIAL_HAS_CLEAR_COAT", "") );
-						//	if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
-						//		fragmentDefines.Add( ("MATERIAL_HAS_ANISOTROPY", "") );
-						//}
-
-						//!!!!
-						//if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
-						//	generalDefines.Add( ("DISPLACEMENT", "") );
-						//!!!!
-						//if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
-						//	fragmentDefines.Add( ("OPACITY_DITHERING", "") );
-						//!!!!
-						//if( SoftParticles )
-						//	fragmentDefines.Add( ("SOFT_PARTICLES", "") );
-						if( voxelPass )
-							defines.Add( ("VOXEL", "") );
-						//if( billboardPass )
-						//	generalDefines.Add( ("BILLBOARD", "") );
-
-						//receive shadows support
-						if( receiveShadows )//nShadowsSupportCounter != 0 )
-						{
-							//!!!!дефайны не разделены по типу программ
-							defines.Add( ("SHADOW_MAP", "") );
-							//fragmentDefines.Add( ("SHADOW_MAP", "") );
-
-							////if( nShadowsSupportCounter == 2 )
-							////	fragmentDefines.Add( ("SHADOW_MAP_HIGH", "") );
-							////else
-							////	fragmentDefines.Add( ("SHADOW_MAP_LOW", "") );
-						}
-
-						//if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterEqual )
-						//	defines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
-						//else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessEqual )
-						//	defines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
-
-						if( shaderGenerationEnable )
-						{
-							//vertex
-							var vertexCode = result.vertexGeneratedCode;
-							if( vertexCode != null )
-							{
-								if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
-									defines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
-								if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
-									defines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
-								if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
-									defines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
-								if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
-									defines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
-							}
-
-							//material index
-							var materialIndexCode = result.materialIndexGeneratedCode;
-							if( materialIndexCode != null )
-							{
-								if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
-									defines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
-								if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
-									defines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
-								if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
-									defines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
-								if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
-									defines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
-							}
-
-							////displacement
-							//var displacementCode = result.displacementGeneratedCode;
-							//if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
-							//{
-							//	if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
-							//		fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
-							//	if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
-							//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
-							//	if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
-							//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
-							//	if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
-							//		fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
-							//}
-
-							//fragment
-							var fragmentCode = result.fragmentGeneratedCode;
-							if( fragmentCode != null )
-							{
-								if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
-									defines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
-								if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
-									defines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
-								if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
-									defines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
-								if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
-									defines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
-							}
-						}
-					}
-
-					{
-						var parameters = new GpuProgramManager.GetProgramItem( "Standard_GI_Voxel_", GpuProgramType.Compute, @"Base\Shaders\MaterialStandard_GI_Voxel.sc", defines, optimize );
-
-						if( collecting )
-							programsToCompile.Add( parameters );
-						else
-						{
-							string error2;
-
-							//vertex program
-							var program = GpuProgramManager.GetProgram( parameters, out error2 );
-							if( !string.IsNullOrEmpty( error2 ) )
-							{
-								result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
-								Log.Warning( result.error );
-								return null;
-							}
-
-							//!!!!Dispose()? who else
-							result.giVoxelProgram = new Program( program.RealObject );
-							//result.giVoxelProgram = program;
-						}
-					}
-					//}
+				//	var receiveShadows = ReceiveShadows.Value && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
 
 
+				//	//!!!!
+				//	var nPassType = 1;
+				//	//for( int nPassType = 0; nPassType < 3; nPassType++ )//for( int nPassType = 0; nPassType < 4; nPassType++ )
+				//	//{
+				//	var voxelPass = nPassType == 1;
+				//	var billboardPass = nPassType == 2;
 
-					//var nPassType = 1;
-					////for( int nPassType = 0; nPassType < 3; nPassType++ )//for( int nPassType = 0; nPassType < 4; nPassType++ )
-					////{
-					//var voxelPass = nPassType == 1;
-					//var billboardPass = nPassType == 2;
+				//	//generate compile arguments
+				//	var defines = new List<(string, string)>( 8 );
+				//	{
+				//		defines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
+				//		defines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
+				//		defines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
+				//		//!!!!
+				//		//if( TwoSided && TwoSidedFlipNormals )
+				//		//	fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
+				//		if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
+				//			defines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
+				//		if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+				//			defines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
 
-					////generate compile arguments
-					//var defines = new List<(string, string)>( 8 );
-					//{
-					//	defines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
-					//	defines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
-					//	defines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
-					//	//if( TwoSided && TwoSidedFlipNormals )
-					//	//	fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
-					//	if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
-					//		defines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
-					//	if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
-					//		defines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
+				//		//!!!!
+				//		//if( ShadingModel.Value == ShadingModelEnum.Lit )
+				//		//{
+				//		//	if( ClearCoat.ReferenceSpecified || ClearCoat.Value != 0 )
+				//		//		fragmentDefines.Add( ("MATERIAL_HAS_CLEAR_COAT", "") );
+				//		//	if( Anisotropy.ReferenceSpecified || Anisotropy.Value != 0 )
+				//		//		fragmentDefines.Add( ("MATERIAL_HAS_ANISOTROPY", "") );
+				//		//}
 
-					//	//if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
-					//	//	generalDefines.Add( ("DISPLACEMENT", "") );
-					//	//if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
-					//	//	fragmentDefines.Add( ("OPACITY_DITHERING", "") );
-					//	if( voxelPass )
-					//		defines.Add( ("VOXEL", "") );
-					//	//if( billboardPass )
-					//	//	generalDefines.Add( ("BILLBOARD", "") );
+				//		//!!!!
+				//		//if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
+				//		//	generalDefines.Add( ("DISPLACEMENT", "") );
+				//		//!!!!
+				//		//if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+				//		//	fragmentDefines.Add( ("OPACITY_DITHERING", "") );
+				//		//!!!!
+				//		//if( SoftParticles )
+				//		//	fragmentDefines.Add( ("SOFT_PARTICLES", "") );
+				//		if( voxelPass )
+				//			defines.Add( ("VOXEL", "") );
+				//		//if( billboardPass )
+				//		//	generalDefines.Add( ("BILLBOARD", "") );
 
-					//	//if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterEqual )
-					//	//	defines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
-					//	//else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessEqual )
-					//	//	defines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
+				//		//receive shadows support
+				//		if( receiveShadows )//nShadowsSupportCounter != 0 )
+				//		{
+				//			//!!!!дефайны не разделены по типу программ
+				//			defines.Add( ("SHADOW_MAP", "") );
+				//			//fragmentDefines.Add( ("SHADOW_MAP", "") );
 
-					//	if( shaderGenerationEnable )
-					//	{
-					//		//vertex
-					//		var vertexCode = result.vertexGeneratedCode;
-					//		if( vertexCode != null )
-					//		{
-					//			if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
-					//				defines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
-					//			if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
-					//				defines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
-					//			if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
-					//				defines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
-					//			if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
-					//				defines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
-					//		}
+				//			////if( nShadowsSupportCounter == 2 )
+				//			////	fragmentDefines.Add( ("SHADOW_MAP_HIGH", "") );
+				//			////else
+				//			////	fragmentDefines.Add( ("SHADOW_MAP_LOW", "") );
+				//		}
 
-					//		//material index
-					//		var materialIndexCode = result.materialIndexGeneratedCode;
-					//		if( materialIndexCode != null )
-					//		{
-					//			if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
-					//				defines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
-					//			if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
-					//				defines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
-					//			if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
-					//				defines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
-					//			if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
-					//				defines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
-					//		}
+				//		//if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterEqual )
+				//		//	defines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
+				//		//else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessEqual )
+				//		//	defines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
 
-					//		////displacement
-					//		//var displacementCode = result.displacementGeneratedCode;
-					//		//if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
-					//		//{
-					//		//	if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
-					//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
-					//		//	if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
-					//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
-					//		//	if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
-					//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
-					//		//	if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
-					//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
-					//		//}
+				//		if( shaderGenerationEnable )
+				//		{
+				//			//vertex
+				//			var vertexCode = result.vertexGeneratedCode;
+				//			if( vertexCode != null )
+				//			{
+				//				if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
+				//					defines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
+				//				if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
+				//					defines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
+				//				if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
+				//					defines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
+				//				if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
+				//					defines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
+				//			}
 
-					//		//fragment
-					//		var fragmentCode = result.fragmentGeneratedCode;
-					//		if( fragmentCode != null )
-					//		{
-					//			if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
-					//				defines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
-					//			if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
-					//				defines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
-					//			if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
-					//				defines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
-					//			if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
-					//				defines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
-					//		}
-					//	}
-					//}
+				//			//material index
+				//			var materialIndexCode = result.materialIndexGeneratedCode;
+				//			if( materialIndexCode != null )
+				//			{
+				//				if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
+				//					defines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
+				//				if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
+				//					defines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
+				//				if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
+				//					defines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
+				//				if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
+				//					defines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
+				//			}
 
-					//{
-					//	var parameters = new GpuProgramManager.GetProgramItem( "Standard_GI_Voxel_", GpuProgramType.Compute, @"Base\Shaders\MaterialStandard_GI_Voxel.sc", defines, optimize );
+				//			////displacement
+				//			//var displacementCode = result.displacementGeneratedCode;
+				//			//if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
+				//			//{
+				//			//	if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
+				//			//		fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
+				//			//	if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
+				//			//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
+				//			//	if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
+				//			//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
+				//			//	if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
+				//			//		fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
+				//			//}
 
-					//	if( collecting )
-					//		programsToCompile.Add( parameters );
-					//	else
-					//	{
-					//		string error2;
+				//			//fragment
+				//			var fragmentCode = result.fragmentGeneratedCode;
+				//			if( fragmentCode != null )
+				//			{
+				//				if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
+				//					defines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
+				//				if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
+				//					defines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
+				//				if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
+				//					defines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
+				//				if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
+				//					defines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
+				//			}
+				//		}
+				//	}
 
-					//		//vertex program
-					//		var program = GpuProgramManager.GetProgram( parameters, out error2 );
-					//		if( !string.IsNullOrEmpty( error2 ) )
-					//		{
-					//			result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
-					//			Log.Warning( result.error );
-					//			return null;
-					//		}
+				//	{
+				//		var parameters = new GpuProgramManager.GetProgramItem( "Standard_GI_Voxel_", GpuProgramType.Compute, @"Base\Shaders\MaterialStandard_GI_Voxel.sc", defines, optimize );
 
-					//		//!!!!Dispose()? who else
-					//		result.giVoxelProgram = new Program( program.RealObject );
-					//		//result.giVoxelProgram = program;
-					//	}
-					//}
-					////}
-				}
+				//		if( collecting )
+				//			programsToCompile.Add( parameters );
+				//		else
+				//		{
+				//			string error2;
+
+				//			//vertex program
+				//			var program = GpuProgramManager.GetProgram( parameters, out error2 );
+				//			if( !string.IsNullOrEmpty( error2 ) )
+				//			{
+				//				result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
+				//				Log.Warning( result.error );
+				//				return null;
+				//			}
+
+				//			//!!!!Dispose()? who else
+				//			result.giVoxelProgram = new Program( program.RealObject );
+				//			//result.giVoxelProgram = program;
+				//		}
+				//	}
+				//	//}
+
+
+
+				//	//var nPassType = 1;
+				//	////for( int nPassType = 0; nPassType < 3; nPassType++ )//for( int nPassType = 0; nPassType < 4; nPassType++ )
+				//	////{
+				//	//var voxelPass = nPassType == 1;
+				//	//var billboardPass = nPassType == 2;
+
+				//	////generate compile arguments
+				//	//var defines = new List<(string, string)>( 8 );
+				//	//{
+				//	//	defines.Add( ("BLEND_MODE_" + blendMode.ToString().ToUpper(), "") );
+				//	//	defines.Add( ("SHADING_MODEL_" + ShadingModel.Value.ToString().ToUpper(), "") );
+				//	//	defines.Add( ("SHADING_MODEL_INDEX", ( (int)ShadingModel.Value ).ToString()) );
+				//	//	//if( TwoSided && TwoSidedFlipNormals )
+				//	//	//	fragmentDefines.Add( ("TWO_SIDED_FLIP_NORMALS", "") );
+				//	//	if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialSeparatePass )
+				//	//		defines.Add( ("MULTI_MATERIAL_SEPARATE_PASS", "") );
+				//	//	if( specialMode == CompiledMaterialData.SpecialMode.MultiMaterialCombinedPass )
+				//	//		defines.Add( ("MULTI_MATERIAL_COMBINED_PASS", "") );
+
+				//	//	//if( RenderingSystem.DisplacementMaxSteps > 0 && Displacement.ReferenceSpecified )
+				//	//	//	generalDefines.Add( ("DISPLACEMENT", "") );
+				//	//	//if( ( blendMode == BlendModeEnum.Masked /*|| blendMode == BlendModeEnum.MaskedLayer */) && opacityDithering )
+				//	//	//	fragmentDefines.Add( ("OPACITY_DITHERING", "") );
+				//	//	if( voxelPass )
+				//	//		defines.Add( ("VOXEL", "") );
+				//	//	//if( billboardPass )
+				//	//	//	generalDefines.Add( ("BILLBOARD", "") );
+
+				//	//	//if( DepthOffsetMode.Value == DepthOffsetModeEnum.GreaterEqual )
+				//	//	//	defines.Add( ("DEPTH_OFFSET_MODE_GREATER_EQUAL", "") );
+				//	//	//else if( DepthOffsetMode.Value == DepthOffsetModeEnum.LessEqual )
+				//	//	//	defines.Add( ("DEPTH_OFFSET_MODE_LESS_EQUAL", "") );
+
+				//	//	if( shaderGenerationEnable )
+				//	//	{
+				//	//		//vertex
+				//	//		var vertexCode = result.vertexGeneratedCode;
+				//	//		if( vertexCode != null )
+				//	//		{
+				//	//			if( !string.IsNullOrEmpty( vertexCode.parametersBody ) )
+				//	//				defines.Add( ("VERTEX_CODE_PARAMETERS", vertexCode.parametersBody) );
+				//	//			if( !string.IsNullOrEmpty( vertexCode.samplersBody ) )
+				//	//				defines.Add( ("VERTEX_CODE_SAMPLERS", vertexCode.samplersBody) );
+				//	//			if( !string.IsNullOrEmpty( vertexCode.shaderScripts ) )
+				//	//				defines.Add( ("VERTEX_CODE_SHADER_SCRIPTS", "\r\n" + vertexCode.shaderScripts) );
+				//	//			if( !string.IsNullOrEmpty( vertexCode.codeBody ) )
+				//	//				defines.Add( ("VERTEX_CODE_BODY", "\r\n" + vertexCode.codeBody) );
+				//	//		}
+
+				//	//		//material index
+				//	//		var materialIndexCode = result.materialIndexGeneratedCode;
+				//	//		if( materialIndexCode != null )
+				//	//		{
+				//	//			if( !string.IsNullOrEmpty( materialIndexCode.parametersBody ) )
+				//	//				defines.Add( ("MATERIAL_INDEX_CODE_PARAMETERS", materialIndexCode.parametersBody) );
+				//	//			if( !string.IsNullOrEmpty( materialIndexCode.samplersBody ) )
+				//	//				defines.Add( ("MATERIAL_INDEX_CODE_SAMPLERS", materialIndexCode.samplersBody) );
+				//	//			if( !string.IsNullOrEmpty( materialIndexCode.shaderScripts ) )
+				//	//				defines.Add( ("MATERIAL_INDEX_CODE_SHADER_SCRIPTS", "\r\n" + materialIndexCode.shaderScripts) );
+				//	//			if( !string.IsNullOrEmpty( materialIndexCode.codeBody ) )
+				//	//				defines.Add( ("MATERIAL_INDEX_CODE_BODY", "\r\n" + materialIndexCode.codeBody) );
+				//	//		}
+
+				//	//		////displacement
+				//	//		//var displacementCode = result.displacementGeneratedCode;
+				//	//		//if( RenderingSystem.DisplacementMaxSteps > 0 && displacementCode != null )
+				//	//		//{
+				//	//		//	if( !string.IsNullOrEmpty( displacementCode.parametersBody ) )
+				//	//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_PARAMETERS", displacementCode.parametersBody) );
+				//	//		//	if( !string.IsNullOrEmpty( displacementCode.samplersBody ) )
+				//	//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SAMPLERS", displacementCode.samplersBody) );
+				//	//		//	if( !string.IsNullOrEmpty( displacementCode.shaderScripts ) )
+				//	//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_SHADER_SCRIPTS", "\r\n" + displacementCode.shaderScripts) );
+				//	//		//	if( !string.IsNullOrEmpty( displacementCode.codeBody ) )
+				//	//		//		fragmentDefines.Add( ("DISPLACEMENT_CODE_BODY", "\r\n" + displacementCode.codeBody) );
+				//	//		//}
+
+				//	//		//fragment
+				//	//		var fragmentCode = result.fragmentGeneratedCode;
+				//	//		if( fragmentCode != null )
+				//	//		{
+				//	//			if( !string.IsNullOrEmpty( fragmentCode.parametersBody ) )
+				//	//				defines.Add( ("FRAGMENT_CODE_PARAMETERS", fragmentCode.parametersBody) );
+				//	//			if( !string.IsNullOrEmpty( fragmentCode.samplersBody ) )
+				//	//				defines.Add( ("FRAGMENT_CODE_SAMPLERS", fragmentCode.samplersBody) );
+				//	//			if( !string.IsNullOrEmpty( fragmentCode.shaderScripts ) )
+				//	//				defines.Add( ("FRAGMENT_CODE_SHADER_SCRIPTS", "\r\n" + fragmentCode.shaderScripts) );
+				//	//			if( !string.IsNullOrEmpty( fragmentCode.codeBody ) )
+				//	//				defines.Add( ("FRAGMENT_CODE_BODY", "\r\n" + fragmentCode.codeBody) );
+				//	//		}
+				//	//	}
+				//	//}
+
+				//	//{
+				//	//	var parameters = new GpuProgramManager.GetProgramItem( "Standard_GI_Voxel_", GpuProgramType.Compute, @"Base\Shaders\MaterialStandard_GI_Voxel.sc", defines, optimize );
+
+				//	//	if( collecting )
+				//	//		programsToCompile.Add( parameters );
+				//	//	else
+				//	//	{
+				//	//		string error2;
+
+				//	//		//vertex program
+				//	//		var program = GpuProgramManager.GetProgram( parameters, out error2 );
+				//	//		if( !string.IsNullOrEmpty( error2 ) )
+				//	//		{
+				//	//			result.error = GpuProgramManager.GetGpuProgramCompilationErrorText( this, error2 );
+				//	//			Log.Warning( result.error );
+				//	//			return null;
+				//	//		}
+
+				//	//		//!!!!Dispose()? who else
+				//	//		result.giVoxelProgram = new Program( program.RealObject );
+				//	//		//result.giVoxelProgram = program;
+				//	//	}
+				//	//}
+				//	////}
+				//}
 
 
 				if( collecting )
@@ -3475,190 +3663,6 @@ namespace NeoAxis
 			//Log.Info( "Total time: " + ( DateTime.Now - time ).TotalSeconds.ToString() );
 
 			return result;
-		}
-
-		public void NewObjectCreateShaderGraph( NewMaterialData data = null )
-		{
-			var graph = CreateComponent<FlowGraph>();
-			graph.Name = "Shader graph";
-			graph.Specialization = ReferenceUtility.MakeReference(
-				MetadataManager.GetTypeOfNetType( typeof( FlowGraphSpecialization_Shader ) ).Name + "|Instance" );
-
-			{
-				var node = graph.CreateComponent<FlowGraphNode>();
-				if( !string.IsNullOrEmpty( Name ) )
-					node.Name = "Node " + Name;
-				else
-					node.Name = "Node";
-				node.Position = new Vector2I( 10, -7 );
-				node.ControlledObject = ReferenceUtility.MakeThisReference( node, this );
-			}
-
-			//configure
-			if( data != null )
-			{
-				const int step = 9;
-				Vector2I position = new Vector2I( -20, -data.GetTextureCount() * step / 2 );
-
-				//BaseColor
-				if( !string.IsNullOrEmpty( data.BaseColorTexture ) )
-				{
-					var node = graph.CreateComponent<FlowGraphNode>();
-					node.Name = "Node Texture Sample " + "BaseColor";
-					node.Position = position;
-					position.Y += step;
-
-					var sample = node.CreateComponent<ShaderTextureSample>();
-					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-					sample.Texture = new Reference<ImageComponent>( null, data.BaseColorTexture );
-
-					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-					BaseColor = ReferenceUtility.MakeThisReference( this, sample, "RGBA" );
-				}
-				//else if( data.BaseColor.HasValue )
-				//	BaseColor = data.BaseColor.Value;
-
-				//Metallic
-				if( !string.IsNullOrEmpty( data.MetallicTexture ) )
-				{
-					var node = graph.CreateComponent<FlowGraphNode>();
-					node.Name = "Node Texture Sample " + "Metallic";
-					node.Position = position;
-					position.Y += step;
-
-					var sample = node.CreateComponent<ShaderTextureSample>();
-					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-					sample.Texture = new Reference<ImageComponent>( null, data.MetallicTexture );
-
-					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-					Metallic = ReferenceUtility.MakeThisReference( this, sample, "R" );
-				}
-
-				//Roughness
-				if( !string.IsNullOrEmpty( data.RoughnessTexture ) )
-				{
-					var node = graph.CreateComponent<FlowGraphNode>();
-					node.Name = "Node Texture Sample " + "Roughness";
-					node.Position = position;
-					position.Y += step;
-
-					var sample = node.CreateComponent<ShaderTextureSample>();
-					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-					sample.Texture = new Reference<ImageComponent>( null, data.RoughnessTexture );
-
-					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-					Roughness = ReferenceUtility.MakeThisReference( this, sample, "R" );
-				}
-
-				//Normal
-				if( !string.IsNullOrEmpty( data.NormalTexture ) )
-				{
-					var node = graph.CreateComponent<FlowGraphNode>();
-					node.Name = "Node Texture Sample " + "Normal";
-					node.Position = position;
-					position.Y += step;
-
-					var sample = node.CreateComponent<ShaderTextureSample>();
-					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-					sample.Texture = new Reference<ImageComponent>( null, data.NormalTexture );
-
-					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-					Normal = ReferenceUtility.MakeThisReference( this, sample, "RGBA" );
-				}
-
-				//Displacement
-				if( !string.IsNullOrEmpty( data.DisplacementTexture ) )
-				{
-					var node = graph.CreateComponent<FlowGraphNode>();
-					node.Name = "Node Texture Sample " + "Displacement";
-					node.Position = position;
-					position.Y += step;
-
-					var sample = node.CreateComponent<ShaderTextureSample>();
-					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-					sample.Texture = new Reference<ImageComponent>( null, data.DisplacementTexture );
-
-					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-					Displacement = ReferenceUtility.MakeThisReference( this, sample, "R" );
-				}
-
-				//AmbientOcclusion
-				if( !string.IsNullOrEmpty( data.AmbientOcclusionTexture ) )
-				{
-					var node = graph.CreateComponent<FlowGraphNode>();
-					node.Name = "Node Texture Sample " + "AmbientOcclusion";
-					node.Position = position;
-					position.Y += step;
-
-					var sample = node.CreateComponent<ShaderTextureSample>();
-					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-					sample.Texture = new Reference<ImageComponent>( null, data.AmbientOcclusionTexture );
-
-					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-					AmbientOcclusion = ReferenceUtility.MakeThisReference( this, sample, "R" );
-				}
-
-				//Emissive
-				if( !string.IsNullOrEmpty( data.EmissiveTexture ) )
-				{
-					var node = graph.CreateComponent<FlowGraphNode>();
-					node.Name = "Node Texture Sample " + "Emissive";
-					node.Position = position;
-					position.Y += step;
-
-					var sample = node.CreateComponent<ShaderTextureSample>();
-					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-					sample.Texture = new Reference<ImageComponent>( null, data.EmissiveTexture );
-
-					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-					Emissive = ReferenceUtility.MakeThisReference( this, sample, "RGBA" );
-				}
-
-				//Opacity
-				if( !string.IsNullOrEmpty( data.OpacityTexture ) )
-				{
-					var node = graph.CreateComponent<FlowGraphNode>();
-					node.Name = "Node Texture Sample " + "Opacity";
-					node.Position = position;
-					position.Y += step;
-
-					var sample = node.CreateComponent<ShaderTextureSample>();
-					sample.Name = ComponentUtility.GetNewObjectUniqueName( sample );
-					sample.Texture = new Reference<ImageComponent>( null, data.OpacityTexture );
-
-					node.ControlledObject = ReferenceUtility.MakeThisReference( node, sample );
-
-					Opacity = ReferenceUtility.MakeThisReference( this, sample, "R" );
-
-					BlendMode = BlendModeEnum.Masked;
-				}
-			}
-
-			if( Parent == null )
-			{
-				var toSelect = new Component[] { this, graph };
-				EditorDocumentConfiguration = EditorAPI.CreateEditorDocumentXmlConfiguration( toSelect, graph );
-			}
-		}
-
-		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow )
-		{
-			//don't create another shader graph if already exists in a base type
-			if( !createdFromNewObjectWindow && GetComponent<FlowGraph>( "Shader graph" ) == null )
-				NewObjectCreateShaderGraph();
-		}
-
-		public void EditorUpdateWhenDocumentModified()
-		{
-			if( EditorAutoUpdate )
-				PerformResultCompile();
 		}
 	}
 }

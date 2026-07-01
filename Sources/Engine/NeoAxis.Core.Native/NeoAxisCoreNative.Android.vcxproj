@@ -2308,6 +2308,7 @@
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseHelper.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslScanContext.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslTokenStream.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_spirv_glsl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\OggVorbisTheora\libogg\include\ogg\ogg.h" />

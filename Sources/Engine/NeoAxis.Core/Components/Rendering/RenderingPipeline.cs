@@ -1577,9 +1577,9 @@ namespace NeoAxis
 		//}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		internal protected virtual void SetCutVolumeSettingsUniforms( ViewportRenderingContext context, RenderSceneData.CutVolumeItem[] cutVolumes, bool forceUpdate ) { }
+		internal protected virtual void SetCutVolumeSettingsUniforms_Simple3DRenderer( ViewportRenderingContext context, RenderSceneData.CutVolumeItem[] cutVolumes, bool forceUpdate ) { }
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		internal static bool IsEqualCutVolumes( RenderSceneData.CutVolumeItem[] array1, RenderSceneData.CutVolumeItem[] array2 )
 		{
 			if( array1 == null && array2 == null )

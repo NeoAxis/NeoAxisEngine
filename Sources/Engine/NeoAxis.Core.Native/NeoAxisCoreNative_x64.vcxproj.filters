@@ -4190,6 +4190,9 @@
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslTokenStream.cpp">
       <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
     </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_spirv_glsl.cpp">
+      <Filter>bgfx\shaderc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryManager\MemoryManager.h">

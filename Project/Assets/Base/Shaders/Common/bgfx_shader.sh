@@ -18,6 +18,11 @@
 #	define BRANCH
 #	define LOOP
 #	define UNROLL
+//!!!!betauser
+#elif BGFX_SHADER_LANGUAGE_SPIRV
+#	define BRANCH [[dont_flatten]]
+#	define LOOP [[dont_unroll]]
+#	define UNROLL [[unroll]]
 #else
 #	define BRANCH [branch]
 #	define LOOP   [loop]
@@ -48,9 +53,13 @@
 #   define ARRAY_END() }
 #endif // BGFX_SHADER_LANGUAGE_GLSL
 
+//!!!!betauser
+//replaced to SPIRV_HLSL when HLSL mode
+// || BGFX_SHADER_LANGUAGE_SPIRV
+
 #if BGFX_SHADER_LANGUAGE_HLSL \
  || BGFX_SHADER_LANGUAGE_PSSL \
- || BGFX_SHADER_LANGUAGE_SPIRV \
+ || SPIRV_HLSL \
  || BGFX_SHADER_LANGUAGE_METAL \
  || BGFX_SHADER_LANGUAGE_WGSL
 #	define CONST(_x) static const _x
@@ -756,7 +765,7 @@ uvec3 uvec3_splat(uint _x) { return uvec3(_x, _x, _x); }
 uvec4 uvec4_splat(uint _x) { return uvec4(_x, _x, _x, _x); }
 #endif // BGFX_SHADER_LANGUAGE_*
 
-#if BGFX_SHADER_LANGUAGE_GLSL
+#if BGFX_SHADER_LANGUAGE_GLSL || SPIRV_GLSL
 #	define mul(_a, _b) ( (_a) * (_b) )
 #elif BGFX_SHADER_LANGUAGE_WGSL
 #	define mul(_a, _b) mul(_b, _a)
@@ -843,7 +852,7 @@ uniform vec4  u_alphaRef4;
 #endif
 
 
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 
 vec4 lerp(vec4 x, vec4 y, float s) { return mix(x,y,s); }
 vec3 lerp(vec3 x, vec3 y, float s) { return mix(x,y,s); }
@@ -902,7 +911,7 @@ mat3 mtxFromRows(float _00, float _01, float _02, float _10, float _11, float _1
 #define float4x4 mat4
 
 
-#if HLSL || SPIRV
+#ifndef LIMITED_DEVICE //#if HLSL || SPIRV
 	BgfxSampler2D makeSampler( BgfxSampler2D _sampler, Texture2D _texture )
 	{
 		BgfxSampler2D result;
@@ -926,6 +935,12 @@ mat3 mtxFromRows(float _00, float _01, float _02, float _10, float _11, float _1
 ivec2 ivec2_splat(int _x) { return ivec2(_x, _x); }
 ivec3 ivec3_splat(int _x) { return ivec3(_x, _x, _x); }
 ivec4 ivec4_splat(int _x) { return ivec4(_x, _x, _x, _x); }
+
+
+#if FRAGMENT && SPIRV_GLSL
+layout(location = 0) out vec4 out_FragColor;
+#define gl_FragColor out_FragColor
+#endif
 
 
 #endif // __cplusplus

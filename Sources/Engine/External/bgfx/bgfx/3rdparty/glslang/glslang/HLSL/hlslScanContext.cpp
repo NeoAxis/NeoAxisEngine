@@ -1,5 +1,6 @@
 //!!!!betauser
 #ifdef SPIRV
+#ifdef ENABLE_HLSL
 
 //
 // Copyright (C) 2016 Google, Inc.
@@ -1041,4 +1042,5 @@ EHlslTokenClass HlslScanContext::reservedWord()
 } // end namespace glslang
 
 //!!!!betauser
+#endif
 #endif

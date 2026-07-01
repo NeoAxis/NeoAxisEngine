@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NeoAxis;
+using System;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -44,8 +45,12 @@ namespace Internal.SharpBgfx {
         /// Initializes a new instance of the <see cref="MemoryBlock"/> struct.
         /// </summary>
         /// <param name="size">The size of the block, in bytes.</param>
-        public MemoryBlock (int size) {
-            ptr = NativeMethods.bgfx_alloc(size);
+        public MemoryBlock( int size, bool zeroMemory = false )
+        {
+            ptr = NativeMethods.bgfx_alloc( size );
+            //!!!!betauser
+            if( zeroMemory )
+                NativeUtility.ZeroMemory( ptr->Data, size );
         }
 
         /// <summary>

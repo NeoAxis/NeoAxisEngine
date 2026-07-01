@@ -1,6 +1,6 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 
-#ifdef GLSL
+#if GLSL || SPIRV_GLSL
 void clip(float v)
 {
 	if(v < 0.0)
@@ -96,6 +96,7 @@ int ditherArray4(vec4 fragCoord, vec3 factors)
 	return 3;
 }
 
+/* now in Common.sh
 vec2 vogelDiskSample(int sampleIndex, int sampleCount, float angle)
 {
 	const float goldenAngle = 2.399963f;
@@ -105,6 +106,7 @@ vec2 vogelDiskSample(int sampleIndex, int sampleCount, float angle)
 	sincos(theta, sine, cosine);
 	return vec2(cosine, sine) * r;
 }
+*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -122,6 +124,7 @@ float getLightAttenuation2(vec3 lightAttenuation, float distance)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/* now in Common.sh
 float toClipSpaceDepth(float depthTextureValue)
 {
 #if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
@@ -163,20 +166,18 @@ float getDepthValue(float depthTextureValue, float near, float far)
 }
 
 //!!!!not works
-/*
-float getDepthValue2(vec2 texCoord, float rawDepth, float near, float far, mat4 invProj)
-{
-	vec3 clip = vec3(texCoord * 2.0 - 1.0, toClipSpaceDepth(rawDepth));
-	#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
-		clip.y = -clip.y;
-	#endif	
-	vec4 posVS = mul(invProj, vec4(clip, 1.0));
-
-	float depth = (posVS.z - near) / (far - near);
-	
-	return depth;
-}
-*/
+//float getDepthValue2(vec2 texCoord, float rawDepth, float near, float far, mat4 invProj)
+//{
+//	vec3 clip = vec3(texCoord * 2.0 - 1.0, toClipSpaceDepth(rawDepth));
+//	#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
+//		clip.y = -clip.y;
+//	#endif	
+//	vec4 posVS = mul(invProj, vec4(clip, 1.0));
+//
+//	float depth = (posVS.z - near) / (far - near);
+//	
+//	return depth;
+//}
 
 float getRawDepthValue(float depth, float near, float far)
 {
@@ -195,9 +196,11 @@ float getRawDepthValue(float depth, float near, float far)
 	
 	return rawDepth;
 }
+*/
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/* now in Common.sh
 vec3 reconstructWorldPosition(mat4 invView, mat4 invProj, vec2 texCoord, float rawDepth)
 {
 	//!!!!
@@ -213,6 +216,8 @@ vec3 reconstructWorldPosition(mat4 invView, mat4 invProj, vec2 texCoord, float r
 	vec3 posNDC = posVS.xyz / posVS.w;
 	return mul(invView, vec4(posNDC, 1.0)).xyz;
 }
+*/
+
 
 /*
 vec3 reconstructWorldPosition(mat4 invViewProj, vec2 texCoord, float rawDepth)
@@ -370,65 +375,6 @@ vec3 getEnvironmentValueLod(samplerCube tex, EnvironmentTextureData data, vec3 t
 	vec3 v = textureCubeLod(tex, flipCubemapCoords(mulQuat(data.rotation, texCoord)), lod).rgb * data.multiplierAndAffect.xyz;
 	//vec3 v = textureCubeLod(tex, flipCubemapCoords2(mulQuat(data.rotation, texCoord)), lod).rgb * data.multiplierAndAffect.xyz;
 	return lerp(vec3_splat(1), v, data.multiplierAndAffect.w);
-}
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-bool cutVolumes( vec3 worldPosition )
-{
-#if GLOBAL_CUT_VOLUME_MAX_AMOUNT > 0
-
-	BRANCH
-	if(u_viewportCutVolumeSettings.x > 0.0)
-	{
-		int count = int(u_viewportCutVolumeSettings.x);
-		//BRANCH
-		LOOP
-		for(int n = 0; n < count; n++)
-		{
-			mat4 m = u_viewportCutVolumeData[n];
-			float shape = m[3][3];
-			m[3][3] = 1.0;
-
-			vec3 p = abs(mul(m, vec4(worldPosition, 1.0)).xyz);
-			bool invert = shape < 0.0;
-			float shapeAbs = abs(shape);
-			
-			bool clip = false;
-			
-			if(shapeAbs == 1.0)
-			{
-				//Box
-				clip = p.x < 0.5 && p.y < 0.5 && p.z < 0.5;
-			}
-			else if(shapeAbs == 2.0)
-			{
-				//Sphere
-				clip = length(p) < 0.5;
-			}
-			else// if(shapeAbs == 3.0)
-			{
-				//Cylinder
-				clip = p.x < 0.5 && length(p.yz) < 0.5;
-			}
-/*			else
-			{
-				//Plane
-				vec4 plane = m[0];
-				clip = dot(plane, vec4(worldPosition, 1.0));
-			}*/
-			
-			if(invert)
-				clip = !clip;
-			
-			if(clip)
-				return true;
-		}
-	}
-
-#endif
-
-	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

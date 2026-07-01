@@ -38,6 +38,7 @@ namespace bgfx
 
 
 //!!!!betauser. SHADERC_CONFIG_HAS_DXC is disabled
+//|| BX_PLATFORM_LINUX       \
 //// DXIL compilation support (Shader Model 6.0+):
 //// - Windows: Native DXC (dxcompiler.dll)
 //// - Linux: DXC (libdxcompiler.so) via directx-headers
@@ -45,9 +46,9 @@ namespace bgfx
 //#ifndef SHADERC_CONFIG_HAS_DXC
 //#	define SHADERC_CONFIG_HAS_DXC (0  \
 //		|| BX_PLATFORM_WINDOWS     \
-//		|| BX_PLATFORM_LINUX       \
 //		)
 //#endif // SHADERC_CONFIG_HAS_DXC
+
 
 #ifndef SHADERC_CONFIG_HAS_TINT
 #	if __has_include(<tint/api/tint.h>)
@@ -200,7 +201,7 @@ namespace bgfx
 		uint32_t optimizationLevel;
 
 		////!!!!betauser
-		//bool compileToSpirv;
+		bool compileToSpirv;
 	};
 
 	typedef std::vector<Uniform> UniformArray;

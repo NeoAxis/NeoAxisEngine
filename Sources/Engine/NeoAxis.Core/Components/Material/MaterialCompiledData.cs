@@ -15,9 +15,9 @@ namespace NeoAxis
 		/// </summary>
 		public class CompiledMaterialData
 		{
-			static Uniform? u_materialCustomParameters;
-			static Uniform? u_multiMaterialCombinedInfo;
-			static Uniform? u_multiMaterialCombinedMaterials;
+			//static Uniform? u_materialCustomParameters;
+			//static Uniform? u_multiMaterialCombinedInfo;
+			//static Uniform? u_multiMaterialCombinedMaterials;
 
 			public List<GpuMaterialPass> AllPasses = new List<GpuMaterialPass>();
 			//bool passesDisposeOnDisposeResultData = true;
@@ -77,9 +77,9 @@ namespace NeoAxis
 			//!!!!GpuMaterialPassGroup?
 			public GpuMaterialPass decalShadingPass;
 
-			public bool giSupport;
-			public string giSupportReason;
-			public Program giVoxelProgram;
+			//public bool giSupport;
+			//public string giSupportReason;
+			//public Program giVoxelProgram;
 
 			//public bool softParticles;
 
@@ -112,6 +112,14 @@ namespace NeoAxis
 
 			public float tessellationQuality;
 			//public bool tessellation;
+
+
+
+			//compute rendering
+			public GpuMaterialPass geometryPassUsual;
+			public GpuMaterialPass geometryPassVoxel;
+
+
 
 			/////////////////////////////////////
 
@@ -853,60 +861,95 @@ namespace NeoAxis
 				//if( setUniformsAndBindTextures )
 				//{
 
-				var uniforms = data.Uniforms;
-				if( uniforms != null )
+				if( RenderingPipeline_Basic.drawBufferCurrentItem == null )
 				{
-					for( int n = 0; n < uniforms.Count; n++ )
+					var uniforms = data.Uniforms;
+					if( uniforms != null )
 					{
-						ref var item = ref uniforms.Data[ n ];
-						var uniform = item.Uniform;
-						var value = item.Value;
-						Bgfx.SetUniform( uniform, &value, 1 );
+						for( int n = 0; n < uniforms.Count; n++ )
+						{
+							ref var item = ref uniforms.Data[ n ];
+							var uniform = item.Uniform;
+							var value = item.Value;
+							Bgfx.SetUniform( uniform, &value, 1 );
+						}
 					}
-				}
 
-				if( data.FallbackUniformContainer != null )
-					context.BindParameterContainer( data.FallbackUniformContainer, disableAnisotropic );
+					if( data.FallbackUniformContainer != null )
+						context.BindParameterContainer( data.FallbackUniformContainer, disableAnisotropic );
+				}
 
 				//!!!!transfer via Materials texture? yes, in the future
 				//set uniforms of custom parameters (Advanced Scripting)
 				if( owner.AdvancedScripting )
 				{
-					if( !u_materialCustomParameters.HasValue )
-						u_materialCustomParameters = GpuProgramManager.RegisterUniform( "u_materialCustomParameters", UniformType.Vector4, 2 );
+					if( RenderingPipeline_Basic.drawBufferCurrentItem != null )
+					{
+						var p = RenderingPipeline_Basic.drawBufferCurrentItem + RenderingPipeline_Basic.d_materialCustomParameters;
+						*( p + 0 ) = owner.CustomParameter1.Value.ToVector4F();
+						*( p + 1 ) = owner.CustomParameter2.Value.ToVector4F();
 
-					var parameters = stackalloc Vector4F[ 2 ];
-					parameters[ 0 ] = owner.CustomParameter1.Value.ToVector4F();
-					parameters[ 1 ] = owner.CustomParameter2.Value.ToVector4F();
-					Bgfx.SetUniform( u_materialCustomParameters.Value, parameters, 2 );
+						//var parameters = stackalloc Vector4F[ 2 ];
+						//parameters[ 0 ] = owner.CustomParameter1.Value.ToVector4F();
+						//parameters[ 1 ] = owner.CustomParameter2.Value.ToVector4F();
+						//NativeUtility.CopyMemory( RenderingPipeline_Basic.drawBufferCurrentItem + RenderingPipeline_Basic.d_materialCustomParameters, parameters, sizeof( Vector4F ) * 2 );
+					}
+
+					//if( !u_materialCustomParameters.HasValue )
+					//	u_materialCustomParameters = GpuProgramManager.RegisterUniform( "u_materialCustomParameters", UniformType.Vector4, 2 );
+
+					//var parameters = stackalloc Vector4F[ 2 ];
+					//parameters[ 0 ] = owner.CustomParameter1.Value.ToVector4F();
+					//parameters[ 1 ] = owner.CustomParameter2.Value.ToVector4F();
+					//Bgfx.SetUniform( u_materialCustomParameters.Value, parameters, 2 );
 				}
 
 				if( multiMaterialReferencedSeparateMaterialsOfCombinedGroup != null )
 				{
-					if( !u_multiMaterialCombinedInfo.HasValue )
+					if( RenderingPipeline_Basic.drawBufferCurrentItem != null )
 					{
-						u_multiMaterialCombinedInfo = GpuProgramManager.RegisterUniform( "u_multiMaterialCombinedInfo", UniformType.Vector4, 1 );
-						u_multiMaterialCombinedMaterials = GpuProgramManager.RegisterUniform( "u_multiMaterialCombinedMaterials", UniformType.Vector4, 8 );
-					}
+						//d_multiMaterialCombinedInfo
+						var info = RenderingPipeline_Basic.drawBufferCurrentItem + RenderingPipeline_Basic.d_multiMaterialCombinedInfo;
+						info->X = multiMaterialStartIndexOfCombinedGroup;
+						info->Y = multiMaterialReferencedSeparateMaterialsOfCombinedGroup.Length;
 
-					var info = new Vector4F();
-					info.X = multiMaterialStartIndexOfCombinedGroup;
-					info.Y = multiMaterialReferencedSeparateMaterialsOfCombinedGroup.Length;
-					Bgfx.SetUniform( u_multiMaterialCombinedInfo.Value, &info, 1 );
-
-					var parameters = stackalloc float[ 32 ];
-					for( int n = 0; n < 32; n++ )
-					{
-						var v = 0;
-						if( n < multiMaterialReferencedSeparateMaterialsOfCombinedGroup.Length )
+						//d_multiMaterialCombinedMaterials
+						var parameters = (float*)( RenderingPipeline_Basic.drawBufferCurrentItem + RenderingPipeline_Basic.d_multiMaterialCombinedMaterials );
+						for( int n = 0; n < 32; n++ )
 						{
-							var materialData = multiMaterialReferencedSeparateMaterialsOfCombinedGroup[ n ];
-							if( materialData != null )
-								v = materialData.currentFrameIndex;
+							if( n < multiMaterialReferencedSeparateMaterialsOfCombinedGroup.Length )
+							{
+								var materialData = multiMaterialReferencedSeparateMaterialsOfCombinedGroup[ n ];
+								if( materialData != null )
+									parameters[ n ] = materialData.currentFrameIndex;
+							}
 						}
-						parameters[ n ] = v;
 					}
-					Bgfx.SetUniform( u_multiMaterialCombinedMaterials.Value, parameters, 8 );
+
+					//if( !u_multiMaterialCombinedInfo.HasValue )
+					//{
+					//	u_multiMaterialCombinedInfo = GpuProgramManager.RegisterUniform( "u_multiMaterialCombinedInfo", UniformType.Vector4, 1 );
+					//	u_multiMaterialCombinedMaterials = GpuProgramManager.RegisterUniform( "u_multiMaterialCombinedMaterials", UniformType.Vector4, 8 );
+					//}
+
+					//var info = new Vector4F();
+					//info.X = multiMaterialStartIndexOfCombinedGroup;
+					//info.Y = multiMaterialReferencedSeparateMaterialsOfCombinedGroup.Length;
+					//Bgfx.SetUniform( u_multiMaterialCombinedInfo.Value, &info, 1 );
+
+					//var parameters = stackalloc float[ 32 ];
+					//for( int n = 0; n < 32; n++ )
+					//{
+					//	var v = 0;
+					//	if( n < multiMaterialReferencedSeparateMaterialsOfCombinedGroup.Length )
+					//	{
+					//		var materialData = multiMaterialReferencedSeparateMaterialsOfCombinedGroup[ n ];
+					//		if( materialData != null )
+					//			v = materialData.currentFrameIndex;
+					//	}
+					//	parameters[ n ] = v;
+					//}
+					//Bgfx.SetUniform( u_multiMaterialCombinedMaterials.Value, parameters, 8 );
 				}
 
 				//}
@@ -914,76 +957,74 @@ namespace NeoAxis
 				//if( bindTextures )
 				//{
 
-				var textures = data.Textures;
-				if( textures != null )
+				if( RenderingPipeline_Basic.drawBufferCurrentItem == null )
 				{
-					if( textures.Count > 1 )
+					var textures = data.Textures;
+					if( textures != null )
 					{
-						uint* pointer = stackalloc uint[ textures.Count * 4 ];
+						if( textures.Count > 1 )
+						{
+							uint* pointer = stackalloc uint[ textures.Count * 4 ];
 
-						uint* pointer2 = pointer;
-						int count = 0;
-						for( int n = 0; n < textures.Count; n++ )
-							context.BindTexture( ref textures.Data[ n ], ref pointer2, ref count, disableAnisotropic );
+							uint* pointer2 = pointer;
+							int count = 0;
+							for( int n = 0; n < textures.Count; n++ )
+								context.BindTexture( ref textures.Data[ n ], ref pointer2, ref count, disableAnisotropic );
 
-						if( count > 0 )
-							Bgfx.SetTextures( pointer, count );
+							if( count > 0 )
+								Bgfx.SetTextures( pointer, count );
+						}
+						else
+							context.BindTexture( ref textures.Data[ 0 ], disableAnisotropic );
 					}
-					else
-						context.BindTexture( ref textures.Data[ 0 ], disableAnisotropic );
 				}
 
 				//}
 			}
 
 			[MethodImpl( (MethodImplOptions)512 )]
-			public void BindCurrentFrameDataMaskTextures( ViewportRenderingContext context, ImageComponent mask )
+			public unsafe void BindCurrentFrameDataMaskTextures( ViewportRenderingContext context, ImageComponent mask )
 			{
-				if( mask?.Result != null )
+				if( RenderingPipeline_Basic.drawBufferCurrentItem == null )
 				{
-					for( int nCode = 0; nCode < 5; nCode++ )
+					if( mask?.Result != null )
 					{
-						//!!!!shadow casters?
-
-						ShaderGenerator.ResultData generatedCode = null;
-						switch( nCode )
+						for( int nCode = 0; nCode < 5; nCode++ )
 						{
-						case 0: generatedCode = vertexGeneratedCode; break;
-						case 1: generatedCode = materialIndexGeneratedCode; break;
-						case 2: generatedCode = displacementGeneratedCode; break;
-						case 3: generatedCode = fragmentGeneratedCode; break;
-						case 4: generatedCode = opacityGeneratedCode; break;
-						}
+							//!!!!shadow casters?
 
-						if( generatedCode != null )
-						{
-							var texturesMask = generatedCode.texturesMask;
-							if( texturesMask != null )
+							ShaderGenerator.ResultData generatedCode = null;
+							switch( nCode )
 							{
-								for( int n = 0; n < texturesMask.Count; n++ )
+							case 0: generatedCode = vertexGeneratedCode; break;
+							case 1: generatedCode = materialIndexGeneratedCode; break;
+							case 2: generatedCode = displacementGeneratedCode; break;
+							case 3: generatedCode = fragmentGeneratedCode; break;
+							case 4: generatedCode = opacityGeneratedCode; break;
+							}
+
+							if( generatedCode != null )
+							{
+								var texturesMask = generatedCode.texturesMask;
+								if( texturesMask != null )
 								{
-									var item = texturesMask[ n ];
+									for( int n = 0; n < texturesMask.Count; n++ )
+									{
+										var item = texturesMask[ n ];
 
-									//!!!!right?
-									//disable anisotropic for masks
-									var minMag = FilterOption.Linear;
+										//!!!!right?
+										//disable anisotropic for masks
+										var minMag = FilterOption.Linear;
 
-									//var minMag = RenderingSystem.AnisotropicFiltering/* EngineApp.InitSettings.AnisotropicFiltering*/ ? FilterOption.Anisotropic : FilterOption.Linear;
-									context.BindTexture( item.textureRegister, mask, TextureAddressingMode.Wrap, minMag, minMag, FilterOption.Linear, 0, false );
+										//var minMag = RenderingSystem.AnisotropicFiltering/* EngineApp.InitSettings.AnisotropicFiltering*/ ? FilterOption.Anisotropic : FilterOption.Linear;
+										context.BindTexture( item.textureRegister, mask, TextureAddressingMode.Wrap, minMag, minMag, FilterOption.Linear, 0, false );
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-
-			//public void BindCurrentFrameDataDepthTexture( ViewportRenderingContext context, ImageComponent depthTexture )
-			//{
-			//	if( softParticles )
-			//	{
-			//		context.BindTexture( 9/* "depthTexture"*/, depthTexture ?? ResourceUtility.WhiteTexture2D, TextureAddressingMode.Clamp, FilterOption.Point, FilterOption.Point, FilterOption.Point );
-			//	}
-			//}
 
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			public CompiledMaterialData[] GetOutputMaterials( bool multiMaterialGetCombined, bool gi )

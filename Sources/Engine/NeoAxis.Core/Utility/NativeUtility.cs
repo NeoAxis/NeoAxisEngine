@@ -194,6 +194,7 @@ namespace NeoAxis
 			////#endif
 		}
 
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public unsafe static void ZeroMemory( void* buffer, int length )
 		{
 			//#if !UWP

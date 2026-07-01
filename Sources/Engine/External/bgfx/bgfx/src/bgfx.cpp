@@ -3981,14 +3981,14 @@ namespace bgfx
 		BX_ASSERT(_stage < g_caps.limits.maxTextureSamplers, "Invalid stage %d (max %d).", _stage, g_caps.limits.maxTextureSamplers);
 
 		//!!!!comment?
-		if (isValid(_handle) )
-		{
-			const TextureRef& ref = s_ctx->m_textureRef[_handle.idx];
-			BX_ASSERT(!ref.isReadBack()
-				, "Can't sample from texture which was created with BGFX_TEXTURE_READ_BACK. This is CPU only texture."
-				);
-			BX_UNUSED(ref);
-		}
+		//if (isValid(_handle) )
+		//{
+		//	const TextureRef& ref = s_ctx->m_textureRef[_handle.idx];
+		//	BX_ASSERT(!ref.isReadBack()
+		//		, "Can't sample from texture which was created with BGFX_TEXTURE_READ_BACK. This is CPU only texture."
+		//		);
+		//	BX_UNUSED(ref);
+		//}
 
 		BGFX_ENCODER(setTexture(_stage, _sampler, _handle, _flags) );
 	}

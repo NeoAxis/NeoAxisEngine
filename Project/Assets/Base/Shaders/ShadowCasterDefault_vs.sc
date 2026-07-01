@@ -6,10 +6,12 @@ $output v_texCoord0, v_worldPosition, v_lodValue_visibilityDistance_receiveDecal
 #include "Common.sh"
 #include "VertexFunctions.sh"
 
-uniform vec4 u_renderOperationData[8];
+//uniform vec4 u_renderOperationData[8];
 #ifdef GLOBAL_SKELETAL_ANIMATION
 	SAMPLER2D(s_bones, 0);
 #endif
+SAMPLER2D(s_drawBufferTexture, 5);
+#include "DrawBuffer.sh"
 
 void main()
 {
@@ -17,17 +19,17 @@ void main()
 	vec3 normalLocal = vec3_splat(0);
 	vec4 tangentLocal = vec4_splat(0);
 #ifdef GLOBAL_SKELETAL_ANIMATION
-	getAnimationData(u_renderOperationData[0], s_bones, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
+	getAnimationData(d_renderOperationData0, s_bones, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
 #endif
 
 	mat4 worldMatrix;
 	uint cullingByCameraDirectionData = uint(0);
 	BRANCH
-	if(u_renderOperationData[0].y < 0.0)
+	if(d_renderOperationData0.y < 0.0)
 	{
 		//instancing
 		worldMatrix = mtxFromRows(i_data0, i_data1, i_data2, vec4(0,0,0,1));
-		addTranslate(worldMatrix, u_renderOperationData[7].xyz);
+		addTranslate(worldMatrix, d_renderOperationData7.xyz);
 		
 		v_lodValue_visibilityDistance_receiveDecals.xy = i_data4.xy;
 		uint data2 = asuint(i_data4.z);
@@ -39,16 +41,16 @@ void main()
 		v_colorParameter = decodePackedInstanceColor( i_data3.w, colorExp );
 		
 		if(v_lodValue_visibilityDistance_receiveDecals.y < 0.0)
-			v_lodValue_visibilityDistance_receiveDecals.y = u_renderOperationData[1].y;
+			v_lodValue_visibilityDistance_receiveDecals.y = d_renderOperationData1.y;
 		
 		cullingByCameraDirectionData = asuint( i_data4.w );
 	}
 	else
 	{
 		worldMatrix = u_model[0];
-		v_colorParameter = u_renderOperationData[4];
-		v_lodValue_visibilityDistance_receiveDecals = vec4(u_renderOperationData[2].w, u_renderOperationData[1].y, u_renderOperationData[1].x, 0);
-		cullingByCameraDirectionData = asuint( u_renderOperationData[3].w );
+		v_colorParameter = d_renderOperationData4;
+		v_lodValue_visibilityDistance_receiveDecals = vec4(d_renderOperationData2.w, d_renderOperationData1.y, d_renderOperationData1.x, 0);
+		cullingByCameraDirectionData = asuint( d_renderOperationData3.w );
 	}
 
 	//mat4 worldMatrixBeforeChanges = worldMatrix;
@@ -56,7 +58,7 @@ void main()
 	
 #ifdef BILLBOARD
 	vec4 billboardRotation;
-	billboardRotateWorldMatrix(u_renderOperationData, worldMatrix, true, u_cameraPosition, billboardRotation);
+	billboardRotateWorldMatrix(d_renderOperationData0, worldMatrix, true, u_cameraPosition, billboardRotation);
 #endif
 	vec4 worldPosition = mul(worldMatrix, vec4(positionLocal, 1.0));
 
@@ -70,7 +72,7 @@ void main()
 	gl_Position.xy += vec2(u_shadowTexelOffset, u_shadowTexelOffset) * gl_Position.w; //output.position.xy += texelOffsets.zw * output.position.w;
 
 	//!!!!special for mobile
-#ifdef GLSL
+#ifdef LIMITED_DEVICE //#ifdef GLSL
 	glPositionZ = gl_Position.z;
 #endif
 	//#ifdef LIGHT_TYPE_POINT
@@ -84,7 +86,7 @@ void main()
 	v_worldPosition = worldPosition.xyz;
 
 	//!!!!GLSL
-#ifndef GLSL
+#ifndef LIMITED_DEVICE //#ifndef GLSL
 	BRANCH
 	if( cullingByCameraDirectionData != 0 )
 	{
@@ -107,6 +109,6 @@ void main()
 	//geometry with voxel data
 #if (defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)) || (defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED))
 	v_objectSpacePosition = positionLocal;
-	voxelOrVirtualizedDataModeCalculateParametersV(u_renderOperationData, worldMatrix, u_cameraPosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2);
+	voxelOrVirtualizedDataModeCalculateParametersV(d_renderOperationData1, worldMatrix, u_cameraPosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2);
 #endif
 }

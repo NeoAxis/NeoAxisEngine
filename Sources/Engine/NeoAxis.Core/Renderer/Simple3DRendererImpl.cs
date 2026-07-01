@@ -1825,6 +1825,8 @@ namespace NeoAxis
 			if( preparedRenderables.Count == 0 )
 				return;
 
+			context.renderingPipeline.SetCutVolumeSettingsUniforms_Simple3DRenderer( context, null, true );
+
 			//var owner = context.Owner;
 			//Mat4F viewMatrix = owner.CameraSettings.ViewMatrix.ToMat4F();
 			//Mat4F projectionMatrix = owner.CameraSettings.ProjectionMatrix.ToMat4F();
@@ -1981,7 +1983,7 @@ namespace NeoAxis
 					{
 						if( !renderableItem_DynamicallyCreated.vertexBuffer.Disposed )
 						{
-							context.renderingPipeline.SetCutVolumeSettingsUniforms( context, item_DynamicallyCreated.cutVolumes, false );
+							context.renderingPipeline.SetCutVolumeSettingsUniforms_Simple3DRenderer( context, item_DynamicallyCreated.cutVolumes, false );
 
 							var operationType = item_DynamicallyCreated.type == Item_DynamicallyCreated.ItemType.Lines ? RenderOperationType.LineList : RenderOperationType.TriangleList;
 							context.SetVertexBuffer( 0, renderableItem_DynamicallyCreated.vertexBuffer, 0, renderableItem_DynamicallyCreated.vertexCount );
@@ -2004,7 +2006,7 @@ namespace NeoAxis
 
 						if( !data.ContainsDisposedBuffers() )
 						{
-							context.renderingPipeline.SetCutVolumeSettingsUniforms( context, item_VertexIndexData.cutVolumes, false );
+							context.renderingPipeline.SetCutVolumeSettingsUniforms_Simple3DRenderer( context, item_VertexIndexData.cutVolumes, false );
 
 							for( int n = 0; n < data.VertexBuffers.Count; n++ )
 								context.SetVertexBuffer( n, data.VertexBuffers[ n ], data.VertexStartOffset, data.VertexCount );

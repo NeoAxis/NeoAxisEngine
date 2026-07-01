@@ -4,17 +4,18 @@ $output v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tang
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 #define FORWARD 1
 #include "Common.sh"
-#include "UniformsVertex.sh"
 #include "VertexFunctions.sh"
 
-uniform vec4 u_renderOperationData[8];
-uniform vec4 u_materialCustomParameters[2];
-uniform vec4 u_objectInstanceParameters[2];
+//uniform vec4 u_renderOperationData[8];
+//uniform vec4 u_materialCustomParameters[2];
+//uniform vec4 u_objectInstanceParameters[2];
 
 #ifdef GLOBAL_SKELETAL_ANIMATION
 	SAMPLER2D(s_bones, 0);
 #endif
-#ifndef GLSL
+SAMPLER2D(s_drawBufferTexture, 5);
+#include "DrawBuffer.sh"
+#ifndef LIMITED_DEVICE
 	SAMPLER2D(s_linearSamplerVertex, 9);
 #endif
 
@@ -34,18 +35,18 @@ void main()
 	MEDIUMP vec3 normalLocal = a_normal;
 	MEDIUMP vec4 tangentLocal = a_tangent;
 #ifdef GLOBAL_SKELETAL_ANIMATION
-	getAnimationData(u_renderOperationData[0], s_bones, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
+	getAnimationData(d_renderOperationData0, s_bones, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
 #endif
 
 	mat4 worldMatrix;
 	vec3 previousFramePositionChange;
 	uint cullingByCameraDirectionData = uint(0);
 	BRANCH
-	if(u_renderOperationData[0].y < 0.0)
+	if(d_renderOperationData0.y < 0.0)
 	{
 		//instancing
 		worldMatrix = mtxFromRows(i_data0, i_data1, i_data2, vec4(0,0,0,1));
-		addTranslate(worldMatrix, u_renderOperationData[7].xyz);
+		addTranslate(worldMatrix, d_renderOperationData7.xyz);
 		previousFramePositionChange = i_data3.xyz;
 		
 		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.xy = i_data4.xy;
@@ -58,45 +59,45 @@ void main()
 		v_colorParameter = decodePackedInstanceColor( i_data3.w, colorExp );
 		
 		if(v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y < 0.0)
-			v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y = u_renderOperationData[1].y;
+			v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor.y = d_renderOperationData1.y;
 		
 		cullingByCameraDirectionData = asuint( i_data4.w );
 	}
 	else
 	{
 		worldMatrix = u_model[0];
-		vec4 renderOperationData1 = u_renderOperationData[1];
-		vec4 renderOperationData2 = u_renderOperationData[2];
+		vec4 renderOperationData1 = d_renderOperationData1;
+		vec4 renderOperationData2 = d_renderOperationData2;
 		previousFramePositionChange = renderOperationData2.xyz;
-		v_colorParameter = u_renderOperationData[4];
+		v_colorParameter = d_renderOperationData4;
 		v_lodValue_visibilityDistance_receiveDecals_motionBlurFactor = vec4(renderOperationData2.w, renderOperationData1.y, renderOperationData1.x, renderOperationData1.z);
-		cullingByCameraDirectionData = asuint( u_renderOperationData[3].w );
+		cullingByCameraDirectionData = asuint( d_renderOperationData3.w );
 	}
 	
 	//mat4 worldMatrixBeforeChanges = worldMatrix;
 	//vec3 worldObjectPositionBeforeChanges = getTranslate(worldMatrix);
 	
 	MEDIUMP vec4 billboardRotation;
-	billboardRotateWorldMatrix(u_renderOperationData, worldMatrix, false, vec3_splat(0), billboardRotation);
+	billboardRotateWorldMatrix(d_renderOperationData0, worldMatrix, false, vec3_splat(0), billboardRotation);
 	vec4 worldPosition = mul(worldMatrix, vec4(positionLocal, 1.0));
 
 	vec2 texCoord0 = a_texcoord0;
 	vec2 texCoord1 = a_texcoord1;
 	vec2 texCoord2 = a_texcoord2;
 	//vec2 texCoord3 = a_texcoord3;
-	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2/*, texCoord3*/, u_renderOperationData[3].x);
-	MEDIUMP vec4 color0 = (u_renderOperationData[3].y > 0.0) ? a_color0 : vec4_splat(1);
+	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2/*, texCoord3*/, d_renderOperationData3.x);
+	MEDIUMP vec4 color0 = (d_renderOperationData3.y > 0.0) ? a_color0 : vec4_splat(1);
 	vec3 positionOffset = vec3(0,0,0);
-	vec4 customParameter1 = u_materialCustomParameters[0];
-	vec4 customParameter2 = u_materialCustomParameters[1];
-	vec4 instanceParameter1 = u_objectInstanceParameters[0];
-	vec4 instanceParameter2 = u_objectInstanceParameters[1];
+	vec4 customParameter1 = d_materialCustomParameters0;
+	vec4 customParameter2 = d_materialCustomParameters1;
+	vec4 instanceParameter1 = d_objectInstanceParameters0;
+	vec4 instanceParameter2 = d_objectInstanceParameters1;
 	vec3 cameraPosition = u_viewportOwnerCameraPosition;
 	
 #ifdef VERTEX_CODE_BODY
 	#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
-		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerFragment, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerFragment, _sampler), 0 ).x ), 0.5 ) * 0.1)
-		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerFragment, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerFragment, _sampler), 0 ).x ), 0.5 ) * 0.1)
+		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerVertex, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerVertex, _sampler), 0 ).x ), 0.5 ) * 0.1)
+		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DLod(makeSampler(s_linearSamplerVertex, _sampler), _uv, pow( float( textureSize( makeSampler(s_linearSamplerVertex, _sampler), 0 ).x ), 0.5 ) * 0.1)
 	#else
 		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_removeTextureTiling, u_mipBias)
 		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_mipBias)
@@ -130,7 +131,7 @@ void main()
 	v_tangent.w = tangentLocal.w;
 
 	//!!!!GLSL
-#ifndef GLSL
+#ifndef LIMITED_DEVICE //#ifndef GLSL
 	BRANCH
 	if( cullingByCameraDirectionData != 0 )
 	{
@@ -198,6 +199,6 @@ void main()
 	//geometry with voxel data
 #if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL ) //#if defined(GLOBAL_VOXEL_LOD) || defined(GLOBAL_VIRTUALIZED_GEOMETRY)
 	v_objectSpacePosition = positionLocal;
-	voxelOrVirtualizedDataModeCalculateParametersV(u_renderOperationData, worldMatrix, u_viewportOwnerCameraPosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2);
+	voxelOrVirtualizedDataModeCalculateParametersV(d_renderOperationData1, worldMatrix, u_viewportOwnerCameraPosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2);
 #endif
 }

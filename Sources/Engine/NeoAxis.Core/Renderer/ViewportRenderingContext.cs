@@ -56,7 +56,7 @@ namespace NeoAxis
 		public Dictionary<string, object> AnyData = new Dictionary<string, object>();
 		public Dictionary<string, IDisposable> AnyDataAutoDispose = new Dictionary<string, IDisposable>();
 
-		internal RenderingPipeline.RenderSceneData.CutVolumeItem[] CurrentCutVolumes;
+		internal RenderingPipeline.RenderSceneData.CutVolumeItem[] CurrentCutVolumesSimple3DRenderer;
 
 		internal Vector2I SizeInPixelsLowResolutionBeforeUpscale;
 
@@ -1373,7 +1373,7 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
-		public void BindParameterContainer( ParameterContainer container, bool disableAnisotropic )
+		public unsafe void BindParameterContainer( ParameterContainer container, bool disableAnisotropic )
 		{
 			if( container.NamedParameters != null )
 			{
@@ -1413,10 +1413,13 @@ namespace NeoAxis
 				}
 			}
 
-			if( container.TextureParameters != null )
+			if( RenderingPipeline_Basic.drawBufferCurrentItem == null )
 			{
-				for( int n = 0; n < container.TextureParameters.Count; n++ )
-					BindTexture( ref container.TextureParameters.Data[ n ], disableAnisotropic );
+				if( container.TextureParameters != null )
+				{
+					for( int n = 0; n < container.TextureParameters.Count; n++ )
+						BindTexture( ref container.TextureParameters.Data[ n ], disableAnisotropic );
+				}
 			}
 
 			//foreach( var p in container.AllParameters )
@@ -1443,101 +1446,6 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void SetPassAndSubmit( GpuMaterialPass pass, RenderOperationType renderOperation, List<ParameterContainer> parameterContainers, OcclusionQuery? occlusionQuery, bool disableAnisotropic, bool discardAll )// = null )
 		{
-			////set parameters
-			//unsafe
-			//{
-			//	var allContainers = new List<ParameterContainer>();
-			//	if( pass.ConstantParameterValues != null )
-			//		allContainers.Add( pass.ConstantParameterValues );
-			//	allContainers.AddRange( parameterContainers );
-
-			//	foreach( var program in pass.LinkedProgram.Programs )
-			//	{
-			//		foreach( var uniform in program.RealObject.Uniforms )
-			//		{
-			//			//skip samplers
-			//			if( uniform == Uniform.Invalid )
-			//				continue;
-
-			//			var containerItem = GetValueFromContainers( allContainers, uniform.Name );
-			//			if( containerItem == null )
-			//			{
-			//				//!!!!
-			//				Log.Fatal( "ViewportRenderingContext: SetPassAndSubmit: Parameter value with name \'{0}\' is not exists in containers.", uniform.Name );
-			//			}
-
-			//			byte[] data = new byte[ containerItem.GetTotalSizeInBytes() ];
-			//			containerItem.GetValue( data, 0 );
-
-			//			bool success = false;
-
-			//			switch( uniform.Type )
-			//			{
-			//			case UniformType.Int1:
-			//				if( containerItem.Type == ParameterType.Integer )
-			//				{
-			//					fixed ( byte* pData = data )
-			//						Bgfx.SetUniform( uniform, pData, containerItem.ElementCount );
-			//					success = true;
-			//				}
-			//				break;
-
-			//			case UniformType.Vector4:
-			//				if( containerItem.Type == ParameterType.Vector4 )
-			//				{
-			//					fixed ( byte* pData = data )
-			//						Bgfx.SetUniform( uniform, pData, containerItem.ElementCount );
-			//					success = true;
-			//				}
-			//				else if( containerItem.Type == ParameterType.Vector3 && containerItem.ElementCount == 1 )
-			//				{
-			//					fixed ( byte* pData = data )
-			//					{
-			//						var value = new Vec4F( *(Vec3F*)pData, 0 );
-			//						Bgfx.SetUniform( uniform, &value, containerItem.ElementCount );
-			//					}
-			//					success = true;
-			//				}
-			//				else if( containerItem.Type == ParameterType.Vector2 && containerItem.ElementCount == 1 )
-			//				{
-			//					fixed ( byte* pData = data )
-			//					{
-			//						var value2 = *(Vec2F*)pData;
-			//						var value = new Vec4F( value2.X, value2.Y, 0, 0 );
-			//						Bgfx.SetUniform( uniform, &value, containerItem.ElementCount );
-			//					}
-			//					success = true;
-			//				}
-			//				break;
-
-			//			case UniformType.Matrix3x3:
-			//				if( containerItem.Type == ParameterType.Matrix3x3 )
-			//				{
-			//					fixed ( byte* pData = data )
-			//						Bgfx.SetUniform( uniform, pData, containerItem.ElementCount );
-			//					success = true;
-			//				}
-			//				break;
-
-			//			case UniformType.Matrix4x4:
-			//				if( containerItem.Type == ParameterType.Matrix4x4 )
-			//				{
-			//					fixed ( byte* pData = data )
-			//						Bgfx.SetUniform( uniform, pData, containerItem.ElementCount );
-			//					success = true;
-			//				}
-			//				break;
-			//			}
-
-			//			if( !success )
-			//			{
-			//				//!!!!
-			//				Log.Fatal( "ViewportRenderingContext: SetPassAndSubmit: Unable to convert parameter value with name \'{0}\'. Source type: {1}. Element count: {2}.", uniform.Name, containerItem.Type, containerItem.ElementCount );
-			//			}
-			//		}
-			//	}
-			//}
-
 			//!!!!
 			//bind parameter containers
 			{
@@ -1576,8 +1484,6 @@ namespace NeoAxis
 				pass.RenderingProcess_SetRenderState( renderOperation, true, disableAnisotropic );
 				Bgfx.Submit( (ushort)RenderingSystem.CurrentViewNumber, pass.LinkedProgram.RealObject, 0, discardFlags );
 			}
-
-			//Bgfx.Submit( CurrentViewNumber, pass.LinkedProgram.RealObject, preserveState: true );
 
 			updateStatisticsCurrent.DrawCalls++;
 		}

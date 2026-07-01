@@ -764,7 +764,10 @@ namespace NeoAxis
 
 								//mul UV Scale
 								if( shaderTextureSample.TextureType.Value != ShaderTextureSample.TextureTypeEnum.Mask )
-									locationStr = "( " + locationStr + " ) * u_renderOperationData[7].w";
+								{
+									locationStr = "( " + locationStr + " ) * d_renderOperationData7.w";
+									//locationStr = "( " + locationStr + " ) * u_renderOperationData[7].w";
+								}
 
 								string constructBody;
 								//!!!!disabled

@@ -212,20 +212,39 @@ EXPORT Instance* ShaderC_New(ShaderType shaderType, ShaderModel shaderModel, wch
 
 	case ShaderModel_Vulkan:
 
+#ifdef ENABLE_HLSL
+		instance->options.defines.push_back("SPIRV_HLSL=1");
+#else
+		instance->options.defines.push_back("SPIRV_GLSL=1");
+#endif
+
 		switch (shaderType)
 		{
 
-		case ShaderType_Vertex:instance->options.profile = "spirv14-11"; break;
-		case ShaderType_Fragment:instance->options.profile = "spirv14-11"; break;
-		case ShaderType_Compute:instance->options.profile = "spirv14-11"; break;
 
-		//case ShaderType_Vertex:instance->options.profile = "spirv15-12"; break;
-		//case ShaderType_Fragment:instance->options.profile = "spirv15-12"; break;
-		//case ShaderType_Compute:instance->options.profile = "spirv15-12"; break;
+		//Vulkan 1.2 for bindless
+		case ShaderType_Vertex:instance->options.profile = "spirv15-12"; break;
+		case ShaderType_Fragment:instance->options.profile = "spirv15-12"; break;
+		case ShaderType_Compute:instance->options.profile = "spirv15-12"; break;
+
+
+		//case ShaderType_Vertex:instance->options.profile = "spirv14-11"; break;
+		//case ShaderType_Fragment:instance->options.profile = "spirv14-11"; break;
+		//case ShaderType_Compute:instance->options.profile = "spirv14-11"; break;
 
 		//case ShaderType_Vertex:instance->options.profile = "spirv16-13"; break;
 		//case ShaderType_Fragment:instance->options.profile = "spirv16-13"; break;
 		//case ShaderType_Compute:instance->options.profile = "spirv16-13"; break;
+
+
+		//!!!!get DXC_OUT_REFLECTION error
+		//instance->options.compileToSpirv = true;
+		//switch (shaderType)
+		//{
+		//case ShaderType_Vertex:instance->options.profile = "s_6_6"; break;
+		//case ShaderType_Fragment:instance->options.profile = "s_6_6"; break;
+		//case ShaderType_Compute:instance->options.profile = "s_6_6"; break;
+
 
 		//{ ShadingLang::SpirV, 1010,	"spirv" },
 		//{ ShadingLang::SpirV, 1010,	"spirv10-10" },

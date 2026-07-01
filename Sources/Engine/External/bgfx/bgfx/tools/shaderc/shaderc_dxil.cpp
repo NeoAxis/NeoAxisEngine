@@ -428,6 +428,13 @@ namespace bgfx { namespace dxil
 				args[numArgs++] = L"vs_6_0";
 			}
 
+			//!!!!betauser
+			if (_options.compileToSpirv)
+			{
+				args[numArgs++] = L"-spirv";
+				args[numArgs++] = L"-fspv-reflect";
+			}
+
 			if (_options.warningsAreErrors)
 			{
 				args[numArgs++] = DXC_ARG_WARNINGS_ARE_ERRORS;

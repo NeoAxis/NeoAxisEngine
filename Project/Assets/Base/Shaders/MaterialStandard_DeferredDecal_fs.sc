@@ -5,25 +5,22 @@ $input v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tange
 #include "Common.sh"
 #include "UniformsFragment.sh"
 
-uniform vec4 u_renderOperationData[8];
-uniform vec4 u_materialCustomParameters[2];
-uniform vec4 u_objectInstanceParameters[2];
+//uniform vec4 u_renderOperationData[8];
+//uniform vec4 u_materialCustomParameters[2];
+//uniform vec4 u_objectInstanceParameters[2];
 SAMPLER2D(s_materials, 1);
-/*
-#if defined(GLOBAL_VIRTUALIZED_GEOMETRY) && defined(VIRTUALIZED)
-	SAMPLER2D(s_virtualizedData, 11);
-#endif
-*/
 SAMPLER2D(s_linearSamplerFragment, 9);
-//SAMPLER2D(s_linearSamplerFragment, 10);
 
-uniform mat4 u_decalMatrix;
-uniform vec4 u_decalNormalTangent[2];
+//uniform mat4 u_decalMatrix;
+//uniform vec4 u_decalNormalTangent[2];
 
 SAMPLER2D(s_depthTexture, 3);
 SAMPLER2D(s_gBuffer1TextureCopy, 4);
 SAMPLER2D(s_gBuffer4TextureCopy, 5);
 SAMPLER2D(s_gBuffer5TextureCopy, 6);
+
+SAMPLER2D(s_drawBufferTexture, 7); //non-standard index than other
+#include "DrawBuffer.sh"
 
 #include "CustomFunctions.sh"
 
@@ -69,10 +66,10 @@ SAMPLER2D(s_gBuffer5TextureCopy, 6);
 	OPACITY_CODE_SHADER_SCRIPTS
 #endif
 
-#ifdef MULTI_MATERIAL_COMBINED_PASS
-	uniform vec4 u_multiMaterialCombinedInfo;
-	uniform vec4 u_multiMaterialCombinedMaterials[4];
-#endif
+//#ifdef MULTI_MATERIAL_COMBINED_PASS
+//	uniform vec4 u_multiMaterialCombinedInfo;
+//	uniform vec4 u_multiMaterialCombinedMaterials[4];
+//#endif
 
 #include "FragmentFunctions.sh"
 #include "FragmentVoxel.sh"
@@ -103,7 +100,7 @@ void main()
 
 	vec2 decalTexCoord;
 	{
-		vec4 objectPosition = mul(u_decalMatrix, vec4(worldPosition, 1));
+		vec4 objectPosition = mul(d_decalMatrix_get(), vec4(worldPosition, 1));
 		
 		decalTexCoord = vec2(0.5 - objectPosition.y, objectPosition.x + 0.5);
 		//decalTexCoord = objectPosition.xy + 0.5;
@@ -133,11 +130,18 @@ void main()
 		discard;
 
 	//NormalsMode.VectorOfDecal
+	if(any(d_decalNormal))
+	{
+		sourceNormal = d_decalNormal.xyz;
+		sourceTangent = d_decalTangent;
+	}
+	/*
 	if(any(u_decalNormalTangent[0]))
 	{
 		sourceNormal = u_decalNormalTangent[0].xyz;
 		sourceTangent = u_decalNormalTangent[1];
 	}
+	*/
 	
 	vec2 texCoord0 = decalTexCoord;
 	vec2 texCoord1 = decalTexCoord;
@@ -164,13 +168,14 @@ void main()
 #endif
 
 	//get material data
-	int frameMaterialIndex = int( u_renderOperationData[ 0 ].x );
+	int frameMaterialIndex = int( d_renderOperationData0.x );
 #ifdef MULTI_MATERIAL_COMBINED_PASS
-	uint localGroupMaterialIndex = uint( materialIndex ) - uint( u_multiMaterialCombinedInfo.x );
+	uint localGroupMaterialIndex = uint( materialIndex ) - uint( d_multiMaterialCombinedInfo.x );
 	BRANCH
-	if( localGroupMaterialIndex < 0 || localGroupMaterialIndex >= uint( u_multiMaterialCombinedInfo.y ) )
+	if( localGroupMaterialIndex < 0 || localGroupMaterialIndex >= uint( d_multiMaterialCombinedInfo.y ) )
 		discard;
-	frameMaterialIndex = int( u_multiMaterialCombinedMaterials[ localGroupMaterialIndex / 4 ][ localGroupMaterialIndex % 4 ] );
+	frameMaterialIndex = int( d_multiMaterialCombinedMaterials_get( localGroupMaterialIndex ) );
+	//frameMaterialIndex = int( u_multiMaterialCombinedMaterials[ localGroupMaterialIndex / 4 ][ localGroupMaterialIndex % 4 ] );
 #endif
 	//vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ];
 	//getMaterialData( s_materials, frameMaterialIndex, materialStandardFragment );
@@ -223,10 +228,10 @@ void main()
 	float ambientOcclusion = 1;
 	//float rayTracingReflection = u_materialRayTracingReflection;
 	vec3 emissive = u_materialEmissive;
-	vec4 customParameter1 = u_materialCustomParameters[0];
-	vec4 customParameter2 = u_materialCustomParameters[1];
-	vec4 instanceParameter1 = u_objectInstanceParameters[0];
-	vec4 instanceParameter2 = u_objectInstanceParameters[1];
+	vec4 customParameter1 = d_materialCustomParameters0;
+	vec4 customParameter2 = d_materialCustomParameters1;
+	vec4 instanceParameter1 = d_objectInstanceParameters0;
+	vec4 instanceParameter2 = d_objectInstanceParameters1;
 
 	vec2 texCoord0BeforeDisplacement = texCoord0;
 	vec2 texCoord1BeforeDisplacement = texCoord1;

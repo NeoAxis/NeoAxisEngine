@@ -1121,6 +1121,10 @@ namespace NeoAxis
 							try
 							{
 								InitSettings.RendererBackend = (RendererBackend)Enum.Parse( typeof( RendererBackend ), str );
+
+								//!!!!temp consider Vulkan as limited device
+								if( EngineApp.InitSettings.RendererBackend == RendererBackend.Vulkan )
+									SystemSettings._UpdateDeviceProperties();
 							}
 							catch { }
 						}

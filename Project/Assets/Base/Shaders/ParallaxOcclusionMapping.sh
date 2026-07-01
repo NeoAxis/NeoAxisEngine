@@ -8,10 +8,10 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, flo
 		vec2 texCoord0 = vec2_splat(0);//dummy
 		float displacement = 0.0;//dummy
 		float displacementScale = materialDisplacementScale;//u_materialDisplacementScale;
-		vec4 customParameter1 = u_materialCustomParameters[0];
-		vec4 customParameter2 = u_materialCustomParameters[1];
-		vec4 instanceParameter1 = u_objectInstanceParameters[0];
-		vec4 instanceParameter2 = u_objectInstanceParameters[1];
+		vec4 customParameter1 = d_materialCustomParameters0;
+		vec4 customParameter2 = d_materialCustomParameters1;
+		vec4 instanceParameter1 = d_objectInstanceParameters0;
+		vec4 instanceParameter2 = d_objectInstanceParameters1;
 		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
 		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerFragment, _sampler), _uv, u_mipBias)
 		DISPLACEMENT_CODE_BODY
@@ -139,10 +139,10 @@ vec2 getParallaxOcclusionMappingOffset(vec2 texCoord, vec3 eye, vec3 normal, flo
 		vec2 texCoord0 = texCurrentOffset;
 		float displacement = 0.0;
 		float displacementScale = 0.0;//dummy
-		vec4 customParameter1 = u_materialCustomParameters[0];
-		vec4 customParameter2 = u_materialCustomParameters[1];
-		vec4 instanceParameter1 = u_objectInstanceParameters[0];
-		vec4 instanceParameter2 = u_objectInstanceParameters[1];
+		vec4 customParameter1 = d_materialCustomParameters0;
+		vec4 customParameter2 = d_materialCustomParameters1;
+		vec4 instanceParameter1 = d_objectInstanceParameters0;
+		vec4 instanceParameter2 = d_objectInstanceParameters1;
 		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DGrad(makeSampler(s_linearSamplerFragment, _sampler), _uv, dx, dy)
 		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DGrad(makeSampler(s_linearSamplerFragment, _sampler), _uv, dx, dy)
 		DISPLACEMENT_CODE_BODY

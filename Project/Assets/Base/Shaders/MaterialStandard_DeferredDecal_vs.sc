@@ -4,15 +4,16 @@ $output v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tang
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 #define DEFERRED_DECAL 1
 #include "Common.sh"
-#include "UniformsVertex.sh"
 #include "VertexFunctions.sh"
 
-uniform vec4 u_renderOperationData[8];
-uniform vec4 u_materialCustomParameters[2];
-uniform vec4 u_objectInstanceParameters[2];
+//uniform vec4 u_renderOperationData[8];
+//uniform vec4 u_materialCustomParameters[2];
+//uniform vec4 u_objectInstanceParameters[2];
 #ifdef GLOBAL_SKELETAL_ANIMATION
 	SAMPLER2D(s_bones, 0);
 #endif
+SAMPLER2D(s_drawBufferTexture, 7); //non-standard index than other
+#include "DrawBuffer.sh"
 SAMPLER2D(s_linearSamplerVertex, 9);
 
 #ifdef VERTEX_CODE_PARAMETERS
@@ -31,17 +32,17 @@ void main()
 	vec3 normalLocal = a_normal;
 	vec4 tangentLocal = a_tangent;
 #ifdef GLOBAL_SKELETAL_ANIMATION
-	getAnimationData(u_renderOperationData[0], s_bones, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
+	getAnimationData(d_renderOperationData0, s_bones, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
 #endif
 	
 	mat4 worldMatrix;
 	uint cullingByCameraDirectionData = uint(0);
 	BRANCH
-	if(u_renderOperationData[0].y < 0.0)
+	if(d_renderOperationData0.y < 0.0)
 	{
 		//instancing
 		worldMatrix = mtxFromRows(i_data0, i_data1, i_data2, vec4(0,0,0,1));
-		addTranslate(worldMatrix, u_renderOperationData[7].xyz);
+		addTranslate(worldMatrix, d_renderOperationData7.xyz);
 		
 		v_lodValue_visibilityDistance_receiveDecals.xy = i_data4.xy;
 		uint data2 = asuint(i_data4.z);
@@ -53,33 +54,33 @@ void main()
 		v_colorParameter = decodePackedInstanceColor( i_data3.w, colorExp );
 		
 		if(v_lodValue_visibilityDistance_receiveDecals.y < 0.0)
-			v_lodValue_visibilityDistance_receiveDecals.y = u_renderOperationData[1].y;
+			v_lodValue_visibilityDistance_receiveDecals.y = d_renderOperationData1.y;
 		
 		cullingByCameraDirectionData = asuint( i_data4.w );
 	}
 	else
 	{
 		worldMatrix = u_model[0];
-		v_colorParameter = u_renderOperationData[4];
-		v_lodValue_visibilityDistance_receiveDecals = vec4(u_renderOperationData[2].w, u_renderOperationData[1].y, u_renderOperationData[1].x, 0);
-		cullingByCameraDirectionData = asuint( u_renderOperationData[3].w );
+		v_colorParameter = d_renderOperationData4;
+		v_lodValue_visibilityDistance_receiveDecals = vec4(d_renderOperationData2.w, d_renderOperationData1.y, d_renderOperationData1.x, 0);
+		cullingByCameraDirectionData = asuint( d_renderOperationData3.w );
 	}
 	
 	vec4 billboardRotation;
-	billboardRotateWorldMatrix(u_renderOperationData, worldMatrix, false, vec3_splat(0), billboardRotation);
+	billboardRotateWorldMatrix(d_renderOperationData0, worldMatrix, false, vec3_splat(0), billboardRotation);
 	vec4 worldPosition = mul(worldMatrix, vec4(positionLocal, 1.0));
 
 	vec2 texCoord0 = a_texcoord0;
 	vec2 texCoord1 = a_texcoord1;
 	vec2 texCoord2 = a_texcoord2;
 	//vec2 texCoord3 = a_texcoord3;
-	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2/*, texCoord3*/, u_renderOperationData[3].x);
-	vec4 color0 = (u_renderOperationData[3].y > 0.0) ? a_color0 : vec4_splat(1);
+	vec2 unwrappedUV = getUnwrappedUV(texCoord0, texCoord1, texCoord2/*, texCoord3*/, d_renderOperationData3.x);
+	vec4 color0 = (d_renderOperationData3.y > 0.0) ? a_color0 : vec4_splat(1);
 	vec3 positionOffset = vec3(0,0,0);
-	vec4 customParameter1 = u_materialCustomParameters[0];
-	vec4 customParameter2 = u_materialCustomParameters[1];
-	vec4 instanceParameter1 = u_objectInstanceParameters[0];
-	vec4 instanceParameter2 = u_objectInstanceParameters[1];
+	vec4 customParameter1 = d_materialCustomParameters0;
+	vec4 customParameter2 = d_materialCustomParameters1;
+	vec4 instanceParameter1 = d_objectInstanceParameters0;
+	vec4 instanceParameter2 = d_objectInstanceParameters1;
 	vec3 cameraPosition = u_viewportOwnerCameraPosition;
 #ifdef VERTEX_CODE_BODY
 	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_removeTextureTiling, u_mipBias)

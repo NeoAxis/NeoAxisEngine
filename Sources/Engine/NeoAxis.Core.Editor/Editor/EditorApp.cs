@@ -69,6 +69,31 @@ namespace NeoAxis.Editor
 
 			EngineApp.Init();
 
+			//command line parameters
+			{
+				//rendererBackend
+				{
+					if( SystemSettings.CommandLineParameters.TryGetValue( "-rendererBackend", out var str ) )
+					{
+						try
+						{
+							EngineApp.InitSettings.RendererBackend = (Internal.SharpBgfx.RendererBackend)Enum.Parse( typeof( Internal.SharpBgfx.RendererBackend ), str );
+
+							//!!!!temp consider Vulkan as limited device
+							if( EngineApp.InitSettings.RendererBackend == Internal.SharpBgfx.RendererBackend.Vulkan )
+								SystemSettings._UpdateDeviceProperties();
+						}
+						catch { }
+					}
+				}
+
+				//soundSystem
+				{
+					if( SystemSettings.CommandLineParameters.TryGetValue( "-soundSystem", out var str ) )
+						EngineApp.InitSettings.SoundSystem = str;
+				}
+			}
+
 			Application.SetCompatibleTextRenderingDefault( false );
 
 			var form = new EditorForm();

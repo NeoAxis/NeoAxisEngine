@@ -1,5 +1,6 @@
 //!!!!betauser
-#ifdef ENABLE_HLSL
+// Copyright 2006–2026 Ivan Efimov. All rights reserved.
+#ifndef ENABLE_HLSL
 
 /*
  * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
@@ -16,6 +17,18 @@
 //#if SHADERC_CONFIG_HAS_GLSLANG
 
 #include <iostream> // std::cout
+
+
+#include <string>
+#include <sstream>
+
+//namespace bgfx
+//{
+//	extern const char* getUniformTypeName2(UniformType::Enum _enum);
+//	extern UniformType::Enum nameToUniformTypeEnum2(const char* _name);
+//}
+
+
 
 BX_PRAGMA_DIAGNOSTIC_PUSH()
 BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4100) // error C4100: 'inclusionDepth' : unreferenced formal parameter
@@ -340,19 +353,70 @@ namespace bgfx { namespace spirv
 
 	static const char* s_samplerTypes[] =
 	{
-		"BgfxSampler2D",
-		"BgfxISampler2D",
-		"BgfxUSampler2D",
-		"BgfxSampler2DArray",
-		"BgfxSampler2DShadow",
-		"BgfxSampler2DArrayShadow",
-		"BgfxSampler3D",
-		"BgfxISampler3D",
-		"BgfxUSampler3D",
-		"BgfxSamplerCube",
-		"BgfxSamplerCubeShadow",
-		"BgfxSampler2DMS",
+		// BgfxSampler2D
+		"texture2D",
+		"sampler2D",
+
+		// BgfxISampler2D
+		"itexture2D",
+		"isampler2D",
+
+		// BgfxUSampler2D
+		"utexture2D",
+		"usampler2D",
+
+		// BgfxSampler2DArray
+		"texture2DArray",
+		"sampler2DArray",
+
+		// BgfxSampler2DShadow
+		"texture2D",
+		"sampler2DShadow",
+
+		// BgfxSampler2DArrayShadow
+		"texture2DArray",
+		"sampler2DArrayShadow",
+
+		// BgfxSampler3D
+		"texture3D",
+		"sampler3D",
+
+		// BgfxISampler3D
+		"itexture3D",
+		"isampler3D",
+
+		// BgfxUSampler3D
+		"utexture3D",
+		"usampler3D",
+
+		// BgfxSamplerCube
+		"textureCube",
+		"samplerCube",
+
+		// BgfxSamplerCubeShadow
+		"textureCube",
+		"samplerCubeShadow",
+
+		// BgfxSampler2DMS
+		"texture2DMS",
+		"sampler2DMS",
 	};
+
+	//static const char* s_samplerTypes[] =
+	//{
+	//	"BgfxSampler2D",
+	//	"BgfxISampler2D",
+	//	"BgfxUSampler2D",
+	//	"BgfxSampler2DArray",
+	//	"BgfxSampler2DShadow",
+	//	"BgfxSampler2DArrayShadow",
+	//	"BgfxSampler3D",
+	//	"BgfxISampler3D",
+	//	"BgfxUSampler3D",
+	//	"BgfxSamplerCube",
+	//	"BgfxSamplerCubeShadow",
+	//	"BgfxSampler2DMS",
+	//};
 
 	static uint16_t writeUniformArray(bx::WriterI* _shaderWriter, const UniformArray& uniforms, bool isFragmentShader)
 	{
@@ -487,7 +551,7 @@ namespace bgfx { namespace spirv
 
 		EShMessages messages = EShMessages(0
 			| EShMsgDefault
-			| EShMsgReadHlsl
+			//| EShMsgReadHlsl
 			| EShMsgVulkanRules
 			| EShMsgSpvRules
 			| EShMsgDebugInfo
@@ -495,7 +559,9 @@ namespace bgfx { namespace spirv
 
 		shader->setEntryPoint("main");
 		shader->setAutoMapBindings(true);
-		shader->setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientVulkan, s_GLSL_VULKAN_CLIENT_VERSION);
+
+		shader->setEnvInput(glslang::EShSourceGlsl, stage, glslang::EShClientVulkan, s_GLSL_VULKAN_CLIENT_VERSION);
+		//shader->setEnvInput(glslang::EShSourceHlsl, stage, glslang::EShClientVulkan, s_GLSL_VULKAN_CLIENT_VERSION);
 		shader->setEnvClient(glslang::EShClientVulkan, getGlslangTargetVulkanVersion(_version, _messageWriter));
 		shader->setEnvTarget(glslang::EShTargetSpv, getGlslangTargetSpirvVersion(_version, _messageWriter));
 
@@ -506,7 +572,94 @@ namespace bgfx { namespace spirv
 		shader->setShiftBinding(glslang::EResSsbo, kSpirvBindShift);
 		shader->setShiftBinding(glslang::EResImage, kSpirvBindShift);
 
-		const char* shaderStrings[] = { _code.c_str() };
+
+		//std::string code2;
+		bx::ErrorAssert err;
+
+
+		//preprocessing. move uniforms to uniform buffer, add #version, extensions
+
+		std::string codePrefix = "#version 450\n";
+		codePrefix += "#extension GL_EXT_control_flow_attributes : enable\n";
+
+		//codePrefix += "#extension GL_OES_standard_derivatives : enable\n";
+		//codePrefix += "#extension GL_NV_explicit_typecast : enable\n";
+
+
+		struct UniformDeclaration
+		{
+			//std::string name;
+			std::string decl;
+
+			//for second step
+			bool used = false;
+		};
+		std::vector<UniformDeclaration> uniformDeclarations;
+
+		std::string codeWithoutUniforms;
+		std::string codeToCompile;
+
+		//if(_firstPass)
+		{
+			std::stringstream codestream(_code);
+			std::string line;
+
+			while (std::getline(codestream, line, '\n'))
+			{
+				if (line.find("uniform") == std::string::npos)
+				{
+					codeWithoutUniforms += line + "\n";
+					continue;
+				}
+
+				bx::StringView parse(line.c_str());
+				bx::StringView strLine = bx::strLTrimSpace(parse);
+
+				//detect sampler uniform and skip
+				bool sampler = false;
+				for (uint32_t ii = 0; ii < BX_COUNTOF(s_samplerTypes); ++ii)
+				{
+					if (!bx::findIdentifierMatch(strLine, s_samplerTypes[ii]).isEmpty())
+					{
+						sampler = true;
+						break;
+					}
+				}
+				if (sampler)
+				{
+					codeWithoutUniforms += line + "\n";
+					continue;
+				}
+
+				UniformDeclaration uniform;
+				//uniform.name = name;
+				uniform.decl = std::string(strLine.getPtr(), strLine.getTerm());
+				uniformDeclarations.push_back(uniform);
+			}
+
+			codeToCompile = codePrefix;
+
+			//write uniforms to uniform buffer
+			if (uniformDeclarations.size() > 0)
+			{
+				std::string uniformBlock;
+				uniformBlock += "layout(std140, set = 0, binding = 0) uniform UniformBufferObject\n";
+				uniformBlock += "{\n";
+				for (const UniformDeclaration& uniform : uniformDeclarations)
+				{
+					uniformBlock += uniform.decl;
+					uniformBlock += "\n";
+				}
+				uniformBlock += "};\n";
+
+				codeToCompile += uniformBlock;
+			}
+
+			codeToCompile += codeWithoutUniforms;
+		}
+
+
+		const char* shaderStrings[] = { codeToCompile.c_str() };
 		shader->setStrings(
 			  shaderStrings
 			, BX_COUNTOF(shaderStrings)
@@ -549,8 +702,7 @@ namespace bgfx { namespace spirv
 					end   = start + 20;
 				}
 
-				//!!!!betauser
-				printCode2(_code.c_str());
+				printCode2(codeToCompile.c_str());
 				//printCode(_code.c_str(), bx::satSub<uint32_t>(line, 1u), start, end, column);
 
 				bx::write(_messageWriter, &messageErr, "%s\n", log);
@@ -576,100 +728,83 @@ namespace bgfx { namespace spirv
 			{
 				program->buildReflection();
 
+
+				//preprocessing step 2
 				if (_firstPass)
 				{
-					// first time through, we just find unused uniforms and get rid of them
-					std::string output;
 
-					struct Uniform
+					//detect which uniforms are actually used in the shader, and mark them as used or unused
+					for (UniformDeclaration& uniform : uniformDeclarations)
 					{
-						std::string name;
-						std::string decl;
-					};
-					std::vector<Uniform> uniforms;
-
-					bx::LineReader reader(_code.c_str() );
-					while (!reader.isDone() )
-					{
-						bx::StringView strLine = reader.next();
-
-						bool moved = false;
-
-						bx::StringView str = strFind(strLine, "uniform ");
-						if (!str.isEmpty() )
+						bool found = false;
+						for (int32_t ii = 0, num = program->getNumLiveUniformVariables(); ii < num; ++ii)
 						{
-							bool found = false;
+							std::string uniformName = program->getUniformName(ii);
+							//if (uniformName.find(uniform.decl) != std::string::npos)
+							if (uniform.decl.find(uniformName) != std::string::npos)
+							{
+								found = true;
+								break;
+							}
+						}
+						uniform.used = found;
+					}
+
+
+					//make another code for second step. change not unused uniforms to static, so that they don't get included in the uniform buffer
+					std::string output;
+					{
+						std::stringstream codestream(_code);
+						std::string line;
+
+						while (std::getline(codestream, line, '\n'))
+						{
+							if (line.find("uniform") == std::string::npos)
+							{
+								output += line + "\n";
+								continue;
+							}
+
+							bx::StringView parse(line.c_str());
+							bx::StringView strLine = bx::strLTrimSpace(parse);
+
+							//detect sampler uniform and skip
 							bool sampler = false;
-							std::string name = "";
-
-							// add to samplers
-
 							for (uint32_t ii = 0; ii < BX_COUNTOF(s_samplerTypes); ++ii)
 							{
-								if (!bx::findIdentifierMatch(strLine, s_samplerTypes[ii]).isEmpty() )
+								if (!bx::findIdentifierMatch(strLine, s_samplerTypes[ii]).isEmpty())
 								{
-									found = true;
 									sampler = true;
 									break;
 								}
 							}
-
-							if (!found)
+							if (sampler)
 							{
-								for (int32_t ii = 0, num = program->getNumLiveUniformVariables(); ii < num; ++ii)
+								output += line + "\n";
+								continue;
+							}
+
+							//detect if this uniform is used or not
+							bool used = false;
+							for (const UniformDeclaration& uniform : uniformDeclarations)
+							{
+								if (uniform.decl == line)
 								{
-									// matching lines like:  uniform u_name;
-									// we want to replace "uniform" with "static" so that it's no longer
-									// included in the uniform blob that the application must upload
-									// we can't just remove them, because unused functions might still reference
-									// them and cause a compile error when they're gone
-									if (!bx::findIdentifierMatch(strLine, program->getUniformName(ii) ).isEmpty() )
-									{
-										found = true;
-										name = program->getUniformName(ii);
-										break;
-									}
+									used = uniform.used;
+									break;
 								}
 							}
 
-							if (!found)
+							//make static variable if not used, so that it doesn't get included in the uniform buffer
+							if (!used)
 							{
-								output.append(strLine.getPtr(), str.getPtr() );
-								output += "static ";
-								output.append(str.getTerm(), strLine.getTerm() );
-								output += "\n";
-								moved = true;
+								//remove "uniform "
+								line = line.substr(8);
 							}
-							else if (!sampler)
-							{
-								Uniform uniform;
-								uniform.name = name;
-								uniform.decl = std::string(strLine.getPtr(), strLine.getTerm() );
-								uniforms.push_back(uniform);
-								moved = true;
-							}
-						}
 
-						if (!moved)
-						{
-							output.append(strLine.getPtr(), strLine.getTerm() );
-							output += "\n";
+							output += line + "\n";
 						}
 					}
-
-					std::string uniformBlock;
-					uniformBlock += "cbuffer UniformBlock\n";
-					uniformBlock += "{\n";
-
-					for (const Uniform& uniform : uniforms)
-					{
-						uniformBlock += uniform.decl.substr(7 /* uniform */);
-						uniformBlock += "\n";
-					}
-
-					uniformBlock += "};\n";
-
-					output = uniformBlock + output;
 
 					// recompile with the unused uniforms converted to statics
 					delete program;
@@ -918,6 +1053,11 @@ namespace bgfx { namespace spirv
 
 	bool compileSPIRVShader(const Options& _options, uint32_t _version, const std::string& _code, bx::WriterI* _shaderWriter, bx::WriterI* _messageWriter)
 	{
+		//std::string code2 = "#version 450\n#extension GL_EXT_control_flow_attributes : enable\n" + _code;
+
+		////std::string code2 = "#version 450\n" + _code;
+		////std::string code2 = "#version 450\n#extension GL_NV_explicit_typecast : enable\n" + _code;
+
 		return spirv::compile(_options, _version, _code, _shaderWriter, _messageWriter, true);
 	}
 
@@ -938,5 +1078,4 @@ namespace bgfx
 
 #endif // SHADERC_HAS_GLSLANG
 
-//!!!!betauser
-#endif //ENABLE_HLSL
+#endif //!ENABLE_HLSL
