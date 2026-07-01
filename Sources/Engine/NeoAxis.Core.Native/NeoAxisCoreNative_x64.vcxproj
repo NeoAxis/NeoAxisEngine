@@ -1411,6 +1411,7 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <ClCompile Include="Jolt\Core\Color.cpp" />
     <ClCompile Include="Jolt\Core\Factory.cpp" />
     <ClCompile Include="Jolt\Core\IssueReporting.cpp" />
+    <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp" />
     <ClCompile Include="Jolt\Core\JobSystemThreadPool.cpp" />
     <ClCompile Include="Jolt\Core\JobSystemWithBarrier.cpp" />
     <ClCompile Include="Jolt\Core\LinearCurve.cpp" />
@@ -2291,6 +2292,7 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <ClInclude Include="Jolt\Core\InsertionSort.h" />
     <ClInclude Include="Jolt\Core\IssueReporting.h" />
     <ClInclude Include="Jolt\Core\JobSystem.h" />
+    <ClInclude Include="Jolt\Core\JobSystemSingleThreaded.h" />
     <ClInclude Include="Jolt\Core\JobSystemThreadPool.h" />
     <ClInclude Include="Jolt\Core\JobSystemWithBarrier.h" />
     <ClInclude Include="Jolt\Core\LinearCurve.h" />

@@ -15,6 +15,7 @@
 #include <Jolt/Core/Factory.h>
 #include <Jolt/Core/TempAllocator.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
+#include <Jolt/Core/JobSystemSingleThreaded.h>
 #include <Jolt/Renderer/DebugRenderer.h>
 //#include <Jolt/Renderer/DebugRendererRecorder.h>
 #include <Jolt/Physics/PhysicsSettings.h>
@@ -837,9 +838,13 @@ static bool AssertFailedImpl(const char* inExpression, const char* inMessage, co
 
 #endif // JPH_ENABLE_ASSERTS
 
-
 bool staticInitialized = false;
+#ifdef JOLT_SINGLE_THREADED
+JobSystemSingleThreaded job_system;
+#else
 JobSystemThreadPool job_system;
+#endif
+
 TempAllocatorMalloc tempAllocator;
 
 EXPORT PhysicsSystemItem* JCreateSystem(int maxBodies, int maxBodyPairs, int maxContactConstraints)
@@ -897,9 +902,11 @@ EXPORT PhysicsSystemItem* JCreateSystem(int maxBodies, int maxBodyPairs, int max
 		// Register all Jolt physics types
 		RegisterTypes();
 
+#ifdef JOLT_SINGLE_THREADED
+		job_system.Init(cMaxPhysicsJobs);// , cMaxPhysicsBarriers, 0);
+#else
 		job_system.Init(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1);
-		//single threaded:
-		//job_system.Init(cMaxPhysicsJobs, cMaxPhysicsBarriers, 0);
+#endif
 	}
 
 
@@ -940,7 +947,9 @@ EXPORT void JDestroySystem(PhysicsSystemItem* system)
 
 EXPORT void JDestroy()
 {
+#ifndef JOLT_SINGLE_THREADED
 	job_system.SetNumThreads(0);
+#endif
 }
 
 //EXPORT void JPhysicsSystem_SetPhysicsSettings(PhysicsSystemItem* system, /*bool useDefault,*/
