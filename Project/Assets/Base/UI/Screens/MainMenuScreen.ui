@@ -37,7 +37,7 @@
 	.component NeoAxis.UIText
 	{
 		Name = Text Console
-		Text = Press ~ or F12 to show the developer console
+		Text = Press F2 to show the developer console
 		Size = Units 430 30
 		VerticalAlignment = Bottom
 		Margin = Units 390 960 0 10
