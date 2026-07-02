@@ -8,36 +8,29 @@
 
 #if BX_PLATFORM_ANDROID
 #	define VK_USE_PLATFORM_ANDROID_KHR
-#	define KHR_SURFACE_EXTENSION_NAME VK_KHR_ANDROID_SURFACE_EXTENSION_NAME
 #	define VK_IMPORT_INSTANCE_PLATFORM VK_IMPORT_INSTANCE_ANDROID
 #elif BX_PLATFORM_LINUX
-#	if defined(WL_EGL_PLATFORM)
 #		define VK_USE_PLATFORM_WAYLAND_KHR
-#	endif // defined(WL_EGL_PLATFORM)
 #	define VK_USE_PLATFORM_XLIB_KHR
 #	define VK_USE_PLATFORM_XCB_KHR
-#	if defined(WL_EGL_PLATFORM)
-#		define KHR_SURFACE_EXTENSION_NAME VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME, \
-		VK_KHR_XCB_SURFACE_EXTENSION_NAME
-#	else
-#		define KHR_SURFACE_EXTENSION_NAME VK_KHR_XCB_SURFACE_EXTENSION_NAME
-#	endif // defined(WL_EGL_PLATFORM)
 #	define VK_IMPORT_INSTANCE_PLATFORM VK_IMPORT_INSTANCE_LINUX
 #elif BX_PLATFORM_WINDOWS
 #	define VK_USE_PLATFORM_WIN32_KHR
-#	define KHR_SURFACE_EXTENSION_NAME  VK_KHR_WIN32_SURFACE_EXTENSION_NAME
 #	define VK_IMPORT_INSTANCE_PLATFORM VK_IMPORT_INSTANCE_WINDOWS
 #elif BX_PLATFORM_OSX
 #	define VK_USE_PLATFORM_MACOS_MVK
-#	define KHR_SURFACE_EXTENSION_NAME  VK_MVK_MACOS_SURFACE_EXTENSION_NAME
 #	define VK_IMPORT_INSTANCE_PLATFORM VK_IMPORT_INSTANCE_MACOS
+#elif BX_PLATFORM_NX
+# define VK_USE_PLATFORM_VI_NN
+#	define VK_IMPORT_INSTANCE_PLATFORM VK_IMPORT_INSTANCE_NX
 #else
-#	define KHR_SURFACE_EXTENSION_NAME ""
 #	define VK_IMPORT_INSTANCE_PLATFORM
 #endif // BX_PLATFORM_*
 
+#define VK_NO_STDDEF_H
 #define VK_NO_STDINT_H
 #define VK_NO_PROTOTYPES
+//#define VK_USE_64_BIT_PTR_DEFINES 0
 #include <vulkan-local/vulkan.h>
 #include <vulkan-local/vulkan_beta.h>
 
@@ -70,7 +63,6 @@
 			/* VK_KHR_android_surface */                               \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkCreateAndroidSurfaceKHR); \
 
-#if defined(WL_EGL_PLATFORM)
 #define VK_IMPORT_INSTANCE_LINUX                                                              \
 			/* VK_KHR_wayland_surface */                                                      \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkCreateWaylandSurfaceKHR);                        \
@@ -82,17 +74,6 @@
 			VK_IMPORT_INSTANCE_FUNC(true,  vkCreateXcbSurfaceKHR);                            \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkGetPhysicalDeviceXcbPresentationSupportKHR);     \
 
-#else
-#define VK_IMPORT_INSTANCE_LINUX                                                           \
-			/* VK_KHR_xlib_surface */                                                      \
-			VK_IMPORT_INSTANCE_FUNC(true,  vkCreateXlibSurfaceKHR);                        \
-			VK_IMPORT_INSTANCE_FUNC(true,  vkGetPhysicalDeviceXlibPresentationSupportKHR); \
-			/* VK_KHR_xcb_surface */                                                       \
-			VK_IMPORT_INSTANCE_FUNC(true,  vkCreateXcbSurfaceKHR);                         \
-			VK_IMPORT_INSTANCE_FUNC(true,  vkGetPhysicalDeviceXcbPresentationSupportKHR);  \
-
-#endif // defined(WL_EGL_PLATFORM)
-
 #define VK_IMPORT_INSTANCE_WINDOWS                                                          \
 			/* VK_KHR_win32_surface */                                                      \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkCreateWin32SurfaceKHR);                        \
@@ -101,6 +82,10 @@
 #define VK_IMPORT_INSTANCE_MACOS                                     \
 			/* VK_MVK_macos_surface */                               \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkCreateMacOSSurfaceMVK); \
+
+#define VK_IMPORT_INSTANCE_NX \
+			/* VK_NN_vi_surface */                              \
+			VK_IMPORT_INSTANCE_FUNC(true, vkCreateViSurfaceNN); \
 
 #define VK_IMPORT_INSTANCE                                                             \
 			VK_IMPORT_INSTANCE_FUNC(false, vkDestroyInstance);                         \
@@ -122,11 +107,14 @@
 			VK_IMPORT_INSTANCE_FUNC(true,  vkGetPhysicalDeviceSurfaceSupportKHR);      \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkDestroySurfaceKHR);                       \
 			/* VK_KHR_get_physical_device_properties2 */                               \
+			VK_IMPORT_INSTANCE_FUNC(true,  vkGetPhysicalDeviceProperties2KHR);         \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkGetPhysicalDeviceFeatures2KHR);           \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkGetPhysicalDeviceMemoryProperties2KHR);   \
 			/* VK_EXT_debug_report */                                                  \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkCreateDebugReportCallbackEXT);            \
 			VK_IMPORT_INSTANCE_FUNC(true,  vkDestroyDebugReportCallbackEXT);           \
+			/* VK_KHR_fragment_shading_rate */                                         \
+			VK_IMPORT_INSTANCE_FUNC(true, vkGetPhysicalDeviceFragmentShadingRatesKHR); \
 			VK_IMPORT_INSTANCE_PLATFORM
 
 #define VK_IMPORT_DEVICE                                                    \
@@ -236,6 +224,8 @@
 			/* VK_KHR_draw_indirect_count */                                \
 			VK_IMPORT_DEVICE_FUNC(true,  vkCmdDrawIndirectCountKHR);        \
 			VK_IMPORT_DEVICE_FUNC(true,  vkCmdDrawIndexedIndirectCountKHR); \
+			/* VK_KHR_fragment_shading_rate */                                        \
+			VK_IMPORT_DEVICE_FUNC(true, vkCmdSetFragmentShadingRateKHR);              \
 
 #define VK_DESTROY                                \
 			VK_DESTROY_FUNC(Buffer);              \
@@ -260,13 +250,15 @@
 				BX_MACRO_BLOCK_BEGIN                                                                            \
 					/*BX_TRACE(#_call);*/                                                                       \
 					VkResult vkresult = _call;                                                                  \
-					_check(VK_SUCCESS == vkresult, #_call "; VK error 0x%x: %s", vkresult, getName(vkresult) ); \
+					_check(VK_SUCCESS == vkresult, #_call "; VK error %d: %s", vkresult, getName(vkresult) ); \
 				BX_MACRO_BLOCK_END
 
 #if BGFX_CONFIG_DEBUG
 #	define VK_CHECK(_call) _VK_CHECK(BX_ASSERT, _call)
+#	define VK_CHECK_W(_call) _VK_CHECK(BX_WARN, _call)
 #else
 #	define VK_CHECK(_call) _call
+#	define VK_CHECK_W(_call) _call
 #endif // BGFX_CONFIG_DEBUG
 
 #if BGFX_CONFIG_DEBUG_ANNOTATION
