@@ -1992,5 +1992,7146 @@ public class DynamicClass05C48E8299CF8F7A31FE138987B25138DC388677E1788A606B8EC18
             material3.PropertySet("Multiplier", new ColorValue(1, 1, 1.0 + (1.0 + Math.Sin(Time.Current)) * 5));
     }
 }
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9yczsKc3RhdGljIGJvb2wgY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXI7Ci8vc3RhdGljIGJvb2wgY3VycmVudFJlZmxlY3Rpb25Qcm9iZSA9IHRydWU7Cgpjb25zdCBpbnQgU3VubnkgPSAwOwpjb25zdCBpbnQgUmFpbkZhbGxpbmcgPSAxOwpjb25zdCBpbnQgUmFpbkZhbGxlbiA9IDI7Cgp2b2lkIFVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShGb2cgZm9nLCBDYW1lcmEgY2FtZXJhKQp7Cglmb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoKCWlmIChmb2cuRW5hYmxlZCAmJiBmb2cuQWZmZWN0QmFja2dyb3VuZCA9PSAxKQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSAzMDA7CgllbHNlCgkJY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwp9Cgp2b2lkIFVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoIENvbXBvbmVudCBzZW5kZXIgKQp7Cgl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJdmFyIGVmZmVjdCA9IHJlbmRlcmluZ1BpcGVsaW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfTWljcm9wYXJ0aWNsZXNJbkFpcj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CglpZiAoZWZmZWN0ICE9IG51bGwpCgl7CgkJaWYgKGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyKQoJCXsKCQkJZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC43LCAwLjYpOwoJCQkvL2VmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC41KTsKCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMTU7CgkJfQoJCWVsc2UKCQl7CgkJCWlmIChjdXJyZW50TmlnaHQpCgkJCXsKCQkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNzUsIDAuNzUsIDEpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCQl9CgkJCWVsc2UKCQkJewoJCQkJLy9zaW11bGF0ZSBpbmRpcmVjdCBsaWdodGluZyBieSBtZWFucyBtaWNyb3BhcnRpY2xlcyBpbiBhaXIKCQkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC42MjgpOwoJCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCQllZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMzsKCQkJfQoKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJLy9lZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMTU7CgkJfQoJfQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDUwMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQzKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5GbHlpbmdWZWhpY2xlcyA9IHN5c3RlbS5GbHlpbmdWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDIwMDsvLzUwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDkpCgkJewoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5TaW11bGF0ZUR5bmFtaWNPYmplY3RzID0gIXN5c3RlbS5TaW11bGF0ZUR5bmFtaWNPYmplY3RzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENCkKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zID0gc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucy5WYWx1ZSAhPSAwID8gMCA6IDEwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDApCgkJewoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnNNYW5hZ2VUYXNrcyA9ICFzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3M7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ1KQoJCXsKCQkJdmFyIHNjZW5lID0gKFNjZW5lKXNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmU+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIHJlZmxlY3Rpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9SZWZsZWN0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoJCQl2YXIgcHJlY2lwaXRhdGlvbiA9IHJlbmRlcmluZ1BpcGVsaW5lPy5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X1ByZWNpcGl0YXRpb24+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJCQl2YXIgc291bmRTb3VyY2VSYWluID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTb3VuZCBTb3VyY2UgUmFpbiIpIGFzIFNvdW5kU291cmNlOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBkaXJlY3Rpb25hbExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoKCQkJY3VycmVudFdlYXRoZXIrKzsKCQkJaWYgKGN1cnJlbnRXZWF0aGVyID4gMikKCQkJCWN1cnJlbnRXZWF0aGVyID0gMDsKCQkJLy9jdXJyZW50UmFpbiA9ICFjdXJyZW50UmFpbjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoKCQkJCXNvdW5kU291cmNlUmFpbi5FbmFibGVkID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmc7CgoJCQkJc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxpbmcgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDEgOiAwOwoJCQkJc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxlbiA9IChjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyB8fCBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGVuKSA_IDEgOiAwOwoKCQkJCS8vcHJlY2lwaXRhdGlvbi5FbmFibGVkID0gY3VycmVudFJhaW47CgkJCQkvL3NvdW5kU291cmNlUmFpbi5FbmFibGVkID0gY3VycmVudFJhaW47CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFJhaW4gPyAxIDogMDsKCQkJCS8vc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxlbiA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgoJCQkJLyoKCQkJCQkJCQlpZihjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZykvL2lmIChjdXJyZW50UmFpbikKCQkJCQkJCQl7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFzayA9IG5ldyBSZWZlcmVuY2VOb1ZhbHVlKEAiU2FtcGxlc1xDaXR5IERlbW9cU2tpZXNcUmFpbiBjbG91ZHMgbWFza1xSYWluIGNsb3VkcyBtYXNrLmpwZyIpOwoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2tUcmFuc2Zvcm0gPSBuZXcgVHJhbnNmb3JtKFZlY3RvcjMuWmVybywgUXVhdGVybmlvbi5JZGVudGl0eSwgbmV3IFZlY3RvcjMoMC4wMDUsIDAuMDA1LCAwLjAwNSkpOwoJCQkJCQkJCX0KCQkJCQkJCQllbHNlCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBudWxsOwoJCQkJCQkJCX0KCQkJCSovCgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENikKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIGFtYmllbnRMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiQW1iaWVudCBMaWdodCIpIGFzIExpZ2h0OwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIHN0cmVldExpZ2h0TGlnaHRzID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CgkJCXZhciBza3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIlNreSIpIGFzIFNreTsKCQkJLy92YXIgZGF5U2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEYXkgc2t5Iik7CgkJCS8vdmFyIG5pZ2h0U2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJOaWdodCBza3kiKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgoJCQljdXJyZW50TmlnaHQgPSAhY3VycmVudE5pZ2h0OwoKCQkJdHJ5CgkJCXsKCQkJCXNjZW5lLlRpbWVPZkRheSA9IGN1cnJlbnROaWdodCA_IDAgOiAxMjsKCQkJCWFtYmllbnRMaWdodC5CcmlnaHRuZXNzID0gY3VycmVudE5pZ2h0ID8gMjUwMDAgOiAzMDAwMDsvLzEwMDAwMDsKCQkJCWRpcmVjdGlvbmFsTGlnaHQuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7CgkJCQlzdHJlZXRMaWdodExpZ2h0cy5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJc2t5LlByb2NlZHVyYWxBdG1vc3BoZXJlID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgkJCQkvL3NreS5Qcm9jZWR1cmFsU3RhcnMgPSBjdXJyZW50TmlnaHQgPyAxIDogMDsKCQkJCS8vc2t5Lk1vZGUgPSBjdXJyZW50TmlnaHQgPyBTa3kuTW9kZUVudW0uUmVzb3VyY2UgOiBTa3kuTW9kZUVudW0uUHJvY2VkdXJhbDsJCQkJCgkJCQkvLy8vc2t5LlByb2NlZHVyYWxJbnRlbnNpdHkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTsKCQkJCS8vLy9kYXlTa3kuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7CgkJCQkvLy8vbmlnaHRTa3kuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCQlVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKHNlbmRlcik7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EOCkKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCXsKCQkJCWlmIChzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlLlZhbHVlID09IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uVmVoaWNsZUNvbXBvbmVudCkKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5TdGF0aWNPYmplY3Q7CgkJCQllbHNlCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uVmVoaWNsZUNvbXBvbmVudDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENykKCQl7CgkJCWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA9ICFjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmc7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lX0Jhc2ljPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoKCQkJLy9jYW1lcmEuRmFyQ2xpcFBsYW5lID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMjAwMCA6IDEwMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLk1pbmltdW1WaXNpYmxlU2l6ZU9mT2JqZWN0cyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIgOiA0OwoKCQkJcmVuZGVyaW5nUGlwZWxpbmUuU2hhZG93RGlyZWN0aW9uYWxEaXN0YW5jZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDYwMCA6IDIwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuU2hhZG93RGlyZWN0aW9uYWxMaWdodENhc2NhZGVzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMyA6IDI7CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCgkJCS8qCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290IGFzIFNjZW5lOwoJCQlpZiAoc2NlbmUgIT0gbnVsbCkKCQkJewoJCQkJaWYgKHNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUuVmFsdWUgPT0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLkJhY2tncm91bmRUaHJlYWQpCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5TaW5nbGVUaHJlYWRlZDsKCQkJCWVsc2UKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLkJhY2tncm91bmRUaHJlYWQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCQkqLwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuQykKCQl7CgkJCWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9ICFjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnM7CgkJCQoJCQl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CgkJCWlmKGxpZ2h0cyAhPSBudWxsKQoJCQl7CgkJCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkJCQoJCQkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJCQl7CgkJCQkJaWYoY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzKQoJCQkJCXsKCQkJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQkJCXZhciBtYXggPSAwLjZmOy8vMC4yZjsKCQkJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkdyZWVuICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJCQl9CgkJCQkJZWxzZQoJCQkJCXsKCQkJCQkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwLjcxMTAxOTYpOwoJCQkJCX0KCQkJCX0KCQkJfQkKCgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5NKQoJCXsKCQkJY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXIgPSAhY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXI7CgkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJLyppZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuUCkKCQl7CgkJCWN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSAhY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQlmb3JlYWNoICh2YXIgcHJvYmUgaW4gc2NlbmUuR2V0Q29tcG9uZW50czxSZWZsZWN0aW9uUHJvYmU+KCkpCgkJCQlwcm9iZS5SZWFsVGltZSA9IGN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfSovCgl9Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7CglpZiAoIXNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuQ29udHJvbCkpCgkJUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KHNlbmRlciwgbWVzc2FnZSk7Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0VuYWJsZWRJblNpbXVsYXRpb24oTmVvQXhpcy5Db21wb25lbnQgb2JqKQp7CgkvLy8vYWN0aXZhdGUgbmlnaHQgbW9kZQoJLy9Qcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoKEdhbWVNb2RlKW9iaiwgbmV3IElucHV0TWVzc2FnZUtleURvd24oRUtleXMuRDYpKTsKCQoJLy9yYW5kb21pemUgc3RyZWV0IGxpZ2h0cwoJdmFyIGxpZ2h0cyA9IG9iai5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJaWYobGlnaHRzICE9IG51bGwpCgl7CgkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCgkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJewoJCQkvL3JhbmRvbWl6ZSByb3RhdGlvbgoJCQl2YXIgdHIgPSBsaWdodC5UcmFuc2Zvcm1WOwoJCQl0ciA9IHRyLlVwZGF0ZVJvdGF0aW9uKFF1YXRlcm5pb24uRnJvbVJvdGF0ZUJ5WihyYW5kb20uTmV4dChNYXRoLlBJICogMikpKTsKCQkJbGlnaHQuVHJhbnNmb3JtID0gdHI7CgovKgoJCQkvL3JhbmRvbWl6ZSBjb2xvcnMKCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCXZhciBtYXggPSAwLjZmOy8vMC4yZjsKCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCWNvbG9yLkdyZWVuICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKKi8JCQkKCQl9Cgl9CQp9")]
+public class DynamicClassFA1A0965DF0D5C77FB304E983CC11C0FAB8D9878668773B0F91076C14C53D7F4
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight; // || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 30000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                var lights = sender.ParentRoot.GetComponent("Street light lights");
+                if (lights != null)
+                {
+                    var random = new FastRandom();
+                    foreach (var light in lights.GetComponents<Light>())
+                    {
+                        if (currentRandomizeStreetLightColors)
+                        {
+                            var color = light.Color.Value;
+                            var max = 0.6f; //0.2f;
+                            color.Red += random.Next(-max, max);
+                            color.Green += random.Next(-max, max);
+                            color.Blue += random.Next(-max, max);
+                            light.Color = color;
+                        }
+                        else
+                        {
+                            light.Color = new ColorValue(1, 1, 0.7110196);
+                        }
+                    }
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            /*
+			//randomize colors
+			var color = light.Color.Value;
+			var max = 0.6f;//0.2f;
+			color.Red += random.Next(-max, max);
+			color.Green += random.Next(-max, max);
+			color.Blue += random.Next(-max, max);
+			light.Color = color;
+*/
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9yczsKc3RhdGljIGJvb2wgY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXI7Ci8vc3RhdGljIGJvb2wgY3VycmVudFJlZmxlY3Rpb25Qcm9iZSA9IHRydWU7Cgpjb25zdCBpbnQgU3VubnkgPSAwOwpjb25zdCBpbnQgUmFpbkZhbGxpbmcgPSAxOwpjb25zdCBpbnQgUmFpbkZhbGxlbiA9IDI7Cgp2b2lkIFVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShGb2cgZm9nLCBDYW1lcmEgY2FtZXJhKQp7Cglmb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoKCWlmIChmb2cuRW5hYmxlZCAmJiBmb2cuQWZmZWN0QmFja2dyb3VuZCA9PSAxKQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSAzMDA7CgllbHNlCgkJY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwp9Cgp2b2lkIFVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoIENvbXBvbmVudCBzZW5kZXIgKQp7Cgl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJdmFyIGVmZmVjdCA9IHJlbmRlcmluZ1BpcGVsaW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfTWljcm9wYXJ0aWNsZXNJbkFpcj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CglpZiAoZWZmZWN0ICE9IG51bGwpCgl7CgkJaWYgKGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyKQoJCXsKCQkJZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC43LCAwLjYpOwoJCQkvL2VmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC41KTsKCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMTU7CgkJfQoJCWVsc2UKCQl7CgkJCWlmIChjdXJyZW50TmlnaHQpCgkJCXsKCQkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNzUsIDAuNzUsIDEpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCQl9CgkJCWVsc2UKCQkJewoJCQkJLy9zaW11bGF0ZSBpbmRpcmVjdCBsaWdodGluZyBieSBtZWFucyBtaWNyb3BhcnRpY2xlcyBpbiBhaXIKCQkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC42MjgpOwoJCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCQllZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMzsKCQkJfQoKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJLy9lZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMTU7CgkJfQoJfQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDQwMDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAyMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDI1MDAwIDogMzAwMDA7Ly8xMDAwMDA7CgkJCQlkaXJlY3Rpb25hbExpZ2h0LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJc3RyZWV0TGlnaHRMaWdodHMuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCXNreS5Qcm9jZWR1cmFsQXRtb3NwaGVyZSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy9za3kuUHJvY2VkdXJhbFN0YXJzID0gY3VycmVudE5pZ2h0ID8gMSA6IDA7CgkJCQkvL3NreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlJlc291cmNlIDogU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWw7CQkJCQoJCQkJLy8vL3NreS5Qcm9jZWR1cmFsSW50ZW5zaXR5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgkJCQkvLy8vZGF5U2t5LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJLy8vL25pZ2h0U2t5LkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDgpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZS5WYWx1ZSA9PSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQpCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uU3RhdGljT2JqZWN0OwoJCQkJZWxzZQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDcpCgkJewoJCQljdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPSAhY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCgkJCS8vY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5NaW5pbXVtVmlzaWJsZVNpemVPZk9iamVjdHMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyIDogNDsKCgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsRGlzdGFuY2UgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyA2MDAgOiAyMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsTGlnaHRDYXNjYWRlcyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDMgOiAyOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgoJCQkvKgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdCBhcyBTY2VuZTsKCQkJaWYgKHNjZW5lICE9IG51bGwpCgkJCXsKCQkJCWlmIChzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlLlZhbHVlID09IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkKQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uU2luZ2xlVGhyZWFkZWQ7CgkJCQllbHNlCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkOwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQkJKi8KCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkMpCgkJewoJCQljdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMgPSAhY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzOwoJCQkKCQkJdmFyIGxpZ2h0cyA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQlpZihsaWdodHMgIT0gbnVsbCkKCQkJewoJCQkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCQkKCQkJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCQkJewoJCQkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJCQl7CgkJCQkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQkJCQl2YXIgbWF4ID0gMC42ZjsvLzAuMmY7CgkJCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5CbHVlICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCQkJfQoJCQkJCWVsc2UKCQkJCQl7CgkJCQkJCWxpZ2h0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMC43MTEwMTk2KTsKCQkJCQl9CgkJCQl9CgkJCX0JCgoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuTSkKCQl7CgkJCWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyID0gIWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwoJCQlVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKHNlbmRlcik7CgkJCQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCS8qaWYgKGtleURvd24uS2V5ID09IEVLZXlzLlApCgkJewoJCQljdXJyZW50UmVmbGVjdGlvblByb2JlID0gIWN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCQkJZm9yZWFjaCAodmFyIHByb2JlIGluIHNjZW5lLkdldENvbXBvbmVudHM8UmVmbGVjdGlvblByb2JlPigpKQoJCQkJcHJvYmUuUmVhbFRpbWUgPSBjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0qLwoJfQp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9JbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJaWYgKCFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJCVByb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudChzZW5kZXIsIG1lc3NhZ2UpOwp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9FbmFibGVkSW5TaW11bGF0aW9uKE5lb0F4aXMuQ29tcG9uZW50IG9iaikKewoJLy8vL2FjdGl2YXRlIG5pZ2h0IG1vZGUKCS8vUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KChHYW1lTW9kZSlvYmosIG5ldyBJbnB1dE1lc3NhZ2VLZXlEb3duKEVLZXlzLkQ2KSk7CgkKCS8vcmFuZG9taXplIHN0cmVldCBsaWdodHMKCXZhciBsaWdodHMgPSBvYmouUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCWlmKGxpZ2h0cyAhPSBudWxsKQoJewoJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQoJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCXsKCQkJLy9yYW5kb21pemUgcm90YXRpb24KCQkJdmFyIHRyID0gbGlnaHQuVHJhbnNmb3JtVjsKCQkJdHIgPSB0ci5VcGRhdGVSb3RhdGlvbihRdWF0ZXJuaW9uLkZyb21Sb3RhdGVCeVoocmFuZG9tLk5leHQoTWF0aC5QSSAqIDIpKSk7CgkJCWxpZ2h0LlRyYW5zZm9ybSA9IHRyOwoKLyoKCQkJLy9yYW5kb21pemUgY29sb3JzCgkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQl2YXIgbWF4ID0gMC42ZjsvLzAuMmY7CgkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQljb2xvci5CbHVlICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CiovCQkJCgkJfQoJfQkKfQ==")]
+public class DynamicClassF0D31E4E6BAD7A70F5B242B9D6304B1D711868154CF6D99B1403245D8CE0496A
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight; // || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 30000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                var lights = sender.ParentRoot.GetComponent("Street light lights");
+                if (lights != null)
+                {
+                    var random = new FastRandom();
+                    foreach (var light in lights.GetComponents<Light>())
+                    {
+                        if (currentRandomizeStreetLightColors)
+                        {
+                            var color = light.Color.Value;
+                            var max = 0.6f; //0.2f;
+                            color.Red += random.Next(-max, max);
+                            color.Green += random.Next(-max, max);
+                            color.Blue += random.Next(-max, max);
+                            light.Color = color;
+                        }
+                        else
+                        {
+                            light.Color = new ColorValue(1, 1, 0.7110196);
+                        }
+                    }
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            /*
+			//randomize colors
+			var color = light.Color.Value;
+			var max = 0.6f;//0.2f;
+			color.Red += random.Next(-max, max);
+			color.Green += random.Next(-max, max);
+			color.Blue += random.Next(-max, max);
+			light.Color = color;
+*/
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJZm9nLkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0Oy8vIHx8IGN1cnJlbnRSYWluOwoJZm9nLkRlbnNpdHkgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDAuMDEgOiAwLjAwMTsvL2ZvZy5EZW5zaXR5ID0gY3VycmVudFJhaW4gPyAwLjAxIDogMC4wMDE7CgoJaWYgKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gMTsKCWVsc2UKCQlmb2cuQWZmZWN0QmFja2dyb3VuZCA9IGN1cnJlbnROaWdodCA_IDAgOiAwLjU7CgoJaWYgKGN1cnJlbnROaWdodCkKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLCAwLCAwKTsKCWVsc2UKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjQ1Mzk2MDgsIDAuNTE2MDM5MiwgMC42NTg4MjM1KTsKCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBFeGl0RnJvbVZlaGljbGUoTmVvQXhpcy5HYW1lTW9kZSBnYW1lTW9kZSkKewoJdmFyIG9iaiA9IGdhbWVNb2RlLk9iamVjdENvbnRyb2xsZWRCeVBsYXllci5WYWx1ZSBhcyBWZWhpY2xlOwoJaWYgKG9iaiAhPSBudWxsKQoJewoJCXZhciBpbnB1dFByb2Nlc3NpbmcgPSBvYmouR2V0Q29tcG9uZW50PFZlaGljbGVJbnB1dFByb2Nlc3Npbmc+KCk7CgkJaWYgKGlucHV0UHJvY2Vzc2luZyAhPSBudWxsKQoJCQlpbnB1dFByb2Nlc3NpbmcuRXhpdEFsbE9iamVjdHNGcm9tVmVoaWNsZShnYW1lTW9kZSk7Cgl9Cn0KCnZvaWQgUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7Cgl2YXIga2V5RG93biA9IG1lc3NhZ2UgYXMgSW5wdXRNZXNzYWdlS2V5RG93bjsKCWlmIChrZXlEb3duICE9IG51bGwpLy8mJiAhc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Db250cm9sKSkKCXsKCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDEpCgkJewoJCQl2YXIgbWFuYWdlciA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxCdWlsZGluZ01hbmFnZXI+KCk7CgkJCWlmIChtYW5hZ2VyICE9IG51bGwpCgkJCXsKCQkJCW1hbmFnZXIuRGlzcGxheSA9ICFtYW5hZ2VyLkRpc3BsYXk7CgkJCQltYW5hZ2VyLkNvbGxpc2lvbiA9IG1hbmFnZXIuRGlzcGxheTsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMikKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXMgPSBzeXN0ZW0uUGFya2VkVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiA0MDAwOy8vNTAwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDMpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLkZseWluZ1ZlaGljbGVzID0gc3lzdGVtLkZseWluZ1ZlaGljbGVzLlZhbHVlICE9IDAgPyAwIDogMjAwOy8vNTAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EOSkKCQl7CgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLlNpbXVsYXRlRHluYW1pY09iamVjdHMgPSAhc3lzdGVtLlNpbXVsYXRlRHluYW1pY09iamVjdHM7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ0KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMgPSBzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zLlZhbHVlICE9IDAgPyAwIDogMTAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMCkKCQl7CgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzID0gIXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnNNYW5hZ2VUYXNrczsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDUpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZT4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgcmVmbGVjdGlvbiA9IHJlbmRlcmluZ1BpcGVsaW5lPy5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X1JlZmxlY3Rpb24+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgkJCXZhciBwcmVjaXBpdGF0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUHJlY2lwaXRhdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBzb3VuZFNvdXJjZVJhaW4gPSBzY2VuZS5HZXRDb21wb25lbnQoIlNvdW5kIFNvdXJjZSBSYWluIikgYXMgU291bmRTb3VyY2U7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgoJCQljdXJyZW50V2VhdGhlcisrOwoJCQlpZiAoY3VycmVudFdlYXRoZXIgPiAyKQoJCQkJY3VycmVudFdlYXRoZXIgPSAwOwoJCQkvL2N1cnJlbnRSYWluID0gIWN1cnJlbnRSYWluOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgoJCQkJc291bmRTb3VyY2VSYWluLkVuYWJsZWQgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZzsKCgkJCQlzY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMSA6IDA7CgkJCQlzY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGVuID0gKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nIHx8IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsZW4pID8gMSA6IDA7CgoJCQkJLy9wcmVjaXBpdGF0aW9uLkVuYWJsZWQgPSBjdXJyZW50UmFpbjsKCQkJCS8vc291bmRTb3VyY2VSYWluLkVuYWJsZWQgPSBjdXJyZW50UmFpbjsKCQkJCS8vc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxpbmcgPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGVuID0gY3VycmVudFJhaW4gPyAxIDogMDsKCgkJCQkvKgoJCQkJCQkJCWlmKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbmV3IFJlZmVyZW5jZU5vVmFsdWUoQCJTYW1wbGVzXENpdHkgRGVtb1xTa2llc1xSYWluIGNsb3VkcyBtYXNrXFJhaW4gY2xvdWRzIG1hc2suanBnIik7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFza1RyYW5zZm9ybSA9IG5ldyBUcmFuc2Zvcm0oVmVjdG9yMy5aZXJvLCBRdWF0ZXJuaW9uLklkZW50aXR5LCBuZXcgVmVjdG9yMygwLjAwNSwgMC4wMDUsIDAuMDA1KSk7CgkJCQkJCQkJfQoJCQkJCQkJCWVsc2UKCQkJCQkJCQl7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFzayA9IG51bGw7CgkJCQkJCQkJfQoJCQkJKi8KCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ2KQoJCXsKCQkJdmFyIHNjZW5lID0gKFNjZW5lKXNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgYW1iaWVudExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJBbWJpZW50IExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBkaXJlY3Rpb25hbExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoJCQl2YXIgc3RyZWV0TGlnaHRMaWdodHMgPSBzY2VuZS5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJdmFyIHNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiU2t5IikgYXMgU2t5OwoJCQkvL3ZhciBkYXlTa3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRheSBza3kiKTsKCQkJLy92YXIgbmlnaHRTa3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIk5pZ2h0IHNreSIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCgkJCWN1cnJlbnROaWdodCA9ICFjdXJyZW50TmlnaHQ7CgoJCQl0cnkKCQkJewoJCQkJc2NlbmUuVGltZU9mRGF5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDEyOwoJCQkJYW1iaWVudExpZ2h0LkJyaWdodG5lc3MgPSBjdXJyZW50TmlnaHQgPyAyNTAwMCA6IDMwMDAwOy8vMTAwMDAwOwoJCQkJZGlyZWN0aW9uYWxMaWdodC5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCXN0cmVldExpZ2h0TGlnaHRzLkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlza3kuUHJvY2VkdXJhbEF0bW9zcGhlcmUgPSBjdXJyZW50TmlnaHQgPyAwIDogMTsKCQkJCS8vc2t5LlByb2NlZHVyYWxTdGFycyA9IGN1cnJlbnROaWdodCA_IDEgOiAwOwoJCQkJLy9za3kuTW9kZSA9IGN1cnJlbnROaWdodCA_IFNreS5Nb2RlRW51bS5SZXNvdXJjZSA6IFNreS5Nb2RlRW51bS5Qcm9jZWR1cmFsOwkJCQkKCQkJCS8vLy9za3kuUHJvY2VkdXJhbEludGVuc2l0eSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy8vL2RheVNreS5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCS8vLy9uaWdodFNreS5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ4KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJewoJCQkJaWYgKHN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUuVmFsdWUgPT0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50KQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlN0YXRpY09iamVjdDsKCQkJCWVsc2UKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ3KQoJCXsKCQkJY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID0gIWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZzsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgoJCQkvL2NhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuTWluaW11bVZpc2libGVTaXplT2ZPYmplY3RzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMiA6IDQ7CgoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbERpc3RhbmNlID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gNjAwIDogMjAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbExpZ2h0Q2FzY2FkZXMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAzIDogMjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoKCQkJLyoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3QgYXMgU2NlbmU7CgkJCWlmIChzY2VuZSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZS5WYWx1ZSA9PSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZCkKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLlNpbmdsZVRocmVhZGVkOwoJCQkJZWxzZQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJCSovCgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5DKQoJCXsKCQkJY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzID0gIWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9yczsKCQkJCgkJCXZhciBsaWdodHMgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJaWYobGlnaHRzICE9IG51bGwpCgkJCXsKCQkJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQkJCgkJCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQkJCXsKCQkJCQlpZihjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMpCgkJCQkJewoJCQkJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJCQkJdmFyIG1heCA9IDAuNmY7Ly8wLjJmOwoJCQkJCQljb2xvci5SZWQgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJY29sb3IuQmx1ZSArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQlsaWdodC5Db2xvciA9IGNvbG9yOwoJCQkJCX0KCQkJCQllbHNlCgkJCQkJewoJCQkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCQkJfQoJCQkJfQoJCQl9CQoKCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLk0pCgkJewoJCQljdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpciA9ICFjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcjsKCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQkKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQkvKmlmIChrZXlEb3duLktleSA9PSBFS2V5cy5QKQoJCXsKCQkJY3VycmVudFJlZmxlY3Rpb25Qcm9iZSA9ICFjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCWZvcmVhY2ggKHZhciBwcm9iZSBpbiBzY2VuZS5HZXRDb21wb25lbnRzPFJlZmxlY3Rpb25Qcm9iZT4oKSkKCQkJCXByb2JlLlJlYWxUaW1lID0gY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9Ki8KCX0KfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCWlmICghc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Db250cm9sKSkKCQlQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoc2VuZGVyLCBtZXNzYWdlKTsKfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfRW5hYmxlZEluU2ltdWxhdGlvbihOZW9BeGlzLkNvbXBvbmVudCBvYmopCnsKCS8vLy9hY3RpdmF0ZSBuaWdodCBtb2RlCgkvL1Byb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudCgoR2FtZU1vZGUpb2JqLCBuZXcgSW5wdXRNZXNzYWdlS2V5RG93bihFS2V5cy5ENikpOwoJCgkvL3JhbmRvbWl6ZSBzdHJlZXQgbGlnaHRzCgl2YXIgbGlnaHRzID0gb2JqLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCS8vcmFuZG9taXplIHJvdGF0aW9uCgkJCXZhciB0ciA9IGxpZ2h0LlRyYW5zZm9ybVY7CgkJCXRyID0gdHIuVXBkYXRlUm90YXRpb24oUXVhdGVybmlvbi5Gcm9tUm90YXRlQnlaKHJhbmRvbS5OZXh0KE1hdGguUEkgKiAyKSkpOwoJCQlsaWdodC5UcmFuc2Zvcm0gPSB0cjsKCi8qCgkJCS8vcmFuZG9taXplIGNvbG9ycwoJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJdmFyIG1heCA9IDAuNmY7Ly8wLjJmOwoJCQljb2xvci5SZWQgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJY29sb3IuQmx1ZSArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQlsaWdodC5Db2xvciA9IGNvbG9yOwoqLwkJCQoJCX0KCX0JCn0=")]
+public class DynamicClass01B7B463479F6B78E18F56AAE00306973380894AF6C45D172F11F9BFF45972CB
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight; // || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 30000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                var lights = sender.ParentRoot.GetComponent("Street light lights");
+                if (lights != null)
+                {
+                    var random = new FastRandom();
+                    foreach (var light in lights.GetComponents<Light>())
+                    {
+                        if (currentRandomizeStreetLightColors)
+                        {
+                            var color = light.Color.Value;
+                            var max = 0.6f; //0.2f;
+                            color.Red += random.Next(-max, max);
+                            color.Green += random.Next(-max, max);
+                            color.Blue += random.Next(-max, max);
+                            light.Color = color;
+                        }
+                        else
+                        {
+                            light.Color = new ColorValue(1, 1, 0.7110196);
+                        }
+                    }
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            /*
+			//randomize colors
+			var color = light.Color.Value;
+			var max = 0.6f;//0.2f;
+			color.Red += random.Next(-max, max);
+			color.Green += random.Next(-max, max);
+			color.Blue += random.Next(-max, max);
+			light.Color = color;
+*/
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJZm9nLkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0Oy8vIHx8IGN1cnJlbnRSYWluOwoJZm9nLkRlbnNpdHkgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDAuMDEgOiAwLjAwMTsvL2ZvZy5EZW5zaXR5ID0gY3VycmVudFJhaW4gPyAwLjAxIDogMC4wMDE7CgoJaWYgKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gMTsKCWVsc2UKCQlmb2cuQWZmZWN0QmFja2dyb3VuZCA9IGN1cnJlbnROaWdodCA_IDAgOiAwLjU7CgoJaWYgKGN1cnJlbnROaWdodCkKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLCAwLCAwKTsKCWVsc2UKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjQ1Mzk2MDgsIDAuNTE2MDM5MiwgMC42NTg4MjM1KTsKCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBFeGl0RnJvbVZlaGljbGUoTmVvQXhpcy5HYW1lTW9kZSBnYW1lTW9kZSkKewoJdmFyIG9iaiA9IGdhbWVNb2RlLk9iamVjdENvbnRyb2xsZWRCeVBsYXllci5WYWx1ZSBhcyBWZWhpY2xlOwoJaWYgKG9iaiAhPSBudWxsKQoJewoJCXZhciBpbnB1dFByb2Nlc3NpbmcgPSBvYmouR2V0Q29tcG9uZW50PFZlaGljbGVJbnB1dFByb2Nlc3Npbmc+KCk7CgkJaWYgKGlucHV0UHJvY2Vzc2luZyAhPSBudWxsKQoJCQlpbnB1dFByb2Nlc3NpbmcuRXhpdEFsbE9iamVjdHNGcm9tVmVoaWNsZShnYW1lTW9kZSk7Cgl9Cn0KCnZvaWQgUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7Cgl2YXIga2V5RG93biA9IG1lc3NhZ2UgYXMgSW5wdXRNZXNzYWdlS2V5RG93bjsKCWlmIChrZXlEb3duICE9IG51bGwpLy8mJiAhc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Db250cm9sKSkKCXsKCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDEpCgkJewoJCQl2YXIgbWFuYWdlciA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxCdWlsZGluZ01hbmFnZXI+KCk7CgkJCWlmIChtYW5hZ2VyICE9IG51bGwpCgkJCXsKCQkJCW1hbmFnZXIuRGlzcGxheSA9ICFtYW5hZ2VyLkRpc3BsYXk7CgkJCQltYW5hZ2VyLkNvbGxpc2lvbiA9IG1hbmFnZXIuRGlzcGxheTsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMikKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXMgPSBzeXN0ZW0uUGFya2VkVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiA0MDAwOy8vNTAwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDMpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLkZseWluZ1ZlaGljbGVzID0gc3lzdGVtLkZseWluZ1ZlaGljbGVzLlZhbHVlICE9IDAgPyAwIDogMjAwOy8vNTAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EOSkKCQl7CgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLlNpbXVsYXRlRHluYW1pY09iamVjdHMgPSAhc3lzdGVtLlNpbXVsYXRlRHluYW1pY09iamVjdHM7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ0KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMgPSBzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zLlZhbHVlICE9IDAgPyAwIDogMTAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMCkKCQl7CgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzID0gIXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnNNYW5hZ2VUYXNrczsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDUpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZT4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgcmVmbGVjdGlvbiA9IHJlbmRlcmluZ1BpcGVsaW5lPy5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X1JlZmxlY3Rpb24+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgkJCXZhciBwcmVjaXBpdGF0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUHJlY2lwaXRhdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBzb3VuZFNvdXJjZVJhaW4gPSBzY2VuZS5HZXRDb21wb25lbnQoIlNvdW5kIFNvdXJjZSBSYWluIikgYXMgU291bmRTb3VyY2U7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgoJCQljdXJyZW50V2VhdGhlcisrOwoJCQlpZiAoY3VycmVudFdlYXRoZXIgPiAyKQoJCQkJY3VycmVudFdlYXRoZXIgPSAwOwoJCQkvL2N1cnJlbnRSYWluID0gIWN1cnJlbnRSYWluOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgoJCQkJc291bmRTb3VyY2VSYWluLkVuYWJsZWQgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZzsKCgkJCQlzY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMSA6IDA7CgkJCQlzY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGVuID0gKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nIHx8IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsZW4pID8gMSA6IDA7CgoJCQkJLy9wcmVjaXBpdGF0aW9uLkVuYWJsZWQgPSBjdXJyZW50UmFpbjsKCQkJCS8vc291bmRTb3VyY2VSYWluLkVuYWJsZWQgPSBjdXJyZW50UmFpbjsKCQkJCS8vc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxpbmcgPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGVuID0gY3VycmVudFJhaW4gPyAxIDogMDsKCgkJCQkvKgoJCQkJCQkJCWlmKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbmV3IFJlZmVyZW5jZU5vVmFsdWUoQCJTYW1wbGVzXENpdHkgRGVtb1xTa2llc1xSYWluIGNsb3VkcyBtYXNrXFJhaW4gY2xvdWRzIG1hc2suanBnIik7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFza1RyYW5zZm9ybSA9IG5ldyBUcmFuc2Zvcm0oVmVjdG9yMy5aZXJvLCBRdWF0ZXJuaW9uLklkZW50aXR5LCBuZXcgVmVjdG9yMygwLjAwNSwgMC4wMDUsIDAuMDA1KSk7CgkJCQkJCQkJfQoJCQkJCQkJCWVsc2UKCQkJCQkJCQl7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFzayA9IG51bGw7CgkJCQkJCQkJfQoJCQkJKi8KCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ2KQoJCXsKCQkJdmFyIHNjZW5lID0gKFNjZW5lKXNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgYW1iaWVudExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJBbWJpZW50IExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBkaXJlY3Rpb25hbExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoJCQl2YXIgc3RyZWV0TGlnaHRMaWdodHMgPSBzY2VuZS5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJdmFyIHNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiU2t5IikgYXMgU2t5OwoJCQkvL3ZhciBkYXlTa3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRheSBza3kiKTsKCQkJLy92YXIgbmlnaHRTa3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIk5pZ2h0IHNreSIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCgkJCWN1cnJlbnROaWdodCA9ICFjdXJyZW50TmlnaHQ7CgoJCQl0cnkKCQkJewoJCQkJc2NlbmUuVGltZU9mRGF5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDEyOwoJCQkJYW1iaWVudExpZ2h0LkJyaWdodG5lc3MgPSBjdXJyZW50TmlnaHQgPyAyNTAwMCA6IDMwMDAwOy8vMTAwMDAwOwoJCQkJZGlyZWN0aW9uYWxMaWdodC5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCXN0cmVldExpZ2h0TGlnaHRzLkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlza3kuUHJvY2VkdXJhbEF0bW9zcGhlcmUgPSBjdXJyZW50TmlnaHQgPyAwIDogMTsKCQkJCS8vc2t5LlByb2NlZHVyYWxTdGFycyA9IGN1cnJlbnROaWdodCA_IDEgOiAwOwoJCQkJLy9za3kuTW9kZSA9IGN1cnJlbnROaWdodCA_IFNreS5Nb2RlRW51bS5SZXNvdXJjZSA6IFNreS5Nb2RlRW51bS5Qcm9jZWR1cmFsOwkJCQkKCQkJCS8vLy9za3kuUHJvY2VkdXJhbEludGVuc2l0eSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy8vL2RheVNreS5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCS8vLy9uaWdodFNreS5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ4KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJewoJCQkJaWYgKHN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUuVmFsdWUgPT0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50KQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlN0YXRpY09iamVjdDsKCQkJCWVsc2UKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ3KQoJCXsKCQkJY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID0gIWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZzsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgoJCQkvL2NhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuTWluaW11bVZpc2libGVTaXplT2ZPYmplY3RzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMiA6IDQ7CgoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbERpc3RhbmNlID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gNjAwIDogMjAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbExpZ2h0Q2FzY2FkZXMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAzIDogMjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoKCQkJLyoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3QgYXMgU2NlbmU7CgkJCWlmIChzY2VuZSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZS5WYWx1ZSA9PSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZCkKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLlNpbmdsZVRocmVhZGVkOwoJCQkJZWxzZQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJCSovCgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5DKQoJCXsKCQkJY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzID0gIWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9yczsKCQkJCgkJCXZhciBsaWdodHMgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJaWYobGlnaHRzICE9IG51bGwpCgkJCXsKCQkJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQkJCgkJCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQkJCXsKCQkJCQlpZihjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMpCgkJCQkJewoJCQkJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJCQkJdmFyIG1heCA9IDAuNmY7CgkJCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5CbHVlICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCQkJfQoJCQkJCWVsc2UKCQkJCQl7CgkJCQkJCWxpZ2h0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMC43MTEwMTk2KTsKCQkJCQl9CgkJCQl9CgkJCX0JCgoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuTSkKCQl7CgkJCWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyID0gIWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwoJCQlVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKHNlbmRlcik7CgkJCQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCS8qaWYgKGtleURvd24uS2V5ID09IEVLZXlzLlApCgkJewoJCQljdXJyZW50UmVmbGVjdGlvblByb2JlID0gIWN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCQkJZm9yZWFjaCAodmFyIHByb2JlIGluIHNjZW5lLkdldENvbXBvbmVudHM8UmVmbGVjdGlvblByb2JlPigpKQoJCQkJcHJvYmUuUmVhbFRpbWUgPSBjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0qLwoJfQp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9JbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJaWYgKCFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJCVByb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudChzZW5kZXIsIG1lc3NhZ2UpOwp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9FbmFibGVkSW5TaW11bGF0aW9uKE5lb0F4aXMuQ29tcG9uZW50IG9iaikKewoJLy8vL2FjdGl2YXRlIG5pZ2h0IG1vZGUKCS8vUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KChHYW1lTW9kZSlvYmosIG5ldyBJbnB1dE1lc3NhZ2VLZXlEb3duKEVLZXlzLkQ2KSk7CgkKCS8vcmFuZG9taXplIHN0cmVldCBsaWdodHMKCXZhciBsaWdodHMgPSBvYmouUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCWlmKGxpZ2h0cyAhPSBudWxsKQoJewoJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQoJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCXsKCQkJLy9yYW5kb21pemUgcm90YXRpb24KCQkJdmFyIHRyID0gbGlnaHQuVHJhbnNmb3JtVjsKCQkJdHIgPSB0ci5VcGRhdGVSb3RhdGlvbihRdWF0ZXJuaW9uLkZyb21Sb3RhdGVCeVoocmFuZG9tLk5leHQoTWF0aC5QSSAqIDIpKSk7CgkJCWxpZ2h0LlRyYW5zZm9ybSA9IHRyOwoKLyoKCQkJLy9yYW5kb21pemUgY29sb3JzCgkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQl2YXIgbWF4ID0gMC42ZjsvLzAuMmY7CgkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQljb2xvci5CbHVlICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CiovCQkJCgkJfQoJfQkKfQ==")]
+public class DynamicClass9A63D1A83633EDCD3AD6C235D9208E6CC428434B1E454B91507C5209DACF9A54
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight; // || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 30000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                var lights = sender.ParentRoot.GetComponent("Street light lights");
+                if (lights != null)
+                {
+                    var random = new FastRandom();
+                    foreach (var light in lights.GetComponents<Light>())
+                    {
+                        if (currentRandomizeStreetLightColors)
+                        {
+                            var color = light.Color.Value;
+                            var max = 0.6f;
+                            color.Red += random.Next(-max, max);
+                            color.Green += random.Next(-max, max);
+                            color.Blue += random.Next(-max, max);
+                            light.Color = color;
+                        }
+                        else
+                        {
+                            light.Color = new ColorValue(1, 1, 0.7110196);
+                        }
+                    }
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            /*
+			//randomize colors
+			var color = light.Color.Value;
+			var max = 0.6f;//0.2f;
+			color.Red += random.Next(-max, max);
+			color.Green += random.Next(-max, max);
+			color.Blue += random.Next(-max, max);
+			light.Color = color;
+*/
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJZm9nLkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0Oy8vIHx8IGN1cnJlbnRSYWluOwoJZm9nLkRlbnNpdHkgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDAuMDEgOiAwLjAwMTsvL2ZvZy5EZW5zaXR5ID0gY3VycmVudFJhaW4gPyAwLjAxIDogMC4wMDE7CgoJaWYgKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gMTsKCWVsc2UKCQlmb2cuQWZmZWN0QmFja2dyb3VuZCA9IGN1cnJlbnROaWdodCA_IDAgOiAwLjU7CgoJaWYgKGN1cnJlbnROaWdodCkKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLCAwLCAwKTsKCWVsc2UKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjQ1Mzk2MDgsIDAuNTE2MDM5MiwgMC42NTg4MjM1KTsKCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBFeGl0RnJvbVZlaGljbGUoTmVvQXhpcy5HYW1lTW9kZSBnYW1lTW9kZSkKewoJdmFyIG9iaiA9IGdhbWVNb2RlLk9iamVjdENvbnRyb2xsZWRCeVBsYXllci5WYWx1ZSBhcyBWZWhpY2xlOwoJaWYgKG9iaiAhPSBudWxsKQoJewoJCXZhciBpbnB1dFByb2Nlc3NpbmcgPSBvYmouR2V0Q29tcG9uZW50PFZlaGljbGVJbnB1dFByb2Nlc3Npbmc+KCk7CgkJaWYgKGlucHV0UHJvY2Vzc2luZyAhPSBudWxsKQoJCQlpbnB1dFByb2Nlc3NpbmcuRXhpdEFsbE9iamVjdHNGcm9tVmVoaWNsZShnYW1lTW9kZSk7Cgl9Cn0KCnZvaWQgUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7Cgl2YXIga2V5RG93biA9IG1lc3NhZ2UgYXMgSW5wdXRNZXNzYWdlS2V5RG93bjsKCWlmIChrZXlEb3duICE9IG51bGwpLy8mJiAhc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Db250cm9sKSkKCXsKCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDEpCgkJewoJCQl2YXIgbWFuYWdlciA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxCdWlsZGluZ01hbmFnZXI+KCk7CgkJCWlmIChtYW5hZ2VyICE9IG51bGwpCgkJCXsKCQkJCW1hbmFnZXIuRGlzcGxheSA9ICFtYW5hZ2VyLkRpc3BsYXk7CgkJCQltYW5hZ2VyLkNvbGxpc2lvbiA9IG1hbmFnZXIuRGlzcGxheTsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMikKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXMgPSBzeXN0ZW0uUGFya2VkVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiA0MDAwOy8vNTAwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDMpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLkZseWluZ1ZlaGljbGVzID0gc3lzdGVtLkZseWluZ1ZlaGljbGVzLlZhbHVlICE9IDAgPyAwIDogMjAwOy8vNTAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EOSkKCQl7CgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLlNpbXVsYXRlRHluYW1pY09iamVjdHMgPSAhc3lzdGVtLlNpbXVsYXRlRHluYW1pY09iamVjdHM7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ0KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMgPSBzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zLlZhbHVlICE9IDAgPyAwIDogMTAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMCkKCQl7CgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzID0gIXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnNNYW5hZ2VUYXNrczsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDUpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZT4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgcmVmbGVjdGlvbiA9IHJlbmRlcmluZ1BpcGVsaW5lPy5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X1JlZmxlY3Rpb24+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgkJCXZhciBwcmVjaXBpdGF0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUHJlY2lwaXRhdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBzb3VuZFNvdXJjZVJhaW4gPSBzY2VuZS5HZXRDb21wb25lbnQoIlNvdW5kIFNvdXJjZSBSYWluIikgYXMgU291bmRTb3VyY2U7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgoJCQljdXJyZW50V2VhdGhlcisrOwoJCQlpZiAoY3VycmVudFdlYXRoZXIgPiAyKQoJCQkJY3VycmVudFdlYXRoZXIgPSAwOwoJCQkvL2N1cnJlbnRSYWluID0gIWN1cnJlbnRSYWluOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgoJCQkJc291bmRTb3VyY2VSYWluLkVuYWJsZWQgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZzsKCgkJCQlzY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMSA6IDA7CgkJCQlzY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGVuID0gKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nIHx8IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsZW4pID8gMSA6IDA7CgoJCQkJLy9wcmVjaXBpdGF0aW9uLkVuYWJsZWQgPSBjdXJyZW50UmFpbjsKCQkJCS8vc291bmRTb3VyY2VSYWluLkVuYWJsZWQgPSBjdXJyZW50UmFpbjsKCQkJCS8vc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxpbmcgPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGVuID0gY3VycmVudFJhaW4gPyAxIDogMDsKCgkJCQkvKgoJCQkJCQkJCWlmKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbmV3IFJlZmVyZW5jZU5vVmFsdWUoQCJTYW1wbGVzXENpdHkgRGVtb1xTa2llc1xSYWluIGNsb3VkcyBtYXNrXFJhaW4gY2xvdWRzIG1hc2suanBnIik7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFza1RyYW5zZm9ybSA9IG5ldyBUcmFuc2Zvcm0oVmVjdG9yMy5aZXJvLCBRdWF0ZXJuaW9uLklkZW50aXR5LCBuZXcgVmVjdG9yMygwLjAwNSwgMC4wMDUsIDAuMDA1KSk7CgkJCQkJCQkJfQoJCQkJCQkJCWVsc2UKCQkJCQkJCQl7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFzayA9IG51bGw7CgkJCQkJCQkJfQoJCQkJKi8KCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ2KQoJCXsKCQkJdmFyIHNjZW5lID0gKFNjZW5lKXNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgYW1iaWVudExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJBbWJpZW50IExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBkaXJlY3Rpb25hbExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoJCQl2YXIgc3RyZWV0TGlnaHRMaWdodHMgPSBzY2VuZS5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJdmFyIHNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiU2t5IikgYXMgU2t5OwoJCQkvL3ZhciBkYXlTa3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRheSBza3kiKTsKCQkJLy92YXIgbmlnaHRTa3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIk5pZ2h0IHNreSIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCgkJCWN1cnJlbnROaWdodCA9ICFjdXJyZW50TmlnaHQ7CgoJCQl0cnkKCQkJewoJCQkJc2NlbmUuVGltZU9mRGF5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDEyOwoJCQkJYW1iaWVudExpZ2h0LkJyaWdodG5lc3MgPSBjdXJyZW50TmlnaHQgPyAyNTAwMCA6IDMwMDAwOy8vMTAwMDAwOwoJCQkJZGlyZWN0aW9uYWxMaWdodC5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCXN0cmVldExpZ2h0TGlnaHRzLkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlza3kuUHJvY2VkdXJhbEF0bW9zcGhlcmUgPSBjdXJyZW50TmlnaHQgPyAwIDogMTsKCQkJCS8vc2t5LlByb2NlZHVyYWxTdGFycyA9IGN1cnJlbnROaWdodCA_IDEgOiAwOwoJCQkJLy9za3kuTW9kZSA9IGN1cnJlbnROaWdodCA_IFNreS5Nb2RlRW51bS5SZXNvdXJjZSA6IFNreS5Nb2RlRW51bS5Qcm9jZWR1cmFsOwkJCQkKCQkJCS8vLy9za3kuUHJvY2VkdXJhbEludGVuc2l0eSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy8vL2RheVNreS5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCS8vLy9uaWdodFNreS5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ4KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJewoJCQkJaWYgKHN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUuVmFsdWUgPT0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50KQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlN0YXRpY09iamVjdDsKCQkJCWVsc2UKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ3KQoJCXsKCQkJY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID0gIWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZzsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgoJCQkvL2NhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuTWluaW11bVZpc2libGVTaXplT2ZPYmplY3RzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMiA6IDQ7CgoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbERpc3RhbmNlID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gNjAwIDogMjAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbExpZ2h0Q2FzY2FkZXMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAzIDogMjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoKCQkJLyoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3QgYXMgU2NlbmU7CgkJCWlmIChzY2VuZSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZS5WYWx1ZSA9PSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZCkKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLlNpbmdsZVRocmVhZGVkOwoJCQkJZWxzZQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJCSovCgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5DKQoJCXsKCQkJY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzID0gIWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9yczsKCQkJCgkJCXZhciBsaWdodHMgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJaWYobGlnaHRzICE9IG51bGwpCgkJCXsKCQkJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQkJCgkJCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQkJCXsKCQkJCQlpZihjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMpCgkJCQkJewoJCQkJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJCQkJdmFyIG1heCA9IDAuNmY7CgkJCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5CbHVlICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCQkJfQoJCQkJCWVsc2UKCQkJCQl7CgkJCQkJCWxpZ2h0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMC43MTEwMTk2KTsKCQkJCQl9CgkJCQl9CgkJCX0JCgoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuTSkKCQl7CgkJCWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyID0gIWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwoJCQlVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKHNlbmRlcik7CgkJCQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCS8qaWYgKGtleURvd24uS2V5ID09IEVLZXlzLlApCgkJewoJCQljdXJyZW50UmVmbGVjdGlvblByb2JlID0gIWN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCQkJZm9yZWFjaCAodmFyIHByb2JlIGluIHNjZW5lLkdldENvbXBvbmVudHM8UmVmbGVjdGlvblByb2JlPigpKQoJCQkJcHJvYmUuUmVhbFRpbWUgPSBjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0qLwoJfQp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9JbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJaWYgKCFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJCVByb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudChzZW5kZXIsIG1lc3NhZ2UpOwp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9FbmFibGVkSW5TaW11bGF0aW9uKE5lb0F4aXMuQ29tcG9uZW50IG9iaikKewoJLy8vL2FjdGl2YXRlIG5pZ2h0IG1vZGUKCS8vUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KChHYW1lTW9kZSlvYmosIG5ldyBJbnB1dE1lc3NhZ2VLZXlEb3duKEVLZXlzLkQ2KSk7CgkKCS8vcmFuZG9taXplIHN0cmVldCBsaWdodHMKCXZhciBsaWdodHMgPSBvYmouUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCWlmKGxpZ2h0cyAhPSBudWxsKQoJewoJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQoJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCXsKCQkJLy9yYW5kb21pemUgcm90YXRpb24KCQkJdmFyIHRyID0gbGlnaHQuVHJhbnNmb3JtVjsKCQkJdHIgPSB0ci5VcGRhdGVSb3RhdGlvbihRdWF0ZXJuaW9uLkZyb21Sb3RhdGVCeVoocmFuZG9tLk5leHQoTWF0aC5QSSAqIDIpKSk7CgkJCWxpZ2h0LlRyYW5zZm9ybSA9IHRyOwoJCX0KCX0JCn0=")]
+public class DynamicClass14838F1AE2929EA0F7FE1BD8700F1790F073DBA2E06CDF0FC39D2021E3A5B6F9
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight; // || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 30000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                var lights = sender.ParentRoot.GetComponent("Street light lights");
+                if (lights != null)
+                {
+                    var random = new FastRandom();
+                    foreach (var light in lights.GetComponents<Light>())
+                    {
+                        if (currentRandomizeStreetLightColors)
+                        {
+                            var color = light.Color.Value;
+                            var max = 0.6f;
+                            color.Red += random.Next(-max, max);
+                            color.Green += random.Next(-max, max);
+                            color.Blue += random.Next(-max, max);
+                            light.Color = color;
+                        }
+                        else
+                        {
+                            light.Color = new ColorValue(1, 1, 0.7110196);
+                        }
+                    }
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJZm9nLkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0Oy8vIHx8IGN1cnJlbnRSYWluOwoJZm9nLkRlbnNpdHkgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDAuMDEgOiAwLjAwMTsvL2ZvZy5EZW5zaXR5ID0gY3VycmVudFJhaW4gPyAwLjAxIDogMC4wMDE7CgoJaWYgKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gMTsKCWVsc2UKCQlmb2cuQWZmZWN0QmFja2dyb3VuZCA9IGN1cnJlbnROaWdodCA_IDAgOiAwLjU7CgoJaWYgKGN1cnJlbnROaWdodCkKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLCAwLCAwKTsKCWVsc2UKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjQ1Mzk2MDgsIDAuNTE2MDM5MiwgMC42NTg4MjM1KTsKCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBVcGRhdGVMaWdodHNDb2xvcihDb21wb25lbnQgc2VuZGVyKQp7Cgl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJewoJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCX0KCQl9Cgl9CQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDQwMDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAyMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDI1MDAwIDogMzAwMDA7Ly8xMDAwMDA7CgkJCQlkaXJlY3Rpb25hbExpZ2h0LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJc3RyZWV0TGlnaHRMaWdodHMuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCXNreS5Qcm9jZWR1cmFsQXRtb3NwaGVyZSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy9za3kuUHJvY2VkdXJhbFN0YXJzID0gY3VycmVudE5pZ2h0ID8gMSA6IDA7CgkJCQkvL3NreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlJlc291cmNlIDogU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWw7CQkJCQoJCQkJLy8vL3NreS5Qcm9jZWR1cmFsSW50ZW5zaXR5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgkJCQkvLy8vZGF5U2t5LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJLy8vL25pZ2h0U2t5LkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDgpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZS5WYWx1ZSA9PSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQpCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uU3RhdGljT2JqZWN0OwoJCQkJZWxzZQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDcpCgkJewoJCQljdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPSAhY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCgkJCS8vY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5NaW5pbXVtVmlzaWJsZVNpemVPZk9iamVjdHMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyIDogNDsKCgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsRGlzdGFuY2UgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyA2MDAgOiAyMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsTGlnaHRDYXNjYWRlcyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDMgOiAyOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgoJCQkvKgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdCBhcyBTY2VuZTsKCQkJaWYgKHNjZW5lICE9IG51bGwpCgkJCXsKCQkJCWlmIChzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlLlZhbHVlID09IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkKQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uU2luZ2xlVGhyZWFkZWQ7CgkJCQllbHNlCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkOwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQkJKi8KCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkMpCgkJewoJCQljdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMgPSAhY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzOwoJCQkKCQkJdmFyIGxpZ2h0cyA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQlpZihsaWdodHMgIT0gbnVsbCkKCQkJewoJCQkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCQkKCQkJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCQkJewoJCQkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJCQl7CgkJCQkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkdyZWVuICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJCQl9CgkJCQkJZWxzZQoJCQkJCXsKCQkJCQkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwLjcxMTAxOTYpOwoJCQkJCX0KCQkJCX0KCQkJfQkKCgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5NKQoJCXsKCQkJY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXIgPSAhY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXI7CgkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJLyppZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuUCkKCQl7CgkJCWN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSAhY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQlmb3JlYWNoICh2YXIgcHJvYmUgaW4gc2NlbmUuR2V0Q29tcG9uZW50czxSZWZsZWN0aW9uUHJvYmU+KCkpCgkJCQlwcm9iZS5SZWFsVGltZSA9IGN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfSovCgl9Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7CglpZiAoIXNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuQ29udHJvbCkpCgkJUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KHNlbmRlciwgbWVzc2FnZSk7Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0VuYWJsZWRJblNpbXVsYXRpb24oTmVvQXhpcy5Db21wb25lbnQgb2JqKQp7CgkvLy8vYWN0aXZhdGUgbmlnaHQgbW9kZQoJLy9Qcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoKEdhbWVNb2RlKW9iaiwgbmV3IElucHV0TWVzc2FnZUtleURvd24oRUtleXMuRDYpKTsKCQoJLy9yYW5kb21pemUgc3RyZWV0IGxpZ2h0cwoJdmFyIGxpZ2h0cyA9IG9iai5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJaWYobGlnaHRzICE9IG51bGwpCgl7CgkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCgkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJewoJCQkvL3JhbmRvbWl6ZSByb3RhdGlvbgoJCQl2YXIgdHIgPSBsaWdodC5UcmFuc2Zvcm1WOwoJCQl0ciA9IHRyLlVwZGF0ZVJvdGF0aW9uKFF1YXRlcm5pb24uRnJvbVJvdGF0ZUJ5WihyYW5kb20uTmV4dChNYXRoLlBJICogMikpKTsKCQkJbGlnaHQuVHJhbnNmb3JtID0gdHI7CgkJfQoJfQkKfQ==")]
+public class DynamicClassC3ED4C467BDD3225EC7F422819A24E540CC4E870ACC6389024A4BD840B235D29
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight; // || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 30000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                var lights = sender.ParentRoot.GetComponent("Street light lights");
+                if (lights != null)
+                {
+                    var random = new FastRandom();
+                    foreach (var light in lights.GetComponents<Light>())
+                    {
+                        if (currentRandomizeStreetLightColors)
+                        {
+                            var color = light.Color.Value;
+                            var max = 0.6f;
+                            color.Red += random.Next(-max, max);
+                            color.Green += random.Next(-max, max);
+                            color.Blue += random.Next(-max, max);
+                            light.Color = color;
+                        }
+                        else
+                        {
+                            light.Color = new ColorValue(1, 1, 0.7110196);
+                        }
+                    }
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJZm9nLkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0Oy8vIHx8IGN1cnJlbnRSYWluOwoJZm9nLkRlbnNpdHkgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDAuMDEgOiAwLjAwMTsvL2ZvZy5EZW5zaXR5ID0gY3VycmVudFJhaW4gPyAwLjAxIDogMC4wMDE7CgoJaWYgKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gMTsKCWVsc2UKCQlmb2cuQWZmZWN0QmFja2dyb3VuZCA9IGN1cnJlbnROaWdodCA_IDAgOiAwLjU7CgoJaWYgKGN1cnJlbnROaWdodCkKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLCAwLCAwKTsKCWVsc2UKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjQ1Mzk2MDgsIDAuNTE2MDM5MiwgMC42NTg4MjM1KTsKCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBVcGRhdGVMaWdodHNDb2xvcihDb21wb25lbnQgc2VuZGVyKQp7Cgl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJewoJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCX0KCQl9Cgl9CQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDQwMDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAyMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDI1MDAwIDogMzAwMDA7Ly8xMDAwMDA7CgkJCQlkaXJlY3Rpb25hbExpZ2h0LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJc3RyZWV0TGlnaHRMaWdodHMuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCXNreS5Qcm9jZWR1cmFsQXRtb3NwaGVyZSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy9za3kuUHJvY2VkdXJhbFN0YXJzID0gY3VycmVudE5pZ2h0ID8gMSA6IDA7CgkJCQkvL3NreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlJlc291cmNlIDogU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWw7CQkJCQoJCQkJLy8vL3NreS5Qcm9jZWR1cmFsSW50ZW5zaXR5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgkJCQkvLy8vZGF5U2t5LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJLy8vL25pZ2h0U2t5LkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDgpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZS5WYWx1ZSA9PSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQpCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uU3RhdGljT2JqZWN0OwoJCQkJZWxzZQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDcpCgkJewoJCQljdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPSAhY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCgkJCS8vY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5NaW5pbXVtVmlzaWJsZVNpemVPZk9iamVjdHMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyIDogNDsKCgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsRGlzdGFuY2UgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyA2MDAgOiAyMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsTGlnaHRDYXNjYWRlcyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDMgOiAyOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgoJCQkvKgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdCBhcyBTY2VuZTsKCQkJaWYgKHNjZW5lICE9IG51bGwpCgkJCXsKCQkJCWlmIChzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlLlZhbHVlID09IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkKQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uU2luZ2xlVGhyZWFkZWQ7CgkJCQllbHNlCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkOwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQkJKi8KCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkMpCgkJewoJCQljdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMgPSAhY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzOwoJCQkKCQkJdmFyIGxpZ2h0cyA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQlpZihsaWdodHMgIT0gbnVsbCkKCQkJewoJCQkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCQkKCQkJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCQkJewoJCQkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJCQl7CgkJCQkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkdyZWVuICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJCQl9CgkJCQkJZWxzZQoJCQkJCXsKCQkJCQkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwLjcxMTAxOTYpOwoJCQkJCX0KCQkJCX0KCQkJfQkKCgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5NKQoJCXsKCQkJY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXIgPSAhY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXI7CgkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJLyppZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuUCkKCQl7CgkJCWN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSAhY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQlmb3JlYWNoICh2YXIgcHJvYmUgaW4gc2NlbmUuR2V0Q29tcG9uZW50czxSZWZsZWN0aW9uUHJvYmU+KCkpCgkJCQlwcm9iZS5SZWFsVGltZSA9IGN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfSovCgl9Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7CglpZiAoIXNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuQ29udHJvbCkpCgkJUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KHNlbmRlciwgbWVzc2FnZSk7Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0VuYWJsZWRJblNpbXVsYXRpb24oTmVvQXhpcy5Db21wb25lbnQgb2JqKQp7CgkvLy8vYWN0aXZhdGUgbmlnaHQgbW9kZQoJLy9Qcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoKEdhbWVNb2RlKW9iaiwgbmV3IElucHV0TWVzc2FnZUtleURvd24oRUtleXMuRDYpKTsKCQoJLy9yYW5kb21pemUgc3RyZWV0IGxpZ2h0cwoJdmFyIGxpZ2h0cyA9IG9iai5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJaWYobGlnaHRzICE9IG51bGwpCgl7CgkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCgkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJewoJCQkvL3JhbmRvbWl6ZSByb3RhdGlvbgoJCQl2YXIgdHIgPSBsaWdodC5UcmFuc2Zvcm1WOwoJCQl0ciA9IHRyLlVwZGF0ZVJvdGF0aW9uKFF1YXRlcm5pb24uRnJvbVJvdGF0ZUJ5WihyYW5kb20uTmV4dChNYXRoLlBJICogMikpKTsKCQkJbGlnaHQuVHJhbnNmb3JtID0gdHI7CgkJfQoKCQlVcGRhdGVMaWdodHNDb2xvcihvYmopOwoJfQkKfQ==")]
+public class DynamicClass679AF305526F1287A02C2747950538C76B847C13F4B68E2A5C2C215CCF88DF13
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight; // || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 30000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                var lights = sender.ParentRoot.GetComponent("Street light lights");
+                if (lights != null)
+                {
+                    var random = new FastRandom();
+                    foreach (var light in lights.GetComponents<Light>())
+                    {
+                        if (currentRandomizeStreetLightColors)
+                        {
+                            var color = light.Color.Value;
+                            var max = 0.6f;
+                            color.Red += random.Next(-max, max);
+                            color.Green += random.Next(-max, max);
+                            color.Blue += random.Next(-max, max);
+                            light.Color = color;
+                        }
+                        else
+                        {
+                            light.Color = new ColorValue(1, 1, 0.7110196);
+                        }
+                    }
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJZm9nLkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0Oy8vIHx8IGN1cnJlbnRSYWluOwoJZm9nLkRlbnNpdHkgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDAuMDEgOiAwLjAwMTsvL2ZvZy5EZW5zaXR5ID0gY3VycmVudFJhaW4gPyAwLjAxIDogMC4wMDE7CgoJaWYgKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gMTsKCWVsc2UKCQlmb2cuQWZmZWN0QmFja2dyb3VuZCA9IGN1cnJlbnROaWdodCA_IDAgOiAwLjU7CgoJaWYgKGN1cnJlbnROaWdodCkKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLCAwLCAwKTsKCWVsc2UKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjQ1Mzk2MDgsIDAuNTE2MDM5MiwgMC42NTg4MjM1KTsKCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBVcGRhdGVMaWdodHNDb2xvcihDb21wb25lbnQgc2VuZGVyKQp7Cgl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJewoJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCX0KCQl9Cgl9CQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDQwMDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAyMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDI1MDAwIDogMzAwMDA7Ly8xMDAwMDA7CgkJCQlkaXJlY3Rpb25hbExpZ2h0LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJc3RyZWV0TGlnaHRMaWdodHMuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCXNreS5Qcm9jZWR1cmFsQXRtb3NwaGVyZSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy9za3kuUHJvY2VkdXJhbFN0YXJzID0gY3VycmVudE5pZ2h0ID8gMSA6IDA7CgkJCQkvL3NreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlJlc291cmNlIDogU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWw7CQkJCQoJCQkJLy8vL3NreS5Qcm9jZWR1cmFsSW50ZW5zaXR5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgkJCQkvLy8vZGF5U2t5LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJLy8vL25pZ2h0U2t5LkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDgpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZS5WYWx1ZSA9PSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQpCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uU3RhdGljT2JqZWN0OwoJCQkJZWxzZQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDcpCgkJewoJCQljdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPSAhY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCgkJCS8vY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5NaW5pbXVtVmlzaWJsZVNpemVPZk9iamVjdHMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyIDogNDsKCgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsRGlzdGFuY2UgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyA2MDAgOiAyMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsTGlnaHRDYXNjYWRlcyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDMgOiAyOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgoJCQkvKgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdCBhcyBTY2VuZTsKCQkJaWYgKHNjZW5lICE9IG51bGwpCgkJCXsKCQkJCWlmIChzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlLlZhbHVlID09IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkKQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uU2luZ2xlVGhyZWFkZWQ7CgkJCQllbHNlCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkOwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQkJKi8KCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkMpCgkJewoJCQljdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMgPSAhY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzOwoKCQkJVXBkYXRlTGlnaHRzQ29sb3Ioc2VuZGVyKTsKLyoKCQkJdmFyIGxpZ2h0cyA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQlpZihsaWdodHMgIT0gbnVsbCkKCQkJewoJCQkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCQkKCQkJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCQkJewoJCQkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJCQl7CgkJCQkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkdyZWVuICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJCQl9CgkJCQkJZWxzZQoJCQkJCXsKCQkJCQkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwLjcxMTAxOTYpOwoJCQkJCX0KCQkJCX0KCQkJfQkKKi8KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLk0pCgkJewoJCQljdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpciA9ICFjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcjsKCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQkKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQkvKmlmIChrZXlEb3duLktleSA9PSBFS2V5cy5QKQoJCXsKCQkJY3VycmVudFJlZmxlY3Rpb25Qcm9iZSA9ICFjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCWZvcmVhY2ggKHZhciBwcm9iZSBpbiBzY2VuZS5HZXRDb21wb25lbnRzPFJlZmxlY3Rpb25Qcm9iZT4oKSkKCQkJCXByb2JlLlJlYWxUaW1lID0gY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9Ki8KCX0KfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCWlmICghc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Db250cm9sKSkKCQlQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoc2VuZGVyLCBtZXNzYWdlKTsKfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfRW5hYmxlZEluU2ltdWxhdGlvbihOZW9BeGlzLkNvbXBvbmVudCBvYmopCnsKCS8vLy9hY3RpdmF0ZSBuaWdodCBtb2RlCgkvL1Byb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudCgoR2FtZU1vZGUpb2JqLCBuZXcgSW5wdXRNZXNzYWdlS2V5RG93bihFS2V5cy5ENikpOwoJCgkvL3JhbmRvbWl6ZSBzdHJlZXQgbGlnaHRzCgl2YXIgbGlnaHRzID0gb2JqLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCS8vcmFuZG9taXplIHJvdGF0aW9uCgkJCXZhciB0ciA9IGxpZ2h0LlRyYW5zZm9ybVY7CgkJCXRyID0gdHIuVXBkYXRlUm90YXRpb24oUXVhdGVybmlvbi5Gcm9tUm90YXRlQnlaKHJhbmRvbS5OZXh0KE1hdGguUEkgKiAyKSkpOwoJCQlsaWdodC5UcmFuc2Zvcm0gPSB0cjsKCQl9CgoJCVVwZGF0ZUxpZ2h0c0NvbG9yKG9iaik7Cgl9CQp9")]
+public class DynamicClass5D8D0562F4E69983B124C73AE96A80C62A53A01CD356F7CFC94C48D051246807
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight; // || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 30000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJLy9mb2cgaXMgZGlzYWJsZWQKCS8qCglmb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoJKi8KCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBVcGRhdGVMaWdodHNDb2xvcihDb21wb25lbnQgc2VuZGVyKQp7Cgl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJewoJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCX0KCQl9Cgl9CQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDQwMDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAyMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDI1MDAwIDogMzAwMDA7Ly8xMDAwMDA7CgkJCQlkaXJlY3Rpb25hbExpZ2h0LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJc3RyZWV0TGlnaHRMaWdodHMuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCXNreS5Qcm9jZWR1cmFsQXRtb3NwaGVyZSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy9za3kuUHJvY2VkdXJhbFN0YXJzID0gY3VycmVudE5pZ2h0ID8gMSA6IDA7CgkJCQkvL3NreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlJlc291cmNlIDogU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWw7CQkJCQoJCQkJLy8vL3NreS5Qcm9jZWR1cmFsSW50ZW5zaXR5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgkJCQkvLy8vZGF5U2t5LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJLy8vL25pZ2h0U2t5LkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDgpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZS5WYWx1ZSA9PSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQpCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uU3RhdGljT2JqZWN0OwoJCQkJZWxzZQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDcpCgkJewoJCQljdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPSAhY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCgkJCS8vY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5NaW5pbXVtVmlzaWJsZVNpemVPZk9iamVjdHMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyIDogNDsKCgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsRGlzdGFuY2UgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyA2MDAgOiAyMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsTGlnaHRDYXNjYWRlcyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDMgOiAyOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgoJCQkvKgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdCBhcyBTY2VuZTsKCQkJaWYgKHNjZW5lICE9IG51bGwpCgkJCXsKCQkJCWlmIChzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlLlZhbHVlID09IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkKQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uU2luZ2xlVGhyZWFkZWQ7CgkJCQllbHNlCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkOwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQkJKi8KCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkMpCgkJewoJCQljdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMgPSAhY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzOwoKCQkJVXBkYXRlTGlnaHRzQ29sb3Ioc2VuZGVyKTsKLyoKCQkJdmFyIGxpZ2h0cyA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQlpZihsaWdodHMgIT0gbnVsbCkKCQkJewoJCQkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCQkKCQkJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCQkJewoJCQkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJCQl7CgkJCQkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkdyZWVuICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJCQl9CgkJCQkJZWxzZQoJCQkJCXsKCQkJCQkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwLjcxMTAxOTYpOwoJCQkJCX0KCQkJCX0KCQkJfQkKKi8KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLk0pCgkJewoJCQljdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpciA9ICFjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcjsKCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQkKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQkvKmlmIChrZXlEb3duLktleSA9PSBFS2V5cy5QKQoJCXsKCQkJY3VycmVudFJlZmxlY3Rpb25Qcm9iZSA9ICFjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCWZvcmVhY2ggKHZhciBwcm9iZSBpbiBzY2VuZS5HZXRDb21wb25lbnRzPFJlZmxlY3Rpb25Qcm9iZT4oKSkKCQkJCXByb2JlLlJlYWxUaW1lID0gY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9Ki8KCX0KfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCWlmICghc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Db250cm9sKSkKCQlQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoc2VuZGVyLCBtZXNzYWdlKTsKfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfRW5hYmxlZEluU2ltdWxhdGlvbihOZW9BeGlzLkNvbXBvbmVudCBvYmopCnsKCS8vLy9hY3RpdmF0ZSBuaWdodCBtb2RlCgkvL1Byb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudCgoR2FtZU1vZGUpb2JqLCBuZXcgSW5wdXRNZXNzYWdlS2V5RG93bihFS2V5cy5ENikpOwoJCgkvL3JhbmRvbWl6ZSBzdHJlZXQgbGlnaHRzCgl2YXIgbGlnaHRzID0gb2JqLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCS8vcmFuZG9taXplIHJvdGF0aW9uCgkJCXZhciB0ciA9IGxpZ2h0LlRyYW5zZm9ybVY7CgkJCXRyID0gdHIuVXBkYXRlUm90YXRpb24oUXVhdGVybmlvbi5Gcm9tUm90YXRlQnlaKHJhbmRvbS5OZXh0KE1hdGguUEkgKiAyKSkpOwoJCQlsaWdodC5UcmFuc2Zvcm0gPSB0cjsKCQl9CgoJCVVwZGF0ZUxpZ2h0c0NvbG9yKG9iaik7Cgl9CQp9")]
+public class DynamicClass5FB618923568B3C7DD8E56D28DFC94C5F0ED5A1B20CAB71C63BE596044C8A941
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        //fog is disabled
+        /*
+	fog.Enabled = !currentNight;// || currentRain;
+	fog.Density = currentWeather == RainFalling ? 0.01 : 0.001;//fog.Density = currentRain ? 0.01 : 0.001;
+
+	if (currentWeather == RainFalling)//if (currentRain)
+		fog.AffectBackground = 1;
+	else
+		fog.AffectBackground = currentNight ? 0 : 0.5;
+
+	if (currentNight)
+		fog.Color = new ColorValue(0, 0, 0);
+	else
+		fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+	*/
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 30000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJLy9mb2cgaXMgZGlzYWJsZWQKCS8qCglmb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoJKi8KCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBVcGRhdGVMaWdodHNDb2xvcihDb21wb25lbnQgc2VuZGVyKQp7Cgl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJewoJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCX0KCQl9Cgl9CQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDQwMDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAyMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDI1MDAwIDogMzAwMDA7Ly8xMDAwMDA7CgkJCQlkaXJlY3Rpb25hbExpZ2h0LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJc3RyZWV0TGlnaHRMaWdodHMuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCXNreS5Qcm9jZWR1cmFsQXRtb3NwaGVyZSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoKCQkJCXNreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWwgOiBTa3kuTW9kZUVudW0uUmVzb3VyY2U7CgkJCQkKCQkJCS8vc2t5LlByb2NlZHVyYWxTdGFycyA9IGN1cnJlbnROaWdodCA_IDEgOiAwOwoJCQkJLy9za3kuTW9kZSA9IGN1cnJlbnROaWdodCA_IFNreS5Nb2RlRW51bS5SZXNvdXJjZSA6IFNreS5Nb2RlRW51bS5Qcm9jZWR1cmFsOwkJCQkKCQkJCS8vLy9za3kuUHJvY2VkdXJhbEludGVuc2l0eSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy8vL2RheVNreS5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCS8vLy9uaWdodFNreS5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ4KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJewoJCQkJaWYgKHN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUuVmFsdWUgPT0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50KQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlN0YXRpY09iamVjdDsKCQkJCWVsc2UKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ3KQoJCXsKCQkJY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID0gIWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZzsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgoJCQkvL2NhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuTWluaW11bVZpc2libGVTaXplT2ZPYmplY3RzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMiA6IDQ7CgoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbERpc3RhbmNlID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gNjAwIDogMjAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbExpZ2h0Q2FzY2FkZXMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAzIDogMjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoKCQkJLyoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3QgYXMgU2NlbmU7CgkJCWlmIChzY2VuZSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZS5WYWx1ZSA9PSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZCkKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLlNpbmdsZVRocmVhZGVkOwoJCQkJZWxzZQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJCSovCgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5DKQoJCXsKCQkJY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzID0gIWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9yczsKCgkJCVVwZGF0ZUxpZ2h0c0NvbG9yKHNlbmRlcik7Ci8qCgkJCXZhciBsaWdodHMgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJaWYobGlnaHRzICE9IG51bGwpCgkJCXsKCQkJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQkJCgkJCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQkJCXsKCQkJCQlpZihjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMpCgkJCQkJewoJCQkJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJCQkJdmFyIG1heCA9IDAuNmY7CgkJCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5CbHVlICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCQkJfQoJCQkJCWVsc2UKCQkJCQl7CgkJCQkJCWxpZ2h0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMC43MTEwMTk2KTsKCQkJCQl9CgkJCQl9CgkJCX0JCiovCgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5NKQoJCXsKCQkJY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXIgPSAhY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXI7CgkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJLyppZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuUCkKCQl7CgkJCWN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSAhY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQlmb3JlYWNoICh2YXIgcHJvYmUgaW4gc2NlbmUuR2V0Q29tcG9uZW50czxSZWZsZWN0aW9uUHJvYmU+KCkpCgkJCQlwcm9iZS5SZWFsVGltZSA9IGN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfSovCgl9Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7CglpZiAoIXNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuQ29udHJvbCkpCgkJUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KHNlbmRlciwgbWVzc2FnZSk7Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0VuYWJsZWRJblNpbXVsYXRpb24oTmVvQXhpcy5Db21wb25lbnQgb2JqKQp7CgkvLy8vYWN0aXZhdGUgbmlnaHQgbW9kZQoJLy9Qcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoKEdhbWVNb2RlKW9iaiwgbmV3IElucHV0TWVzc2FnZUtleURvd24oRUtleXMuRDYpKTsKCQoJLy9yYW5kb21pemUgc3RyZWV0IGxpZ2h0cwoJdmFyIGxpZ2h0cyA9IG9iai5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJaWYobGlnaHRzICE9IG51bGwpCgl7CgkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCgkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJewoJCQkvL3JhbmRvbWl6ZSByb3RhdGlvbgoJCQl2YXIgdHIgPSBsaWdodC5UcmFuc2Zvcm1WOwoJCQl0ciA9IHRyLlVwZGF0ZVJvdGF0aW9uKFF1YXRlcm5pb24uRnJvbVJvdGF0ZUJ5WihyYW5kb20uTmV4dChNYXRoLlBJICogMikpKTsKCQkJbGlnaHQuVHJhbnNmb3JtID0gdHI7CgkJfQoKCQlVcGRhdGVMaWdodHNDb2xvcihvYmopOwoJfQkKfQ==")]
+public class DynamicClass7422CA02B1E20E04713A53956B7F755129A710DF86F11EC25981D7560CC89C32
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        //fog is disabled
+        /*
+	fog.Enabled = !currentNight;// || currentRain;
+	fog.Density = currentWeather == RainFalling ? 0.01 : 0.001;//fog.Density = currentRain ? 0.01 : 0.001;
+
+	if (currentWeather == RainFalling)//if (currentRain)
+		fog.AffectBackground = 1;
+	else
+		fog.AffectBackground = currentNight ? 0 : 0.5;
+
+	if (currentNight)
+		fog.Color = new ColorValue(0, 0, 0);
+	else
+		fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+	*/
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 30000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    sky.Mode = currentNight ? Sky.ModeEnum.Procedural : Sky.ModeEnum.Resource;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJLy9mb2cgaXMgZGlzYWJsZWQKCS8qCglmb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoJKi8KCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBVcGRhdGVMaWdodHNDb2xvcihDb21wb25lbnQgc2VuZGVyKQp7Cgl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJewoJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCX0KCQl9Cgl9CQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDQwMDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAyMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDI1MDAwIDogNTAwMDA7Ly8xMDAwMDA7CgkJCQlkaXJlY3Rpb25hbExpZ2h0LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJc3RyZWV0TGlnaHRMaWdodHMuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCXNreS5Qcm9jZWR1cmFsQXRtb3NwaGVyZSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoKCQkJCXNreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWwgOiBTa3kuTW9kZUVudW0uUmVzb3VyY2U7CgkJCQkKCQkJCS8vc2t5LlByb2NlZHVyYWxTdGFycyA9IGN1cnJlbnROaWdodCA_IDEgOiAwOwoJCQkJLy9za3kuTW9kZSA9IGN1cnJlbnROaWdodCA_IFNreS5Nb2RlRW51bS5SZXNvdXJjZSA6IFNreS5Nb2RlRW51bS5Qcm9jZWR1cmFsOwkJCQkKCQkJCS8vLy9za3kuUHJvY2VkdXJhbEludGVuc2l0eSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy8vL2RheVNreS5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCS8vLy9uaWdodFNreS5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ4KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJewoJCQkJaWYgKHN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUuVmFsdWUgPT0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50KQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlN0YXRpY09iamVjdDsKCQkJCWVsc2UKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ3KQoJCXsKCQkJY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID0gIWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZzsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgoJCQkvL2NhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuTWluaW11bVZpc2libGVTaXplT2ZPYmplY3RzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMiA6IDQ7CgoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbERpc3RhbmNlID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gNjAwIDogMjAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbExpZ2h0Q2FzY2FkZXMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAzIDogMjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoKCQkJLyoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3QgYXMgU2NlbmU7CgkJCWlmIChzY2VuZSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZS5WYWx1ZSA9PSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZCkKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLlNpbmdsZVRocmVhZGVkOwoJCQkJZWxzZQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJCSovCgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5DKQoJCXsKCQkJY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzID0gIWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9yczsKCgkJCVVwZGF0ZUxpZ2h0c0NvbG9yKHNlbmRlcik7Ci8qCgkJCXZhciBsaWdodHMgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJaWYobGlnaHRzICE9IG51bGwpCgkJCXsKCQkJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQkJCgkJCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQkJCXsKCQkJCQlpZihjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMpCgkJCQkJewoJCQkJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJCQkJdmFyIG1heCA9IDAuNmY7CgkJCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5CbHVlICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCQkJfQoJCQkJCWVsc2UKCQkJCQl7CgkJCQkJCWxpZ2h0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMC43MTEwMTk2KTsKCQkJCQl9CgkJCQl9CgkJCX0JCiovCgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5NKQoJCXsKCQkJY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXIgPSAhY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXI7CgkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJLyppZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuUCkKCQl7CgkJCWN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSAhY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQlmb3JlYWNoICh2YXIgcHJvYmUgaW4gc2NlbmUuR2V0Q29tcG9uZW50czxSZWZsZWN0aW9uUHJvYmU+KCkpCgkJCQlwcm9iZS5SZWFsVGltZSA9IGN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfSovCgl9Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7CglpZiAoIXNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuQ29udHJvbCkpCgkJUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KHNlbmRlciwgbWVzc2FnZSk7Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0VuYWJsZWRJblNpbXVsYXRpb24oTmVvQXhpcy5Db21wb25lbnQgb2JqKQp7CgkvLy8vYWN0aXZhdGUgbmlnaHQgbW9kZQoJLy9Qcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoKEdhbWVNb2RlKW9iaiwgbmV3IElucHV0TWVzc2FnZUtleURvd24oRUtleXMuRDYpKTsKCQoJLy9yYW5kb21pemUgc3RyZWV0IGxpZ2h0cwoJdmFyIGxpZ2h0cyA9IG9iai5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJaWYobGlnaHRzICE9IG51bGwpCgl7CgkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCgkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJewoJCQkvL3JhbmRvbWl6ZSByb3RhdGlvbgoJCQl2YXIgdHIgPSBsaWdodC5UcmFuc2Zvcm1WOwoJCQl0ciA9IHRyLlVwZGF0ZVJvdGF0aW9uKFF1YXRlcm5pb24uRnJvbVJvdGF0ZUJ5WihyYW5kb20uTmV4dChNYXRoLlBJICogMikpKTsKCQkJbGlnaHQuVHJhbnNmb3JtID0gdHI7CgkJfQoKCQlVcGRhdGVMaWdodHNDb2xvcihvYmopOwoJfQkKfQ==")]
+public class DynamicClassA8A7693977B4153FC6DB99EEFDB4321B0C4804B00802C34A64E5A8D5CE60DF1D
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        //fog is disabled
+        /*
+	fog.Enabled = !currentNight;// || currentRain;
+	fog.Density = currentWeather == RainFalling ? 0.01 : 0.001;//fog.Density = currentRain ? 0.01 : 0.001;
+
+	if (currentWeather == RainFalling)//if (currentRain)
+		fog.AffectBackground = 1;
+	else
+		fog.AffectBackground = currentNight ? 0 : 0.5;
+
+	if (currentNight)
+		fog.Color = new ColorValue(0, 0, 0);
+	else
+		fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+	*/
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 25000 : 50000; //100000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    sky.Mode = currentNight ? Sky.ModeEnum.Procedural : Sky.ModeEnum.Resource;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJLy9mb2cgaXMgZGlzYWJsZWQKCS8qCglmb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoJKi8KCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBVcGRhdGVMaWdodHNDb2xvcihDb21wb25lbnQgc2VuZGVyKQp7Cgl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJewoJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCX0KCQl9Cgl9CQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDQwMDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAyMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDE1MDAwIDogNTAwMDA7CgkJCQlkaXJlY3Rpb25hbExpZ2h0LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJc3RyZWV0TGlnaHRMaWdodHMuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCXNreS5Qcm9jZWR1cmFsQXRtb3NwaGVyZSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoKCQkJCXNreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWwgOiBTa3kuTW9kZUVudW0uUmVzb3VyY2U7CgkJCQkKCQkJCS8vc2t5LlByb2NlZHVyYWxTdGFycyA9IGN1cnJlbnROaWdodCA_IDEgOiAwOwoJCQkJLy9za3kuTW9kZSA9IGN1cnJlbnROaWdodCA_IFNreS5Nb2RlRW51bS5SZXNvdXJjZSA6IFNreS5Nb2RlRW51bS5Qcm9jZWR1cmFsOwkJCQkKCQkJCS8vLy9za3kuUHJvY2VkdXJhbEludGVuc2l0eSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy8vL2RheVNreS5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCS8vLy9uaWdodFNreS5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ4KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJewoJCQkJaWYgKHN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUuVmFsdWUgPT0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50KQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlN0YXRpY09iamVjdDsKCQkJCWVsc2UKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ3KQoJCXsKCQkJY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID0gIWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZzsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgoJCQkvL2NhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuTWluaW11bVZpc2libGVTaXplT2ZPYmplY3RzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMiA6IDQ7CgoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbERpc3RhbmNlID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gNjAwIDogMjAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbExpZ2h0Q2FzY2FkZXMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAzIDogMjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoKCQkJLyoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3QgYXMgU2NlbmU7CgkJCWlmIChzY2VuZSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZS5WYWx1ZSA9PSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZCkKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLlNpbmdsZVRocmVhZGVkOwoJCQkJZWxzZQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJCSovCgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5DKQoJCXsKCQkJY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzID0gIWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9yczsKCgkJCVVwZGF0ZUxpZ2h0c0NvbG9yKHNlbmRlcik7Ci8qCgkJCXZhciBsaWdodHMgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJaWYobGlnaHRzICE9IG51bGwpCgkJCXsKCQkJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQkJCgkJCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQkJCXsKCQkJCQlpZihjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMpCgkJCQkJewoJCQkJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJCQkJdmFyIG1heCA9IDAuNmY7CgkJCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5CbHVlICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCQkJfQoJCQkJCWVsc2UKCQkJCQl7CgkJCQkJCWxpZ2h0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMC43MTEwMTk2KTsKCQkJCQl9CgkJCQl9CgkJCX0JCiovCgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5NKQoJCXsKCQkJY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXIgPSAhY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXI7CgkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJLyppZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuUCkKCQl7CgkJCWN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSAhY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQlmb3JlYWNoICh2YXIgcHJvYmUgaW4gc2NlbmUuR2V0Q29tcG9uZW50czxSZWZsZWN0aW9uUHJvYmU+KCkpCgkJCQlwcm9iZS5SZWFsVGltZSA9IGN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfSovCgl9Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7CglpZiAoIXNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuQ29udHJvbCkpCgkJUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KHNlbmRlciwgbWVzc2FnZSk7Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0VuYWJsZWRJblNpbXVsYXRpb24oTmVvQXhpcy5Db21wb25lbnQgb2JqKQp7CgkvLy8vYWN0aXZhdGUgbmlnaHQgbW9kZQoJLy9Qcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoKEdhbWVNb2RlKW9iaiwgbmV3IElucHV0TWVzc2FnZUtleURvd24oRUtleXMuRDYpKTsKCQoJLy9yYW5kb21pemUgc3RyZWV0IGxpZ2h0cwoJdmFyIGxpZ2h0cyA9IG9iai5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJaWYobGlnaHRzICE9IG51bGwpCgl7CgkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCgkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJewoJCQkvL3JhbmRvbWl6ZSByb3RhdGlvbgoJCQl2YXIgdHIgPSBsaWdodC5UcmFuc2Zvcm1WOwoJCQl0ciA9IHRyLlVwZGF0ZVJvdGF0aW9uKFF1YXRlcm5pb24uRnJvbVJvdGF0ZUJ5WihyYW5kb20uTmV4dChNYXRoLlBJICogMikpKTsKCQkJbGlnaHQuVHJhbnNmb3JtID0gdHI7CgkJfQoKCQlVcGRhdGVMaWdodHNDb2xvcihvYmopOwoJfQkKfQ==")]
+public class DynamicClass94021404D1F254CC5ECE6EC3BBAC9B7B803120D7F5A0F59BBF0660BBD2793A7F
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        //fog is disabled
+        /*
+	fog.Enabled = !currentNight;// || currentRain;
+	fog.Density = currentWeather == RainFalling ? 0.01 : 0.001;//fog.Density = currentRain ? 0.01 : 0.001;
+
+	if (currentWeather == RainFalling)//if (currentRain)
+		fog.AffectBackground = 1;
+	else
+		fog.AffectBackground = currentNight ? 0 : 0.5;
+
+	if (currentNight)
+		fog.Color = new ColorValue(0, 0, 0);
+	else
+		fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+	*/
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 15000 : 50000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    sky.Mode = currentNight ? Sky.ModeEnum.Procedural : Sky.ModeEnum.Resource;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJLy9mb2cgaXMgZGlzYWJsZWQKCS8qCglmb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoJKi8KCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBVcGRhdGVMaWdodHNDb2xvcihDb21wb25lbnQgc2VuZGVyKQp7Cgl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJewoJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCX0KCQl9Cgl9CQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDQwMDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAyMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDE1MDAwIDogNTAwMDA7IC8vMjUwMDAgOiAzMDAwMDsKCQkJCWRpcmVjdGlvbmFsTGlnaHQuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7CgkJCQlzdHJlZXRMaWdodExpZ2h0cy5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJc2t5LlByb2NlZHVyYWxBdG1vc3BoZXJlID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgoJCQkJc2t5Lk1vZGUgPSBjdXJyZW50TmlnaHQgPyBTa3kuTW9kZUVudW0uUHJvY2VkdXJhbCA6IFNreS5Nb2RlRW51bS5SZXNvdXJjZTsKCQkJCQoJCQkJLy9za3kuUHJvY2VkdXJhbFN0YXJzID0gY3VycmVudE5pZ2h0ID8gMSA6IDA7CgkJCQkvL3NreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlJlc291cmNlIDogU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWw7CQkJCQoJCQkJLy8vL3NreS5Qcm9jZWR1cmFsSW50ZW5zaXR5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgkJCQkvLy8vZGF5U2t5LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJLy8vL25pZ2h0U2t5LkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDgpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZS5WYWx1ZSA9PSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQpCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uU3RhdGljT2JqZWN0OwoJCQkJZWxzZQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDcpCgkJewoJCQljdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPSAhY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCgkJCS8vY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5NaW5pbXVtVmlzaWJsZVNpemVPZk9iamVjdHMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyIDogNDsKCgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsRGlzdGFuY2UgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyA2MDAgOiAyMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsTGlnaHRDYXNjYWRlcyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDMgOiAyOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgoJCQkvKgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdCBhcyBTY2VuZTsKCQkJaWYgKHNjZW5lICE9IG51bGwpCgkJCXsKCQkJCWlmIChzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlLlZhbHVlID09IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkKQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uU2luZ2xlVGhyZWFkZWQ7CgkJCQllbHNlCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkOwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQkJKi8KCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkMpCgkJewoJCQljdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMgPSAhY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzOwoKCQkJVXBkYXRlTGlnaHRzQ29sb3Ioc2VuZGVyKTsKLyoKCQkJdmFyIGxpZ2h0cyA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQlpZihsaWdodHMgIT0gbnVsbCkKCQkJewoJCQkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCQkKCQkJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCQkJewoJCQkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJCQl7CgkJCQkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkdyZWVuICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJCQl9CgkJCQkJZWxzZQoJCQkJCXsKCQkJCQkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwLjcxMTAxOTYpOwoJCQkJCX0KCQkJCX0KCQkJfQkKKi8KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLk0pCgkJewoJCQljdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpciA9ICFjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcjsKCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQkKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQkvKmlmIChrZXlEb3duLktleSA9PSBFS2V5cy5QKQoJCXsKCQkJY3VycmVudFJlZmxlY3Rpb25Qcm9iZSA9ICFjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCWZvcmVhY2ggKHZhciBwcm9iZSBpbiBzY2VuZS5HZXRDb21wb25lbnRzPFJlZmxlY3Rpb25Qcm9iZT4oKSkKCQkJCXByb2JlLlJlYWxUaW1lID0gY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9Ki8KCX0KfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCWlmICghc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Db250cm9sKSkKCQlQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoc2VuZGVyLCBtZXNzYWdlKTsKfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfRW5hYmxlZEluU2ltdWxhdGlvbihOZW9BeGlzLkNvbXBvbmVudCBvYmopCnsKCS8vLy9hY3RpdmF0ZSBuaWdodCBtb2RlCgkvL1Byb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudCgoR2FtZU1vZGUpb2JqLCBuZXcgSW5wdXRNZXNzYWdlS2V5RG93bihFS2V5cy5ENikpOwoJCgkvL3JhbmRvbWl6ZSBzdHJlZXQgbGlnaHRzCgl2YXIgbGlnaHRzID0gb2JqLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCS8vcmFuZG9taXplIHJvdGF0aW9uCgkJCXZhciB0ciA9IGxpZ2h0LlRyYW5zZm9ybVY7CgkJCXRyID0gdHIuVXBkYXRlUm90YXRpb24oUXVhdGVybmlvbi5Gcm9tUm90YXRlQnlaKHJhbmRvbS5OZXh0KE1hdGguUEkgKiAyKSkpOwoJCQlsaWdodC5UcmFuc2Zvcm0gPSB0cjsKCQl9CgoJCVVwZGF0ZUxpZ2h0c0NvbG9yKG9iaik7Cgl9CQp9")]
+public class DynamicClassAA8FA002BCE74928F38BE02E3394147F81558C86D361FF29397FA98C94CCEA20
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        //fog is disabled
+        /*
+	fog.Enabled = !currentNight;// || currentRain;
+	fog.Density = currentWeather == RainFalling ? 0.01 : 0.001;//fog.Density = currentRain ? 0.01 : 0.001;
+
+	if (currentWeather == RainFalling)//if (currentRain)
+		fog.AffectBackground = 1;
+	else
+		fog.AffectBackground = currentNight ? 0 : 0.5;
+
+	if (currentNight)
+		fog.Color = new ColorValue(0, 0, 0);
+	else
+		fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+	*/
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 4000; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 200; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 15000 : 50000; //25000 : 30000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    sky.Mode = currentNight ? Sky.ModeEnum.Procedural : Sky.ModeEnum.Resource;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJLy9mb2cgaXMgZGlzYWJsZWQKCS8qCglmb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoJKi8KCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBVcGRhdGVMaWdodHNDb2xvcihDb21wb25lbnQgc2VuZGVyKQp7Cgl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJewoJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCX0KCQl9Cgl9CQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDI1MDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDE1MDAwIDogNTAwMDA7IC8vMjUwMDAgOiAzMDAwMDsKCQkJCWRpcmVjdGlvbmFsTGlnaHQuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7CgkJCQlzdHJlZXRMaWdodExpZ2h0cy5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJc2t5LlByb2NlZHVyYWxBdG1vc3BoZXJlID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgoJCQkJc2t5Lk1vZGUgPSBjdXJyZW50TmlnaHQgPyBTa3kuTW9kZUVudW0uUHJvY2VkdXJhbCA6IFNreS5Nb2RlRW51bS5SZXNvdXJjZTsKCQkJCQoJCQkJLy9za3kuUHJvY2VkdXJhbFN0YXJzID0gY3VycmVudE5pZ2h0ID8gMSA6IDA7CgkJCQkvL3NreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlJlc291cmNlIDogU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWw7CQkJCQoJCQkJLy8vL3NreS5Qcm9jZWR1cmFsSW50ZW5zaXR5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgkJCQkvLy8vZGF5U2t5LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJLy8vL25pZ2h0U2t5LkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDgpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZS5WYWx1ZSA9PSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQpCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uU3RhdGljT2JqZWN0OwoJCQkJZWxzZQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDcpCgkJewoJCQljdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPSAhY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCgkJCS8vY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5NaW5pbXVtVmlzaWJsZVNpemVPZk9iamVjdHMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyIDogNDsKCgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsRGlzdGFuY2UgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyA2MDAgOiAyMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsTGlnaHRDYXNjYWRlcyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDMgOiAyOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgoJCQkvKgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdCBhcyBTY2VuZTsKCQkJaWYgKHNjZW5lICE9IG51bGwpCgkJCXsKCQkJCWlmIChzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlLlZhbHVlID09IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkKQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uU2luZ2xlVGhyZWFkZWQ7CgkJCQllbHNlCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkOwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQkJKi8KCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkMpCgkJewoJCQljdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMgPSAhY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzOwoKCQkJVXBkYXRlTGlnaHRzQ29sb3Ioc2VuZGVyKTsKLyoKCQkJdmFyIGxpZ2h0cyA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQlpZihsaWdodHMgIT0gbnVsbCkKCQkJewoJCQkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCQkKCQkJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCQkJewoJCQkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJCQl7CgkJCQkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkdyZWVuICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJCQl9CgkJCQkJZWxzZQoJCQkJCXsKCQkJCQkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwLjcxMTAxOTYpOwoJCQkJCX0KCQkJCX0KCQkJfQkKKi8KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLk0pCgkJewoJCQljdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpciA9ICFjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcjsKCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQkKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQkvKmlmIChrZXlEb3duLktleSA9PSBFS2V5cy5QKQoJCXsKCQkJY3VycmVudFJlZmxlY3Rpb25Qcm9iZSA9ICFjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCWZvcmVhY2ggKHZhciBwcm9iZSBpbiBzY2VuZS5HZXRDb21wb25lbnRzPFJlZmxlY3Rpb25Qcm9iZT4oKSkKCQkJCXByb2JlLlJlYWxUaW1lID0gY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9Ki8KCX0KfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCWlmICghc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Db250cm9sKSkKCQlQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoc2VuZGVyLCBtZXNzYWdlKTsKfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfRW5hYmxlZEluU2ltdWxhdGlvbihOZW9BeGlzLkNvbXBvbmVudCBvYmopCnsKCS8vLy9hY3RpdmF0ZSBuaWdodCBtb2RlCgkvL1Byb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudCgoR2FtZU1vZGUpb2JqLCBuZXcgSW5wdXRNZXNzYWdlS2V5RG93bihFS2V5cy5ENikpOwoJCgkvL3JhbmRvbWl6ZSBzdHJlZXQgbGlnaHRzCgl2YXIgbGlnaHRzID0gb2JqLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCS8vcmFuZG9taXplIHJvdGF0aW9uCgkJCXZhciB0ciA9IGxpZ2h0LlRyYW5zZm9ybVY7CgkJCXRyID0gdHIuVXBkYXRlUm90YXRpb24oUXVhdGVybmlvbi5Gcm9tUm90YXRlQnlaKHJhbmRvbS5OZXh0KE1hdGguUEkgKiAyKSkpOwoJCQlsaWdodC5UcmFuc2Zvcm0gPSB0cjsKCQl9CgoJCVVwZGF0ZUxpZ2h0c0NvbG9yKG9iaik7Cgl9CQp9")]
+public class DynamicClassD56361517092CB5202A6045177472EDA6FD045BB71D3E13B513D9E0A3A3673EB
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        //fog is disabled
+        /*
+	fog.Enabled = !currentNight;// || currentRain;
+	fog.Density = currentWeather == RainFalling ? 0.01 : 0.001;//fog.Density = currentRain ? 0.01 : 0.001;
+
+	if (currentWeather == RainFalling)//if (currentRain)
+		fog.AffectBackground = 1;
+	else
+		fog.AffectBackground = currentNight ? 0 : 0.5;
+
+	if (currentNight)
+		fog.Color = new ColorValue(0, 0, 0);
+	else
+		fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+	*/
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 2500; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 100; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 15000 : 50000; //25000 : 30000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    sky.Mode = currentNight ? Sky.ModeEnum.Procedural : Sky.ModeEnum.Resource;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJLy9mb2cgaXMgZGlzYWJsZWQKCWZvZy5FbmFibGVkID0gIWN1cnJlbnROaWdodDsvLyB8fCBjdXJyZW50UmFpbjsKCWZvZy5EZW5zaXR5ID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAwLjAxIDogMC4wMDE7Ly9mb2cuRGVuc2l0eSA9IGN1cnJlbnRSYWluID8gMC4wMSA6IDAuMDAxOwoKCWlmIChjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZykvL2lmIChjdXJyZW50UmFpbikKCQlmb2cuQWZmZWN0QmFja2dyb3VuZCA9IDE7CgllbHNlCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSBjdXJyZW50TmlnaHQgPyAwIDogMC41OwoKCWlmIChjdXJyZW50TmlnaHQpCgkJZm9nLkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMCwgMCwgMCk7CgllbHNlCgkJZm9nLkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC40NTM5NjA4LCAwLjUxNjAzOTIsIDAuNjU4ODIzNSk7CgoJaWYgKGZvZy5FbmFibGVkICYmIGZvZy5BZmZlY3RCYWNrZ3JvdW5kID09IDEpCgkJY2FtZXJhLkZhckNsaXBQbGFuZSA9IDMwMDsKCWVsc2UKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMjAwMCA6IDEwMDA7Cn0KCnZvaWQgVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpciggQ29tcG9uZW50IHNlbmRlciApCnsKCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lX0Jhc2ljPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7Cgl2YXIgZWZmZWN0ID0gcmVuZGVyaW5nUGlwZWxpbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9NaWNyb3BhcnRpY2xlc0luQWlyPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCWlmIChlZmZlY3QgIT0gbnVsbCkKCXsKCQlpZiAoY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXIpCgkJewoJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjcsIDAuNik7CgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQllZmZlY3QuTXVsdGlwbGllciA9IDAuMDAxNTsKCQl9CgkJZWxzZQoJCXsKCQkJaWYgKGN1cnJlbnROaWdodCkKCQkJewoJCQkJZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCQllZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMTU7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQkvL3NpbXVsYXRlIGluZGlyZWN0IGxpZ2h0aW5nIGJ5IG1lYW5zIG1pY3JvcGFydGljbGVzIGluIGFpcgoJCQkJZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjYyOCk7CgkJCQkvL2VmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC41KTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAzOwoJCQl9CgoJCQkvL2VmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNzUsIDAuNzUsIDEpOwoJCQkvL2VmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQl9Cgl9Cn0KCnZvaWQgVXBkYXRlTGlnaHRzQ29sb3IoQ29tcG9uZW50IHNlbmRlcikKewoJdmFyIGxpZ2h0cyA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJaWYobGlnaHRzICE9IG51bGwpCgl7CgkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCgkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJewoJCQlpZihjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMpCgkJCXsKCQkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQkJdmFyIG1heCA9IDAuNmY7CgkJCQljb2xvci5SZWQgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkdyZWVuICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQljb2xvci5CbHVlICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQlsaWdodC5Db2xvciA9IGNvbG9yOwoJCQl9CgkJCWVsc2UKCQkJewoJCQkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwLjcxMTAxOTYpOwoJCQl9CgkJfQoJfQkKfQoKdm9pZCBFeGl0RnJvbVZlaGljbGUoTmVvQXhpcy5HYW1lTW9kZSBnYW1lTW9kZSkKewoJdmFyIG9iaiA9IGdhbWVNb2RlLk9iamVjdENvbnRyb2xsZWRCeVBsYXllci5WYWx1ZSBhcyBWZWhpY2xlOwoJaWYgKG9iaiAhPSBudWxsKQoJewoJCXZhciBpbnB1dFByb2Nlc3NpbmcgPSBvYmouR2V0Q29tcG9uZW50PFZlaGljbGVJbnB1dFByb2Nlc3Npbmc+KCk7CgkJaWYgKGlucHV0UHJvY2Vzc2luZyAhPSBudWxsKQoJCQlpbnB1dFByb2Nlc3NpbmcuRXhpdEFsbE9iamVjdHNGcm9tVmVoaWNsZShnYW1lTW9kZSk7Cgl9Cn0KCnZvaWQgUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7Cgl2YXIga2V5RG93biA9IG1lc3NhZ2UgYXMgSW5wdXRNZXNzYWdlS2V5RG93bjsKCWlmIChrZXlEb3duICE9IG51bGwpLy8mJiAhc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Db250cm9sKSkKCXsKCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDEpCgkJewoJCQl2YXIgbWFuYWdlciA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxCdWlsZGluZ01hbmFnZXI+KCk7CgkJCWlmIChtYW5hZ2VyICE9IG51bGwpCgkJCXsKCQkJCW1hbmFnZXIuRGlzcGxheSA9ICFtYW5hZ2VyLkRpc3BsYXk7CgkJCQltYW5hZ2VyLkNvbGxpc2lvbiA9IG1hbmFnZXIuRGlzcGxheTsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMikKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXMgPSBzeXN0ZW0uUGFya2VkVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAyNTAwOy8vNTAwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDMpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLkZseWluZ1ZlaGljbGVzID0gc3lzdGVtLkZseWluZ1ZlaGljbGVzLlZhbHVlICE9IDAgPyAwIDogMTAwOy8vNTAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EOSkKCQl7CgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLlNpbXVsYXRlRHluYW1pY09iamVjdHMgPSAhc3lzdGVtLlNpbXVsYXRlRHluYW1pY09iamVjdHM7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ0KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMgPSBzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zLlZhbHVlICE9IDAgPyAwIDogMTAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMCkKCQl7CgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzID0gIXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnNNYW5hZ2VUYXNrczsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDUpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZT4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgcmVmbGVjdGlvbiA9IHJlbmRlcmluZ1BpcGVsaW5lPy5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X1JlZmxlY3Rpb24+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgkJCXZhciBwcmVjaXBpdGF0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUHJlY2lwaXRhdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBzb3VuZFNvdXJjZVJhaW4gPSBzY2VuZS5HZXRDb21wb25lbnQoIlNvdW5kIFNvdXJjZSBSYWluIikgYXMgU291bmRTb3VyY2U7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgoJCQljdXJyZW50V2VhdGhlcisrOwoJCQlpZiAoY3VycmVudFdlYXRoZXIgPiAyKQoJCQkJY3VycmVudFdlYXRoZXIgPSAwOwoJCQkvL2N1cnJlbnRSYWluID0gIWN1cnJlbnRSYWluOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgoJCQkJc291bmRTb3VyY2VSYWluLkVuYWJsZWQgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZzsKCgkJCQlzY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMSA6IDA7CgkJCQlzY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGVuID0gKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nIHx8IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsZW4pID8gMSA6IDA7CgoJCQkJLy9wcmVjaXBpdGF0aW9uLkVuYWJsZWQgPSBjdXJyZW50UmFpbjsKCQkJCS8vc291bmRTb3VyY2VSYWluLkVuYWJsZWQgPSBjdXJyZW50UmFpbjsKCQkJCS8vc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxpbmcgPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGVuID0gY3VycmVudFJhaW4gPyAxIDogMDsKCgkJCQkvKgoJCQkJCQkJCWlmKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbmV3IFJlZmVyZW5jZU5vVmFsdWUoQCJTYW1wbGVzXENpdHkgRGVtb1xTa2llc1xSYWluIGNsb3VkcyBtYXNrXFJhaW4gY2xvdWRzIG1hc2suanBnIik7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFza1RyYW5zZm9ybSA9IG5ldyBUcmFuc2Zvcm0oVmVjdG9yMy5aZXJvLCBRdWF0ZXJuaW9uLklkZW50aXR5LCBuZXcgVmVjdG9yMygwLjAwNSwgMC4wMDUsIDAuMDA1KSk7CgkJCQkJCQkJfQoJCQkJCQkJCWVsc2UKCQkJCQkJCQl7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFzayA9IG51bGw7CgkJCQkJCQkJfQoJCQkJKi8KCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ2KQoJCXsKCQkJdmFyIHNjZW5lID0gKFNjZW5lKXNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgYW1iaWVudExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJBbWJpZW50IExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBkaXJlY3Rpb25hbExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoJCQl2YXIgc3RyZWV0TGlnaHRMaWdodHMgPSBzY2VuZS5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJdmFyIHNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiU2t5IikgYXMgU2t5OwoJCQkvL3ZhciBkYXlTa3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRheSBza3kiKTsKCQkJLy92YXIgbmlnaHRTa3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIk5pZ2h0IHNreSIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCgkJCWN1cnJlbnROaWdodCA9ICFjdXJyZW50TmlnaHQ7CgoJCQl0cnkKCQkJewoJCQkJc2NlbmUuVGltZU9mRGF5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDEyOwoJCQkJYW1iaWVudExpZ2h0LkJyaWdodG5lc3MgPSBjdXJyZW50TmlnaHQgPyAxNTAwMCA6IDUwMDAwOyAvLzI1MDAwIDogMzAwMDA7CgkJCQlkaXJlY3Rpb25hbExpZ2h0LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJc3RyZWV0TGlnaHRMaWdodHMuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCXNreS5Qcm9jZWR1cmFsQXRtb3NwaGVyZSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoKCQkJCXNreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWwgOiBTa3kuTW9kZUVudW0uUmVzb3VyY2U7CgkJCQkKCQkJCS8vc2t5LlByb2NlZHVyYWxTdGFycyA9IGN1cnJlbnROaWdodCA_IDEgOiAwOwoJCQkJLy9za3kuTW9kZSA9IGN1cnJlbnROaWdodCA_IFNreS5Nb2RlRW51bS5SZXNvdXJjZSA6IFNreS5Nb2RlRW51bS5Qcm9jZWR1cmFsOwkJCQkKCQkJCS8vLy9za3kuUHJvY2VkdXJhbEludGVuc2l0eSA9IGN1cnJlbnROaWdodCA_IDAgOiAxOwoJCQkJLy8vL2RheVNreS5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCS8vLy9uaWdodFNreS5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ4KQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJewoJCQkJaWYgKHN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUuVmFsdWUgPT0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50KQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlN0YXRpY09iamVjdDsKCQkJCWVsc2UKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5WZWhpY2xlQ29tcG9uZW50OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ3KQoJCXsKCQkJY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID0gIWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZzsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZm9nID0gc2NlbmUuR2V0Q29tcG9uZW50KCJGb2ciKSBhcyBGb2c7CgoJCQkvL2NhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuTWluaW11bVZpc2libGVTaXplT2ZPYmplY3RzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMiA6IDQ7CgoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbERpc3RhbmNlID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gNjAwIDogMjAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5TaGFkb3dEaXJlY3Rpb25hbExpZ2h0Q2FzY2FkZXMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAzIDogMjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoKCQkJLyoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3QgYXMgU2NlbmU7CgkJCWlmIChzY2VuZSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZS5WYWx1ZSA9PSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZCkKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLlNpbmdsZVRocmVhZGVkOwoJCQkJZWxzZQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uQmFja2dyb3VuZFRocmVhZDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJCSovCgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5DKQoJCXsKCQkJY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzID0gIWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9yczsKCgkJCVVwZGF0ZUxpZ2h0c0NvbG9yKHNlbmRlcik7Ci8qCgkJCXZhciBsaWdodHMgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCQkJaWYobGlnaHRzICE9IG51bGwpCgkJCXsKCQkJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQkJCgkJCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQkJCXsKCQkJCQlpZihjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMpCgkJCQkJewoJCQkJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJCQkJdmFyIG1heCA9IDAuNmY7CgkJCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQljb2xvci5CbHVlICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCQkJfQoJCQkJCWVsc2UKCQkJCQl7CgkJCQkJCWxpZ2h0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMC43MTEwMTk2KTsKCQkJCQl9CgkJCQl9CgkJCX0JCiovCgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5NKQoJCXsKCQkJY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXIgPSAhY3VycmVudE1pY3JvcGFydGljbGVzSW5BaXI7CgkJCVVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoc2VuZGVyKTsKCQkJCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJLyppZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuUCkKCQl7CgkJCWN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSAhY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290OwoJCQlmb3JlYWNoICh2YXIgcHJvYmUgaW4gc2NlbmUuR2V0Q29tcG9uZW50czxSZWZsZWN0aW9uUHJvYmU+KCkpCgkJCQlwcm9iZS5SZWFsVGltZSA9IGN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfSovCgl9Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0lucHV0TWVzc2FnZUV2ZW50KE5lb0F4aXMuR2FtZU1vZGUgc2VuZGVyLCBOZW9BeGlzLklucHV0TWVzc2FnZSBtZXNzYWdlKQp7CglpZiAoIXNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuQ29udHJvbCkpCgkJUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KHNlbmRlciwgbWVzc2FnZSk7Cn0KCnB1YmxpYyB2b2lkIEdhbWVNb2RlX0VuYWJsZWRJblNpbXVsYXRpb24oTmVvQXhpcy5Db21wb25lbnQgb2JqKQp7CgkvLy8vYWN0aXZhdGUgbmlnaHQgbW9kZQoJLy9Qcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoKEdhbWVNb2RlKW9iaiwgbmV3IElucHV0TWVzc2FnZUtleURvd24oRUtleXMuRDYpKTsKCQoJLy9yYW5kb21pemUgc3RyZWV0IGxpZ2h0cwoJdmFyIGxpZ2h0cyA9IG9iai5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJaWYobGlnaHRzICE9IG51bGwpCgl7CgkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCgkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJewoJCQkvL3JhbmRvbWl6ZSByb3RhdGlvbgoJCQl2YXIgdHIgPSBsaWdodC5UcmFuc2Zvcm1WOwoJCQl0ciA9IHRyLlVwZGF0ZVJvdGF0aW9uKFF1YXRlcm5pb24uRnJvbVJvdGF0ZUJ5WihyYW5kb20uTmV4dChNYXRoLlBJICogMikpKTsKCQkJbGlnaHQuVHJhbnNmb3JtID0gdHI7CgkJfQoKCQlVcGRhdGVMaWdodHNDb2xvcihvYmopOwoJfQkKfQ==")]
+public class DynamicClass71AC85B8F7A2091E1BB7A1759C42A0C52D617BADFC4E949471F1DB85F23B87FC
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        //fog is disabled
+        fog.Enabled = !currentNight; // || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 2500; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 100; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 15000 : 50000; //25000 : 30000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    sky.Mode = currentNight ? Sky.ModeEnum.Procedural : Sky.ModeEnum.Resource;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJZm9nLkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0Oy8vIHx8IGN1cnJlbnRSYWluOwoJZm9nLkRlbnNpdHkgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDAuMDEgOiAwLjAwMTsvL2ZvZy5EZW5zaXR5ID0gY3VycmVudFJhaW4gPyAwLjAxIDogMC4wMDE7CgoJaWYgKGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nKS8vaWYgKGN1cnJlbnRSYWluKQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gMTsKCWVsc2UKCQlmb2cuQWZmZWN0QmFja2dyb3VuZCA9IGN1cnJlbnROaWdodCA_IDAgOiAwLjU7CgoJaWYgKGN1cnJlbnROaWdodCkKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLCAwLCAwKTsKCWVsc2UKCQlmb2cuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjQ1Mzk2MDgsIDAuNTE2MDM5MiwgMC42NTg4MjM1KTsKCglpZiAoZm9nLkVuYWJsZWQgJiYgZm9nLkFmZmVjdEJhY2tncm91bmQgPT0gMSkKCQljYW1lcmEuRmFyQ2xpcFBsYW5lID0gMzAwOwoJZWxzZQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyMDAwIDogMTAwMDsKfQoKdm9pZCBVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKCBDb21wb25lbnQgc2VuZGVyICkKewoJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7Cgl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmVfQmFzaWM+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCXZhciBlZmZlY3QgPSByZW5kZXJpbmdQaXBlbGluZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X01pY3JvcGFydGljbGVzSW5BaXI+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJaWYgKGVmZmVjdCAhPSBudWxsKQoJewoJCWlmIChjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcikKCQl7CgkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuNywgMC42KTsKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDE1OwoJCX0KCQllbHNlCgkJewoJCQlpZiAoY3VycmVudE5pZ2h0KQoJCQl7CgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJCWVmZmVjdC5NdWx0aXBsaWVyID0gMC4wMDAxNTsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCS8vc2ltdWxhdGUgaW5kaXJlY3QgbGlnaHRpbmcgYnkgbWVhbnMgbWljcm9wYXJ0aWNsZXMgaW4gYWlyCgkJCQllZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNjI4KTsKCQkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC44LCAwLjUpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDM7CgkJCX0KCgkJCS8vZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMC43NSwgMC43NSwgMSk7CgkJCS8vZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCX0KCX0KfQoKdm9pZCBVcGRhdGVMaWdodHNDb2xvcihDb21wb25lbnQgc2VuZGVyKQp7Cgl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJewoJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCWNvbG9yLlJlZCArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCWxpZ2h0LkNvbG9yID0gY29sb3I7CgkJCX0KCQkJZWxzZQoJCQl7CgkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCX0KCQl9Cgl9CQp9Cgp2b2lkIEV4aXRGcm9tVmVoaWNsZShOZW9BeGlzLkdhbWVNb2RlIGdhbWVNb2RlKQp7Cgl2YXIgb2JqID0gZ2FtZU1vZGUuT2JqZWN0Q29udHJvbGxlZEJ5UGxheWVyLlZhbHVlIGFzIFZlaGljbGU7CglpZiAob2JqICE9IG51bGwpCgl7CgkJdmFyIGlucHV0UHJvY2Vzc2luZyA9IG9iai5HZXRDb21wb25lbnQ8VmVoaWNsZUlucHV0UHJvY2Vzc2luZz4oKTsKCQlpZiAoaW5wdXRQcm9jZXNzaW5nICE9IG51bGwpCgkJCWlucHV0UHJvY2Vzc2luZy5FeGl0QWxsT2JqZWN0c0Zyb21WZWhpY2xlKGdhbWVNb2RlKTsKCX0KfQoKdm9pZCBQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCXZhciBrZXlEb3duID0gbWVzc2FnZSBhcyBJbnB1dE1lc3NhZ2VLZXlEb3duOwoJaWYgKGtleURvd24gIT0gbnVsbCkvLyYmICFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJewoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMSkKCQl7CgkJCXZhciBtYW5hZ2VyID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PEJ1aWxkaW5nTWFuYWdlcj4oKTsKCQkJaWYgKG1hbmFnZXIgIT0gbnVsbCkKCQkJewoJCQkJbWFuYWdlci5EaXNwbGF5ID0gIW1hbmFnZXIuRGlzcGxheTsKCQkJCW1hbmFnZXIuQ29sbGlzaW9uID0gbWFuYWdlci5EaXNwbGF5OwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQyKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlcyA9IHN5c3RlbS5QYXJrZWRWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDI1MDA7Ly81MDAwOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EMykKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uRmx5aW5nVmVoaWNsZXMgPSBzeXN0ZW0uRmx5aW5nVmVoaWNsZXMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7Ly81MDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ5KQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0cyA9ICFzeXN0ZW0uU2ltdWxhdGVEeW5hbWljT2JqZWN0czsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDQpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucyA9IHN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnMuVmFsdWUgIT0gMCA_IDAgOiAxMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQwKQoJCXsKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3MgPSAhc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFuc01hbmFnZVRhc2tzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENSkKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciByZWZsZWN0aW9uID0gcmVuZGVyaW5nUGlwZWxpbmU_LkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfUmVmbGVjdGlvbj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIHByZWNpcGl0YXRpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9QcmVjaXBpdGF0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIHNvdW5kU291cmNlUmFpbiA9IHNjZW5lLkdldENvbXBvbmVudCgiU291bmQgU291cmNlIFJhaW4iKSBhcyBTb3VuZFNvdXJjZTsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCgkJCWN1cnJlbnRXZWF0aGVyKys7CgkJCWlmIChjdXJyZW50V2VhdGhlciA+IDIpCgkJCQljdXJyZW50V2VhdGhlciA9IDA7CgkJCS8vY3VycmVudFJhaW4gPSAhY3VycmVudFJhaW47CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCgkJCQlzb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOwoKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgPyAxIDogMDsKCQkJCXNjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcgfHwgY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxlbikgPyAxIDogMDsKCgkJCQkvL3ByZWNpcGl0YXRpb24uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zb3VuZFNvdXJjZVJhaW4uRW5hYmxlZCA9IGN1cnJlbnRSYWluOwoJCQkJLy9zY2VuZS5QcmVjaXBpdGF0aW9uRmFsbGluZyA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsZW4gPSBjdXJyZW50UmFpbiA_IDEgOiAwOwoKCQkJCS8qCgkJCQkJCQkJaWYoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBuZXcgUmVmZXJlbmNlTm9WYWx1ZShAIlNhbXBsZXNcQ2l0eSBEZW1vXFNraWVzXFJhaW4gY2xvdWRzIG1hc2tcUmFpbiBjbG91ZHMgbWFzay5qcGciKTsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrVHJhbnNmb3JtID0gbmV3IFRyYW5zZm9ybShWZWN0b3IzLlplcm8sIFF1YXRlcm5pb24uSWRlbnRpdHksIG5ldyBWZWN0b3IzKDAuMDA1LCAwLjAwNSwgMC4wMDUpKTsKCQkJCQkJCQl9CgkJCQkJCQkJZWxzZQoJCQkJCQkJCXsKCQkJCQkJCQkJZGlyZWN0aW9uYWxMaWdodC5NYXNrID0gbnVsbDsKCQkJCQkJCQl9CgkJCQkqLwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDYpCgkJewoJCQl2YXIgc2NlbmUgPSAoU2NlbmUpc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciBhbWJpZW50TGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkFtYmllbnQgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIGRpcmVjdGlvbmFsTGlnaHQgPSBzY2VuZS5HZXRDb21wb25lbnQoIkRpcmVjdGlvbmFsIExpZ2h0IikgYXMgTGlnaHQ7CgkJCXZhciBzdHJlZXRMaWdodExpZ2h0cyA9IHNjZW5lLkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQl2YXIgc2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTa3kiKSBhcyBTa3k7CgkJCS8vdmFyIGRheVNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiRGF5IHNreSIpOwoJCQkvL3ZhciBuaWdodFNreSA9IHNjZW5lLkdldENvbXBvbmVudCgiTmlnaHQgc2t5Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCQkJdmFyIGNhbWVyYSA9IHNjZW5lLkdldENvbXBvbmVudDxDYW1lcmE+KCJDYW1lcmEgRGVmYXVsdCIpOwoKCQkJY3VycmVudE5pZ2h0ID0gIWN1cnJlbnROaWdodDsKCgkJCXRyeQoJCQl7CgkJCQlzY2VuZS5UaW1lT2ZEYXkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTI7CgkJCQlhbWJpZW50TGlnaHQuQnJpZ2h0bmVzcyA9IGN1cnJlbnROaWdodCA_IDE1MDAwIDogNTAwMDA7IC8vMjUwMDAgOiAzMDAwMDsKCQkJCWRpcmVjdGlvbmFsTGlnaHQuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7CgkJCQlzdHJlZXRMaWdodExpZ2h0cy5FbmFibGVkID0gY3VycmVudE5pZ2h0OwoJCQkJc2t5LlByb2NlZHVyYWxBdG1vc3BoZXJlID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgoJCQkJc2t5Lk1vZGUgPSBjdXJyZW50TmlnaHQgPyBTa3kuTW9kZUVudW0uUHJvY2VkdXJhbCA6IFNreS5Nb2RlRW51bS5SZXNvdXJjZTsKCQkJCQoJCQkJLy9za3kuUHJvY2VkdXJhbFN0YXJzID0gY3VycmVudE5pZ2h0ID8gMSA6IDA7CgkJCQkvL3NreS5Nb2RlID0gY3VycmVudE5pZ2h0ID8gU2t5Lk1vZGVFbnVtLlJlc291cmNlIDogU2t5Lk1vZGVFbnVtLlByb2NlZHVyYWw7CQkJCQoJCQkJLy8vL3NreS5Qcm9jZWR1cmFsSW50ZW5zaXR5ID0gY3VycmVudE5pZ2h0ID8gMCA6IDE7CgkJCQkvLy8vZGF5U2t5LkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0OwoJCQkJLy8vL25pZ2h0U2t5LkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoJCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQl9CgkJCWNhdGNoIChFeGNlcHRpb24gZSkKCQkJewoJCQkJTG9nLldhcm5pbmcoZS5NZXNzYWdlKTsKCQkJfQoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDgpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQl7CgkJCQlpZiAoc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZS5WYWx1ZSA9PSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQpCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uU3RhdGljT2JqZWN0OwoJCQkJZWxzZQoJCQkJCXN5c3RlbS5QYXJrZWRWZWhpY2xlc09iamVjdE1vZGUgPSBUcmFmZmljU3lzdGVtLk9iamVjdE1vZGVFbnVtLlZlaGljbGVDb21wb25lbnQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDcpCgkJewoJCQljdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPSAhY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBmb2cgPSBzY2VuZS5HZXRDb21wb25lbnQoIkZvZyIpIGFzIEZvZzsKCgkJCS8vY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwoJCQlyZW5kZXJpbmdQaXBlbGluZS5NaW5pbXVtVmlzaWJsZVNpemVPZk9iamVjdHMgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyAyIDogNDsKCgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsRGlzdGFuY2UgPSBjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmcgPyA2MDAgOiAyMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLlNoYWRvd0RpcmVjdGlvbmFsTGlnaHRDYXNjYWRlcyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDMgOiAyOwoKCQkJdHJ5CgkJCXsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgoJCQkvKgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdCBhcyBTY2VuZTsKCQkJaWYgKHNjZW5lICE9IG51bGwpCgkJCXsKCQkJCWlmIChzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlLlZhbHVlID09IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkKQoJCQkJCXNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUgPSBPY3RyZWVDb250YWluZXIuVGhyZWFkaW5nTW9kZUVudW0uU2luZ2xlVGhyZWFkZWQ7CgkJCQllbHNlCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5CYWNrZ3JvdW5kVGhyZWFkOwoJCQl9CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQkJKi8KCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkMpCgkJewoJCQljdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnMgPSAhY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzOwoKCQkJVXBkYXRlTGlnaHRzQ29sb3Ioc2VuZGVyKTsKLyoKCQkJdmFyIGxpZ2h0cyA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudCgiU3RyZWV0IGxpZ2h0IGxpZ2h0cyIpOwoJCQlpZihsaWdodHMgIT0gbnVsbCkKCQkJewoJCQkJdmFyIHJhbmRvbSA9IG5ldyBGYXN0UmFuZG9tKCk7CgkJCQkKCQkJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCQkJewoJCQkJCWlmKGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycykKCQkJCQl7CgkJCQkJCXZhciBjb2xvciA9IGxpZ2h0LkNvbG9yLlZhbHVlOwoJCQkJCQl2YXIgbWF4ID0gMC42ZjsKCQkJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkdyZWVuICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQkJCWNvbG9yLkJsdWUgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJCQl9CgkJCQkJZWxzZQoJCQkJCXsKCQkJCQkJbGlnaHQuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAxLCAwLjcxMTAxOTYpOwoJCQkJCX0KCQkJCX0KCQkJfQkKKi8KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLk0pCgkJewoJCQljdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpciA9ICFjdXJyZW50TWljcm9wYXJ0aWNsZXNJbkFpcjsKCQkJVXBkYXRlTWljcm9wYXJ0aWNsZXNJbkFpcihzZW5kZXIpOwoJCQkKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQkvKmlmIChrZXlEb3duLktleSA9PSBFS2V5cy5QKQoJCXsKCQkJY3VycmVudFJlZmxlY3Rpb25Qcm9iZSA9ICFjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJdmFyIHNjZW5lID0gc2VuZGVyLlBhcmVudFJvb3Q7CgkJCWZvcmVhY2ggKHZhciBwcm9iZSBpbiBzY2VuZS5HZXRDb21wb25lbnRzPFJlZmxlY3Rpb25Qcm9iZT4oKSkKCQkJCXByb2JlLlJlYWxUaW1lID0gY3VycmVudFJlZmxlY3Rpb25Qcm9iZTsKCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9Ki8KCX0KfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfSW5wdXRNZXNzYWdlRXZlbnQoTmVvQXhpcy5HYW1lTW9kZSBzZW5kZXIsIE5lb0F4aXMuSW5wdXRNZXNzYWdlIG1lc3NhZ2UpCnsKCWlmICghc2VuZGVyLklzS2V5UHJlc3NlZChFS2V5cy5Db250cm9sKSkKCQlQcm9jZXNzSW5wdXRNZXNzYWdlRXZlbnQoc2VuZGVyLCBtZXNzYWdlKTsKfQoKcHVibGljIHZvaWQgR2FtZU1vZGVfRW5hYmxlZEluU2ltdWxhdGlvbihOZW9BeGlzLkNvbXBvbmVudCBvYmopCnsKCS8vLy9hY3RpdmF0ZSBuaWdodCBtb2RlCgkvL1Byb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudCgoR2FtZU1vZGUpb2JqLCBuZXcgSW5wdXRNZXNzYWdlS2V5RG93bihFS2V5cy5ENikpOwoJCgkvL3JhbmRvbWl6ZSBzdHJlZXQgbGlnaHRzCgl2YXIgbGlnaHRzID0gb2JqLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CglpZihsaWdodHMgIT0gbnVsbCkKCXsKCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkKCQlmb3JlYWNoKHZhciBsaWdodCBpbiBsaWdodHMuR2V0Q29tcG9uZW50czxMaWdodD4oKSkKCQl7CgkJCS8vcmFuZG9taXplIHJvdGF0aW9uCgkJCXZhciB0ciA9IGxpZ2h0LlRyYW5zZm9ybVY7CgkJCXRyID0gdHIuVXBkYXRlUm90YXRpb24oUXVhdGVybmlvbi5Gcm9tUm90YXRlQnlaKHJhbmRvbS5OZXh0KE1hdGguUEkgKiAyKSkpOwoJCQlsaWdodC5UcmFuc2Zvcm0gPSB0cjsKCQl9CgoJCVVwZGF0ZUxpZ2h0c0NvbG9yKG9iaik7Cgl9CQp9")]
+public class DynamicClass7E9EFB6318F0DFFA5DA7B03F25E727BC241D4BF7BACE9726120F95B038509931
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight; // || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 2500; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 100; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 15000 : 50000; //25000 : 30000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    sky.Mode = currentNight ? Sky.ModeEnum.Procedural : Sky.ModeEnum.Resource;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJZm9nLkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0ICYmIGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOy8vIHx8IGN1cnJlbnRSYWluOwoJLy9mb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoKCWlmIChmb2cuRW5hYmxlZCAmJiBmb2cuQWZmZWN0QmFja2dyb3VuZCA9PSAxKQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSAzMDA7CgllbHNlCgkJY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwp9Cgp2b2lkIFVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoIENvbXBvbmVudCBzZW5kZXIgKQp7Cgl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJdmFyIGVmZmVjdCA9IHJlbmRlcmluZ1BpcGVsaW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfTWljcm9wYXJ0aWNsZXNJbkFpcj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CglpZiAoZWZmZWN0ICE9IG51bGwpCgl7CgkJaWYgKGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyKQoJCXsKCQkJZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC43LCAwLjYpOwoJCQkvL2VmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC41KTsKCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMTU7CgkJfQoJCWVsc2UKCQl7CgkJCWlmIChjdXJyZW50TmlnaHQpCgkJCXsKCQkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNzUsIDAuNzUsIDEpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCQl9CgkJCWVsc2UKCQkJewoJCQkJLy9zaW11bGF0ZSBpbmRpcmVjdCBsaWdodGluZyBieSBtZWFucyBtaWNyb3BhcnRpY2xlcyBpbiBhaXIKCQkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC42MjgpOwoJCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCQllZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMzsKCQkJfQoKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJLy9lZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMTU7CgkJfQoJfQp9Cgp2b2lkIFVwZGF0ZUxpZ2h0c0NvbG9yKENvbXBvbmVudCBzZW5kZXIpCnsKCXZhciBsaWdodHMgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCWlmKGxpZ2h0cyAhPSBudWxsKQoJewoJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQoJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCXsKCQkJaWYoY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzKQoJCQl7CgkJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJCXZhciBtYXggPSAwLjZmOwoJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuQmx1ZSArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCWxpZ2h0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMC43MTEwMTk2KTsKCQkJfQoJCX0KCX0JCn0KCnZvaWQgRXhpdEZyb21WZWhpY2xlKE5lb0F4aXMuR2FtZU1vZGUgZ2FtZU1vZGUpCnsKCXZhciBvYmogPSBnYW1lTW9kZS5PYmplY3RDb250cm9sbGVkQnlQbGF5ZXIuVmFsdWUgYXMgVmVoaWNsZTsKCWlmIChvYmogIT0gbnVsbCkKCXsKCQl2YXIgaW5wdXRQcm9jZXNzaW5nID0gb2JqLkdldENvbXBvbmVudDxWZWhpY2xlSW5wdXRQcm9jZXNzaW5nPigpOwoJCWlmIChpbnB1dFByb2Nlc3NpbmcgIT0gbnVsbCkKCQkJaW5wdXRQcm9jZXNzaW5nLkV4aXRBbGxPYmplY3RzRnJvbVZlaGljbGUoZ2FtZU1vZGUpOwoJfQp9Cgp2b2lkIFByb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJdmFyIGtleURvd24gPSBtZXNzYWdlIGFzIElucHV0TWVzc2FnZUtleURvd247CglpZiAoa2V5RG93biAhPSBudWxsKS8vJiYgIXNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuQ29udHJvbCkpCgl7CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQxKQoJCXsKCQkJdmFyIG1hbmFnZXIgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8QnVpbGRpbmdNYW5hZ2VyPigpOwoJCQlpZiAobWFuYWdlciAhPSBudWxsKQoJCQl7CgkJCQltYW5hZ2VyLkRpc3BsYXkgPSAhbWFuYWdlci5EaXNwbGF5OwoJCQkJbWFuYWdlci5Db2xsaXNpb24gPSBtYW5hZ2VyLkRpc3BsYXk7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDIpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzID0gc3lzdGVtLlBhcmtlZFZlaGljbGVzLlZhbHVlICE9IDAgPyAwIDogMjUwMDsvLzUwMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQzKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5GbHlpbmdWZWhpY2xlcyA9IHN5c3RlbS5GbHlpbmdWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDEwMDsvLzUwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDkpCgkJewoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5TaW11bGF0ZUR5bmFtaWNPYmplY3RzID0gIXN5c3RlbS5TaW11bGF0ZUR5bmFtaWNPYmplY3RzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENCkKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zID0gc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucy5WYWx1ZSAhPSAwID8gMCA6IDEwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDApCgkJewoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnNNYW5hZ2VUYXNrcyA9ICFzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3M7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ1KQoJCXsKCQkJdmFyIHNjZW5lID0gKFNjZW5lKXNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmU+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIHJlZmxlY3Rpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9SZWZsZWN0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoJCQl2YXIgcHJlY2lwaXRhdGlvbiA9IHJlbmRlcmluZ1BpcGVsaW5lPy5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X1ByZWNpcGl0YXRpb24+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJCQl2YXIgc291bmRTb3VyY2VSYWluID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTb3VuZCBTb3VyY2UgUmFpbiIpIGFzIFNvdW5kU291cmNlOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBkaXJlY3Rpb25hbExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoKCQkJY3VycmVudFdlYXRoZXIrKzsKCQkJaWYgKGN1cnJlbnRXZWF0aGVyID4gMikKCQkJCWN1cnJlbnRXZWF0aGVyID0gMDsKCQkJLy9jdXJyZW50UmFpbiA9ICFjdXJyZW50UmFpbjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoKCQkJCXNvdW5kU291cmNlUmFpbi5FbmFibGVkID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmc7CgoJCQkJc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxpbmcgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDEgOiAwOwoJCQkJc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxlbiA9IChjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyB8fCBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGVuKSA_IDEgOiAwOwoKCQkJCS8vcHJlY2lwaXRhdGlvbi5FbmFibGVkID0gY3VycmVudFJhaW47CgkJCQkvL3NvdW5kU291cmNlUmFpbi5FbmFibGVkID0gY3VycmVudFJhaW47CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFJhaW4gPyAxIDogMDsKCQkJCS8vc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxlbiA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgoJCQkJLyoKCQkJCQkJCQlpZihjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZykvL2lmIChjdXJyZW50UmFpbikKCQkJCQkJCQl7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFzayA9IG5ldyBSZWZlcmVuY2VOb1ZhbHVlKEAiU2FtcGxlc1xDaXR5IERlbW9cU2tpZXNcUmFpbiBjbG91ZHMgbWFza1xSYWluIGNsb3VkcyBtYXNrLmpwZyIpOwoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2tUcmFuc2Zvcm0gPSBuZXcgVHJhbnNmb3JtKFZlY3RvcjMuWmVybywgUXVhdGVybmlvbi5JZGVudGl0eSwgbmV3IFZlY3RvcjMoMC4wMDUsIDAuMDA1LCAwLjAwNSkpOwoJCQkJCQkJCX0KCQkJCQkJCQllbHNlCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBudWxsOwoJCQkJCQkJCX0KCQkJCSovCgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENikKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIGFtYmllbnRMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiQW1iaWVudCBMaWdodCIpIGFzIExpZ2h0OwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIHN0cmVldExpZ2h0TGlnaHRzID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CgkJCXZhciBza3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIlNreSIpIGFzIFNreTsKCQkJLy92YXIgZGF5U2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEYXkgc2t5Iik7CgkJCS8vdmFyIG5pZ2h0U2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJOaWdodCBza3kiKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgoJCQljdXJyZW50TmlnaHQgPSAhY3VycmVudE5pZ2h0OwoKCQkJdHJ5CgkJCXsKCQkJCXNjZW5lLlRpbWVPZkRheSA9IGN1cnJlbnROaWdodCA_IDAgOiAxMjsKCQkJCWFtYmllbnRMaWdodC5CcmlnaHRuZXNzID0gY3VycmVudE5pZ2h0ID8gMTUwMDAgOiA1MDAwMDsgLy8yNTAwMCA6IDMwMDAwOwoJCQkJZGlyZWN0aW9uYWxMaWdodC5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCXN0cmVldExpZ2h0TGlnaHRzLkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlza3kuUHJvY2VkdXJhbEF0bW9zcGhlcmUgPSBjdXJyZW50TmlnaHQgPyAwIDogMTsKCgkJCQlza3kuTW9kZSA9IGN1cnJlbnROaWdodCA_IFNreS5Nb2RlRW51bS5Qcm9jZWR1cmFsIDogU2t5Lk1vZGVFbnVtLlJlc291cmNlOwoJCQkJCgkJCQkvL3NreS5Qcm9jZWR1cmFsU3RhcnMgPSBjdXJyZW50TmlnaHQgPyAxIDogMDsKCQkJCS8vc2t5Lk1vZGUgPSBjdXJyZW50TmlnaHQgPyBTa3kuTW9kZUVudW0uUmVzb3VyY2UgOiBTa3kuTW9kZUVudW0uUHJvY2VkdXJhbDsJCQkJCgkJCQkvLy8vc2t5LlByb2NlZHVyYWxJbnRlbnNpdHkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTsKCQkJCS8vLy9kYXlTa3kuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7CgkJCQkvLy8vbmlnaHRTa3kuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCQlVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKHNlbmRlcik7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EOCkKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCXsKCQkJCWlmIChzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlLlZhbHVlID09IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uVmVoaWNsZUNvbXBvbmVudCkKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5TdGF0aWNPYmplY3Q7CgkJCQllbHNlCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uVmVoaWNsZUNvbXBvbmVudDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENykKCQl7CgkJCWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA9ICFjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmc7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lX0Jhc2ljPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoKCQkJLy9jYW1lcmEuRmFyQ2xpcFBsYW5lID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMjAwMCA6IDEwMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLk1pbmltdW1WaXNpYmxlU2l6ZU9mT2JqZWN0cyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIgOiA0OwoKCQkJcmVuZGVyaW5nUGlwZWxpbmUuU2hhZG93RGlyZWN0aW9uYWxEaXN0YW5jZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDYwMCA6IDIwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuU2hhZG93RGlyZWN0aW9uYWxMaWdodENhc2NhZGVzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMyA6IDI7CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCgkJCS8qCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290IGFzIFNjZW5lOwoJCQlpZiAoc2NlbmUgIT0gbnVsbCkKCQkJewoJCQkJaWYgKHNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUuVmFsdWUgPT0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLkJhY2tncm91bmRUaHJlYWQpCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5TaW5nbGVUaHJlYWRlZDsKCQkJCWVsc2UKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLkJhY2tncm91bmRUaHJlYWQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCQkqLwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuQykKCQl7CgkJCWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9ICFjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnM7CgoJCQlVcGRhdGVMaWdodHNDb2xvcihzZW5kZXIpOwovKgoJCQl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CgkJCWlmKGxpZ2h0cyAhPSBudWxsKQoJCQl7CgkJCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkJCQoJCQkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJCQl7CgkJCQkJaWYoY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzKQoJCQkJCXsKCQkJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQkJCXZhciBtYXggPSAwLjZmOwoJCQkJCQljb2xvci5SZWQgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJY29sb3IuQmx1ZSArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQlsaWdodC5Db2xvciA9IGNvbG9yOwoJCQkJCX0KCQkJCQllbHNlCgkJCQkJewoJCQkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCQkJfQoJCQkJfQoJCQl9CQoqLwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuTSkKCQl7CgkJCWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyID0gIWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwoJCQlVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKHNlbmRlcik7CgkJCQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCS8qaWYgKGtleURvd24uS2V5ID09IEVLZXlzLlApCgkJewoJCQljdXJyZW50UmVmbGVjdGlvblByb2JlID0gIWN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCQkJZm9yZWFjaCAodmFyIHByb2JlIGluIHNjZW5lLkdldENvbXBvbmVudHM8UmVmbGVjdGlvblByb2JlPigpKQoJCQkJcHJvYmUuUmVhbFRpbWUgPSBjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0qLwoJfQp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9JbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJaWYgKCFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJCVByb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudChzZW5kZXIsIG1lc3NhZ2UpOwp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9FbmFibGVkSW5TaW11bGF0aW9uKE5lb0F4aXMuQ29tcG9uZW50IG9iaikKewoJLy8vL2FjdGl2YXRlIG5pZ2h0IG1vZGUKCS8vUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KChHYW1lTW9kZSlvYmosIG5ldyBJbnB1dE1lc3NhZ2VLZXlEb3duKEVLZXlzLkQ2KSk7CgkKCS8vcmFuZG9taXplIHN0cmVldCBsaWdodHMKCXZhciBsaWdodHMgPSBvYmouUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCWlmKGxpZ2h0cyAhPSBudWxsKQoJewoJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQoJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCXsKCQkJLy9yYW5kb21pemUgcm90YXRpb24KCQkJdmFyIHRyID0gbGlnaHQuVHJhbnNmb3JtVjsKCQkJdHIgPSB0ci5VcGRhdGVSb3RhdGlvbihRdWF0ZXJuaW9uLkZyb21Sb3RhdGVCeVoocmFuZG9tLk5leHQoTWF0aC5QSSAqIDIpKSk7CgkJCWxpZ2h0LlRyYW5zZm9ybSA9IHRyOwoJCX0KCgkJVXBkYXRlTGlnaHRzQ29sb3Iob2JqKTsKCX0JCn0=")]
+public class DynamicClass556D75AB5B26FEE2B142A37BBB53BF81A7B4B9B1D511BDC2DD22BB02D12FE619
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight && currentWeather == RainFalling; // || currentRain;
+        //fog.Enabled = !currentNight;// || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 2500; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 100; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 15000 : 50000; //25000 : 30000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    sky.Mode = currentNight ? Sky.ModeEnum.Procedural : Sky.ModeEnum.Resource;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJZm9nLkVuYWJsZWQgPSAhY3VycmVudE5pZ2h0IHx8IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nOy8vIHx8IGN1cnJlbnRSYWluOwoJLy9mb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoKCWlmIChmb2cuRW5hYmxlZCAmJiBmb2cuQWZmZWN0QmFja2dyb3VuZCA9PSAxKQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSAzMDA7CgllbHNlCgkJY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwp9Cgp2b2lkIFVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoIENvbXBvbmVudCBzZW5kZXIgKQp7Cgl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJdmFyIGVmZmVjdCA9IHJlbmRlcmluZ1BpcGVsaW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfTWljcm9wYXJ0aWNsZXNJbkFpcj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CglpZiAoZWZmZWN0ICE9IG51bGwpCgl7CgkJaWYgKGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyKQoJCXsKCQkJZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC43LCAwLjYpOwoJCQkvL2VmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC41KTsKCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMTU7CgkJfQoJCWVsc2UKCQl7CgkJCWlmIChjdXJyZW50TmlnaHQpCgkJCXsKCQkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNzUsIDAuNzUsIDEpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCQl9CgkJCWVsc2UKCQkJewoJCQkJLy9zaW11bGF0ZSBpbmRpcmVjdCBsaWdodGluZyBieSBtZWFucyBtaWNyb3BhcnRpY2xlcyBpbiBhaXIKCQkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC42MjgpOwoJCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCQllZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMzsKCQkJfQoKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJLy9lZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMTU7CgkJfQoJfQp9Cgp2b2lkIFVwZGF0ZUxpZ2h0c0NvbG9yKENvbXBvbmVudCBzZW5kZXIpCnsKCXZhciBsaWdodHMgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCWlmKGxpZ2h0cyAhPSBudWxsKQoJewoJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQoJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCXsKCQkJaWYoY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzKQoJCQl7CgkJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJCXZhciBtYXggPSAwLjZmOwoJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuQmx1ZSArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCWxpZ2h0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMC43MTEwMTk2KTsKCQkJfQoJCX0KCX0JCn0KCnZvaWQgRXhpdEZyb21WZWhpY2xlKE5lb0F4aXMuR2FtZU1vZGUgZ2FtZU1vZGUpCnsKCXZhciBvYmogPSBnYW1lTW9kZS5PYmplY3RDb250cm9sbGVkQnlQbGF5ZXIuVmFsdWUgYXMgVmVoaWNsZTsKCWlmIChvYmogIT0gbnVsbCkKCXsKCQl2YXIgaW5wdXRQcm9jZXNzaW5nID0gb2JqLkdldENvbXBvbmVudDxWZWhpY2xlSW5wdXRQcm9jZXNzaW5nPigpOwoJCWlmIChpbnB1dFByb2Nlc3NpbmcgIT0gbnVsbCkKCQkJaW5wdXRQcm9jZXNzaW5nLkV4aXRBbGxPYmplY3RzRnJvbVZlaGljbGUoZ2FtZU1vZGUpOwoJfQp9Cgp2b2lkIFByb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJdmFyIGtleURvd24gPSBtZXNzYWdlIGFzIElucHV0TWVzc2FnZUtleURvd247CglpZiAoa2V5RG93biAhPSBudWxsKS8vJiYgIXNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuQ29udHJvbCkpCgl7CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQxKQoJCXsKCQkJdmFyIG1hbmFnZXIgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8QnVpbGRpbmdNYW5hZ2VyPigpOwoJCQlpZiAobWFuYWdlciAhPSBudWxsKQoJCQl7CgkJCQltYW5hZ2VyLkRpc3BsYXkgPSAhbWFuYWdlci5EaXNwbGF5OwoJCQkJbWFuYWdlci5Db2xsaXNpb24gPSBtYW5hZ2VyLkRpc3BsYXk7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDIpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzID0gc3lzdGVtLlBhcmtlZFZlaGljbGVzLlZhbHVlICE9IDAgPyAwIDogMjUwMDsvLzUwMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQzKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5GbHlpbmdWZWhpY2xlcyA9IHN5c3RlbS5GbHlpbmdWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDEwMDsvLzUwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDkpCgkJewoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5TaW11bGF0ZUR5bmFtaWNPYmplY3RzID0gIXN5c3RlbS5TaW11bGF0ZUR5bmFtaWNPYmplY3RzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENCkKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zID0gc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucy5WYWx1ZSAhPSAwID8gMCA6IDEwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDApCgkJewoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnNNYW5hZ2VUYXNrcyA9ICFzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3M7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ1KQoJCXsKCQkJdmFyIHNjZW5lID0gKFNjZW5lKXNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmU+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIHJlZmxlY3Rpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9SZWZsZWN0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoJCQl2YXIgcHJlY2lwaXRhdGlvbiA9IHJlbmRlcmluZ1BpcGVsaW5lPy5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X1ByZWNpcGl0YXRpb24+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJCQl2YXIgc291bmRTb3VyY2VSYWluID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTb3VuZCBTb3VyY2UgUmFpbiIpIGFzIFNvdW5kU291cmNlOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBkaXJlY3Rpb25hbExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoKCQkJY3VycmVudFdlYXRoZXIrKzsKCQkJaWYgKGN1cnJlbnRXZWF0aGVyID4gMikKCQkJCWN1cnJlbnRXZWF0aGVyID0gMDsKCQkJLy9jdXJyZW50UmFpbiA9ICFjdXJyZW50UmFpbjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoKCQkJCXNvdW5kU291cmNlUmFpbi5FbmFibGVkID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmc7CgoJCQkJc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxpbmcgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDEgOiAwOwoJCQkJc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxlbiA9IChjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyB8fCBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGVuKSA_IDEgOiAwOwoKCQkJCS8vcHJlY2lwaXRhdGlvbi5FbmFibGVkID0gY3VycmVudFJhaW47CgkJCQkvL3NvdW5kU291cmNlUmFpbi5FbmFibGVkID0gY3VycmVudFJhaW47CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFJhaW4gPyAxIDogMDsKCQkJCS8vc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxlbiA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgoJCQkJLyoKCQkJCQkJCQlpZihjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZykvL2lmIChjdXJyZW50UmFpbikKCQkJCQkJCQl7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFzayA9IG5ldyBSZWZlcmVuY2VOb1ZhbHVlKEAiU2FtcGxlc1xDaXR5IERlbW9cU2tpZXNcUmFpbiBjbG91ZHMgbWFza1xSYWluIGNsb3VkcyBtYXNrLmpwZyIpOwoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2tUcmFuc2Zvcm0gPSBuZXcgVHJhbnNmb3JtKFZlY3RvcjMuWmVybywgUXVhdGVybmlvbi5JZGVudGl0eSwgbmV3IFZlY3RvcjMoMC4wMDUsIDAuMDA1LCAwLjAwNSkpOwoJCQkJCQkJCX0KCQkJCQkJCQllbHNlCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBudWxsOwoJCQkJCQkJCX0KCQkJCSovCgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENikKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIGFtYmllbnRMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiQW1iaWVudCBMaWdodCIpIGFzIExpZ2h0OwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIHN0cmVldExpZ2h0TGlnaHRzID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CgkJCXZhciBza3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIlNreSIpIGFzIFNreTsKCQkJLy92YXIgZGF5U2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEYXkgc2t5Iik7CgkJCS8vdmFyIG5pZ2h0U2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJOaWdodCBza3kiKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgoJCQljdXJyZW50TmlnaHQgPSAhY3VycmVudE5pZ2h0OwoKCQkJdHJ5CgkJCXsKCQkJCXNjZW5lLlRpbWVPZkRheSA9IGN1cnJlbnROaWdodCA_IDAgOiAxMjsKCQkJCWFtYmllbnRMaWdodC5CcmlnaHRuZXNzID0gY3VycmVudE5pZ2h0ID8gMTUwMDAgOiA1MDAwMDsgLy8yNTAwMCA6IDMwMDAwOwoJCQkJZGlyZWN0aW9uYWxMaWdodC5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCXN0cmVldExpZ2h0TGlnaHRzLkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlza3kuUHJvY2VkdXJhbEF0bW9zcGhlcmUgPSBjdXJyZW50TmlnaHQgPyAwIDogMTsKCgkJCQlza3kuTW9kZSA9IGN1cnJlbnROaWdodCA_IFNreS5Nb2RlRW51bS5Qcm9jZWR1cmFsIDogU2t5Lk1vZGVFbnVtLlJlc291cmNlOwoJCQkJCgkJCQkvL3NreS5Qcm9jZWR1cmFsU3RhcnMgPSBjdXJyZW50TmlnaHQgPyAxIDogMDsKCQkJCS8vc2t5Lk1vZGUgPSBjdXJyZW50TmlnaHQgPyBTa3kuTW9kZUVudW0uUmVzb3VyY2UgOiBTa3kuTW9kZUVudW0uUHJvY2VkdXJhbDsJCQkJCgkJCQkvLy8vc2t5LlByb2NlZHVyYWxJbnRlbnNpdHkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTsKCQkJCS8vLy9kYXlTa3kuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7CgkJCQkvLy8vbmlnaHRTa3kuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCQlVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKHNlbmRlcik7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EOCkKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCXsKCQkJCWlmIChzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlLlZhbHVlID09IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uVmVoaWNsZUNvbXBvbmVudCkKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5TdGF0aWNPYmplY3Q7CgkJCQllbHNlCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uVmVoaWNsZUNvbXBvbmVudDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENykKCQl7CgkJCWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA9ICFjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmc7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lX0Jhc2ljPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoKCQkJLy9jYW1lcmEuRmFyQ2xpcFBsYW5lID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMjAwMCA6IDEwMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLk1pbmltdW1WaXNpYmxlU2l6ZU9mT2JqZWN0cyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIgOiA0OwoKCQkJcmVuZGVyaW5nUGlwZWxpbmUuU2hhZG93RGlyZWN0aW9uYWxEaXN0YW5jZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDYwMCA6IDIwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuU2hhZG93RGlyZWN0aW9uYWxMaWdodENhc2NhZGVzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMyA6IDI7CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCgkJCS8qCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290IGFzIFNjZW5lOwoJCQlpZiAoc2NlbmUgIT0gbnVsbCkKCQkJewoJCQkJaWYgKHNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUuVmFsdWUgPT0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLkJhY2tncm91bmRUaHJlYWQpCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5TaW5nbGVUaHJlYWRlZDsKCQkJCWVsc2UKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLkJhY2tncm91bmRUaHJlYWQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCQkqLwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuQykKCQl7CgkJCWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9ICFjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnM7CgoJCQlVcGRhdGVMaWdodHNDb2xvcihzZW5kZXIpOwovKgoJCQl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CgkJCWlmKGxpZ2h0cyAhPSBudWxsKQoJCQl7CgkJCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkJCQoJCQkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJCQl7CgkJCQkJaWYoY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzKQoJCQkJCXsKCQkJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQkJCXZhciBtYXggPSAwLjZmOwoJCQkJCQljb2xvci5SZWQgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJY29sb3IuQmx1ZSArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQlsaWdodC5Db2xvciA9IGNvbG9yOwoJCQkJCX0KCQkJCQllbHNlCgkJCQkJewoJCQkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCQkJfQoJCQkJfQoJCQl9CQoqLwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuTSkKCQl7CgkJCWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyID0gIWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwoJCQlVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKHNlbmRlcik7CgkJCQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCS8qaWYgKGtleURvd24uS2V5ID09IEVLZXlzLlApCgkJewoJCQljdXJyZW50UmVmbGVjdGlvblByb2JlID0gIWN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCQkJZm9yZWFjaCAodmFyIHByb2JlIGluIHNjZW5lLkdldENvbXBvbmVudHM8UmVmbGVjdGlvblByb2JlPigpKQoJCQkJcHJvYmUuUmVhbFRpbWUgPSBjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0qLwoJfQp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9JbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJaWYgKCFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJCVByb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudChzZW5kZXIsIG1lc3NhZ2UpOwp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9FbmFibGVkSW5TaW11bGF0aW9uKE5lb0F4aXMuQ29tcG9uZW50IG9iaikKewoJLy8vL2FjdGl2YXRlIG5pZ2h0IG1vZGUKCS8vUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KChHYW1lTW9kZSlvYmosIG5ldyBJbnB1dE1lc3NhZ2VLZXlEb3duKEVLZXlzLkQ2KSk7CgkKCS8vcmFuZG9taXplIHN0cmVldCBsaWdodHMKCXZhciBsaWdodHMgPSBvYmouUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCWlmKGxpZ2h0cyAhPSBudWxsKQoJewoJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQoJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCXsKCQkJLy9yYW5kb21pemUgcm90YXRpb24KCQkJdmFyIHRyID0gbGlnaHQuVHJhbnNmb3JtVjsKCQkJdHIgPSB0ci5VcGRhdGVSb3RhdGlvbihRdWF0ZXJuaW9uLkZyb21Sb3RhdGVCeVoocmFuZG9tLk5leHQoTWF0aC5QSSAqIDIpKSk7CgkJCWxpZ2h0LlRyYW5zZm9ybSA9IHRyOwoJCX0KCgkJVXBkYXRlTGlnaHRzQ29sb3Iob2JqKTsKCX0JCn0=")]
+public class DynamicClass20E6EF8522F201D0779663CC7EB9DF315DF9F9214EA2B47966610F0AC998F509
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = !currentNight || currentWeather == RainFalling; // || currentRain;
+        //fog.Enabled = !currentNight;// || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 2500; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 100; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 15000 : 50000; //25000 : 30000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    sky.Mode = currentNight ? Sky.ModeEnum.Procedural : Sky.ModeEnum.Resource;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
+
+[CSharpScriptGeneratedAttribute("c3RhdGljIGJvb2wgY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nOwpzdGF0aWMgYm9vbCBjdXJyZW50TmlnaHQ7CnN0YXRpYyBpbnQgY3VycmVudFdlYXRoZXI7CnN0YXRpYyBib29sIGN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9IHRydWU7CnN0YXRpYyBib29sIGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwovL3N0YXRpYyBib29sIGN1cnJlbnRSZWZsZWN0aW9uUHJvYmUgPSB0cnVlOwoKY29uc3QgaW50IFN1bm55ID0gMDsKY29uc3QgaW50IFJhaW5GYWxsaW5nID0gMTsKY29uc3QgaW50IFJhaW5GYWxsZW4gPSAyOwoKdm9pZCBVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoRm9nIGZvZywgQ2FtZXJhIGNhbWVyYSkKewoJZm9nLkVuYWJsZWQgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZzsgLy9mb2cuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7Ly8gfHwgY3VycmVudFJhaW47Cglmb2cuRGVuc2l0eSA9IGN1cnJlbnRXZWF0aGVyID09IFJhaW5GYWxsaW5nID8gMC4wMSA6IDAuMDAxOy8vZm9nLkRlbnNpdHkgPSBjdXJyZW50UmFpbiA_IDAuMDEgOiAwLjAwMTsKCglpZiAoY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmcpLy9pZiAoY3VycmVudFJhaW4pCgkJZm9nLkFmZmVjdEJhY2tncm91bmQgPSAxOwoJZWxzZQoJCWZvZy5BZmZlY3RCYWNrZ3JvdW5kID0gY3VycmVudE5pZ2h0ID8gMCA6IDAuNTsKCglpZiAoY3VycmVudE5pZ2h0KQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAsIDAsIDApOwoJZWxzZQoJCWZvZy5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNDUzOTYwOCwgMC41MTYwMzkyLCAwLjY1ODgyMzUpOwoKCWlmIChmb2cuRW5hYmxlZCAmJiBmb2cuQWZmZWN0QmFja2dyb3VuZCA9PSAxKQoJCWNhbWVyYS5GYXJDbGlwUGxhbmUgPSAzMDA7CgllbHNlCgkJY2FtZXJhLkZhckNsaXBQbGFuZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIwMDAgOiAxMDAwOwp9Cgp2b2lkIFVwZGF0ZU1pY3JvcGFydGljbGVzSW5BaXIoIENvbXBvbmVudCBzZW5kZXIgKQp7Cgl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCXZhciByZW5kZXJpbmdQaXBlbGluZSA9IHNjZW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdQaXBlbGluZV9CYXNpYz4oIlJlbmRlcmluZyBQaXBlbGluZSIpOwoJdmFyIGVmZmVjdCA9IHJlbmRlcmluZ1BpcGVsaW5lLkdldENvbXBvbmVudDxSZW5kZXJpbmdFZmZlY3RfTWljcm9wYXJ0aWNsZXNJbkFpcj4oY2hlY2tDaGlsZHJlbjogdHJ1ZSk7CglpZiAoZWZmZWN0ICE9IG51bGwpCgl7CgkJaWYgKGN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyKQoJCXsKCQkJZWZmZWN0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMC43LCAwLjYpOwoJCQkvL2VmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC41KTsKCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMTU7CgkJfQoJCWVsc2UKCQl7CgkJCWlmIChjdXJyZW50TmlnaHQpCgkJCXsKCQkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDAuNzUsIDAuNzUsIDEpOwoJCQkJZWZmZWN0Lk11bHRpcGxpZXIgPSAwLjAwMDE1OwoJCQl9CgkJCWVsc2UKCQkJewoJCQkJLy9zaW11bGF0ZSBpbmRpcmVjdCBsaWdodGluZyBieSBtZWFucyBtaWNyb3BhcnRpY2xlcyBpbiBhaXIKCQkJCWVmZmVjdC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDAuOCwgMC42MjgpOwoJCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgxLCAwLjgsIDAuNSk7CgkJCQllZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMzsKCQkJfQoKCQkJLy9lZmZlY3QuQ29sb3IgPSBuZXcgQ29sb3JWYWx1ZSgwLjc1LCAwLjc1LCAxKTsKCQkJLy9lZmZlY3QuTXVsdGlwbGllciA9IDAuMDAwMTU7CgkJfQoJfQp9Cgp2b2lkIFVwZGF0ZUxpZ2h0c0NvbG9yKENvbXBvbmVudCBzZW5kZXIpCnsKCXZhciBsaWdodHMgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCWlmKGxpZ2h0cyAhPSBudWxsKQoJewoJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQoJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCXsKCQkJaWYoY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzKQoJCQl7CgkJCQl2YXIgY29sb3IgPSBsaWdodC5Db2xvci5WYWx1ZTsKCQkJCXZhciBtYXggPSAwLjZmOwoJCQkJY29sb3IuUmVkICs9IHJhbmRvbS5OZXh0KC1tYXgsIG1heCk7CgkJCQljb2xvci5HcmVlbiArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJY29sb3IuQmx1ZSArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJbGlnaHQuQ29sb3IgPSBjb2xvcjsKCQkJfQoJCQllbHNlCgkJCXsKCQkJCWxpZ2h0LkNvbG9yID0gbmV3IENvbG9yVmFsdWUoMSwgMSwgMC43MTEwMTk2KTsKCQkJfQoJCX0KCX0JCn0KCnZvaWQgRXhpdEZyb21WZWhpY2xlKE5lb0F4aXMuR2FtZU1vZGUgZ2FtZU1vZGUpCnsKCXZhciBvYmogPSBnYW1lTW9kZS5PYmplY3RDb250cm9sbGVkQnlQbGF5ZXIuVmFsdWUgYXMgVmVoaWNsZTsKCWlmIChvYmogIT0gbnVsbCkKCXsKCQl2YXIgaW5wdXRQcm9jZXNzaW5nID0gb2JqLkdldENvbXBvbmVudDxWZWhpY2xlSW5wdXRQcm9jZXNzaW5nPigpOwoJCWlmIChpbnB1dFByb2Nlc3NpbmcgIT0gbnVsbCkKCQkJaW5wdXRQcm9jZXNzaW5nLkV4aXRBbGxPYmplY3RzRnJvbVZlaGljbGUoZ2FtZU1vZGUpOwoJfQp9Cgp2b2lkIFByb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJdmFyIGtleURvd24gPSBtZXNzYWdlIGFzIElucHV0TWVzc2FnZUtleURvd247CglpZiAoa2V5RG93biAhPSBudWxsKS8vJiYgIXNlbmRlci5Jc0tleVByZXNzZWQoRUtleXMuQ29udHJvbCkpCgl7CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQxKQoJCXsKCQkJdmFyIG1hbmFnZXIgPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8QnVpbGRpbmdNYW5hZ2VyPigpOwoJCQlpZiAobWFuYWdlciAhPSBudWxsKQoJCQl7CgkJCQltYW5hZ2VyLkRpc3BsYXkgPSAhbWFuYWdlci5EaXNwbGF5OwoJCQkJbWFuYWdlci5Db2xsaXNpb24gPSBtYW5hZ2VyLkRpc3BsYXk7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDIpCgkJewoJCQlFeGl0RnJvbVZlaGljbGUoc2VuZGVyKTsKCgkJCXZhciBzeXN0ZW0gPSBzZW5kZXIuUGFyZW50Um9vdC5HZXRDb21wb25lbnQ8VHJhZmZpY1N5c3RlbT4oKTsKCQkJaWYgKHN5c3RlbSAhPSBudWxsKQoJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzID0gc3lzdGVtLlBhcmtlZFZlaGljbGVzLlZhbHVlICE9IDAgPyAwIDogMjUwMDsvLzUwMDA7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQzKQoJCXsKCQkJRXhpdEZyb21WZWhpY2xlKHNlbmRlcik7CgoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5GbHlpbmdWZWhpY2xlcyA9IHN5c3RlbS5GbHlpbmdWZWhpY2xlcy5WYWx1ZSAhPSAwID8gMCA6IDEwMDsvLzUwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDkpCgkJewoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5TaW11bGF0ZUR5bmFtaWNPYmplY3RzID0gIXN5c3RlbS5TaW11bGF0ZUR5bmFtaWNPYmplY3RzOwoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENCkKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCQlzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zID0gc3lzdGVtLldhbGtpbmdQZWRlc3RyaWFucy5WYWx1ZSAhPSAwID8gMCA6IDEwMDsKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuRDApCgkJewoJCQl2YXIgc3lzdGVtID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50PFRyYWZmaWNTeXN0ZW0+KCk7CgkJCWlmIChzeXN0ZW0gIT0gbnVsbCkKCQkJCXN5c3RlbS5XYWxraW5nUGVkZXN0cmlhbnNNYW5hZ2VUYXNrcyA9ICFzeXN0ZW0uV2Fsa2luZ1BlZGVzdHJpYW5zTWFuYWdlVGFza3M7CgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCQl9CgkJaWYgKGtleURvd24uS2V5ID09IEVLZXlzLkQ1KQoJCXsKCQkJdmFyIHNjZW5lID0gKFNjZW5lKXNlbmRlci5QYXJlbnRSb290OwoJCQl2YXIgcmVuZGVyaW5nUGlwZWxpbmUgPSBzY2VuZS5HZXRDb21wb25lbnQ8UmVuZGVyaW5nUGlwZWxpbmU+KCJSZW5kZXJpbmcgUGlwZWxpbmUiKTsKCQkJdmFyIHJlZmxlY3Rpb24gPSByZW5kZXJpbmdQaXBlbGluZT8uR2V0Q29tcG9uZW50PFJlbmRlcmluZ0VmZmVjdF9SZWZsZWN0aW9uPihjaGVja0NoaWxkcmVuOiB0cnVlKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoJCQl2YXIgcHJlY2lwaXRhdGlvbiA9IHJlbmRlcmluZ1BpcGVsaW5lPy5HZXRDb21wb25lbnQ8UmVuZGVyaW5nRWZmZWN0X1ByZWNpcGl0YXRpb24+KGNoZWNrQ2hpbGRyZW46IHRydWUpOwoJCQl2YXIgc291bmRTb3VyY2VSYWluID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTb3VuZCBTb3VyY2UgUmFpbiIpIGFzIFNvdW5kU291cmNlOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgkJCXZhciBkaXJlY3Rpb25hbExpZ2h0ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEaXJlY3Rpb25hbCBMaWdodCIpIGFzIExpZ2h0OwoKCQkJY3VycmVudFdlYXRoZXIrKzsKCQkJaWYgKGN1cnJlbnRXZWF0aGVyID4gMikKCQkJCWN1cnJlbnRXZWF0aGVyID0gMDsKCQkJLy9jdXJyZW50UmFpbiA9ICFjdXJyZW50UmFpbjsKCgkJCXRyeQoJCQl7CgkJCQlVcGRhdGVGb2dBbmRGYXJDbGlwUGxhbmUoZm9nLCBjYW1lcmEpOwoKCQkJCXNvdW5kU291cmNlUmFpbi5FbmFibGVkID0gY3VycmVudFdlYXRoZXIgPT0gUmFpbkZhbGxpbmc7CgoJCQkJc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxpbmcgPSBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyA_IDEgOiAwOwoJCQkJc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxlbiA9IChjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZyB8fCBjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGVuKSA_IDEgOiAwOwoKCQkJCS8vcHJlY2lwaXRhdGlvbi5FbmFibGVkID0gY3VycmVudFJhaW47CgkJCQkvL3NvdW5kU291cmNlUmFpbi5FbmFibGVkID0gY3VycmVudFJhaW47CgkJCQkvL3NjZW5lLlByZWNpcGl0YXRpb25GYWxsaW5nID0gY3VycmVudFJhaW4gPyAxIDogMDsKCQkJCS8vc2NlbmUuUHJlY2lwaXRhdGlvbkZhbGxlbiA9IGN1cnJlbnRSYWluID8gMSA6IDA7CgoJCQkJLyoKCQkJCQkJCQlpZihjdXJyZW50V2VhdGhlciA9PSBSYWluRmFsbGluZykvL2lmIChjdXJyZW50UmFpbikKCQkJCQkJCQl7CgkJCQkJCQkJCWRpcmVjdGlvbmFsTGlnaHQuTWFzayA9IG5ldyBSZWZlcmVuY2VOb1ZhbHVlKEAiU2FtcGxlc1xDaXR5IERlbW9cU2tpZXNcUmFpbiBjbG91ZHMgbWFza1xSYWluIGNsb3VkcyBtYXNrLmpwZyIpOwoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2tUcmFuc2Zvcm0gPSBuZXcgVHJhbnNmb3JtKFZlY3RvcjMuWmVybywgUXVhdGVybmlvbi5JZGVudGl0eSwgbmV3IFZlY3RvcjMoMC4wMDUsIDAuMDA1LCAwLjAwNSkpOwoJCQkJCQkJCX0KCQkJCQkJCQllbHNlCgkJCQkJCQkJewoJCQkJCQkJCQlkaXJlY3Rpb25hbExpZ2h0Lk1hc2sgPSBudWxsOwoJCQkJCQkJCX0KCQkJCSovCgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENikKCQl7CgkJCXZhciBzY2VuZSA9IChTY2VuZSlzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIGFtYmllbnRMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiQW1iaWVudCBMaWdodCIpIGFzIExpZ2h0OwoJCQl2YXIgZGlyZWN0aW9uYWxMaWdodCA9IHNjZW5lLkdldENvbXBvbmVudCgiRGlyZWN0aW9uYWwgTGlnaHQiKSBhcyBMaWdodDsKCQkJdmFyIHN0cmVldExpZ2h0TGlnaHRzID0gc2NlbmUuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CgkJCXZhciBza3kgPSBzY2VuZS5HZXRDb21wb25lbnQoIlNreSIpIGFzIFNreTsKCQkJLy92YXIgZGF5U2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJEYXkgc2t5Iik7CgkJCS8vdmFyIG5pZ2h0U2t5ID0gc2NlbmUuR2V0Q29tcG9uZW50KCJOaWdodCBza3kiKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoJCQl2YXIgY2FtZXJhID0gc2NlbmUuR2V0Q29tcG9uZW50PENhbWVyYT4oIkNhbWVyYSBEZWZhdWx0Iik7CgoJCQljdXJyZW50TmlnaHQgPSAhY3VycmVudE5pZ2h0OwoKCQkJdHJ5CgkJCXsKCQkJCXNjZW5lLlRpbWVPZkRheSA9IGN1cnJlbnROaWdodCA_IDAgOiAxMjsKCQkJCWFtYmllbnRMaWdodC5CcmlnaHRuZXNzID0gY3VycmVudE5pZ2h0ID8gMTUwMDAgOiA1MDAwMDsgLy8yNTAwMCA6IDMwMDAwOwoJCQkJZGlyZWN0aW9uYWxMaWdodC5FbmFibGVkID0gIWN1cnJlbnROaWdodDsKCQkJCXN0cmVldExpZ2h0TGlnaHRzLkVuYWJsZWQgPSBjdXJyZW50TmlnaHQ7CgkJCQlza3kuUHJvY2VkdXJhbEF0bW9zcGhlcmUgPSBjdXJyZW50TmlnaHQgPyAwIDogMTsKCgkJCQlza3kuTW9kZSA9IGN1cnJlbnROaWdodCA_IFNreS5Nb2RlRW51bS5Qcm9jZWR1cmFsIDogU2t5Lk1vZGVFbnVtLlJlc291cmNlOwoJCQkJCgkJCQkvL3NreS5Qcm9jZWR1cmFsU3RhcnMgPSBjdXJyZW50TmlnaHQgPyAxIDogMDsKCQkJCS8vc2t5Lk1vZGUgPSBjdXJyZW50TmlnaHQgPyBTa3kuTW9kZUVudW0uUmVzb3VyY2UgOiBTa3kuTW9kZUVudW0uUHJvY2VkdXJhbDsJCQkJCgkJCQkvLy8vc2t5LlByb2NlZHVyYWxJbnRlbnNpdHkgPSBjdXJyZW50TmlnaHQgPyAwIDogMTsKCQkJCS8vLy9kYXlTa3kuRW5hYmxlZCA9ICFjdXJyZW50TmlnaHQ7CgkJCQkvLy8vbmlnaHRTa3kuRW5hYmxlZCA9IGN1cnJlbnROaWdodDsKCQkJCVVwZGF0ZUZvZ0FuZEZhckNsaXBQbGFuZShmb2csIGNhbWVyYSk7CgkJCQlVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKHNlbmRlcik7CgkJCX0KCQkJY2F0Y2ggKEV4Y2VwdGlvbiBlKQoJCQl7CgkJCQlMb2cuV2FybmluZyhlLk1lc3NhZ2UpOwoJCQl9CgoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5EOCkKCQl7CgkJCUV4aXRGcm9tVmVoaWNsZShzZW5kZXIpOwoKCQkJdmFyIHN5c3RlbSA9IHNlbmRlci5QYXJlbnRSb290LkdldENvbXBvbmVudDxUcmFmZmljU3lzdGVtPigpOwoJCQlpZiAoc3lzdGVtICE9IG51bGwpCgkJCXsKCQkJCWlmIChzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlLlZhbHVlID09IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uVmVoaWNsZUNvbXBvbmVudCkKCQkJCQlzeXN0ZW0uUGFya2VkVmVoaWNsZXNPYmplY3RNb2RlID0gVHJhZmZpY1N5c3RlbS5PYmplY3RNb2RlRW51bS5TdGF0aWNPYmplY3Q7CgkJCQllbHNlCgkJCQkJc3lzdGVtLlBhcmtlZFZlaGljbGVzT2JqZWN0TW9kZSA9IFRyYWZmaWNTeXN0ZW0uT2JqZWN0TW9kZUVudW0uVmVoaWNsZUNvbXBvbmVudDsKCQkJfQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCWlmIChrZXlEb3duLktleSA9PSBFS2V5cy5ENykKCQl7CgkJCWN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA9ICFjdXJyZW50RmFyRGlzdGFuY2VSZW5kZXJpbmc7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCQkJdmFyIHJlbmRlcmluZ1BpcGVsaW5lID0gc2NlbmUuR2V0Q29tcG9uZW50PFJlbmRlcmluZ1BpcGVsaW5lX0Jhc2ljPigiUmVuZGVyaW5nIFBpcGVsaW5lIik7CgkJCXZhciBjYW1lcmEgPSBzY2VuZS5HZXRDb21wb25lbnQ8Q2FtZXJhPigiQ2FtZXJhIERlZmF1bHQiKTsKCQkJdmFyIGZvZyA9IHNjZW5lLkdldENvbXBvbmVudCgiRm9nIikgYXMgRm9nOwoKCQkJLy9jYW1lcmEuRmFyQ2xpcFBsYW5lID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMjAwMCA6IDEwMDA7CgkJCXJlbmRlcmluZ1BpcGVsaW5lLk1pbmltdW1WaXNpYmxlU2l6ZU9mT2JqZWN0cyA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDIgOiA0OwoKCQkJcmVuZGVyaW5nUGlwZWxpbmUuU2hhZG93RGlyZWN0aW9uYWxEaXN0YW5jZSA9IGN1cnJlbnRGYXJEaXN0YW5jZVJlbmRlcmluZyA_IDYwMCA6IDIwMDsKCQkJcmVuZGVyaW5nUGlwZWxpbmUuU2hhZG93RGlyZWN0aW9uYWxMaWdodENhc2NhZGVzID0gY3VycmVudEZhckRpc3RhbmNlUmVuZGVyaW5nID8gMyA6IDI7CgoJCQl0cnkKCQkJewoJCQkJVXBkYXRlRm9nQW5kRmFyQ2xpcFBsYW5lKGZvZywgY2FtZXJhKTsKCQkJfQoJCQljYXRjaCAoRXhjZXB0aW9uIGUpCgkJCXsKCQkJCUxvZy5XYXJuaW5nKGUuTWVzc2FnZSk7CgkJCX0KCgkJCW1lc3NhZ2UuSGFuZGxlZCA9IHRydWU7CgkJCXJldHVybjsKCgkJCS8qCgkJCXZhciBzY2VuZSA9IHNlbmRlci5QYXJlbnRSb290IGFzIFNjZW5lOwoJCQlpZiAoc2NlbmUgIT0gbnVsbCkKCQkJewoJCQkJaWYgKHNjZW5lLk9jdHJlZVRocmVhZGluZ01vZGUuVmFsdWUgPT0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLkJhY2tncm91bmRUaHJlYWQpCgkJCQkJc2NlbmUuT2N0cmVlVGhyZWFkaW5nTW9kZSA9IE9jdHJlZUNvbnRhaW5lci5UaHJlYWRpbmdNb2RlRW51bS5TaW5nbGVUaHJlYWRlZDsKCQkJCWVsc2UKCQkJCQlzY2VuZS5PY3RyZWVUaHJlYWRpbmdNb2RlID0gT2N0cmVlQ29udGFpbmVyLlRocmVhZGluZ01vZGVFbnVtLkJhY2tncm91bmRUaHJlYWQ7CgkJCX0KCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCQkqLwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuQykKCQl7CgkJCWN1cnJlbnRSYW5kb21pemVTdHJlZXRMaWdodENvbG9ycyA9ICFjdXJyZW50UmFuZG9taXplU3RyZWV0TGlnaHRDb2xvcnM7CgoJCQlVcGRhdGVMaWdodHNDb2xvcihzZW5kZXIpOwovKgoJCQl2YXIgbGlnaHRzID0gc2VuZGVyLlBhcmVudFJvb3QuR2V0Q29tcG9uZW50KCJTdHJlZXQgbGlnaHQgbGlnaHRzIik7CgkJCWlmKGxpZ2h0cyAhPSBudWxsKQoJCQl7CgkJCQl2YXIgcmFuZG9tID0gbmV3IEZhc3RSYW5kb20oKTsKCQkJCQoJCQkJZm9yZWFjaCh2YXIgbGlnaHQgaW4gbGlnaHRzLkdldENvbXBvbmVudHM8TGlnaHQ+KCkpCgkJCQl7CgkJCQkJaWYoY3VycmVudFJhbmRvbWl6ZVN0cmVldExpZ2h0Q29sb3JzKQoJCQkJCXsKCQkJCQkJdmFyIGNvbG9yID0gbGlnaHQuQ29sb3IuVmFsdWU7CgkJCQkJCXZhciBtYXggPSAwLjZmOwoJCQkJCQljb2xvci5SZWQgKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJY29sb3IuR3JlZW4gKz0gcmFuZG9tLk5leHQoLW1heCwgbWF4KTsKCQkJCQkJY29sb3IuQmx1ZSArPSByYW5kb20uTmV4dCgtbWF4LCBtYXgpOwoJCQkJCQlsaWdodC5Db2xvciA9IGNvbG9yOwoJCQkJCX0KCQkJCQllbHNlCgkJCQkJewoJCQkJCQlsaWdodC5Db2xvciA9IG5ldyBDb2xvclZhbHVlKDEsIDEsIDAuNzExMDE5Nik7CgkJCQkJfQoJCQkJfQoJCQl9CQoqLwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0KCQlpZiAoa2V5RG93bi5LZXkgPT0gRUtleXMuTSkKCQl7CgkJCWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyID0gIWN1cnJlbnRNaWNyb3BhcnRpY2xlc0luQWlyOwoJCQlVcGRhdGVNaWNyb3BhcnRpY2xlc0luQWlyKHNlbmRlcik7CgkJCQoJCQltZXNzYWdlLkhhbmRsZWQgPSB0cnVlOwoJCQlyZXR1cm47CgkJfQoJCS8qaWYgKGtleURvd24uS2V5ID09IEVLZXlzLlApCgkJewoJCQljdXJyZW50UmVmbGVjdGlvblByb2JlID0gIWN1cnJlbnRSZWZsZWN0aW9uUHJvYmU7CgoJCQl2YXIgc2NlbmUgPSBzZW5kZXIuUGFyZW50Um9vdDsKCQkJZm9yZWFjaCAodmFyIHByb2JlIGluIHNjZW5lLkdldENvbXBvbmVudHM8UmVmbGVjdGlvblByb2JlPigpKQoJCQkJcHJvYmUuUmVhbFRpbWUgPSBjdXJyZW50UmVmbGVjdGlvblByb2JlOwoKCQkJbWVzc2FnZS5IYW5kbGVkID0gdHJ1ZTsKCQkJcmV0dXJuOwoJCX0qLwoJfQp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9JbnB1dE1lc3NhZ2VFdmVudChOZW9BeGlzLkdhbWVNb2RlIHNlbmRlciwgTmVvQXhpcy5JbnB1dE1lc3NhZ2UgbWVzc2FnZSkKewoJaWYgKCFzZW5kZXIuSXNLZXlQcmVzc2VkKEVLZXlzLkNvbnRyb2wpKQoJCVByb2Nlc3NJbnB1dE1lc3NhZ2VFdmVudChzZW5kZXIsIG1lc3NhZ2UpOwp9CgpwdWJsaWMgdm9pZCBHYW1lTW9kZV9FbmFibGVkSW5TaW11bGF0aW9uKE5lb0F4aXMuQ29tcG9uZW50IG9iaikKewoJLy8vL2FjdGl2YXRlIG5pZ2h0IG1vZGUKCS8vUHJvY2Vzc0lucHV0TWVzc2FnZUV2ZW50KChHYW1lTW9kZSlvYmosIG5ldyBJbnB1dE1lc3NhZ2VLZXlEb3duKEVLZXlzLkQ2KSk7CgkKCS8vcmFuZG9taXplIHN0cmVldCBsaWdodHMKCXZhciBsaWdodHMgPSBvYmouUGFyZW50Um9vdC5HZXRDb21wb25lbnQoIlN0cmVldCBsaWdodCBsaWdodHMiKTsKCWlmKGxpZ2h0cyAhPSBudWxsKQoJewoJCXZhciByYW5kb20gPSBuZXcgRmFzdFJhbmRvbSgpOwoJCQoJCWZvcmVhY2godmFyIGxpZ2h0IGluIGxpZ2h0cy5HZXRDb21wb25lbnRzPExpZ2h0PigpKQoJCXsKCQkJLy9yYW5kb21pemUgcm90YXRpb24KCQkJdmFyIHRyID0gbGlnaHQuVHJhbnNmb3JtVjsKCQkJdHIgPSB0ci5VcGRhdGVSb3RhdGlvbihRdWF0ZXJuaW9uLkZyb21Sb3RhdGVCeVoocmFuZG9tLk5leHQoTWF0aC5QSSAqIDIpKSk7CgkJCWxpZ2h0LlRyYW5zZm9ybSA9IHRyOwoJCX0KCgkJVXBkYXRlTGlnaHRzQ29sb3Iob2JqKTsKCX0JCn0=")]
+public class DynamicClass853AA9A70284BA1F90CFE7A2EEE3BA5A266B879B0CF5F7489DCD0FAA776C0715
+{
+    public NeoAxis.CSharpScript Owner;
+    static bool currentFarDistanceRendering;
+    static bool currentNight;
+    static int currentWeather;
+    static bool currentRandomizeStreetLightColors = true;
+    static bool currentMicroparticlesInAir;
+    //static bool currentReflectionProbe = true;
+    const int Sunny = 0;
+    const int RainFalling = 1;
+    const int RainFallen = 2;
+    void UpdateFogAndFarClipPlane(Fog fog, Camera camera)
+    {
+        fog.Enabled = currentWeather == RainFalling; //fog.Enabled = !currentNight;// || currentRain;
+        fog.Density = currentWeather == RainFalling ? 0.01 : 0.001; //fog.Density = currentRain ? 0.01 : 0.001;
+        if (currentWeather == RainFalling) //if (currentRain)
+            fog.AffectBackground = 1;
+        else
+            fog.AffectBackground = currentNight ? 0 : 0.5;
+        if (currentNight)
+            fog.Color = new ColorValue(0, 0, 0);
+        else
+            fog.Color = new ColorValue(0.4539608, 0.5160392, 0.6588235);
+        if (fog.Enabled && fog.AffectBackground == 1)
+            camera.FarClipPlane = 300;
+        else
+            camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+    }
+
+    void UpdateMicroparticlesInAir(Component sender)
+    {
+        var scene = sender.ParentRoot;
+        var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+        var effect = renderingPipeline.GetComponent<RenderingEffect_MicroparticlesInAir>(checkChildren: true);
+        if (effect != null)
+        {
+            if (currentMicroparticlesInAir)
+            {
+                effect.Color = new ColorValue(1, 0.7, 0.6);
+                //effect.Color = new ColorValue(1, 0.8, 0.5);
+                effect.Multiplier = 0.0015;
+            }
+            else
+            {
+                if (currentNight)
+                {
+                    effect.Color = new ColorValue(0.75, 0.75, 1);
+                    effect.Multiplier = 0.00015;
+                }
+                else
+                {
+                    //simulate indirect lighting by means microparticles in air
+                    effect.Color = new ColorValue(1, 0.8, 0.628);
+                    //effect.Color = new ColorValue(1, 0.8, 0.5);
+                    effect.Multiplier = 0.0003;
+                }
+            //effect.Color = new ColorValue(0.75, 0.75, 1);
+            //effect.Multiplier = 0.00015;
+            }
+        }
+    }
+
+    void UpdateLightsColor(Component sender)
+    {
+        var lights = sender.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                if (currentRandomizeStreetLightColors)
+                {
+                    var color = light.Color.Value;
+                    var max = 0.6f;
+                    color.Red += random.Next(-max, max);
+                    color.Green += random.Next(-max, max);
+                    color.Blue += random.Next(-max, max);
+                    light.Color = color;
+                }
+                else
+                {
+                    light.Color = new ColorValue(1, 1, 0.7110196);
+                }
+            }
+        }
+    }
+
+    void ExitFromVehicle(NeoAxis.GameMode gameMode)
+    {
+        var obj = gameMode.ObjectControlledByPlayer.Value as Vehicle;
+        if (obj != null)
+        {
+            var inputProcessing = obj.GetComponent<VehicleInputProcessing>();
+            if (inputProcessing != null)
+                inputProcessing.ExitAllObjectsFromVehicle(gameMode);
+        }
+    }
+
+    void ProcessInputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        var keyDown = message as InputMessageKeyDown;
+        if (keyDown != null) //&& !sender.IsKeyPressed(EKeys.Control))
+        {
+            if (keyDown.Key == EKeys.D1)
+            {
+                var manager = sender.ParentRoot.GetComponent<BuildingManager>();
+                if (manager != null)
+                {
+                    manager.Display = !manager.Display;
+                    manager.Collision = manager.Display;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D2)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.ParkedVehicles = system.ParkedVehicles.Value != 0 ? 0 : 2500; //5000;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D3)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.FlyingVehicles = system.FlyingVehicles.Value != 0 ? 0 : 100; //500;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D9)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.SimulateDynamicObjects = !system.SimulateDynamicObjects;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D4)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestrians = system.WalkingPedestrians.Value != 0 ? 0 : 100;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D0)
+            {
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                    system.WalkingPedestriansManageTasks = !system.WalkingPedestriansManageTasks;
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D5)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline>("Rendering Pipeline");
+                var reflection = renderingPipeline?.GetComponent<RenderingEffect_Reflection>(checkChildren: true);
+                var fog = scene.GetComponent("Fog") as Fog;
+                var precipitation = renderingPipeline?.GetComponent<RenderingEffect_Precipitation>(checkChildren: true);
+                var soundSourceRain = scene.GetComponent("Sound Source Rain") as SoundSource;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                currentWeather++;
+                if (currentWeather > 2)
+                    currentWeather = 0;
+                //currentRain = !currentRain;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    soundSourceRain.Enabled = currentWeather == RainFalling;
+                    scene.PrecipitationFalling = currentWeather == RainFalling ? 1 : 0;
+                    scene.PrecipitationFallen = (currentWeather == RainFalling || currentWeather == RainFallen) ? 1 : 0;
+                //precipitation.Enabled = currentRain;
+                //soundSourceRain.Enabled = currentRain;
+                //scene.PrecipitationFalling = currentRain ? 1 : 0;
+                //scene.PrecipitationFallen = currentRain ? 1 : 0;
+                /*
+								if(currentWeather == RainFalling)//if (currentRain)
+								{
+									directionalLight.Mask = new ReferenceNoValue(@"Samples\City Demo\Skies\Rain clouds mask\Rain clouds mask.jpg");
+									directionalLight.MaskTransform = new Transform(Vector3.Zero, Quaternion.Identity, new Vector3(0.005, 0.005, 0.005));
+								}
+								else
+								{
+									directionalLight.Mask = null;
+								}
+				*/
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D6)
+            {
+                var scene = (Scene)sender.ParentRoot;
+                var ambientLight = scene.GetComponent("Ambient Light") as Light;
+                var directionalLight = scene.GetComponent("Directional Light") as Light;
+                var streetLightLights = scene.GetComponent("Street light lights");
+                var sky = scene.GetComponent("Sky") as Sky;
+                //var daySky = scene.GetComponent("Day sky");
+                //var nightSky = scene.GetComponent("Night sky");
+                var fog = scene.GetComponent("Fog") as Fog;
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                currentNight = !currentNight;
+                try
+                {
+                    scene.TimeOfDay = currentNight ? 0 : 12;
+                    ambientLight.Brightness = currentNight ? 15000 : 50000; //25000 : 30000;
+                    directionalLight.Enabled = !currentNight;
+                    streetLightLights.Enabled = currentNight;
+                    sky.ProceduralAtmosphere = currentNight ? 0 : 1;
+                    sky.Mode = currentNight ? Sky.ModeEnum.Procedural : Sky.ModeEnum.Resource;
+                    //sky.ProceduralStars = currentNight ? 1 : 0;
+                    //sky.Mode = currentNight ? Sky.ModeEnum.Resource : Sky.ModeEnum.Procedural;				
+                    ////sky.ProceduralIntensity = currentNight ? 0 : 1;
+                    ////daySky.Enabled = !currentNight;
+                    ////nightSky.Enabled = currentNight;
+                    UpdateFogAndFarClipPlane(fog, camera);
+                    UpdateMicroparticlesInAir(sender);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D8)
+            {
+                ExitFromVehicle(sender);
+                var system = sender.ParentRoot.GetComponent<TrafficSystem>();
+                if (system != null)
+                {
+                    if (system.ParkedVehiclesObjectMode.Value == TrafficSystem.ObjectModeEnum.VehicleComponent)
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.StaticObject;
+                    else
+                        system.ParkedVehiclesObjectMode = TrafficSystem.ObjectModeEnum.VehicleComponent;
+                }
+
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.D7)
+            {
+                currentFarDistanceRendering = !currentFarDistanceRendering;
+                var scene = sender.ParentRoot;
+                var renderingPipeline = scene.GetComponent<RenderingPipeline_Basic>("Rendering Pipeline");
+                var camera = scene.GetComponent<Camera>("Camera Default");
+                var fog = scene.GetComponent("Fog") as Fog;
+                //camera.FarClipPlane = currentFarDistanceRendering ? 2000 : 1000;
+                renderingPipeline.MinimumVisibleSizeOfObjects = currentFarDistanceRendering ? 2 : 4;
+                renderingPipeline.ShadowDirectionalDistance = currentFarDistanceRendering ? 600 : 200;
+                renderingPipeline.ShadowDirectionalLightCascades = currentFarDistanceRendering ? 3 : 2;
+                try
+                {
+                    UpdateFogAndFarClipPlane(fog, camera);
+                }
+                catch (Exception e)
+                {
+                    Log.Warning(e.Message);
+                }
+
+                message.Handled = true;
+                return;
+            /*
+			var scene = sender.ParentRoot as Scene;
+			if (scene != null)
+			{
+				if (scene.OctreeThreadingMode.Value == OctreeContainer.ThreadingModeEnum.BackgroundThread)
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.SingleThreaded;
+				else
+					scene.OctreeThreadingMode = OctreeContainer.ThreadingModeEnum.BackgroundThread;
+			}
+			message.Handled = true;
+			return;
+			*/
+            }
+
+            if (keyDown.Key == EKeys.C)
+            {
+                currentRandomizeStreetLightColors = !currentRandomizeStreetLightColors;
+                UpdateLightsColor(sender);
+                /*
+			var lights = sender.ParentRoot.GetComponent("Street light lights");
+			if(lights != null)
+			{
+				var random = new FastRandom();
+				
+				foreach(var light in lights.GetComponents<Light>())
+				{
+					if(currentRandomizeStreetLightColors)
+					{
+						var color = light.Color.Value;
+						var max = 0.6f;
+						color.Red += random.Next(-max, max);
+						color.Green += random.Next(-max, max);
+						color.Blue += random.Next(-max, max);
+						light.Color = color;
+					}
+					else
+					{
+						light.Color = new ColorValue(1, 1, 0.7110196);
+					}
+				}
+			}	
+*/
+                message.Handled = true;
+                return;
+            }
+
+            if (keyDown.Key == EKeys.M)
+            {
+                currentMicroparticlesInAir = !currentMicroparticlesInAir;
+                UpdateMicroparticlesInAir(sender);
+                message.Handled = true;
+                return;
+            }
+        /*if (keyDown.Key == EKeys.P)
+		{
+			currentReflectionProbe = !currentReflectionProbe;
+
+			var scene = sender.ParentRoot;
+			foreach (var probe in scene.GetComponents<ReflectionProbe>())
+				probe.RealTime = currentReflectionProbe;
+
+			message.Handled = true;
+			return;
+		}*/
+        }
+    }
+
+    public void GameMode_InputMessageEvent(NeoAxis.GameMode sender, NeoAxis.InputMessage message)
+    {
+        if (!sender.IsKeyPressed(EKeys.Control))
+            ProcessInputMessageEvent(sender, message);
+    }
+
+    public void GameMode_EnabledInSimulation(NeoAxis.Component obj)
+    {
+        ////activate night mode
+        //ProcessInputMessageEvent((GameMode)obj, new InputMessageKeyDown(EKeys.D6));
+        //randomize street lights
+        var lights = obj.ParentRoot.GetComponent("Street light lights");
+        if (lights != null)
+        {
+            var random = new FastRandom();
+            foreach (var light in lights.GetComponents<Light>())
+            {
+                //randomize rotation
+                var tr = light.TransformV;
+                tr = tr.UpdateRotation(Quaternion.FromRotateByZ(random.Next(Math.PI * 2)));
+                light.Transform = tr;
+            }
+
+            UpdateLightsColor(obj);
+        }
+    }
+}
 }
 #endif

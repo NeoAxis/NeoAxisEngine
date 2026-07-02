@@ -4193,6 +4193,9 @@
     <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_spirv_glsl.cpp">
       <Filter>bgfx\shaderc</Filter>
     </ClCompile>
+    <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp">
+      <Filter>Physics\Jolt</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryManager\MemoryManager.h">
@@ -7018,6 +7021,9 @@
     </ClInclude>
     <ClInclude Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\pch.h">
       <Filter>bgfx\3rdparty\glslang\HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="Jolt\Core\JobSystemSingleThreaded.h">
+      <Filter>Physics\Jolt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

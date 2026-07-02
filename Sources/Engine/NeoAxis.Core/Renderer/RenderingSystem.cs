@@ -1224,6 +1224,12 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
+
+				//!!!!temp consider Vulkan as limited device. no shadows, light masks
+				if( Capabilities.Backend == RendererBackend.Vulkan )
+					return ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
+
+
 				if( !shadowTechnique.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
@@ -1359,6 +1365,12 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
+
+				//!!!!temp consider Vulkan as limited device. no shadows, light masks
+				if( Capabilities.Backend == RendererBackend.Vulkan )
+					return false;
+
+
 				if( !lightMask.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )

@@ -839,8 +839,8 @@ namespace NeoAxis
 		/// </summary>
 		[Category( "Rendering: Basic Device" )]
 		[DisplayName( "Voxel LOD Max Steps (Restart to apply changes)" )]
-		[DefaultValue( 14 )]
-		[Range( 4, 64, RangeAttribute.ConvenientDistributionEnum.Exponential )]
+		[DefaultValue( 32 )] //14
+		[Range( 4, 64 )] //RangeAttribute.ConvenientDistributionEnum.Exponential
 		public Reference<int> VoxelLODMaxSteps
 		{
 			get { if( _voxelLODMaxSteps.BeginGet() ) VoxelLODMaxSteps = _voxelLODMaxSteps.Get( this ); return _voxelLODMaxSteps.value; }
@@ -848,7 +848,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="VoxelLODMaxSteps"/> property value changes.</summary>
 		public event Action<ProjectSettingsPage_Rendering> VoxelLODMaxStepsChanged;
-		ReferenceField<int> _voxelLODMaxSteps = 14;
+		ReferenceField<int> _voxelLODMaxSteps = 32; //14
 
 		///// <summary>
 		///// The maximal abount of ray matching steps in the fragment shader on limited devices (mobile).

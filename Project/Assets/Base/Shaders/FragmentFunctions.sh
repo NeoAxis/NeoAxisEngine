@@ -96,18 +96,6 @@ int ditherArray4(vec4 fragCoord, vec3 factors)
 	return 3;
 }
 
-/* now in Common.sh
-vec2 vogelDiskSample(int sampleIndex, int sampleCount, float angle)
-{
-	const float goldenAngle = 2.399963f;
-	float r = sqrt(float(sampleIndex) + 0.5f) / sqrt(float(sampleCount));
-	float theta = float(sampleIndex) * goldenAngle + angle;
-	float sine, cosine;
-	sincos(theta, sine, cosine);
-	return vec2(cosine, sine) * r;
-}
-*/
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //lightAttenuation: x = near; y = far; z = power; w = far - near.
@@ -123,101 +111,6 @@ float getLightAttenuation2(vec3 lightAttenuation, float distance)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/* now in Common.sh
-float toClipSpaceDepth(float depthTextureValue)
-{
-#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
-	return depthTextureValue;
-#else
-	return depthTextureValue * 2.0 - 1.0;
-#endif
-}
-
-float getDepthFromClipSpaceDepth(float depthTextureValue)
-{
-#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
-	return depthTextureValue;
-#else
-	return (depthTextureValue + 1.0) * 0.5;
-#endif
-}
-
-float getDepthValue(float depthTextureValue, float near, float far)
-{
-	//!!!!
-//#ifdef REVERSEDZ	
-//	depthTextureValue = 1.0 - depthTextureValue;
-//#endif
-
-
-	float clipDepth = toClipSpaceDepth(depthTextureValue);
-	
-	float result;
-	
-#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
-	result = near * far / (far - clipDepth * (far - near));
-#else
-	result = near * far / (far + near - clipDepth * (far - near));
-	//return 2.0 * near * far / (far + near - clipDepth * (far - near));
-#endif
-
-	return result;
-}
-
-//!!!!not works
-//float getDepthValue2(vec2 texCoord, float rawDepth, float near, float far, mat4 invProj)
-//{
-//	vec3 clip = vec3(texCoord * 2.0 - 1.0, toClipSpaceDepth(rawDepth));
-//	#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
-//		clip.y = -clip.y;
-//	#endif	
-//	vec4 posVS = mul(invProj, vec4(clip, 1.0));
-//
-//	float depth = (posVS.z - near) / (far - near);
-//	
-//	return depth;
-//}
-
-float getRawDepthValue(float depth, float near, float far)
-{
-#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
-	float clipDepth = (far - (near * far) / depth) / (far - near);
-#else
-	float clipDepth = (far + near - (near * far) / depth) / (far - near);
-#endif
-	
-	float rawDepth = getDepthFromClipSpaceDepth(clipDepth);
-	
-	//!!!!
-//#ifdef REVERSEDZ
-//	rawDepth = 1.0 - rawDepth;
-//#endif
-	
-	return rawDepth;
-}
-*/
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/* now in Common.sh
-vec3 reconstructWorldPosition(mat4 invView, mat4 invProj, vec2 texCoord, float rawDepth)
-{
-	//!!!!
-//#ifdef REVERSEDZ
-//	rawDepth = 1.0 - rawDepth;
-//#endif
-	
-	vec3 clip = vec3(texCoord * 2.0 - 1.0, toClipSpaceDepth(rawDepth));
-	#if BGFX_SHADER_LANGUAGE_HLSL || BGFX_SHADER_LANGUAGE_PSSL || BGFX_SHADER_LANGUAGE_METAL
-		clip.y = -clip.y;
-	#endif	
-	vec4 posVS = mul(invProj, vec4(clip, 1.0));
-	vec3 posNDC = posVS.xyz / posVS.w;
-	return mul(invView, vec4(posNDC, 1.0)).xyz;
-}
-*/
-
 
 /*
 vec3 reconstructWorldPosition(mat4 invViewProj, vec2 texCoord, float rawDepth)

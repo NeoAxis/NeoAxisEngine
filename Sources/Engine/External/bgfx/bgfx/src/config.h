@@ -273,10 +273,10 @@
 #	define BGFX_CONFIG_MULTITHREADED 0
 #endif
 
-//!!!!betauser. multithreaded renderer is disabled for all backends right now
-#ifndef BGFX_CONFIG_MULTITHREADED
-#	define BGFX_CONFIG_MULTITHREADED 0
-#endif
+////!!!!betauser. multithreaded renderer is disabled for all backends right now
+//#ifndef BGFX_CONFIG_MULTITHREADED
+//#	define BGFX_CONFIG_MULTITHREADED 0
+//#endif
 
 
 
