@@ -108,7 +108,7 @@ namespace Internal.SharpBgfx {
             var info = new TextureInfo();
             NativeMethods.bgfx_calc_texture_size(ref info, (ushort)width, (ushort)height, 1, false, hasMips, (ushort)arrayLayers, format);
 
-            var handle = NativeMethods.bgfx_create_texture_2d(info.Width, info.Height, hasMips, (ushort)arrayLayers, format, flags, memory == null ? null : memory.Value.ptr);
+            var handle = NativeMethods.bgfx_create_texture_2d(info.Width, info.Height, hasMips, (ushort)arrayLayers, format, flags, memory == null ? null : memory.Value.ptr, 0);
             return new Texture(handle, ref info);
         }
 
@@ -148,7 +148,7 @@ namespace Internal.SharpBgfx {
             var info = new TextureInfo();
             NativeMethods.bgfx_calc_texture_size(ref info, (ushort)width, (ushort)height, (ushort)depth, false, hasMips, 1, format);
 
-            var handle = NativeMethods.bgfx_create_texture_3d(info.Width, info.Height, info.Depth, hasMips, format, flags, memory == null ? null : memory.Value.ptr);
+            var handle = NativeMethods.bgfx_create_texture_3d( info.Width, info.Height, info.Depth, hasMips, format, flags, memory == null ? null : memory.Value.ptr, 0 );
             return new Texture(handle, ref info);
         }
 
@@ -168,7 +168,7 @@ namespace Internal.SharpBgfx {
             var info = new TextureInfo();
             NativeMethods.bgfx_calc_texture_size(ref info, (ushort)size, (ushort)size, 1, true, hasMips, (ushort)arrayLayers, format);
 
-            var handle = NativeMethods.bgfx_create_texture_cube(info.Width, hasMips, (ushort)arrayLayers, format, flags, memory == null ? null : memory.Value.ptr);
+            var handle = NativeMethods.bgfx_create_texture_cube( info.Width, hasMips, (ushort)arrayLayers, format, flags, memory == null ? null : memory.Value.ptr, 0 );
             return new Texture(handle, ref info);
         }
 
@@ -337,8 +337,8 @@ namespace Internal.SharpBgfx {
         /// <param name="mip">The mip level to read.</param>
         /// <returns>The frame number on which the result will be available.</returns>
         /// <remarks>The texture must have been created with the <see cref="TextureFlags.ReadBack"/> flag.</remarks>
-        public int Read (IntPtr data, int mip) {
-            return (int)NativeMethods.bgfx_read_texture(handle, data, (byte)mip);
+        public int Read (IntPtr data,int layer, int mip) {
+            return (int)NativeMethods.bgfx_read_texture( handle, data, (ushort)layer, (byte)mip );
         }
 
         /// <summary>
@@ -349,8 +349,8 @@ namespace Internal.SharpBgfx {
         /// Native API pointer to the texture. If result is <see cref="IntPtr.Zero"/>, the texture is not yet
         /// created from the main thread.
         /// </returns>
-        public IntPtr OverrideInternal (IntPtr ptr) {
-            return NativeMethods.bgfx_override_internal_texture_ptr(handle, ptr);
+        public IntPtr OverrideInternal (IntPtr ptr, int layerIndex) {
+            return NativeMethods.bgfx_override_internal_texture_ptr(handle, ptr, (ushort)layerIndex);
         }
 
         /// <summary>

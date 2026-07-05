@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
 #ifndef BX_HANDLE_ALLOC_H_HEADER_GUARD
 #	error "Must be included from bx/handlealloc.h!"
 #endif // BX_HANDLE_ALLOC_H_HEADER_GUARD
+
+#include <bx/simd_t.h>
 
 namespace bx
 {
@@ -103,14 +105,14 @@ namespace bx
 
 	inline HandleAlloc* createHandleAlloc(AllocatorI* _allocator, uint16_t _maxHandles)
 	{
-		uint8_t* ptr = (uint8_t*)bx::alloc(_allocator, sizeof(HandleAlloc) + 2*_maxHandles*sizeof(uint16_t) );
+		uint8_t* ptr = (uint8_t*)alloc(_allocator, sizeof(HandleAlloc) + 2*_maxHandles*sizeof(uint16_t) );
 		return BX_PLACEMENT_NEW(ptr, HandleAlloc)(_maxHandles);
 	}
 
 	inline void destroyHandleAlloc(AllocatorI* _allocator, HandleAlloc* _handleAlloc)
 	{
 		_handleAlloc->~HandleAlloc();
-		bx::free(_allocator, _handleAlloc);
+		free(_allocator, _handleAlloc);
 	}
 
 	template <uint16_t MaxHandlesT>
@@ -597,19 +599,25 @@ namespace bx
 	template <uint32_t MaxCapacityT, typename KeyT>
 	inline uint32_t HandleHashMapT<MaxCapacityT, KeyT>::mix(uint32_t _x) const
 	{
-		const uint32_t tmp0   = uint32_mul(_x,   UINT32_C(2246822519) );
-		const uint32_t tmp1   = uint32_rol(tmp0, 13);
-		const uint32_t result = uint32_mul(tmp1, UINT32_C(2654435761) );
-		return result;
+		const simd32_t x      = simd32_splat(_x);
+		const simd32_t c0     = simd32_splat(2246822519u);
+		const simd32_t tmp0   = simd32_u32_mul(x, c0);
+		const simd32_t tmp1   = simd32_x32_rol(tmp0, 13);
+		const simd32_t c1     = simd32_splat(2654435761u);
+		const simd32_t result = simd32_u32_mul(tmp1, c1);
+		return result.u32;
 	}
 
 	template <uint32_t MaxCapacityT, typename KeyT>
 	inline uint64_t HandleHashMapT<MaxCapacityT, KeyT>::mix(uint64_t _x) const
 	{
-		const uint64_t tmp0   = uint64_mul(_x,   UINT64_C(14029467366897019727) );
-		const uint64_t tmp1   = uint64_rol(tmp0, 31);
-		const uint64_t result = uint64_mul(tmp1, UINT64_C(11400714785074694791) );
-		return result;
+		const simd64_t x      = simd64_splat(_x);
+		const simd64_t c0     = simd64_splat(uint64_t(14029467366897019727ull) );
+		const simd64_t tmp0   = simd64_u64_mul(x, c0);
+		const simd64_t tmp1   = simd64_x64_rol(tmp0, 31);
+		const simd64_t c1     = simd64_splat(uint64_t(11400714785074694791ull) );
+		const simd64_t result = simd64_u64_mul(tmp1, c1);
+		return result.u64;
 	}
 
 	template <uint16_t MaxHandlesT, typename KeyT>

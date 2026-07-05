@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -22,7 +22,7 @@ namespace bx
 		m_msg.clear();
 	}
 
-	inline void Error::setError(ErrorResult _errorResult, const StringView& _msg)
+	inline void Error::setError(ErrorResult _errorResult, const StringLiteral& _msg, const Location& _location)
 	{
 		BX_ASSERT(0 != _errorResult.code, "Invalid ErrorResult passed to setError!");
 
@@ -31,6 +31,7 @@ namespace bx
 			return;
 		}
 
+		m_location = _location;
 		m_code = _errorResult.code;
 		m_msg  = _msg;
 	}
@@ -46,9 +47,14 @@ namespace bx
 		return result;
 	}
 
-	inline const StringView& Error::getMessage() const
+	inline const StringLiteral& Error::getMessage() const
 	{
 		return m_msg;
+	}
+
+	inline const Location& Error::getLocation() const
+	{
+		return m_location;
 	}
 
 	inline bool Error::operator==(const ErrorResult& _rhs) const
@@ -97,7 +103,7 @@ namespace bx
 		return this;
 	}
 
-	inline ErrorScope::ErrorScope(Error* _err, const StringView& _name)
+	inline ErrorScope::ErrorScope(Error* _err, const StringLiteral& _name)
 		: m_err(_err)
 		, m_name(_name)
 	{
@@ -124,7 +130,7 @@ namespace bx
 		}
 	}
 
-	inline const StringView& ErrorScope::getName() const
+	inline const StringLiteral& ErrorScope::getName() const
 	{
 		return m_name;
 	}

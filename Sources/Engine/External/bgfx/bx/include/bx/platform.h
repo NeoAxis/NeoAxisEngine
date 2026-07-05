@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -30,7 +30,6 @@
 
 // C Runtime
 #define BX_CRT_BIONIC 0
-#define BX_CRT_BSD    0
 #define BX_CRT_GLIBC  0
 #define BX_CRT_LIBCXX 0
 #define BX_CRT_MINGW  0
@@ -42,7 +41,6 @@
 #endif // BX_CRT_NONE
 
 // Language standard version
-#define BX_LANGUAGE_CPP14 0
 #define BX_LANGUAGE_CPP17 201703L
 #define BX_LANGUAGE_CPP20 202002L
 #define BX_LANGUAGE_CPP23 202207L
@@ -60,6 +58,7 @@
 #define BX_PLATFORM_PS4        0
 #define BX_PLATFORM_PS5        0
 #define BX_PLATFORM_RPI        0
+#define BX_PLATFORM_VISIONOS   0
 #define BX_PLATFORM_WINDOWS    0
 #define BX_PLATFORM_WINRT      0
 #define BX_PLATFORM_XBOXONE    0
@@ -197,6 +196,9 @@
 	|| defined(__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__)
 #	undef  BX_PLATFORM_IOS
 #	define BX_PLATFORM_IOS 1
+#elif defined(__has_builtin) && __has_builtin(__is_target_os) && __is_target_os(xros)
+#	undef  BX_PLATFORM_VISIONOS
+#	define BX_PLATFORM_VISIONOS 1
 #elif defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__)
 #	undef  BX_PLATFORM_OSX
 #	define BX_PLATFORM_OSX __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__
@@ -239,15 +241,13 @@
 #	elif defined(__GLIBC__)
 #		undef  BX_CRT_GLIBC
 #		define BX_CRT_GLIBC (__GLIBC__ * 10000 + __GLIBC_MINOR__ * 100)
-#	elif defined(__MINGW32__) || defined(__MINGW64__)
+#	elif defined(__MINGW32__) \
+	||   defined(__MINGW64__)
 #		undef  BX_CRT_MINGW
 #		define BX_CRT_MINGW 1
 #	elif defined(__apple_build_version__) || defined(__ORBIS__) || defined(__EMSCRIPTEN__) || defined(__llvm__) || defined(__HAIKU__)
 #		undef  BX_CRT_LIBCXX
 #		define BX_CRT_LIBCXX 1
-#	elif BX_PLATFORM_BSD
-#		undef  BX_CRT_BSD
-#		define BX_CRT_BSD 1
 #	endif //
 
 #	if !BX_CRT_BIONIC \
@@ -276,6 +276,7 @@
 	||  BX_PLATFORM_PS4        \
 	||  BX_PLATFORM_PS5        \
 	||  BX_PLATFORM_RPI        \
+	||  BX_PLATFORM_VISIONOS   \
 	)
 
 ///
@@ -292,6 +293,7 @@
 	||  BX_PLATFORM_PS4        \
 	||  BX_PLATFORM_PS5        \
 	||  BX_PLATFORM_RPI        \
+	||  BX_PLATFORM_VISIONOS   \
 	||  BX_PLATFORM_WINDOWS    \
 	||  BX_PLATFORM_WINRT      \
 	||  BX_PLATFORM_XBOXONE    \
@@ -388,13 +390,15 @@
 #elif BX_PLATFORM_NX
 #	define BX_PLATFORM_NAME "NX"
 #elif BX_PLATFORM_OSX
-#	define BX_PLATFORM_NAME "OSX"
+#	define BX_PLATFORM_NAME "macOS"
 #elif BX_PLATFORM_PS4
 #	define BX_PLATFORM_NAME "PlayStation 4"
 #elif BX_PLATFORM_PS5
 #	define BX_PLATFORM_NAME "PlayStation 5"
 #elif BX_PLATFORM_RPI
 #	define BX_PLATFORM_NAME "RaspberryPi"
+#elif BX_PLATFORM_VISIONOS
+#	define BX_PLATFORM_NAME "visionOS"
 #elif BX_PLATFORM_WINDOWS
 #	define BX_PLATFORM_NAME "Windows"
 #elif BX_PLATFORM_WINRT
@@ -421,8 +425,6 @@
 
 #if BX_CRT_BIONIC
 #	define BX_CRT_NAME "Bionic libc"
-#elif BX_CRT_BSD
-#	define BX_CRT_NAME "BSD libc"
 #elif BX_CRT_GLIBC
 #	define BX_CRT_NAME "GNU C Library"
 #elif BX_CRT_MSVC
@@ -436,7 +438,7 @@
 #elif BX_CRT_NONE
 #	define BX_CRT_NAME "None"
 #else
-#	error "Unknown BX_CRT!"
+#	define BX_CRT_NAME "Unknown CRT"
 #endif // BX_CRT_
 
 #if BX_ARCH_32BIT

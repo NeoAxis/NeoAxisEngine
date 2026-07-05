@@ -2043,74 +2043,74 @@ namespace bgfx { namespace d3d12
 			m_uniformReg.remove(_handle);
 		}
 
-		void requestScreenShot(FrameBufferHandle _handle, const char* _filePath) override
-		{
-			BX_UNUSED(_handle);
+		//void requestScreenShot(FrameBufferHandle _handle, const char* _filePath) override
+		//{
+		//	BX_UNUSED(_handle);
 
-			uint32_t idx = (m_backBufferColorIdx-1) % m_scd.bufferCount;
-			m_cmd.finish(m_backBufferColorFence[idx]);
-			ID3D12Resource* backBuffer = m_backBufferColor[idx];
+		//	uint32_t idx = (m_backBufferColorIdx-1) % m_scd.bufferCount;
+		//	m_cmd.finish(m_backBufferColorFence[idx]);
+		//	ID3D12Resource* backBuffer = m_backBufferColor[idx];
 
-			D3D12_RESOURCE_DESC desc = getResourceDesc(backBuffer);
+		//	D3D12_RESOURCE_DESC desc = getResourceDesc(backBuffer);
 
-			const uint32_t width  = (uint32_t)desc.Width;
-			const uint32_t height = (uint32_t)desc.Height;
+		//	const uint32_t width  = (uint32_t)desc.Width;
+		//	const uint32_t height = (uint32_t)desc.Height;
 
-			D3D12_PLACED_SUBRESOURCE_FOOTPRINT layout;
-			uint32_t numRows;
-			uint64_t total;
-			uint64_t pitch;
-			m_device->GetCopyableFootprints(&desc
-				, 0
-				, 1
-				, 0
-				, &layout
-				, &numRows
-				, &pitch
-				, &total
-				);
+		//	D3D12_PLACED_SUBRESOURCE_FOOTPRINT layout;
+		//	uint32_t numRows;
+		//	uint64_t total;
+		//	uint64_t pitch;
+		//	m_device->GetCopyableFootprints(&desc
+		//		, 0
+		//		, 1
+		//		, 0
+		//		, &layout
+		//		, &numRows
+		//		, &pitch
+		//		, &total
+		//		);
 
-			ID3D12Resource* readback = createCommittedResource(m_device, HeapProperty::ReadBack, total);
+		//	ID3D12Resource* readback = createCommittedResource(m_device, HeapProperty::ReadBack, total);
 
-			D3D12_BOX box;
-			box.left   = 0;
-			box.top    = 0;
-			box.right  = width;
-			box.bottom = height;
-			box.front  = 0;
-			box.back   = 1;
+		//	D3D12_BOX box;
+		//	box.left   = 0;
+		//	box.top    = 0;
+		//	box.right  = width;
+		//	box.bottom = height;
+		//	box.front  = 0;
+		//	box.back   = 1;
 
-			setResourceBarrier(m_commandList, backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_COPY_SOURCE);
-			D3D12_TEXTURE_COPY_LOCATION dst = { readback,   D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT,  { layout } };
-			D3D12_TEXTURE_COPY_LOCATION src = { backBuffer, D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX, {}     };
-			m_commandList->CopyTextureRegion(&dst, 0, 0, 0, &src, &box);
-			setResourceBarrier(m_commandList, backBuffer, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_PRESENT);
-			finish();
-			m_commandList = m_cmd.alloc();
+		//	setResourceBarrier(m_commandList, backBuffer, D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_COPY_SOURCE);
+		//	D3D12_TEXTURE_COPY_LOCATION dst = { readback,   D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT,  { layout } };
+		//	D3D12_TEXTURE_COPY_LOCATION src = { backBuffer, D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX, {}     };
+		//	m_commandList->CopyTextureRegion(&dst, 0, 0, 0, &src, &box);
+		//	setResourceBarrier(m_commandList, backBuffer, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_PRESENT);
+		//	finish();
+		//	m_commandList = m_cmd.alloc();
 
-			void* data;
-			readback->Map(0, NULL, (void**)&data);
-			bimg::imageSwizzleBgra8(
-				  data
-				, layout.Footprint.RowPitch
-				, width
-				, height
-				, data
-				, layout.Footprint.RowPitch
-				);
-			g_callback->screenShot(_filePath
-				, width
-				, height
-				, layout.Footprint.RowPitch
-				, data
-				, (uint32_t)total
-				, false
-				);
-			D3D12_RANGE writeRange = { 0, 0 };
-			readback->Unmap(0, &writeRange);
+		//	void* data;
+		//	readback->Map(0, NULL, (void**)&data);
+		//	bimg::imageSwizzleBgra8(
+		//		  data
+		//		, layout.Footprint.RowPitch
+		//		, width
+		//		, height
+		//		, data
+		//		, layout.Footprint.RowPitch
+		//		);
+		//	g_callback->screenShot(_filePath
+		//		, width
+		//		, height
+		//		, layout.Footprint.RowPitch
+		//		, data
+		//		, (uint32_t)total
+		//		, false
+		//		);
+		//	D3D12_RANGE writeRange = { 0, 0 };
+		//	readback->Unmap(0, &writeRange);
 
-			DX_RELEASE(readback, 0);
-		}
+		//	DX_RELEASE(readback, 0);
+		//}
 
 		void updateViewName(ViewId _id, const char* _name) override
 		{

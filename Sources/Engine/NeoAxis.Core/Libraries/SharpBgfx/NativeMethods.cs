@@ -47,19 +47,13 @@ namespace Internal.SharpBgfx
         [SuppressGCTransition]
         public static extern void bgfx_alloc_instance_data_buffer( out InstanceDataBuffer.NativeStruct ptr, int num, ushort stride );
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
 		public static extern void bgfx_dispatch( ushort id, ushort program, uint numX, uint numY, uint numZ, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int bgfx_dispatch (ushort id, ushort program, uint numX, uint numY, uint numZ);
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-		public static extern void bgfx_dispatch_indirect( ushort id, ushort program, ushort indirectHandle, ushort start, ushort num, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int bgfx_dispatch_indirect (ushort id, ushort program, ushort indirectHandle, ushort start, ushort num);
+        public static extern void bgfx_dispatch_indirect( ushort id, ushort program, ushort indirectHandle, uint start, uint num, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
@@ -173,16 +167,16 @@ namespace Internal.SharpBgfx
         public static extern ushort bgfx_create_texture( MemoryBlock.DataPtr* mem, TextureFlags flags, byte skip, out Texture.TextureInfo info );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        public static extern ushort bgfx_create_texture_2d( ushort width, ushort _height, [MarshalAs( UnmanagedType.U1 )] bool hasMips, ushort numLayers, TextureFormat format, TextureFlags flags, MemoryBlock.DataPtr* mem );
+        public static extern ushort bgfx_create_texture_2d( ushort width, ushort _height, [MarshalAs( UnmanagedType.U1 )] bool hasMips, ushort numLayers, TextureFormat format, TextureFlags flags, MemoryBlock.DataPtr* mem, ulong external );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern ushort bgfx_create_texture_2d_scaled( BackbufferRatio ratio, [MarshalAs( UnmanagedType.U1 )] bool hasMips, ushort numLayers, TextureFormat format, TextureFlags flags );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        public static extern ushort bgfx_create_texture_3d( ushort width, ushort _height, ushort _depth, [MarshalAs( UnmanagedType.U1 )] bool hasMips, TextureFormat format, TextureFlags flags, MemoryBlock.DataPtr* mem );
+        public static extern ushort bgfx_create_texture_3d( ushort width, ushort _height, ushort _depth, [MarshalAs( UnmanagedType.U1 )] bool hasMips, TextureFormat format, TextureFlags flags, MemoryBlock.DataPtr* mem, ulong external );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        public static extern ushort bgfx_create_texture_cube( ushort size, [MarshalAs( UnmanagedType.U1 )] bool hasMips, ushort numLayers, TextureFormat format, TextureFlags flags, MemoryBlock.DataPtr* mem );
+        public static extern ushort bgfx_create_texture_cube( ushort size, [MarshalAs( UnmanagedType.U1 )] bool hasMips, ushort numLayers, TextureFormat format, TextureFlags flags, MemoryBlock.DataPtr* mem, ulong external );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern void bgfx_set_texture_name( ushort handle, [MarshalAs( UnmanagedType.LPStr )] string name, int len );
@@ -279,7 +273,7 @@ namespace Internal.SharpBgfx
         public static extern RenderFrameResult bgfx_render_frame( int timeoutMs );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        public static extern IntPtr bgfx_override_internal_texture_ptr( ushort handle, IntPtr ptr );
+        public static extern IntPtr bgfx_override_internal_texture_ptr( ushort handle, IntPtr ptr, ushort layerIndex );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern IntPtr bgfx_override_internal_texture( ushort handle, ushort width, ushort height, byte numMips, TextureFormat format, TextureFlags flags );
@@ -297,13 +291,13 @@ namespace Internal.SharpBgfx
         public static extern void bgfx_reset( int width, int height, ResetFlags flags, TextureFormat format );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        public static extern int bgfx_frame( [MarshalAs( UnmanagedType.U1 )] bool capture );
+        public static extern int bgfx_frame( byte flags );// [MarshalAs( UnmanagedType.U1 )] bool capture );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern void bgfx_set_debug( DebugFeatures flags );
 
-        [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        public static extern void bgfx_set_marker( [MarshalAs( UnmanagedType.LPStr )] string marker );
+        //[DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
+        //public static extern void bgfx_set_marker( [MarshalAs( UnmanagedType.LPStr )] string marker, int len );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern void bgfx_dbg_text_clear( byte color, [MarshalAs( UnmanagedType.U1 )] bool smallText );
@@ -319,37 +313,25 @@ namespace Internal.SharpBgfx
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern void bgfx_touch( ushort id );
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
         public static extern void bgfx_submit( ushort id, ushort programHandle, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int bgfx_submit (ushort id, ushort programHandle, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
         public static extern void bgfx_submit_occlusion_query( ushort id, ushort programHandle, ushort queryHandle, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int bgfx_submit_occlusion_query (ushort id, ushort programHandle, ushort queryHandle, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-        public static extern void bgfx_submit_indirect( ushort id, ushort programHandle, ushort indirectHandle, ushort start, ushort num, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int bgfx_submit_indirect (ushort id, ushort programHandle, ushort indirectHandle, ushort start, ushort num, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
+        public static extern void bgfx_submit_indirect( ushort id, ushort programHandle, ushort indirectHandle, uint start, uint num, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
         public static extern void bgfx_discard( [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern void bgfx_discard ();
 
-        [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        [SuppressGCTransition]
-        public static extern void bgfx_set_view_name( ushort id, [MarshalAs( UnmanagedType.LPStr )] string name );
+        //[DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
+        //[SuppressGCTransition]
+        //public static extern void bgfx_set_view_name( ushort id, [MarshalAs( UnmanagedType.LPStr )] string name, int len );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
@@ -495,7 +477,7 @@ namespace Internal.SharpBgfx
                                              byte srcMip, ushort srcX, ushort srcY, ushort srcZ, ushort width, ushort height, ushort depth );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        public static extern uint bgfx_read_texture( ushort handle, IntPtr data, byte mip );
+        public static extern uint bgfx_read_texture( ushort handle, IntPtr data, ushort layer, byte mip );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern ushort bgfx_get_texture( ushort handle, byte attachment );
@@ -522,9 +504,9 @@ namespace Internal.SharpBgfx
         //[DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         //public static extern void bgfx_end( IntPtr encoder );
 
-        [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        [SuppressGCTransition]
-        public static extern void bgfx_encoder_set_marker( IntPtr encoder, [MarshalAs( UnmanagedType.LPStr )] string marker );
+        //[DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
+        //[SuppressGCTransition]
+        //public static extern void bgfx_encoder_set_marker( IntPtr encoder, [MarshalAs( UnmanagedType.LPStr )] string name, int len );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
@@ -610,28 +592,19 @@ namespace Internal.SharpBgfx
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
 		public static extern void bgfx_encoder_touch( IntPtr encoder, ushort id );
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
 		public static extern void bgfx_encoder_submit( IntPtr encoder, ushort id, ushort programHandle, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int bgfx_encoder_submit(IntPtr encoder, ushort id, ushort programHandle, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
 		public static extern void bgfx_encoder_submit_occlusion_query( IntPtr encoder, ushort id, ushort programHandle, ushort queryHandle, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int bgfx_encoder_submit_occlusion_query(IntPtr encoder, ushort id, ushort programHandle, ushort queryHandle, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-		public static extern void bgfx_encoder_submit_indirect( IntPtr encoder, ushort id, ushort programHandle, ushort indirectHandle, ushort start, ushort num, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int bgfx_encoder_submit_indirect(IntPtr encoder, ushort id, ushort programHandle, ushort indirectHandle, ushort start, ushort num, int depth, [MarshalAs(UnmanagedType.U1)] bool preserveState);
+		public static extern void bgfx_encoder_submit_indirect( IntPtr encoder, ushort id, ushort programHandle, ushort indirectHandle, uint start, uint num, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
 
-        //BGFX_C_API void bgfx_encoder_submit_indirect_count( bgfx_encoder_t* _this, bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint16_t _start, bgfx_index_buffer_handle_t _numHandle, uint32_t _numIndex, uint16_t _numMax, uint32_t _depth, uint8_t _flags );
+        //BGFX_C_API void bgfx_encoder_submit_indirect_count( bgfx_encoder_t* _this, bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint32_t _start, bgfx_index_buffer_handle_t _numHandle, uint32_t _numIndex, uint32_t _numMax, uint32_t _depth, uint8_t _flags );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
@@ -657,26 +630,17 @@ namespace Internal.SharpBgfx
         [SuppressGCTransition]
         public static extern void bgfx_encoder_set_compute_indirect_buffer( IntPtr encoder, byte stage, ushort handle, ComputeBufferAccess access );
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
 		public static extern void bgfx_encoder_dispatch( IntPtr encoder, ushort id, ushort program, uint numX, uint numY, uint numZ, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int bgfx_encoder_dispatch(IntPtr encoder, ushort id, ushort program, uint numX, uint numY, uint numZ);
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-		public static extern void bgfx_encoder_dispatch_indirect( IntPtr encoder, ushort id, ushort program, ushort indirectHandle, ushort start, ushort num, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern int bgfx_encoder_dispatch_indirect(IntPtr encoder, ushort id, ushort program, ushort indirectHandle, ushort start, ushort num);
+        public static extern void bgfx_encoder_dispatch_indirect( IntPtr encoder, ushort id, ushort program, ushort indirectHandle, uint start, uint num, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
 
-        //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
         public static extern void bgfx_encoder_discard( IntPtr encoder, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
-        //[DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-        //public static extern void bgfx_encoder_discard(IntPtr encoder);
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern void bgfx_encoder_blit( IntPtr encoder, ushort id, ushort dst, byte dstMip, ushort dstX, ushort dstY, ushort dstZ, ushort src,
@@ -701,7 +665,7 @@ namespace Internal.SharpBgfx
 
         //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        public static extern void bgfx_check_wrapper( int initSettings, int platformData, int nativeAttachment );
+        public static extern void bgfx_check_wrapper( int initSettings, int platformData, int nativeAttachment, int resolutionSize, int initLimitsSize );
 
         //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]

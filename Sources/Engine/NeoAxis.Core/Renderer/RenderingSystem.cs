@@ -562,13 +562,9 @@ namespace NeoAxis
 		unsafe static bool InitInternal( bool startedAtFullScreen, bool multiMonitorMode, string fontManagerDefaultLanguage )//, bool isEditor )//, Vec2I mainRenderTargetSize )
 		{
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
-			{
 				OgreNativeWrapper.CheckNativeBridgeWeb( (int)ParameterType.TextureCube );
-			}
 			else
-			{
-			OgreNativeWrapper.CheckNativeBridge( (int)ParameterType.TextureCube );// GpuProgramParameters.GetAutoConstantTypeCount() );
-			}
+				OgreNativeWrapper.CheckNativeBridge( (int)ParameterType.TextureCube );
 
 			var path = VirtualFileSystem.Directories.PlatformSpecific;
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
@@ -601,7 +597,7 @@ namespace NeoAxis
 
 			unsafe
 			{
-				NativeMethods.bgfx_check_wrapper( sizeof( InitSettings.Native ), sizeof( PlatformData ), sizeof( FrameBuffer.NativeAttachment ) );
+				NativeMethods.bgfx_check_wrapper( sizeof( InitSettings.Native ), sizeof( PlatformData ), sizeof( FrameBuffer.NativeAttachment ), sizeof( InitSettings.ResolutionNative ), sizeof( InitSettings.InitLimits ) );
 			}
 
 			//set platform data
@@ -650,7 +646,7 @@ namespace NeoAxis
 			//   profilingToolBeginOperationDelegate, 
 			//   profilingToolEndOperationDelegate );
 
-			if(SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 			{
 				logListener = (MyOgreLogListener*)MyOgreLogListener.NewWeb(
 					(delegate* unmanaged[Stdcall]< nint, OgreLogMessageLevel, void >)&logListener_messageLoggedWeb
@@ -658,8 +654,8 @@ namespace NeoAxis
 			}
 			else
 			{
-			logListener_messageLoggedDelegate = logListener_messageLogged;
-			logListener = (MyOgreLogListener*)MyOgreLogListener.New( logListener_messageLoggedDelegate );
+				logListener_messageLoggedDelegate = logListener_messageLogged;
+				logListener = (MyOgreLogListener*)MyOgreLogListener.New( logListener_messageLoggedDelegate );
 			}
 
 			OgreLogManager.getDefaultLog_addListener( realRoot, logListener );

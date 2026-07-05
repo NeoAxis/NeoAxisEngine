@@ -286,12 +286,12 @@ namespace bx
 	BX_CONSTEXPR_FUNC const Ty* alignDown(const Ty* _ptr, int32_t _align);
 
 	///
-	template<typename Ty>
-	BX_CONSTEXPR_FUNC Ty alignUp(Ty _a, int32_t _align);
+	//template<typename Ty>
+	//BX_CONSTEXPR_FUNC Ty alignUp(Ty _a, int32_t _align);
 
-	///
-	template<typename Ty>
-	BX_CONSTEXPR_FUNC Ty* alignUp(Ty* _ptr, int32_t _align);
+	/////
+	//template<typename Ty>
+	//BX_CONSTEXPR_FUNC Ty* alignUp(Ty* _ptr, int32_t _align);
 
 	///
 	template<typename Ty>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -133,6 +133,36 @@ namespace bx
 		uint32_t m_hash;
 		uint32_t m_size;
 		uint8_t  m_tail[4];
+		uint8_t  m_count;
+	};
+
+	/// 64-bit non-cryptographic multiply and rotate hash.
+	class HashMurmur3_64
+	{
+	public:
+		///
+		void begin(uint64_t _seed = 0);
+
+		///
+		void add(const void* _data, int32_t _len);
+
+		///
+		void add(const char* _data);
+
+		///
+		void add(const StringView& _data);
+
+		///
+		template<typename Ty>
+		void add(const Ty& _data);
+
+		///
+		uint64_t end();
+
+	private:
+		uint64_t m_hash[2];
+		uint32_t m_size;
+		uint8_t  m_tail[16];
 		uint8_t  m_count;
 	};
 

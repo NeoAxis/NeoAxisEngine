@@ -15,11 +15,6 @@ namespace Internal.SharpBgfx {
         /// </summary>
         Agc,
 
-        ///// <summary>
-        ///// Direct3D 9
-        ///// </summary>
-        //Direct3D9,
-
         /// <summary>
         /// Direct3D 11
         /// </summary>
@@ -60,10 +55,10 @@ namespace Internal.SharpBgfx {
         /// </summary>
         Vulkan,
 
-        ///// <summary>
-        ///// WebGPU
-        ///// </summary>
-        //WebGPU,
+        /// <summary>
+        /// WebGPU
+        /// </summary>
+        WebGPU,
 
         /// <summary>
         /// Used during initialization; specifies that the library should
@@ -172,6 +167,11 @@ namespace Internal.SharpBgfx {
     /// </summary>
     public enum VertexAttributeType {
         /// <summary>
+        /// One-byte integer.
+        /// </summary>
+        Int8,
+
+        /// <summary>
         /// One-byte unsigned integer.
         /// </summary>
         UInt8,
@@ -188,6 +188,11 @@ namespace Internal.SharpBgfx {
         /// Two-byte signed integer.
         /// </summary>
         Int16,
+
+        /// <summary>
+        /// Two-byte unsigned integer.
+        /// </summary>
+        UInt16,
 
         /// <summary>
         /// Two-byte float.
@@ -264,6 +269,26 @@ namespace Internal.SharpBgfx {
         /// Improved ETC block compression with 1-bit punchthrough alpha.
         /// </summary>
         ETC2A1,
+
+        /// <summary>
+        /// ETC2 Alpha Compression, single 11-bit red channel, unsigned normalized. 4 BPP.
+        /// </summary>
+        EACR11,
+
+        /// <summary>
+        /// ETC2 Alpha Compression, single 11-bit red channel, signed normalized. 4 BPP.
+        /// </summary>
+        EACR11S,
+
+        /// <summary>
+        /// ETC2 Alpha Compression, two 11-bit channels (RG), unsigned normalized. 8 BPP.
+        /// </summary>
+        EACRG11,
+
+        /// <summary>
+        /// ETC2 Alpha Compression, two 11-bit channels (RG), signed normalized. 8 BPP.
+        /// </summary>
+        EACRG11S,
 
         /// <summary>
         /// PVRTC1 compression (2 bits per pixel)
@@ -946,130 +971,153 @@ namespace Internal.SharpBgfx {
         DrawIndirect = 0x10,
 
         /// <summary>
-        /// Fragment shaders can access depth values.
+        /// Draw indirect with indirect count is supported.
         /// </summary>
-        FragmentDepth = 0x20,
+        DrawIndirectCount = 0x20,
 
         /// <summary>
-        /// Device supports ordering of fragment output.
+        /// Fragment depth is available in fragment shader.
         /// </summary>
-        FragmentOrdering = 0x40,
+        FragmentDepth = 0x40,
 
         /// <summary>
-        /// A graphics debugger is present.
+        /// Fragment ordering is available in fragment shader.
         /// </summary>
-        GraphicsDebugger = 0x0000000000000080,
+        FragmentOrdering = 0x80,
 
         /// <summary>
-        /// Devices supports HDR10 rendering.
+        /// Graphics debugger is present.
         /// </summary>
-        HDR10 = 0x100,
+        GraphicsDebugger = 0x100,
 
         /// <summary>
-        /// Device supports high-DPI rendering.
+        /// HDR10 rendering is supported.
         /// </summary>
-        HighDPI = 0x200,
+        HDR10 = 0x200,
+
+        /// <summary>
+        /// HiDPI rendering is supported.
+        /// </summary>
+        HiDPI = 0x400,
 
         /// <summary>
         /// Image Read/Write is supported.
         /// </summary>
-        ImageRW = 0x0000000000000400,
+        ImageRW = 0x800,
 
         /// <summary>
-        /// Device supports 32-bit indices.
+        /// 32-bit indices are supported.
         /// </summary>
-        Index32 = 0x800,
+        Index32 = 0x1000,
 
         /// <summary>
-        /// Device supports instancing.
+        /// Instancing is supported.
         /// </summary>
-        Instancing = 0x1000,
+        Instancing = 0x2000,
 
         /// <summary>
-        /// Device supports occlusion queries.
+        /// Occlusion query is supported.
         /// </summary>
-        OcclusionQuery = 0x2000,
+        OcclusionQuery = 0x4000,
 
         /// <summary>
-        /// Device supports multithreaded rendering.
+        /// PrimitiveID is available in fragment shader.
         /// </summary>
-        RendererMultithreaded = 0x4000,
+        PrimitiveID = 0x8000,
 
         /// <summary>
-        /// Indicates whether the device can render to multiple swap chains.
+        /// Renderer is on separate thread.
         /// </summary>
-        SwapChain = 0x8000,
+        RendererMultithreaded = 0x10000,
 
         /// <summary>
-        /// Device supports 2D texture arrays.
+        /// Multiple windows are supported.
         /// </summary>
-        Texture2DArray = 0x10000,
+        SwapChain = 0x20000,
 
         /// <summary>
-        /// Device supports 3D textures.
-        /// </summary>
-        Texture3D = 0x20000,
-
-        /// <summary>
-        /// Device supports texture blits.
+        /// Texture blit is supported.
         /// </summary>
         TextureBlit = 0x40000,
 
         /// <summary>
-        /// Transparent back buffer supported.
+        /// Texture compare less equal mode is supported.
         /// </summary>
-        TransparentBackBuffer = 0x0000000000080000,
+        TextureCompareLequal = 0x80000,
 
         /// <summary>
-        /// Device supports other texture comparison modes.
         /// </summary>
         TextureCompareReserved = 0x100000,
 
         /// <summary>
-        /// Device supports "Less than or equal to" texture comparison mode.
+        /// Cubemap texture array is supported.
         /// </summary>
-        TextureCompareLessEqual = 0x200000,
+        TextureCubeArray = 0x200000,
 
         /// <summary>
-        /// Device supports cubemap texture arrays.
+        /// CPU direct access to GPU texture memory.
         /// </summary>
-        TextureCubeArray = 0x400000,
+        TextureDirectAccess = 0x400000,
 
         /// <summary>
-        /// Device supports directly accessing texture data.
+        /// External texture is supported.
         /// </summary>
-        TextureDirectAccess = 0x800000,
+        TextureExternal = 0x800000,
 
         /// <summary>
-        /// Device supports reading back texture data.
+        /// External shared texture is supported.
         /// </summary>
-        TextureReadBack = 0x1000000,
+        TextureExternalShared = 0x1000000,
 
         /// <summary>
-        /// Device supports 16-bit floats as vertex attributes.
+        /// Read-back texture is supported.
         /// </summary>
-        VertexAttributeHalf = 0x2000000,
+        TextureReadBack = 0x2000000,
 
         /// <summary>
-        /// UInt10 vertex attributes are supported.
+        /// 2D texture array is supported.
         /// </summary>
-        VertexAttributeUInt10 = 0x4000000,
+        Texture2DArray = 0x4000000,
 
         /// <summary>
-        /// Devices supports rendering with VertexID only.
+        /// 3D textures are supported.
         /// </summary>
-        VertexID = 0x8000000,
+        Texture3D = 0x8000000,
 
-        ///PrimitiveID is available in fragment shader.
-        PrimitiveId  = 0x0000000010000000,
+        /// <summary>
+        /// Transparent back buffer supported.
+        /// </summary>
+        TransparentBackbuffer = 0x10000000,
+
+        /// <summary>
+        /// Variable Rate Shading
+        /// </summary>
+        VariableRateShading = 0x20000000,
+
+        /// <summary>
+        /// Vertex attribute half-float is supported.
+        /// </summary>
+        VertexAttribHalf = 0x40000000,
+
+        /// <summary>
+        /// Vertex attribute 10_10_10_2 is supported.
+        /// </summary>
+        VertexAttribUint10 = 0x80000000,
+
+        /// <summary>
+        /// Rendering with VertexID only is supported.
+        /// </summary>
+        VertexID = 0x100000000,
+
+        /// <summary>
+        /// Hardware video decode is supported.
+        /// </summary>
+        VideoDecode = 0x200000000,
+
         /// <summary>
         /// Viewport layer is available in vertex shader.
         /// </summary>
-        ViewportLayerArray = 0x0000000020000000,
-        /// <summary>
-        /// Draw indirect wit.
-        /// </summary>
-        DrawIndirectCount = 0x0000000040000000 
+        ViewportLayerArray = 0x400000000,
     }
 
     /// <summary>

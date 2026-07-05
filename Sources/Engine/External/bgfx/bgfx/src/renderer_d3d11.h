@@ -144,7 +144,6 @@ namespace bgfx { namespace d3d11
 			, m_hash(0)
 			, m_numUniforms(0)
 			, m_numPredefined(0)
-			//, m_hasDepthOp(false)
 		{
 		}
 
@@ -193,7 +192,6 @@ namespace bgfx { namespace d3d11
 
 		uint16_t m_numUniforms;
 		uint8_t m_numPredefined;
-		//bool m_hasDepthOp;
 	};
 
 	struct ProgramD3D11
@@ -335,6 +333,9 @@ namespace bgfx { namespace d3d11
 			, m_numUav(0)
 			, m_needPresent(false)
 		{
+			bx::memSet(m_rtv, 0, sizeof(m_rtv) );
+			bx::memSet(m_uav, 0, sizeof(m_uav) );
+			bx::memSet(m_srv, 0, sizeof(m_srv) );
 		}
 
 		void create(uint8_t _num, const Attachment* _attachment);

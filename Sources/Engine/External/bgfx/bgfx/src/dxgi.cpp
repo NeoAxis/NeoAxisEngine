@@ -281,7 +281,7 @@ namespace bgfx
 		{
 			AdapterI* adapter;
 			for (uint32_t ii = 0
-				; DXGI_ERROR_NOT_FOUND != m_factory->EnumAdapters(ii, reinterpret_cast<IDXGIAdapter**>(&adapter) ) && ii < BX_COUNTOF(_caps.gpu)
+				; ii < BX_COUNTOF(_caps.gpu) && DXGI_ERROR_NOT_FOUND != m_factory->EnumAdapters(ii, reinterpret_cast<IDXGIAdapter**>(&adapter) )
 				; ++ii
 				)
 			{
@@ -641,13 +641,16 @@ namespace bgfx
 		return S_OK;
 	}
 
-#if BX_PLATFORM_WINRT
 	HRESULT Dxgi::removeSwapChain(const SwapChainDesc& _scd)
 	{
+#if BX_PLATFORM_WINRT
 		IInspectable* nativeWindow = reinterpret_cast<IInspectable*>(_scd.nwh);
 		return setSwapChain(nativeWindow, NULL);
-	}
+#else
+		BX_UNUSED(_scd);
+		return S_OK;
 #endif // BX_PLATFORM_WINRT
+	}
 
 	void Dxgi::updateHdr10(SwapChainI* _swapChain, const SwapChainDesc& _scd)
 	{

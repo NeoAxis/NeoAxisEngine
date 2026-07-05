@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -7,7 +7,6 @@
 #define BX_PIXEL_FORMAT_H_HEADER_GUARD
 
 #include "math.h"
-#include "uint32_t.h"
 
 namespace bx
 {

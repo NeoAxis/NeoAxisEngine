@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bimg/blob/master/LICENSE
  */
 
@@ -72,6 +72,7 @@ namespace bimg
 		, TextureFormat::Enum _dstFormat
 		, Quality::Enum _quality
 		, const ImageContainer& _input
+		, bx::Error* _err = NULL
 		);
 
 	///

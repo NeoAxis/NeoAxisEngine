@@ -14,22 +14,22 @@
 
 namespace bgfx
 {
-	/// Render frame enum.
-	///
-	/// @attention C99's equivalent binding is `bgfx_render_frame_t`.
-	///
-	struct RenderFrame
-	{
-		enum Enum
-		{
-			NoContext,
-			Render,
-			Timeout,
-			Exiting,
+	///// Render frame enum.
+	/////
+	///// @attention C99's equivalent binding is `bgfx_render_frame_t`.
+	/////
+	//struct RenderFrame
+	//{
+	//	enum Enum
+	//	{
+	//		NoContext,
+	//		Render,
+	//		Timeout,
+	//		Exiting,
 
-			Count
-		};
-	};
+	//		Count
+	//	};
+	//};
 
 	/// Render frame.
 	///

@@ -3104,9 +3104,6 @@
     <ClCompile Include="..\External\bgfx\bgfx\src\shader.cpp">
       <Filter>bgfx\bgfx</Filter>
     </ClCompile>
-    <ClCompile Include="..\External\bgfx\bgfx\src\special.cpp">
-      <Filter>bgfx\bgfx</Filter>
-    </ClCompile>
     <ClCompile Include="..\External\bgfx\bgfx\src\topology.cpp">
       <Filter>bgfx\bgfx</Filter>
     </ClCompile>
@@ -3178,9 +3175,6 @@
     </ClCompile>
     <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_weight_quant_xfer_tables.cpp">
       <Filter>bgfx\bimg\3rdparty\astc-encoder</Filter>
-    </ClCompile>
-    <ClCompile Include="..\External\bgfx\bimg\src\image_gnf.cpp">
-      <Filter>bgfx\bimg\src</Filter>
     </ClCompile>
     <ClCompile Include="..\External\bgfx\bx\src\allocator.cpp">
       <Filter>bgfx\bx</Filter>
@@ -3274,9 +3268,6 @@
     </ClCompile>
     <ClCompile Include="..\External\bgfx\bx\src\semaphore_bx.cpp">
       <Filter>bgfx\bx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\External\bgfx\bimg\src\image_bimg.cpp">
-      <Filter>bgfx\bimg\src</Filter>
     </ClCompile>
     <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_dxil.cpp">
       <Filter>bgfx\shaderc</Filter>
@@ -4195,6 +4186,12 @@
     </ClCompile>
     <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp">
       <Filter>Physics\Jolt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bimg\src\image_bimg.cpp">
+      <Filter>bgfx\bimg\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_webgpu.cpp">
+      <Filter>bgfx\bgfx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -6896,9 +6893,6 @@
     <ClInclude Include="..\External\bgfx\bgfx\src\shader.h">
       <Filter>bgfx\bgfx</Filter>
     </ClInclude>
-    <ClInclude Include="..\External\bgfx\bgfx\src\special.h">
-      <Filter>bgfx\bgfx</Filter>
-    </ClInclude>
     <ClInclude Include="..\External\bgfx\bgfx\src\topology.h">
       <Filter>bgfx\bgfx</Filter>
     </ClInclude>
@@ -7024,6 +7018,9 @@
     </ClInclude>
     <ClInclude Include="Jolt\Core\JobSystemSingleThreaded.h">
       <Filter>Physics\Jolt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\External\bgfx\bgfx\src\renderer_webgpu.h">
+      <Filter>bgfx\bgfx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

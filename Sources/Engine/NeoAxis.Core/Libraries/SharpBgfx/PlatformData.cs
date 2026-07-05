@@ -22,6 +22,8 @@ namespace Internal.SharpBgfx {
         /// </summary>
         public IntPtr Context;
 
+        public IntPtr Queue;
+
         /// <summary>
         /// Backbuffer pointer to use instead of letting the library create its own.
         /// </summary>

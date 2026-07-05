@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bimg/blob/master/LICENSE
  */
 
@@ -59,6 +59,10 @@ namespace bimg
 			ETC2,         //!< ETC2 RGB8
 			ETC2A,        //!< ETC2 RGBA8
 			ETC2A1,       //!< ETC2 RGB8A1
+			EACR11,       //!< EAC R11 UNORM
+			EACR11S,      //!< EAC R11 SNORM
+			EACRG11,      //!< EAC RG11 UNORM
+			EACRG11S,     //!< EAC RG11 SNORM
 			PTC12,        //!< PVRTC1 RGB 2BPP
 			PTC14,        //!< PVRTC1 RGB 4BPP
 			PTC12A,       //!< PVRTC1 RGBA 2BPP
@@ -170,6 +174,35 @@ namespace bimg
 		};
 	};
 
+	/// Source image format an `ImageContainer` was parsed from.
+	///
+	struct ImageParser
+	{
+		/// Image formats:
+		enum Enum
+		{
+			Avif,  //!< AV1 Image File Format.
+			Bmp,   //!< Windows Bitmap.
+			Dds,   //!< DirectDraw Surface.
+			Exr,   //!< OpenEXR.
+			Gif,   //!< Graphics Interchange Format.
+			Hdr,   //!< Radiance RGBE.
+			Heif,  //!< High Efficiency Image File Format.
+			Jpeg,  //!< JPEG.
+			Ktx,   //!< Khronos Texture.
+			Ktx2,  //!< Khronos Texture 2.
+			Pic,   //!< Softimage PIC.
+			Png,   //!< Portable Network Graphics.
+			Pnm,   //!< Portable AnyMap (PBM/PGM/PPM).
+			Psd,   //!< Photoshop Document.
+			Pvr3,  //!< PVR (v3).
+			Tga,   //!< Truevision TGA.
+			Webp,  //!< WebP.
+
+			Count  //!< Unknown / not parsed.
+		};
+	};
+
 	/// Texture info.
 	///
 	/// @attention C99 equivalent is `bgfx_texture_info_t`.
@@ -194,6 +227,7 @@ namespace bimg
 
 		TextureFormat::Enum m_format;
 		Orientation::Enum m_orientation;
+		ImageParser::Enum m_parser;
 
 		uint32_t m_size;
 		uint32_t m_offset;
@@ -205,7 +239,7 @@ namespace bimg
 		bool     m_hasAlpha;
 		bool     m_cubeMap;
 		bool     m_ktx;
-		bool     m_ktxLE;
+		bool     m_ktx2;
 		bool     m_pvr3;
 		bool     m_srgb;
 	};
@@ -267,20 +301,23 @@ namespace bimg
 	/// Converts string to format.
 	TextureFormat::Enum getFormat(const char* _name);
 
+	/// Converts image source format to string.
+	const char* getName(ImageParser::Enum _parser);
+
 	/// Returns number of mip-maps required for complete mip-map chain.
 	uint8_t imageGetNumMips(
 		  TextureFormat::Enum _format
-		, uint16_t _width
-		, uint16_t _height
-		, uint16_t _depth = 0
+		, uint32_t _width
+		, uint32_t _height
+		, uint32_t _depth = 0
 		);
 
 	/// Returns image size.
-	uint32_t imageGetSize(
+	uint64_t imageGetSize(
 		  TextureInfo* _info
-		, uint16_t _width
-		, uint16_t _height
-		, uint16_t _depth
+		, uint32_t _width
+		, uint32_t _height
+		, uint32_t _depth
 		, bool _cubeMap
 		, bool _hasMips
 		, uint16_t _numLayers
@@ -472,10 +509,10 @@ namespace bimg
 	ImageContainer* imageAlloc(
 		  bx::AllocatorI* _allocator
 		, TextureFormat::Enum _format
-		, uint16_t _width
-		, uint16_t _height
-		, uint16_t _depth
-		, uint16_t _numLayers
+		, uint32_t _width
+		, uint32_t _height
+		, uint32_t _depth
+		, uint32_t _numLayers
 		, bool _cubeMap
 		, bool _hasMips
 		, const void* _data = NULL
@@ -568,6 +605,30 @@ namespace bimg
 		);
 
 	///
+	int32_t imageWriteKtx2(
+		  bx::WriterI* _writer
+		, TextureFormat::Enum _format
+		, bool _cubeMap
+		, uint32_t _width
+		, uint32_t _height
+		, uint32_t _depth
+		, uint8_t _numMips
+		, uint32_t _numLayers
+		, bool _srgb
+		, const void* _src
+		, bx::Error* _err = NULL
+		);
+
+	///
+	int32_t imageWriteKtx2(
+		  bx::WriterI* _writer
+		, ImageContainer& _imageContainer
+		, const void* _data
+		, uint32_t _size
+		, bx::Error* _err = NULL
+		);
+
+	///
 	bool imageParse(
 		  ImageContainer& _imageContainer
 		, bx::ReaderSeekerI* _reader
@@ -599,7 +660,7 @@ namespace bimg
 		);
 
 	///
-	ImageContainer* imageParsePvr3(
+	ImageContainer* imageParseKtx2(
 		  bx::AllocatorI* _allocator
 		, const void* _src
 		, uint32_t _size
@@ -607,7 +668,7 @@ namespace bimg
 		);
 
 	///
-	ImageContainer* imageParseGnf(
+	ImageContainer* imageParsePvr3(
 		  bx::AllocatorI* _allocator
 		, const void* _src
 		, uint32_t _size

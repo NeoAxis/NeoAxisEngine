@@ -8,7 +8,6 @@
 #include <bx/readerwriter.h>
 #include <bx/sort.h>
 #include <bx/string.h>
-#include <bx/uint32_t.h>
 
 #include "vertexlayout.h"
 
@@ -16,18 +15,22 @@ namespace bgfx
 {
 	static const uint8_t s_attribTypeSizeD3D1x[AttribType::Count][4] =
 	{
+		{  1,  2,  4,  4 }, // Int8
 		{  1,  2,  4,  4 }, // Uint8
 		{  4,  4,  4,  4 }, // Uint10
 		{  2,  4,  8,  8 }, // Int16
+		{  2,  4,  8,  8 }, // Uint16
 		{  2,  4,  8,  8 }, // Half
 		{  4,  8, 12, 16 }, // Float
 	};
 
 	static const uint8_t s_attribTypeSizeGl[AttribType::Count][4] =
 	{
+		{  1,  2,  4,  4 }, // Int8
 		{  1,  2,  4,  4 }, // Uint8
 		{  4,  4,  4,  4 }, // Uint10
 		{  2,  4,  6,  8 }, // Int16
+		{  2,  4,  6,  8 }, // Uint16
 		{  2,  4,  6,  8 }, // Half
 		{  4,  8, 12, 16 }, // Float
 	};
@@ -44,6 +47,7 @@ namespace bgfx
 		&s_attribTypeSizeGl,    // OpenGLES
 		&s_attribTypeSizeGl,    // OpenGL
 		&s_attribTypeSizeD3D1x, // Vulkan
+		&s_attribTypeSizeD3D1x, // WebGPU
 		&s_attribTypeSizeD3D1x, // Count
 	};
 	static_assert(BX_COUNTOF(s_attribTypeSize) == RendererType::Count+1);
@@ -86,7 +90,7 @@ namespace bgfx
 		const uint16_t encodedNorm = (_normalized&1)<<7;
 		const uint16_t encodedType = (_type&7)<<3;
 		const uint16_t encodedNum  = (_num-1)&3;
-		const uint16_t encodeAsInt = (_asInt&(!!"\x1\x1\x1\x0\x0"[_type]) )<<8;
+		const uint16_t encodeAsInt = (_asInt&(!!"\x1\x1\x1\x1\x1\x0\x0"[_type]) )<<8;
 		m_attributes[_attrib] = encodedNorm|encodedType|encodedNum|encodeAsInt;
 
 		m_offset[_attrib] = m_stride;
@@ -113,9 +117,11 @@ namespace bgfx
 
 	static const bool s_attribTypeIsFloat[] =
 	{
+		false, // Int8
 		false, // Uint8
 		false, // Uint10
 		false, // Int16
+		false, // Uint16
 		true,  // Half
 		true,  // Float
 	};
@@ -221,9 +227,11 @@ namespace bgfx
 		// AttribType must be in order how it appears in AttribType::Enum!
 		// id is unique and should not be changed if new AttribTypes are
 		// added.
+		{ AttribType::Int8,   0x0006 },
 		{ AttribType::Uint8,  0x0001 },
 		{ AttribType::Uint10, 0x0005 },
 		{ AttribType::Int16,  0x0002 },
+		{ AttribType::Uint16, 0x0007 },
 		{ AttribType::Half,   0x0003 },
 		{ AttribType::Float,  0x0004 },
 	};
@@ -704,114 +712,6 @@ namespace bgfx
 				dest += destStride;
 			}
 		}
-	}
-
-	inline float sqLength(const float _a[3], const float _b[3])
-	{
-		const float xx = _a[0] - _b[0];
-		const float yy = _a[1] - _b[1];
-		const float zz = _a[2] - _b[2];
-		return xx*xx + yy*yy + zz*zz;
-	}
-
-	template<typename IndexT>
-	static IndexT weldVerticesRef(IndexT* _output, const VertexLayout& _layout, const void* _data, uint32_t _num, float _epsilon)
-	{
-		// Brute force slow vertex welding...
-		const float epsilonSq = _epsilon*_epsilon;
-
-		uint32_t numVertices = 0;
-		bx::memSet(_output, 0xff, _num*sizeof(IndexT) );
-
-		for (uint32_t ii = 0; ii < _num; ++ii)
-		{
-			if (IndexT(-1) != _output[ii])
-			{
-				continue;
-			}
-
-			_output[ii] = (IndexT)ii;
-			++numVertices;
-
-			float pos[4];
-			vertexUnpack(pos, Attrib::Position, _layout, _data, ii);
-
-			for (uint32_t jj = 0; jj < _num; ++jj)
-			{
-				if (IndexT(-1) != _output[jj])
-				{
-					continue;
-				}
-
-				float test[4];
-				vertexUnpack(test, Attrib::Position, _layout, _data, jj);
-
-				if (sqLength(test, pos) < epsilonSq)
-				{
-					_output[jj] = IndexT(ii);
-				}
-			}
-		}
-
-		return IndexT(numVertices);
-	}
-
-	template<typename IndexT>
-	static IndexT weldVertices(IndexT* _output, const VertexLayout& _layout, const void* _data, uint32_t _num, float _epsilon, bx::AllocatorI* _allocator)
-	{
-		const uint32_t hashSize = bx::uint32_nextpow2(_num);
-		const uint32_t hashMask = hashSize-1;
-		const float epsilonSq = _epsilon*_epsilon;
-
-		uint32_t numVertices = 0;
-
-		const uint32_t size = sizeof(IndexT)*(hashSize + _num);
-		IndexT* hashTable = (IndexT*)bx::alloc(_allocator, size);
-		bx::memSet(hashTable, 0xff, size);
-
-		IndexT* next = hashTable + hashSize;
-
-		for (uint32_t ii = 0; ii < _num; ++ii)
-		{
-			float pos[4];
-			vertexUnpack(pos, Attrib::Position, _layout, _data, ii);
-			uint32_t hashValue = bx::hash<bx::HashMurmur2A>(pos, 3*sizeof(float) ) & hashMask;
-
-			IndexT offset = hashTable[hashValue];
-			for (; IndexT(-1) != offset; offset = next[offset])
-			{
-				float test[4];
-				vertexUnpack(test, Attrib::Position, _layout, _data, _output[offset]);
-
-				if (sqLength(test, pos) < epsilonSq)
-				{
-					_output[ii] = _output[offset];
-					break;
-				}
-			}
-
-			if (IndexT(-1) == offset)
-			{
-				_output[ii] = IndexT(ii);
-				next[ii] = hashTable[hashValue];
-				hashTable[hashValue] = IndexT(ii);
-				numVertices++;
-			}
-		}
-
-		bx::free(_allocator, hashTable);
-
-		return IndexT(numVertices);
-	}
-
-	uint32_t weldVertices(void* _output, const VertexLayout& _layout, const void* _data, uint32_t _num, bool _index32, float _epsilon, bx::AllocatorI* _allocator)
-	{
-		if (_index32)
-		{
-			return weldVertices( (uint32_t*)_output, _layout, _data, _num, _epsilon, _allocator);
-		}
-
-		return weldVertices( (uint16_t*)_output, _layout, _data, _num, _epsilon, _allocator);
 	}
 
 } // namespace bgfx

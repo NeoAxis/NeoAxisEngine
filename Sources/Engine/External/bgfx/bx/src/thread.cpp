@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -16,18 +16,9 @@
 extern bool bgfxShutdowning;
 
 #if BX_CRT_NONE
-#	include "crt0.h"
-#elif  BX_PLATFORM_ANDROID \
-	|| BX_PLATFORM_LINUX   \
-	|| BX_PLATFORM_IOS     \
-	|| BX_PLATFORM_OSX     \
-	|| BX_PLATFORM_PS4     \
-	|| BX_PLATFORM_RPI     \
-	|| BX_PLATFORM_NX
+#	include <bx/crt0.h>
+#elif  BX_PLATFORM_POSIX
 #	include <pthread.h>
-#	if BX_PLATFORM_LINUX && (BX_CRT_GLIBC < 21200)
-#		include <sys/prctl.h>
-#	endif // BX_PLATFORM_
 #elif  BX_PLATFORM_WINDOWS \
 	|| BX_PLATFORM_WINRT   \
 	|| BX_PLATFORM_XBOXONE \
@@ -85,13 +76,8 @@ namespace bx
 	void* ThreadInternal::threadFunc(void* _arg)
 	{
 		Thread* thread = (Thread*)_arg;
-		union
-		{
-			void* ptr;
-			int32_t i;
-		} cast;
-		cast.i = thread->entry();
-		return cast.ptr;
+		intptr_t result = thread->entry();
+		return bitCast<void*>(result);
 	}
 #endif // BX_PLATFORM_
 
@@ -103,7 +89,7 @@ namespace bx
 		, m_exitCode(kExitSuccess)
 		, m_running(false)
 	{
-		BX_STATIC_ASSERT(sizeof(ThreadInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(ThreadInternal) <= sizeof(m_internal) );
 
 		ThreadInternal* ti = (ThreadInternal*)m_internal;
 #if BX_CRT_NONE
@@ -130,13 +116,14 @@ namespace bx
 		}
 	}
 
-	bool Thread::init(ThreadFn _fn, void* _userData, uint32_t _stackSize, const char* _name)
+	bool Thread::init(ThreadFn _fn, void* _userData, uint32_t _stackSize, const StringView& _name)
 	{
 		BX_ASSERT(!m_running, "Already running!");
 
 		m_fn = _fn;
 		m_userData = _userData;
 		m_stackSize = _stackSize;
+		m_name      = _name;
 
 		ThreadInternal* ti = (ThreadInternal*)m_internal;
 #if BX_CRT_NONE
@@ -196,11 +183,6 @@ namespace bx
 		m_running = true;
 		m_sem.wait();
 
-		if (NULL != _name)
-		{
-			setThreadName(_name);
-		}
-
 		return true;
 	}
 
@@ -220,13 +202,9 @@ namespace bx
 		CloseHandle(ti->m_handle);
 		ti->m_handle = INVALID_HANDLE_VALUE;
 #elif BX_PLATFORM_POSIX
-		union
-		{
 			void* ptr;
-			int32_t i;
-		} cast;
-		pthread_join(ti->m_handle, &cast.ptr);
-		m_exitCode = cast.i;
+		pthread_join(ti->m_handle, &ptr);
+		m_exitCode = narrowCast<int32_t>(bitCast<intptr_t>(ptr) );
 		ti->m_handle = 0;
 #endif // BX_PLATFORM_
 
@@ -243,62 +221,110 @@ namespace bx
 		return m_exitCode;
 	}
 
-	void Thread::setThreadName(const char* _name)
+	//!!!!betauser
+#if BX_PLATFORM_WINDOWS && BX_COMPILER_MSVC
+// 1. Move the SEH logic into an isolated helper function with no C++ objects
+#pragma pack(push, 8)
+	struct ThreadName
 	{
+		DWORD  type;
+		LPCSTR name;
+		DWORD  id;
+		DWORD  flags;
+	};
+#pragma pack(pop)
+
+	static void raiseThreadNameException(DWORD threadId, LPCSTR name)
+	{
+		ThreadName tn;
+		tn.type = 0x1000;
+		tn.name = name;
+		tn.id = threadId;
+		tn.flags = 0;
+
+		__try
+		{
+			RaiseException(0x406d1388
+				, 0
+				, sizeof(tn) / 4
+				, reinterpret_cast<ULONG_PTR*>(&tn)
+			);
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+		}
+	}
+#endif // BX_PLATFORM_WINDOWS && BX_COMPILER_MSVC
+
+
+	void Thread::setThreadName(const StringView& _name)
+	{
+		if (_name.isEmpty() )
+		{
+			return;
+		}
+
+		m_name = _name;
+
 		ThreadInternal* ti = (ThreadInternal*)m_internal;
 		BX_UNUSED(ti);
-#if BX_CRT_NONE
-		BX_UNUSED(_name);
-#elif  BX_PLATFORM_OSX \
-	|| BX_PLATFORM_IOS
-		pthread_setname_np(_name);
-#elif (BX_CRT_GLIBC >= 21200)
-		pthread_setname_np(ti->m_handle, _name);
+#if  BX_PLATFORM_OSX   \
+	|| BX_PLATFORM_IOS \
+	|| BX_PLATFORM_VISIONOS
+		pthread_setname_np(m_name.getCPtr() );
+#elif BX_CRT_GLIBC
+		pthread_setname_np(ti->m_handle, m_name.getCPtr() );
 #elif BX_PLATFORM_LINUX
-		prctl(PR_SET_NAME,_name, 0, 0, 0);
+		prctl(PR_SET_NAME, m_name.getCPtr(), 0, 0, 0);
 #elif BX_PLATFORM_WINDOWS
-		// Try to use the new thread naming API from Win10 Creators update onwards if we have it
-		typedef HRESULT (WINAPI *SetThreadDescriptionProc)(HANDLE, PCWSTR);
-		SetThreadDescriptionProc SetThreadDescription = dlsym<SetThreadDescriptionProc>((void*)GetModuleHandleA("Kernel32.dll"), "SetThreadDescription");
+		typedef HRESULT (WINAPI *SetThreadDescriptionFn)(HANDLE, PCWSTR);
+		SetThreadDescriptionFn setThreadDescription = dlsym<SetThreadDescriptionFn>( (void*)GetModuleHandleA("kernel32.dll"), "SetThreadDescription");
 
-		if (NULL != SetThreadDescription)
+		if (NULL != setThreadDescription)
 		{
-			uint32_t length = (uint32_t)strLen(_name)+1;
-			uint32_t size = length*sizeof(wchar_t);
-			wchar_t* name = (wchar_t*)alloca(size);
-			mbstowcs(name, _name, size-2);
-			SetThreadDescription(ti->m_handle, name);
+			const uint32_t length = m_name.getLength();
+			const uint32_t max    = (length+1)*sizeof(wchar_t);
+			wchar_t* name = (wchar_t*)BX_STACK_ALLOC(max);
+			mbstowcs(name, m_name.getCPtr(), length);
+			name[length] = 0;
+			setThreadDescription(ti->m_handle, name);
 		}
+		else
+		{
 #	if BX_COMPILER_MSVC
-#		pragma pack(push, 8)
-			struct ThreadName
-			{
-				DWORD  type;
-				LPCSTR name;
-				DWORD  id;
-				DWORD  flags;
-			};
-#		pragma pack(pop)
-			ThreadName tn;
-			tn.type  = 0x1000;
-			tn.name  = _name;
-			tn.id    = ti->m_threadId;
-			tn.flags = 0;
 
-			__try
-			{
-				RaiseException(0x406d1388
-						, 0
-						, sizeof(tn)/4
-						, reinterpret_cast<ULONG_PTR*>(&tn)
-						);
-			}
-			__except(EXCEPTION_EXECUTE_HANDLER)
-			{
-			}
+//!!!!betauser
+
+		raiseThreadNameException(ti->m_threadId, m_name.getCPtr());
+
+//#		pragma pack(push, 8)
+//			struct ThreadName
+//			{
+//				DWORD  type;
+//				LPCSTR name;
+//				DWORD  id;
+//				DWORD  flags;
+//			};
+//#		pragma pack(pop)
+//			ThreadName tn;
+//			tn.type  = 0x1000;
+//			tn.name  = m_name.getCPtr();
+//			tn.id    = ti->m_threadId;
+//			tn.flags = 0;
+//
+//			__try
+//			{
+//				RaiseException(0x406d1388
+//					, 0
+//					, sizeof(tn)/4
+//					, reinterpret_cast<ULONG_PTR*>(&tn)
+//					);
+//			}
+//			__except(EXCEPTION_EXECUTE_HANDLER)
+//			{
+//			}
 #	endif // BX_COMPILER_MSVC
-#else
-		BX_UNUSED(_name);
+		}
 #endif // BX_PLATFORM_
 	}
 
@@ -321,6 +347,7 @@ namespace bx
 #endif // BX_PLATFORM_WINDOWS
 
 		m_sem.post();
+		setThreadName(m_name);
 		int32_t result = m_fn(this, m_userData);
 		return result;
 	}
@@ -338,7 +365,7 @@ namespace bx
 #if BX_CRT_NONE
 	TlsData::TlsData()
 	{
-		BX_STATIC_ASSERT(sizeof(TlsDataInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(TlsDataInternal) <= sizeof(m_internal) );
 
 		TlsDataInternal* ti = (TlsDataInternal*)m_internal;
 		BX_UNUSED(ti);
@@ -365,7 +392,7 @@ namespace bx
 #elif BX_PLATFORM_WINDOWS
 	TlsData::TlsData()
 	{
-		BX_STATIC_ASSERT(sizeof(TlsDataInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(TlsDataInternal) <= sizeof(m_internal) );
 
 		TlsDataInternal* ti = (TlsDataInternal*)m_internal;
 		ti->m_id = TlsAlloc();
@@ -395,7 +422,7 @@ namespace bx
 
 	TlsData::TlsData()
 	{
-		BX_STATIC_ASSERT(sizeof(TlsDataInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(TlsDataInternal) <= sizeof(m_internal) );
 
 		TlsDataInternal* ti = (TlsDataInternal*)m_internal;
 		int result = pthread_key_create(&ti->m_id, NULL);

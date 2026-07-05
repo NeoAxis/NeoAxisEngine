@@ -33,14 +33,14 @@ namespace NeoAxis
 			//return Path.GetDirectoryName( fileName );
 		}
 
-		public override IntPtr LoadLibrary( string path )
-		{
-			path = VirtualFileSystem.MakePathRelative( path );
-			IntPtr result = LoadPackagedLibrary( path, 0 );
-			if( result == IntPtr.Zero )
-				Debug.Fail( "library loading error" + "\r\nError: " + DebugUtil.GetLastErrorStr() );
-			return result;
-		}
+		//public override IntPtr LoadLibrary( string path )
+		//{
+		//	path = VirtualFileSystem.MakePathRelative( path );
+		//	IntPtr result = LoadPackagedLibrary( path, 0 );
+		//	if( result == IntPtr.Zero )
+		//		Debug.Fail( "library loading error" + "\r\nError: " + DebugUtil.GetLastErrorStr() );
+		//	return result;
+		//}
 
 		///////////////////////////////////////////////
 

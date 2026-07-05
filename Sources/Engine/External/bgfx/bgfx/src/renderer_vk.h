@@ -98,6 +98,7 @@
 			VK_IMPORT_INSTANCE_FUNC(false, vkGetPhysicalDeviceImageFormatProperties);  \
 			VK_IMPORT_INSTANCE_FUNC(false, vkGetPhysicalDeviceMemoryProperties);       \
 			VK_IMPORT_INSTANCE_FUNC(false, vkGetPhysicalDeviceQueueFamilyProperties);  \
+			VK_IMPORT_INSTANCE_FUNC(true,  vkGetPhysicalDeviceQueueFamilyProperties2KHR); \
 			VK_IMPORT_INSTANCE_FUNC(false, vkCreateDevice);                            \
 			VK_IMPORT_INSTANCE_FUNC(false, vkDestroyDevice);                           \
 			/* VK_KHR_surface */                                                       \
@@ -115,6 +116,9 @@
 			VK_IMPORT_INSTANCE_FUNC(true,  vkDestroyDebugReportCallbackEXT);           \
 			/* VK_KHR_fragment_shading_rate */                                         \
 			VK_IMPORT_INSTANCE_FUNC(true, vkGetPhysicalDeviceFragmentShadingRatesKHR); \
+			/* VK_KHR_video_queue */                                                   \
+			VK_IMPORT_INSTANCE_FUNC(true, vkGetPhysicalDeviceVideoCapabilitiesKHR);    \
+			VK_IMPORT_INSTANCE_FUNC(true, vkGetPhysicalDeviceVideoFormatPropertiesKHR);\
 			VK_IMPORT_INSTANCE_PLATFORM
 
 #define VK_IMPORT_DEVICE                                                    \
@@ -226,6 +230,19 @@
 			VK_IMPORT_DEVICE_FUNC(true,  vkCmdDrawIndexedIndirectCountKHR); \
 			/* VK_KHR_fragment_shading_rate */                                        \
 			VK_IMPORT_DEVICE_FUNC(true, vkCmdSetFragmentShadingRateKHR);              \
+			/* VK_KHR_video_queue / VK_KHR_video_decode_queue */                      \
+			VK_IMPORT_DEVICE_FUNC(true, vkCmdBeginVideoCodingKHR);                    \
+			VK_IMPORT_DEVICE_FUNC(true, vkCmdEndVideoCodingKHR);                      \
+			VK_IMPORT_DEVICE_FUNC(true, vkCmdControlVideoCodingKHR);                  \
+			VK_IMPORT_DEVICE_FUNC(true, vkCreateVideoSessionKHR);                     \
+			VK_IMPORT_DEVICE_FUNC(true, vkDestroyVideoSessionKHR);                    \
+			VK_IMPORT_DEVICE_FUNC(true, vkGetVideoSessionMemoryRequirementsKHR);      \
+			VK_IMPORT_DEVICE_FUNC(true, vkBindVideoSessionMemoryKHR);                 \
+			VK_IMPORT_DEVICE_FUNC(true, vkCreateVideoSessionParametersKHR);           \
+			VK_IMPORT_DEVICE_FUNC(true, vkDestroyVideoSessionParametersKHR);          \
+			VK_IMPORT_DEVICE_FUNC(true, vkUpdateVideoSessionParametersKHR);           \
+			/* VK_KHR_video_decode_queue */                                           \
+			VK_IMPORT_DEVICE_FUNC(true, vkCmdDecodeVideoKHR);                         \
 
 #define VK_DESTROY                                \
 			VK_DESTROY_FUNC(Buffer);              \
@@ -305,6 +322,17 @@
 namespace bgfx { namespace vk
 {
 
+#define VK_IMPORT_FUNC(_optional, _func) extern PFN_##_func _func
+#define VK_IMPORT_INSTANCE_FUNC VK_IMPORT_FUNC
+#define VK_IMPORT_DEVICE_FUNC   VK_IMPORT_FUNC
+VK_IMPORT
+VK_IMPORT_INSTANCE
+VK_IMPORT_DEVICE
+#undef VK_IMPORT_DEVICE_FUNC
+#undef VK_IMPORT_INSTANCE_FUNC
+#undef VK_IMPORT_FUNC
+
+
 #define VK_DESTROY_FUNC(_name)                                   \
 	struct Vk##_name                                             \
 	{                                                            \
@@ -325,11 +353,135 @@ VK_DESTROY_FUNC(SurfaceKHR);
 VK_DESTROY_FUNC(DescriptorSet);
 #undef VK_DESTROY_FUNC
 
+	void setImageMemoryBarrier(
+		  VkCommandBuffer _commandBuffer
+		, VkImage _image
+		, VkImageAspectFlags _aspectMask
+		, VkImageLayout _oldLayout
+		, VkImageLayout _newLayout
+		, uint32_t _baseMipLevel = 0
+		, uint32_t _levelCount = VK_REMAINING_MIP_LEVELS
+		, uint32_t _baseArrayLayer = 0
+		, uint32_t _layerCount = VK_REMAINING_ARRAY_LAYERS
+		);
+
 	template<typename Ty>
 	void release(Ty)
 	{
 	}
 
+
+
+//!!!!new
+
+	struct DeviceMemoryAllocationVK {
+		DeviceMemoryAllocationVK()
+			: mem(VK_NULL_HANDLE)
+			, offset(0)
+			, size(0)
+			, memoryTypeIndex(0)
+		{
+		}
+
+		VkDeviceMemory mem;
+		uint32_t offset;
+		uint32_t size;
+		int32_t memoryTypeIndex;
+	};
+
+	struct MemoryLruVK
+	{
+		MemoryLruVK()
+			: entries()
+			, lru()
+			, totalSizeCached(0)
+		{
+		}
+
+		static constexpr uint16_t MAX_ENTRIES = 1 << 10;
+		DeviceMemoryAllocationVK entries[MAX_ENTRIES];
+		bx::HandleAllocLruT<MAX_ENTRIES> lru;
+		uint64_t totalSizeCached;
+
+		void recycle(DeviceMemoryAllocationVK &_alloc);
+		bool find(uint32_t _size, int32_t _memoryTypeIndex, DeviceMemoryAllocationVK *_alloc);
+		void evictAll();
+	};
+
+	/** A Buffer used for moving data from main memory to GPU memory.
+	 * This can either be an independently allocated memory region, or a sub-region
+	 * of the scratch staging buffer for the frame-in-flight.
+	 */
+	struct StagingBufferVK
+	{
+		VkBuffer m_buffer;
+		DeviceMemoryAllocationVK m_deviceMem;
+
+		uint8_t* m_data;
+		uint32_t m_size;
+		uint32_t m_offset; // Offset into the bound buffer (not the device memory!)
+		bool     m_isFromScratch;
+	};
+
+	struct StagingScratchBufferVK
+	{
+		StagingScratchBufferVK()
+		{
+		}
+
+		~StagingScratchBufferVK()
+		{
+		}
+
+		void create(uint32_t _size, uint32_t _count, VkBufferUsageFlags _usage, uint32_t align);
+		void createUniform(uint32_t _size, uint32_t _count);
+		void createStaging(uint32_t _size);
+		void destroy();
+		uint32_t alloc(uint32_t _size, uint32_t _minAlign);
+		uint32_t write(const void* _data, uint32_t _size, uint32_t _minAlign = 1);
+		void flush(bool _reset = true);
+
+		VkBuffer m_buffer;
+		DeviceMemoryAllocationVK m_deviceMem;
+
+		uint8_t* m_data;
+		uint32_t m_size;
+		uint32_t m_chunkPos;
+		uint32_t m_align;
+	};
+
+	struct ChunkedScratchBufferOffset
+	{
+		VkBuffer buffer;
+		uint32_t offsets[2];
+	};
+
+	struct ChunkVK
+	{
+		VkBuffer buffer;
+		DeviceMemoryAllocationVK deviceMem;
+		uint8_t* data;
+	};
+
+	struct ChunkedScratchBufferVK : ChunkedScratchBufferT<ChunkedScratchBufferVK, VkBuffer, ChunkVK>
+	{
+		void createUniform(uint32_t _chunkSize, uint32_t _numChunks);
+
+		void createChunk(ChunkVK& _chunk);
+		void destroyChunk(ChunkVK& _chunk);
+		void flushChunk(ChunkVK& _chunk, uint32_t _size);
+		uint32_t currentFrameInFlight() const;
+
+		VkBufferUsageFlags m_usage;
+	};
+
+
+//!!!!new END
+
+
+
+
+//!!!!old
 	template<typename Ty>
 	class StateCacheT
 	{
@@ -381,6 +533,7 @@ VK_DESTROY_FUNC(DescriptorSet);
 		HashMap m_hashMap;
 	};
 
+//!!!!old
 	class ScratchBufferVK
 	{
 	public:
@@ -627,18 +780,22 @@ VK_DESTROY_FUNC(DescriptorSet);
 		TextureFormat::Enum  m_format;
 	};
 
+	struct VideoDecoderVK;
+
 	struct TextureVK
 	{
 		TextureVK()
 			: m_directAccessPtr(NULL)
 			, m_sampler({ 1, VK_SAMPLE_COUNT_1_BIT })
 			, m_format(VK_FORMAT_UNDEFINED)
+			, m_aspectFlags(VK_IMAGE_ASPECT_NONE)
 			, m_textureImage(VK_NULL_HANDLE)
 			, m_textureDeviceMem(VK_NULL_HANDLE)
 			, m_currentImageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
 			, m_singleMsaaImage(VK_NULL_HANDLE)
 			, m_singleMsaaDeviceMem(VK_NULL_HANDLE)
 			, m_currentSingleMsaaImageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
+			, m_videoDecoder(NULL)
 		{
 		}
 
@@ -672,7 +829,7 @@ VK_DESTROY_FUNC(DescriptorSet);
 		VkImageViewType    m_type;
 		VkFormat           m_format;
 		VkComponentMapping m_components;
-		VkImageAspectFlags m_aspectMask;
+		VkImageAspectFlags m_aspectFlags;
 
 		VkImage        m_textureImage;
 		VkDeviceMemory m_textureDeviceMem;
@@ -685,6 +842,7 @@ VK_DESTROY_FUNC(DescriptorSet);
 		VkImageLayout m_sampledLayout;
 
 		ReadbackVK m_readback;
+		VideoDecoderVK* m_videoDecoder;
 
 	private:
 		VkResult createImages(VkCommandBuffer _commandBuffer);
@@ -697,7 +855,7 @@ VK_DESTROY_FUNC(DescriptorSet);
 	{
 		SwapChainVK()
 			: m_nwh(NULL)
-			, m_swapchain(VK_NULL_HANDLE)
+			, m_swapChain(VK_NULL_HANDLE)
 			, m_lastImageRenderedSemaphore(VK_NULL_HANDLE)
 			, m_lastImageAcquiredSemaphore(VK_NULL_HANDLE)
 			, m_backBufferColorMsaaImageView(VK_NULL_HANDLE)
@@ -738,8 +896,8 @@ VK_DESTROY_FUNC(DescriptorSet);
 		TextureFormat::Enum m_depthFormat;
 
 		VkSurfaceKHR   m_surface;
-		VkSwapchainKHR m_swapchain;
-		uint32_t       m_numSwapchainImages;
+		VkSwapchainKHR m_swapChain;
+		uint32_t       m_numSwapChainImages;
 		VkImageLayout  m_backBufferColorImageLayout[kMaxBackBuffers];
 		VkImage        m_backBufferColorImage[kMaxBackBuffers];
 		VkImageView    m_backBufferColorImageView[kMaxBackBuffers];
@@ -797,6 +955,8 @@ VK_DESTROY_FUNC(DescriptorSet);
 
 		bool acquire(VkCommandBuffer _commandBuffer);
 		void present();
+
+		void markDirty() { m_needResolve = true; }
 
 		bool isRenderable() const;
 

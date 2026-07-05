@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bimg/blob/master/LICENSE
  */
 
@@ -8,7 +8,7 @@
 
 #include <libsquish/squish.h>
 #include <etc1/etc1.h>
-#include <etc2/ProcessRGB.hpp>
+#include <etcpak/ProcessRGB.hpp>
 #include <nvtt/nvtt.h>
 #include <pvrtc/PvrTcEncoder.h>
 #include <edtaa3/edtaa3func.h>
@@ -19,7 +19,7 @@ BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4100) // warning C4100: 'alloc_context': unref
 BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4702) // warning C4702: unreachable code
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wunused-parameter") // warning: unused parameter ‘alloc_context’ [-Wunused-parameter]
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include <stb/stb_image_resize.h>
+#include <stb/stb_image_resize2.h>
 BX_PRAGMA_DIAGNOSTIC_POP();
 
 extern "C" {
@@ -39,7 +39,7 @@ namespace bimg
 		squish::kColourIterativeClusterFit, // Highest
 		squish::kColourRangeFit,            // Fastest
 	};
-	BX_STATIC_ASSERT(Quality::Count == BX_COUNTOF(s_squishQuality) );
+	static_assert(Quality::Count == BX_COUNTOF(s_squishQuality) );
 
 	static const float s_astcQuality[] =
 	{
@@ -52,7 +52,49 @@ namespace bimg
 		ASTCENC_PRE_THOROUGH,     // Highest
 		ASTCENC_PRE_FAST,         // Fastest
 	};
-	BX_STATIC_ASSERT(Quality::Count == BX_COUNTOF(s_astcQuality) );
+	static_assert(Quality::Count == BX_COUNTOF(s_astcQuality) );
+
+	static uint32_t* etcpakAllocBgraBlocks(
+		  bx::AllocatorI* _allocator
+		, const uint8_t* _src
+		, uint32_t _width
+		, uint32_t _height
+		, uint32_t& _outNumBlocks
+		, uint32_t& _outPaddedWidth
+		)
+	{
+		const uint32_t blockWidth   = (_width  + 3)/4;
+		const uint32_t blockHeight  = (_height + 3)/4;
+		const uint32_t paddedWidth  = blockWidth *4;
+		const uint32_t paddedHeight = blockHeight*4;
+		const uint32_t srcPitch     = _width*4;
+
+		uint32_t* bgra = (uint32_t*)bx::alloc(_allocator, paddedWidth*paddedHeight*sizeof(uint32_t) );
+
+		for (uint32_t yy = 0; yy < paddedHeight; ++yy)
+		{
+			const uint32_t sy = bx::min(yy, _height-1);
+			const uint8_t* srcRow = &_src[sy*srcPitch];
+			uint32_t* dstRow = &bgra[yy*paddedWidth];
+
+			for (uint32_t xx = 0; xx < paddedWidth; ++xx)
+			{
+				const uint32_t sx = bx::min(xx, _width-1);
+				const uint8_t* px = &srcRow[sx*4];
+				dstRow[xx] = 0
+					| (uint32_t(px[3])<<24) // A
+					| (uint32_t(px[0])<<16) // R
+					| (uint32_t(px[1])<< 8) // G
+					| (uint32_t(px[2])    ) // B
+					;
+			}
+		}
+
+		_outNumBlocks   = blockWidth*blockHeight;
+		_outPaddedWidth = paddedWidth;
+
+		return bgra;
+	}
 
 	void imageEncodeFromRgba8(bx::AllocatorI* _allocator, void* _dst, const void* _src, uint32_t _width, uint32_t _height, uint32_t _depth, TextureFormat::Enum _format, Quality::Enum _quality, bx::Error* _err)
 	{
@@ -89,31 +131,47 @@ namespace bimg
 				BX_ERROR_SET(_err, BIMG_ERROR, "Unable to convert between input/output formats!");
 				break;
 
+			case TextureFormat::ETC2A1:
+				BX_ERROR_SET(_err, BIMG_ERROR, "Encoding to ETC2A1 is not supported.");
+				break;
+
 			case TextureFormat::ETC1:
 				etc1_encode_image(src, _width, _height, 4, _width*4, dst);
 				break;
 
 			case TextureFormat::ETC2:
 				{
-					const uint32_t blockWidth  = (_width +3)/4;
-					const uint32_t blockHeight = (_height+3)/4;
-					uint64_t* dstBlock = (uint64_t*)dst;
-					for (uint32_t yy = 0; yy < blockHeight; ++yy)
-					{
-						for (uint32_t xx = 0; xx < blockWidth; ++xx)
-						{
-							uint8_t block[4*4*4];
-							const uint8_t* ptr = &src[(yy*srcPitch+xx*4)*4];
+					uint32_t numBlocks, paddedWidth;
+					uint32_t* bgra = etcpakAllocBgraBlocks(_allocator, src, _width, _height, numBlocks, paddedWidth);
+					CompressEtc2Rgb(bgra, (uint64_t*)dst, numBlocks, paddedWidth, true);
+					bx::free(_allocator, bgra);
+				}
+				break;
 
-							for (uint32_t ii = 0; ii < 16; ++ii)
-							{ // BGRx
-								bx::memCopy(&block[ii*4], &ptr[(ii%4)*srcPitch + (ii&~3)], 4);
-								bx::swap(block[ii*4+0], block[ii*4+2]);
-							}
+			case TextureFormat::ETC2A:
+				{
+					uint32_t numBlocks, paddedWidth;
+					uint32_t* bgra = etcpakAllocBgraBlocks(_allocator, src, _width, _height, numBlocks, paddedWidth);
+					CompressEtc2Rgba(bgra, (uint64_t*)dst, numBlocks, paddedWidth, true);
+					bx::free(_allocator, bgra);
+				}
+				break;
 
-							*dstBlock++ = ProcessRGB_ETC2(block);
-						}
-					}
+			case TextureFormat::EACR11:
+				{
+					uint32_t numBlocks, paddedWidth;
+					uint32_t* bgra = etcpakAllocBgraBlocks(_allocator, src, _width, _height, numBlocks, paddedWidth);
+					CompressEacR(bgra, (uint64_t*)dst, numBlocks, paddedWidth);
+					bx::free(_allocator, bgra);
+				}
+				break;
+
+			case TextureFormat::EACRG11:
+				{
+					uint32_t numBlocks, paddedWidth;
+					uint32_t* bgra = etcpakAllocBgraBlocks(_allocator, src, _width, _height, numBlocks, paddedWidth);
+					CompressEacRg(bgra, (uint64_t*)dst, numBlocks, paddedWidth);
+					bx::free(_allocator, bgra);
 				}
 				break;
 
@@ -327,6 +385,9 @@ namespace bimg
 			case TextureFormat::BC5:
 			case TextureFormat::ETC1:
 			case TextureFormat::ETC2:
+			case TextureFormat::ETC2A:
+			case TextureFormat::EACR11:
+			case TextureFormat::EACRG11:
 			case TextureFormat::PTC14:
 			case TextureFormat::PTC14A:
 			case TextureFormat::ASTC4x4:
@@ -361,6 +422,10 @@ namespace bimg
 				}
 				break;
 
+			case bimg::TextureFormat::ETC2A1:
+				BX_ERROR_SET(_err, BIMG_ERROR, "Encoding to ETC2A1 is not supported.");
+				break;
+
 			default:
 				if (!imageConvert(_allocator, _dst, _dstFormat, _src, _srcFormat, _width, _height, 1) )
 				{
@@ -370,25 +435,31 @@ namespace bimg
 		}
 	}
 
-	ImageContainer* imageEncode(bx::AllocatorI* _allocator, TextureFormat::Enum _dstFormat, Quality::Enum _quality, const ImageContainer& _input)
+	ImageContainer* imageEncode(bx::AllocatorI* _allocator, TextureFormat::Enum _dstFormat, Quality::Enum _quality, const ImageContainer& _input, bx::Error* _err)
 	{
+		BX_ERROR_USE_TEMP_WHEN_NULL(_err);
+
 		ImageContainer* output = imageAlloc(_allocator
 			, _dstFormat
-			, uint16_t(_input.m_width)
-			, uint16_t(_input.m_height)
-			, uint16_t(_input.m_depth)
+			, _input.m_width
+			, _input.m_height
+			, _input.m_depth
 			, _input.m_numLayers
 			, _input.m_cubeMap
 			, 1 < _input.m_numMips
 			);
 
+		if (NULL == output)
+		{
+			BX_ERROR_SET(_err, BIMG_ERROR, "Failed to allocate output image.");
+			return NULL;
+		}
+
 		const uint16_t numSides = _input.m_numLayers * (_input.m_cubeMap ? 6 : 1);
 
-		bx::Error err;
-
-		for (uint16_t side = 0; side < numSides && err.isOk(); ++side)
+		for (uint16_t side = 0; side < numSides && _err->isOk(); ++side)
 		{
-			for (uint8_t lod = 0, num = _input.m_numMips; lod < num && err.isOk(); ++lod)
+			for (uint8_t lod = 0, num = _input.m_numMips; lod < num && _err->isOk(); ++lod)
 			{
 				ImageMip mip;
 				if (imageGetRawData(_input, side, lod, _input.m_data, _input.m_size, mip) )
@@ -407,13 +478,13 @@ namespace bimg
 						, mip.m_depth
 						, _dstFormat
 						, _quality
-						, &err
+						, _err
 						);
 				}
 			}
 		}
 
-		if (err.isOk() )
+		if (_err->isOk() )
 		{
 			return output;
 		}
@@ -564,18 +635,15 @@ namespace bimg
 				const uint32_t srcDataStep = uint32_t(bx::floor(zz * _src->m_depth / float(_dst->m_depth) ) );
 				const uint8_t* srcData = &srcMip.m_data[srcDataStep*srcSlice];
 
-				int result = stbir_resize_float_generic(
+				void* result = stbir_resize(
 					  (const float*)srcData, _src->m_width, _src->m_height, srcPitch
 					, (      float*)dstData, _dst->m_width, _dst->m_height, dstPitch
-					, 4, 3
-					, STBIR_FLAG_ALPHA_PREMULTIPLIED
+					, STBIR_RGBA_PM, STBIR_TYPE_FLOAT
 					, STBIR_EDGE_CLAMP
 					, STBIR_FILTER_BOX
-					, STBIR_COLORSPACE_LINEAR
-					, NULL
 					);
 
-				if (1 != result)
+				if (NULL == result)
 				{
 					return false;
 				}

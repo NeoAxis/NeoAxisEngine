@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -67,7 +67,7 @@ namespace bx
 
 	inline MemoryBlock::~MemoryBlock()
 	{
-		bx::free(m_allocator, m_data);
+		free(m_allocator, m_data);
 	}
 
 	inline void* MemoryBlock::more(uint32_t _size)
@@ -75,7 +75,7 @@ namespace bx
 		if (0 < _size)
 		{
 			m_size += _size;
-			m_data = bx::realloc(m_allocator, m_data, m_size);
+			m_data = realloc(m_allocator, m_data, m_size);
 		}
 
 		return m_data;
@@ -128,7 +128,7 @@ namespace bx
 		}
 
 		int64_t remainder = m_top-m_pos;
-		int32_t size = uint32_min(_size, uint32_t(min<int64_t>(remainder, INT32_MAX) ) );
+		int32_t size = int32_t(max<int64_t>(0, min<int64_t>(_size, remainder, INT32_MAX) ) );
 		m_pos += size;
 		if (size != _size)
 		{
@@ -173,7 +173,7 @@ namespace bx
 		BX_ASSERT(NULL != _err, "Reader/Writer interface calling functions must handle errors.");
 
 		int64_t remainder = m_top-m_pos;
-		int32_t size = uint32_min(_size, uint32_t(min<int64_t>(remainder, INT32_MAX) ) );
+		int32_t size = int32_t(max<int64_t>(0, min<int64_t>(_size, remainder, INT32_MAX) ) );
 		memCopy(_data, &m_data[m_pos], size);
 		m_pos += size;
 		if (size != _size)
@@ -245,7 +245,7 @@ namespace bx
 		}
 
 		int64_t remainder = m_size-m_pos;
-		int32_t size = uint32_min(_size, uint32_t(min<int64_t>(remainder, INT32_MAX) ) );
+		int32_t size = int32_t(max<int64_t>(0, min<int64_t>(_size, remainder, INT32_MAX) ) );
 		memCopy(&m_data[m_pos], _data, size);
 		m_pos += size;
 		m_top = max(m_top, m_pos);
@@ -276,7 +276,7 @@ namespace bx
 	inline int32_t read(ReaderI* _reader, Ty& _value, Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
-		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
+		static_assert(isTriviallyCopyable<Ty>() );
 		return _reader->read(&_value, sizeof(Ty), _err);
 	}
 
@@ -284,7 +284,7 @@ namespace bx
 	inline int32_t readHE(ReaderI* _reader, Ty& _value, bool _fromLittleEndian, Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
-		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
+		static_assert(isTriviallyCopyable<Ty>() );
 		Ty value;
 		int32_t result = _reader->read(&value, sizeof(Ty), _err);
 		_value = toHostEndian(value, _fromLittleEndian);
@@ -301,16 +301,16 @@ namespace bx
 	{
 		BX_ERROR_SCOPE(_err);
 
-		const uint32_t tmp0      = uint32_sels(64   - _size,   64, _size);
-		const uint32_t tmp1      = uint32_sels(256  - _size,  256, tmp0);
-		const uint32_t blockSize = uint32_sels(1024 - _size, 1024, tmp1);
-		uint8_t* temp = (uint8_t*)alloca(blockSize);
+		const uint32_t tmp0      = simd32_sels(simd32_splat(64   - _size), simd32_splat(  64), simd32_splat(_size)).u32;
+		const uint32_t tmp1      = simd32_sels(simd32_splat(256  - _size), simd32_splat( 256), simd32_splat(tmp0 )).u32;
+		const uint32_t blockSize = simd32_sels(simd32_splat(1024 - _size), simd32_splat(1024), simd32_splat(tmp1 )).u32;
+		uint8_t* temp = (uint8_t*)BX_STACK_ALLOC(blockSize);
 		memSet(temp, _byte, blockSize);
 
 		int32_t size = 0;
-		while (0 < _size)
+		while (0 < _size && _err->isOk() )
 		{
-			int32_t bytes = write(_writer, temp, uint32_min(blockSize, _size), _err);
+			int32_t bytes = write(_writer, temp, min(blockSize, _size), _err);
 			size  += bytes;
 			_size -= bytes;
 		}
@@ -322,7 +322,7 @@ namespace bx
 	inline int32_t write(WriterI* _writer, const Ty& _value, Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
-		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
+		static_assert(isTriviallyCopyable<Ty>() );
 		return _writer->write(&_value, sizeof(Ty), _err);
 	}
 
@@ -347,7 +347,7 @@ namespace bx
 	inline int32_t writeLE(WriterI* _writer, const Ty& _value, Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
-		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
+		static_assert(isTriviallyCopyable<Ty>() );
 		Ty value = toLittleEndian(_value);
 		int32_t result = _writer->write(&value, sizeof(Ty), _err);
 		return result;
@@ -363,7 +363,7 @@ namespace bx
 	inline int32_t writeBE(WriterI* _writer, const Ty& _value, Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
-		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
+		static_assert(isTriviallyCopyable<Ty>() );
 		Ty value = toBigEndian(_value);
 		int32_t result = _writer->write(&value, sizeof(Ty), _err);
 		return result;
@@ -404,9 +404,9 @@ namespace bx
 	inline int32_t peek(ReaderSeekerI* _reader, void* _data, int32_t _size, Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
-		int64_t offset = bx::seek(_reader);
+		int64_t offset = seek(_reader);
 		int32_t size = _reader->read(_data, _size, _err);
-		bx::seek(_reader, offset, bx::Whence::Begin);
+		seek(_reader, offset, Whence::Begin);
 		return size;
 	}
 
@@ -414,19 +414,19 @@ namespace bx
 	inline int32_t peek(ReaderSeekerI* _reader, Ty& _value, Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
-		BX_STATIC_ASSERT(isTriviallyCopyable<Ty>() );
+		static_assert(isTriviallyCopyable<Ty>() );
 		return peek(_reader, &_value, sizeof(Ty), _err);
 	}
 
 	inline int32_t align(ReaderSeekerI* _reader, uint32_t _alignment, Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
-		const int64_t current = bx::seek(_reader);
+		const int64_t current = seek(_reader);
 		const int64_t aligned = ( (current + _alignment-1)/_alignment) * _alignment;
 		const int32_t size    = int32_t(aligned - current);
 		if (0 != size)
 		{
-			const int64_t offset  = bx::seek(_reader, size);
+			const int64_t offset  = seek(_reader, size);
 			if (offset != aligned)
 			{
 				BX_ERROR_SET(_err, kErrorReaderWriterWrite, "Align: read truncated.");
@@ -440,7 +440,7 @@ namespace bx
 	inline int32_t align(WriterSeekerI* _writer, uint32_t _alignment, Error* _err)
 	{
 		BX_ERROR_SCOPE(_err);
-		const int64_t current = bx::seek(_writer);
+		const int64_t current = seek(_writer);
 		const int64_t aligned = ( (current + _alignment-1)/_alignment) * _alignment;
 		const int32_t size    = int32_t(aligned - current);
 		if (0 != size)

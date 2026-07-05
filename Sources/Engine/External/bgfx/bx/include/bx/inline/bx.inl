@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -60,6 +60,81 @@ namespace bx
 	}
 
 	template<typename Ty>
+	inline Ty loadAligned(const void* _ptr)
+	{
+		static_assert(isTriviallyCopyable<Ty>(), "Ty must be trivially copyable type.");
+
+		return *(const Ty*)_ptr;
+	}
+
+	template<typename Ty>
+	inline Ty loadUnaligned(const void* _ptr)
+	{
+		static_assert(isTriviallyCopyable<Ty>(), "Ty must be trivially copyable type.");
+
+#if BX_COMPILER_GCC || BX_COMPILER_CLANG
+		typedef Ty BX_ATTRIBUTE(aligned(1) ) UnalignedTy;
+		return *(UnalignedTy*)_ptr;
+#else
+		Ty value;
+		memCopy(&value, _ptr, sizeof(Ty) );
+
+		return value;
+#endif // BX_COMPILER_*
+	}
+
+	template<>
+	inline uint32_t loadUnaligned(const void* _ptr)
+	{
+		const uint8_t* data = (const uint8_t*)_ptr;
+
+		return 0
+			| uint32_t(data[3])<<24
+			| uint32_t(data[2])<<16
+			| uint32_t(data[1])<<8
+			| uint32_t(data[0])
+			;
+	}
+
+	template<>
+	inline uint64_t loadUnaligned(const void* _ptr)
+	{
+		const uint8_t* data = (const uint8_t*)_ptr;
+
+		return 0
+			| uint64_t(data[7])<<56
+			| uint64_t(data[6])<<48
+			| uint64_t(data[5])<<40
+			| uint64_t(data[4])<<32
+			| uint64_t(data[3])<<24
+			| uint64_t(data[2])<<16
+			| uint64_t(data[1])<<8
+			| uint64_t(data[0])
+			;
+	}
+
+	template<typename Ty>
+	inline void storeAligned(void* _ptr, const Ty& _value)
+	{
+		static_assert(isTriviallyCopyable<Ty>(), "Ty must be trivially copyable type.");
+
+		*(Ty*)_ptr = _value;
+	}
+
+	template<typename Ty>
+	inline void storeUnaligned(void* _ptr, const Ty& _value)
+	{
+		static_assert(isTriviallyCopyable<Ty>(), "Ty must be trivially copyable type.");
+
+#if BX_COMPILER_GCC || BX_COMPILER_CLANG
+		typedef Ty BX_ATTRIBUTE(aligned(1) ) UnalignedTy;
+		*(UnalignedTy*)_ptr = _value;
+#else
+		memCopy(_ptr, &_value, sizeof(Ty) );
+#endif // BX_COMPILER_*
+	}
+
+	template<typename Ty>
 	inline void swap(Ty& _a, Ty& _b)
 	{
 		Ty tmp = move(_a); _a = move(_b); _b = move(tmp);
@@ -96,13 +171,13 @@ namespace bx
 	template<typename Ty>
 	inline constexpr Ty max()
 	{
-		return bx::LimitsT<Ty>::max;
+		return LimitsT<Ty>::max;
 	}
 
 	template<typename Ty>
 	inline constexpr Ty min()
 	{
-		return bx::LimitsT<Ty>::min;
+		return LimitsT<Ty>::min;
 	}
 
 	template<typename Ty>
@@ -145,6 +220,253 @@ namespace bx
 	inline constexpr bool isPowerOf2(Ty _a)
 	{
 		return _a && !(_a & (_a - 1) );
+	}
+
+	constexpr bool isConstantEvaluated()
+	{
+//!!!!betauser
+#ifdef ANDROID
+		return false;
+#else
+		return __builtin_is_constant_evaluated();
+#endif
+	}
+
+	//!!!!betauser
+
+	template <typename Ty, typename FromT>
+	inline Ty bitCast(const FromT& _from)
+	{
+		static_assert(sizeof(Ty) == sizeof(FromT)
+			, "bx::bitCast failed! Ty and FromT must be the same size."
+			);
+		static_assert(isTriviallyCopyable<FromT>()
+			, "bx::bitCast failed! FromT must be trivially copyable."
+			);
+		static_assert(isTriviallyCopyable<Ty>()
+			, "bx::bitCast failed! Ty must be trivially copyable."
+			);
+		static_assert(isTriviallyConstructible<Ty>()
+			, "bx::bitCast failed! Ty must be trivially constructible."
+			);
+
+#ifdef ANDROID
+		Ty to;
+		memCopy(&to, &_from, sizeof(Ty));
+		return to;
+#else
+		return __builtin_bit_cast(Ty, _from);
+#endif
+	}
+
+	//BX_PRAGMA_DIAGNOSTIC_PUSH();
+	//BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wpsabi");
+
+	//template <typename Ty, typename FromT>
+	//inline constexpr Ty bitCast(const FromT& _from)
+	//{
+	//	static_assert(sizeof(Ty) == sizeof(FromT)
+	//		, "bx::bitCast failed! Ty and FromT must be the same size."
+	//		);
+	//	static_assert(isTriviallyCopyable<FromT>()
+	//		, "bx::bitCast failed! FromT must be trivially copyable."
+	//		);
+	//	static_assert(isTriviallyCopyable<Ty>()
+	//		, "bx::bitCast failed! Ty must be trivially copyable."
+	//		);
+	//	static_assert(isTriviallyConstructible<Ty>()
+	//		, "bx::bitCast failed! Ty must be trivially constructible."
+	//		);
+
+	//	return __builtin_bit_cast(Ty, _from);
+	//}
+
+	//BX_PRAGMA_DIAGNOSTIC_POP();
+
+
+	//!!!!betauser
+	//template<typename Ty, typename FromT>
+	//requires (isInteger<   Ty>() || isFloatingPoint<   Ty>() )
+	//	  && (isInteger<FromT>() || isFloatingPoint<FromT>() )
+	//inline constexpr Ty saturateCast(FromT _from)
+	//{
+	//	if constexpr (isSame<RemoveCvType<Ty>, RemoveCvType<FromT> >() )
+	//	{
+	//		return _from;
+	//	}
+
+	//	constexpr Ty mx = max<Ty>();
+
+	//	if constexpr (isSigned<Ty>() && isSigned<FromT>() )
+	//	{
+	//		if constexpr (sizeof(Ty) < sizeof(FromT) )
+	//		{
+	//			constexpr FromT mn = min<Ty>();
+
+	//			if (_from < mn)
+	//			{
+	//				return mn;
+	//			}
+	//			else if (_from > mx)
+	//			{
+	//				return mx;
+	//			}
+	//		}
+	//	}
+	//	else if constexpr (isSigned<FromT>() )
+	//	{
+	//		if (_from < FromT(0) )
+	//		{
+	//			return Ty(0);
+	//		}
+	//		else if (asUnsigned<FromT>(_from) > mx)
+	//		{
+	//			return mx;
+	//		}
+	//	}
+	//	else if (_from > asUnsigned<Ty>(max<Ty>() ) )
+	//	{
+	//		return mx;
+	//	}
+
+	//	return static_cast<Ty>(_from);
+	//}
+
+	template<typename Ty, typename FromT>
+	inline constexpr bool narrowCastTest(Ty* _out, const FromT& _from)
+	{
+		if constexpr (isSame<Ty, FromT>() )
+		{
+			*_out = _from;
+			return true;
+		}
+
+BX_PRAGMA_DIAGNOSTIC_PUSH()
+BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4702) // warning C4702: unreachable code
+		*_out = static_cast<Ty>(_from);
+		return static_cast<FromT>(*_out) == _from;
+BX_PRAGMA_DIAGNOSTIC_POP()
+	}
+
+	template<typename Ty, typename FromT>
+	inline Ty narrowCast(const FromT& _from, Location _location)
+	{
+		Ty to;
+		const bool result = narrowCastTest(&to, _from);
+
+		//!!!!betauser
+		//BX_ASSERT_LOC(_location, result
+		//	, "bx::narrowCast failed! Value is truncated!"
+		//	);
+		BX_UNUSED(result);
+		return to;
+	}
+
+	//!!!!betauser
+	inline float  kFloatInfinity = bitCast<float>(kFloatExponentMask);
+	inline double kDoubleInfinity = bitCast<double>(kDoubleExponentMask);
+	//constexpr float  kFloatInfinity  = bitCast<float>(kFloatExponentMask);
+	//constexpr double kDoubleInfinity = bitCast<double>(kDoubleExponentMask);
+
+	inline BX_CONSTEXPR_FUNC uint32_t gcd(uint32_t _a, uint32_t _b)
+	{
+		do
+		{
+			const uint32_t tmp = _a % _b;
+			_a = _b;
+			_b = tmp;
+		}
+		while (_b);
+
+		return _a;
+	}
+
+	inline BX_CONSTEXPR_FUNC uint32_t lcm(uint32_t _a, uint32_t _b)
+	{
+		return _a * (_b / gcd(_a, _b) );
+	}
+
+	inline BX_CONSTEXPR_FUNC uint32_t strideAlign(uint32_t _offset, uint32_t _stride)
+	{
+		const uint32_t mod    = _offset % _stride;
+		const uint32_t add    = _stride - mod;
+		const uint32_t tmp    = (0 == mod) ? 0 : add;
+		const uint32_t result = _offset + tmp;
+
+		return result;
+	}
+
+	template<uint32_t Min>
+	inline BX_CONSTEXPR_FUNC uint32_t strideAlign(uint32_t _offset, uint32_t _stride)
+	{
+		const uint32_t align  = lcm(Min, _stride);
+		const uint32_t mod    = _offset % align;
+		const uint32_t tmp0   = (0 == mod) ? 0 : align;
+		const uint32_t tmp1   = _offset + tmp0;
+		const uint32_t result = tmp1 - mod;
+
+		return result;
+	}
+
+	template<typename Ty>
+	inline BX_CONSTEXPR_FUNC bool isAligned(Ty _a, size_t _align)
+	{
+		const size_t mask = max<size_t>(1, _align) - 1;
+		return 0 == (size_t(_a) & mask);
+	}
+
+	//!!!!betauser
+	//template<>
+	//inline BX_CONSTEXPR_FUNC bool isAligned(const void* _ptr, size_t _align)
+	//{
+	//	const uintptr_t addr = bitCast<uintptr_t>(_ptr);
+	//	return isAligned(addr, _align);
+	//}
+
+	template<typename Ty>
+	inline BX_CONSTEXPR_FUNC Ty alignDown(Ty _a, size_t _align)
+	{
+		const size_t mask = max<size_t>(1, _align) - 1;
+		return Ty(size_t(_a) & ~mask);
+	}
+
+	template<typename Ty>
+	inline BX_CONSTEXPR_FUNC Ty* alignDown(Ty* _ptr, size_t _align)
+	{
+		uintptr_t addr = bitCast<uintptr_t>(_ptr);
+		addr = alignDown(addr, _align);
+		return bitCast<Ty*>(addr);
+	}
+
+	template<typename Ty>
+	inline BX_CONSTEXPR_FUNC const Ty* alignDown(const Ty* _ptr, size_t _align)
+	{
+		uintptr_t addr = bitCast<uintptr_t>(_ptr);
+		addr = alignDown(addr, _align);
+		return bitCast<const Ty*>(addr);
+	}
+
+	template<typename Ty>
+	inline BX_CONSTEXPR_FUNC Ty alignUp(Ty _a, size_t _align)
+	{
+		const size_t mask = max<size_t>(1, _align) - 1;
+		return Ty( (size_t(_a) + mask) & ~mask);
+	}
+
+	template<typename Ty>
+	inline BX_CONSTEXPR_FUNC Ty* alignUp(Ty* _ptr, size_t _align)
+	{
+		uintptr_t addr = bitCast<uintptr_t>(_ptr);
+		addr = alignUp(addr, _align);
+		return bitCast<Ty*>(addr);
+	}
+
+	template<typename Ty>
+	inline BX_CONSTEXPR_FUNC const Ty* alignUp(const Ty* _ptr, size_t _align)
+	{
+		uintptr_t addr = bitCast<uintptr_t>(_ptr);
+		addr = alignUp(addr, _align);
+		return bitCast<const Ty*>(addr);
 	}
 
 } // namespace bx

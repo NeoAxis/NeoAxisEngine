@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
 #include <bx/debug.h>
 #include <bx/readerwriter.h>
+#include <bx/os.h>
 
 #if !BX_CRT_NONE
 #	include <string.h> // memcpy, memmove, memset
@@ -22,18 +23,45 @@ namespace bx
 		return LocationFull(_function, _filePath, _line);
 	}
 
-	static bool defaultAssertHandler(const Location& _location, const char* _format, va_list _argList)
+	static bool defaultAssertHandler(const Location& _location, uint32_t _skip, const char* _format, va_list _argList)
 	{
 		char temp[8192];
-		int32_t pos = 0;
+		int32_t total = 0;
 
-		pos += snprintf(&temp[pos], max(0, sizeof(temp)-pos), "%s(%d): "
+		StaticMemoryBlockWriter smb(temp, BX_COUNTOF(temp) );
+
+		ErrorIgnore err;
+
+		total += write(&smb, &err, "\n--- ASSERT ---\n\n");
+
+		total += write(&smb, &err, "%s(%d): "
 			, _location.filePath
 			, _location.line
 			);
-		pos += vsnprintf(&temp[pos], max(0, sizeof(temp)-pos), _format, _argList);
-		pos += snprintf(&temp[pos], max(0, sizeof(temp)-pos), "\n");
-		debugOutput(temp);
+		total += write(&smb, _format, _argList, &err);
+		total += write(&smb, "\n\n", &err);
+
+		uintptr_t stack[32];
+		const uint32_t num = getCallStackExact(2 /* skip self */ + _skip, BX_COUNTOF(stack), stack);
+		total += writeCallstack(&smb, stack, num, &err);
+
+		total += write(&smb, &err,
+			"\nBuild info:\n"
+			"\tCompiler: " BX_COMPILER_NAME
+			", CPU: " BX_CPU_NAME
+			", Arch: " BX_ARCH_NAME
+			", OS: " BX_PLATFORM_NAME
+			", CRT: " BX_CRT_NAME
+			", C++: " BX_CPP_NAME
+
+			", Date: " __DATE__
+			", Time: " __TIME__
+			"\n"
+			);
+
+		total += write(&smb, &err, "\n--- END ---\n\n");
+
+		write(getDebugOut(), temp, total, ErrorIgnore{});
 
 		return true;
 	}
@@ -53,11 +81,11 @@ namespace bx
 		}
 	}
 
-	bool assertFunction(const Location& _location, const char* _format, ...)
+	bool assertFunction(const Location& _location, uint32_t _skip, const char* _format, ...)
 	{
 		va_list argList;
 		va_start(argList, _format);
-		const bool result = s_assertHandler(_location, _format, argList);
+		const bool result = s_assertHandler(_location, _skip + 1 /* skip self */, _format, argList);
 		va_end(argList);
 
 		return result;

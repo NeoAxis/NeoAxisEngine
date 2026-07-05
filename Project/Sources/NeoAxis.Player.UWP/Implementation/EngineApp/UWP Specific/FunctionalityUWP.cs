@@ -654,7 +654,7 @@ namespace NeoAxis
 			}
 		}
 
-		public override bool ApplicationIsActivated()
+		public override bool ApplicationIsActive()
 		{
 			//TEST IT:
 			return CreatedWindow_IsWindowActive();

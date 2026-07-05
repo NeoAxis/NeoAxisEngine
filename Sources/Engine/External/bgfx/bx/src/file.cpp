@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -14,7 +14,7 @@
 #endif // BX_CONFIG_CRT_DIRECTORY_READER
 
 #if BX_CRT_NONE
-#	include "crt0.h"
+#	include <bx/crt0.h>
 #else
 #	if BX_CONFIG_CRT_DIRECTORY_READER
 
@@ -115,7 +115,9 @@ namespace bx
 	  || BX_PLATFORM_ANDROID \
 	  || BX_PLATFORM_EMSCRIPTEN \
 	  || BX_PLATFORM_IOS     \
-	  || BX_PLATFORM_OSX
+	  || BX_PLATFORM_OSX        \
+	  || BX_PLATFORM_VISIONOS   \
+		|| BX_PLATFORM_NX
 #		define fseeko64 fseeko
 #		define ftello64 ftello
 #	elif BX_PLATFORM_PS4
@@ -576,7 +578,7 @@ namespace bx
 
 	FileReader::FileReader()
 	{
-		BX_STATIC_ASSERT(sizeof(FileReaderImpl) <= sizeof(m_internal) );
+		static_assert(sizeof(FileReaderImpl) <= sizeof(m_internal) );
 		BX_PLACEMENT_NEW(m_internal, FileReaderImpl)(NULL);
 	}
 
@@ -612,7 +614,7 @@ namespace bx
 
 	FileWriter::FileWriter()
 	{
-		BX_STATIC_ASSERT(sizeof(FileWriterImpl) <= sizeof(m_internal) );
+		static_assert(sizeof(FileWriterImpl) <= sizeof(m_internal) );
 		BX_PLACEMENT_NEW(m_internal, FileWriterImpl)(NULL);
 	}
 
@@ -796,7 +798,7 @@ namespace bx
 
 	DirectoryReader::DirectoryReader()
 	{
-		BX_STATIC_ASSERT(sizeof(DirectoryReaderImpl) <= sizeof(m_internal) );
+		static_assert(sizeof(DirectoryReaderImpl) <= sizeof(m_internal) );
 		BX_PLACEMENT_NEW(m_internal, DirectoryReaderImpl);
 	}
 
@@ -886,7 +888,7 @@ namespace bx
 #if BX_CRT_MSVC
 		int32_t result = ::_mkdir(_filePath.getCPtr() );
 #elif BX_CRT_MINGW
-		int32_t result = ::mkdir(_filePath.getCPtr());
+		int32_t result = ::mkdir(_filePath.getCPtr() );
 #elif BX_CRT_NONE
 		BX_UNUSED(_filePath);
 		int32_t result = -1;
@@ -950,14 +952,18 @@ namespace bx
 			return false;
 		}
 
-#if BX_CRT_MSVC
+#if BX_CRT_MSVC || BX_CRT_MINGW
 		int32_t result = -1;
 		FileInfo fi;
 		if (stat(fi, _filePath) )
 		{
 			if (FileType::Dir == fi.type)
 			{
+#	if BX_CRT_MINGW
+				result = ::rmdir(_filePath.getCPtr() );
+#	else
 				result = ::_rmdir(_filePath.getCPtr() );
+#	endif // BX_CRT_MINGW
 			}
 			else
 			{

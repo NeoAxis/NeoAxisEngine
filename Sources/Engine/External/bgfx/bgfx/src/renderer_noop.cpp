@@ -157,7 +157,7 @@ namespace bgfx { namespace noop
 		{
 		}
 
-		void* createTexture(TextureHandle /*_handle*/, const Memory* /*_mem*/, uint64_t /*_flags*/, uint8_t /*_skip*/) override
+		void* createTexture(TextureHandle /*_handle*/, const Memory* /*_mem*/, uint64_t /*_flags*/, uint8_t /*_skip*/, uint64_t /*_external*/) override
 		{
 			return NULL;
 		}
@@ -174,7 +174,7 @@ namespace bgfx { namespace noop
 		{
 		}
 
-		void readTexture(TextureHandle /*_handle*/, void* /*_data*/, uint8_t /*_mip*/) override
+		void readTexture(TextureHandle /*_handle*/, void* /*_data*/, uint16_t /*_layer*/, uint8_t /*_mip*/) override
 		{
 		}
 
@@ -182,7 +182,7 @@ namespace bgfx { namespace noop
 		{
 		}
 
-		void overrideInternal(TextureHandle /*_handle*/, uintptr_t /*_ptr*/) override
+		void overrideInternal(TextureHandle /*_handle*/, uintptr_t /*_ptr*/, uint16_t /*_layerIndex*/) override
 		{
 		}
 
@@ -215,9 +215,9 @@ namespace bgfx { namespace noop
 		{
 		}
 
-		void requestScreenShot(FrameBufferHandle /*_handle*/, const char* /*_filePath*/) override
-		{
-		}
+		//void requestScreenShot(FrameBufferHandle /*_handle*/, const char* /*_filePath*/) override
+		//{
+		//}
 
 		void updateViewName(ViewId /*_id*/, const char* /*_name*/) override
 		{

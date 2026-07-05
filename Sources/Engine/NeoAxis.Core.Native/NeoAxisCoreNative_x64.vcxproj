@@ -478,8 +478,8 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <ClCompile Include="..\External\bgfx\bgfx\src\renderer_noop.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\renderer_nvn.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\renderer_vk.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_webgpu.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\shader.cpp" />
-    <ClCompile Include="..\External\bgfx\bgfx\src\special.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\topology.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\vertexlayout.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\Library.cpp" />
@@ -515,7 +515,6 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_weight_align.cpp" />
     <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_weight_quant_xfer_tables.cpp" />
     <ClCompile Include="..\External\bgfx\bimg\src\image_bimg.cpp" />
-    <ClCompile Include="..\External\bgfx\bimg\src\image_gnf.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\allocator.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\bx.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\commandline.cpp" />
@@ -1645,8 +1644,8 @@ copy ..\..\..\_build\Windows\$(Configuration)\$(Platform)\libNeoAxisCoreNative\l
     <ClInclude Include="..\External\bgfx\bgfx\src\renderer_gl.h" />
     <ClInclude Include="..\External\bgfx\bgfx\src\renderer_mtl.h" />
     <ClInclude Include="..\External\bgfx\bgfx\src\renderer_vk.h" />
+    <ClInclude Include="..\External\bgfx\bgfx\src\renderer_webgpu.h" />
     <ClInclude Include="..\External\bgfx\bgfx\src\shader.h" />
-    <ClInclude Include="..\External\bgfx\bgfx\src\special.h" />
     <ClInclude Include="..\External\bgfx\bgfx\src\topology.h" />
     <ClInclude Include="..\External\bgfx\bgfx\src\vertexlayout.h" />
     <ClInclude Include="..\External\bgfx\bgfx\tools\shaderc\LibraryBase.h" />

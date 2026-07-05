@@ -24,21 +24,21 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
-		[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
-		public struct RAMP
-		{
-			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
-			public ushort[] red;
-			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
-			public ushort[] green;
-			[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
-			public ushort[] blue;
-		}
+		//[StructLayout( LayoutKind.Sequential, CharSet = CharSet.Ansi )]
+		//public struct RAMP
+		//{
+		//	[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
+		//	public ushort[] red;
+		//	[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
+		//	public ushort[] green;
+		//	[MarshalAs( UnmanagedType.ByValArray, SizeConst = 256 )]
+		//	public ushort[] blue;
+		//}
 
-		[DllImport( "gdi32.dll" )]
-		static extern int GetDeviceGammaRamp( IntPtr hdc, out RAMP ramp );
-		[DllImport( "gdi32.dll" )]
-		static extern int SetDeviceGammaRamp( IntPtr hdc, ref RAMP ramp );
+		//[DllImport( "gdi32.dll" )]
+		//static extern int GetDeviceGammaRamp( IntPtr hdc, out RAMP ramp );
+		//[DllImport( "gdi32.dll" )]
+		//static extern int SetDeviceGammaRamp( IntPtr hdc, ref RAMP ramp );
 
 		///////////////////////////////////////////
 
@@ -97,38 +97,38 @@ namespace NeoAxis
 			// we can't change video mode in UWP
 		}
 
-		public override void SetGamma( float value )
-		{
-			//copy from WindowsPlatformFunctionality
+		//public override void SetGamma( float value )
+		//{
+		//	//copy from WindowsPlatformFunctionality
 
-			RAMP gamma;
-			IntPtr hWnd = GetDesktopWindow();
-			IntPtr hdc = GetDC( hWnd );
-			if( GetDeviceGammaRamp( hdc, out gamma ) != 0 )
-			{
-				for( int n = 0; n < 256; n++ )
-				{
-					ushort g = (ushort)( 255 * (ushort)( 255.0f * MathEx.Pow( (float)n / 255.0f, 1.0f / value ) ) );
-					gamma.red[ n ] = g;
-					gamma.green[ n ] = g;
-					gamma.blue[ n ] = g;
-				}
-				if( SetDeviceGammaRamp( hdc, ref gamma ) == 0 )
-				{
-					//Error
-					//ReleaseDC(hWnd, hdc);
-					//return;
-				}
-			}
+		//	RAMP gamma;
+		//	IntPtr hWnd = GetDesktopWindow();
+		//	IntPtr hdc = GetDC( hWnd );
+		//	if( GetDeviceGammaRamp( hdc, out gamma ) != 0 )
+		//	{
+		//		for( int n = 0; n < 256; n++ )
+		//		{
+		//			ushort g = (ushort)( 255 * (ushort)( 255.0f * MathEx.Pow( (float)n / 255.0f, 1.0f / value ) ) );
+		//			gamma.red[ n ] = g;
+		//			gamma.green[ n ] = g;
+		//			gamma.blue[ n ] = g;
+		//		}
+		//		if( SetDeviceGammaRamp( hdc, ref gamma ) == 0 )
+		//		{
+		//			//Error
+		//			//ReleaseDC(hWnd, hdc);
+		//			//return;
+		//		}
+		//	}
 
-			ReleaseDC( hWnd, hdc );
+		//	ReleaseDC( hWnd, hdc );
 
 
-			//// it seems it works, but it's cross-platform?
+		//	//// it seems it works, but it's cross-platform?
 
-			//var wp = new WindowsPlatformFunctionality();
-			//wp.SetGamma( value );
-		}
+		//	//var wp = new WindowsPlatformFunctionality();
+		//	//wp.SetGamma( value );
+		//}
 
 		public override void ProcessChangingVideoMode()
 		{

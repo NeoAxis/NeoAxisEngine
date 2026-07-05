@@ -920,7 +920,7 @@ namespace NeoAxis
 					texture.Result.GetNativeObject( true ).BlitTo( (ushort)RenderingSystem.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
 					//texture.Result.GetNativeObject( true ).BlitTo( (ushort)viewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
 
-					var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( imageData, 0 );
+					var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( imageData, 0, 0 );
 					while( RenderingSystem.CallFrame() < demandedFrame ) { }
 				}
 

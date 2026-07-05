@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -7,13 +7,11 @@
 #include <bx/os.h>
 #include <bx/readerwriter.h>
 
-#if !BX_CRT_NONE
-#	if BX_CRT_MSVC
+#if BX_CRT_MSVC
 #		include <direct.h>   // _getcwd
-#	else
+#else
 #		include <unistd.h>   // getcwd
-#	endif // BX_CRT_MSVC
-#endif // !BX_CRT_NONE
+#endif // BX_CRT_MSVC
 
 #if BX_PLATFORM_WINDOWS
 #if !defined(GetModuleFileName)
@@ -303,6 +301,12 @@ namespace bx
 	FilePath::FilePath(const StringView& _filePath)
 	{
 		set(_filePath);
+	}
+
+	FilePath& FilePath::operator=(const char* _rhs)
+	{
+		set(_rhs);
+		return *this;
 	}
 
 	FilePath& FilePath::operator=(const StringView& _rhs)

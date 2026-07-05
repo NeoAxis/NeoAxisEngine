@@ -318,7 +318,7 @@ namespace NeoAxis.Editor
 				{
 					fixed( byte* pBytes = data )
 					{
-						var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( (IntPtr)pBytes, 0 );
+						var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( (IntPtr)pBytes, 0, 0 );
 						while( RenderingSystem.CallFrame() < demandedFrame ) { }
 					}
 				}
@@ -736,7 +736,7 @@ namespace NeoAxis.Editor
 					{
 						fixed( byte* pBytes = data )
 						{
-							var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( (IntPtr)pBytes, 0 );
+							var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( (IntPtr)pBytes, 0, 0 );
 							while( RenderingSystem.CallFrame() < demandedFrame ) { }
 						}
 					}

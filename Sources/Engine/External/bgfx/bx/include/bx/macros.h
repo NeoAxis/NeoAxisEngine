@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -60,54 +60,39 @@
 #if BX_COMPILER_GCC || BX_COMPILER_CLANG
 #	define BX_ASSUME(_condition) BX_MACRO_BLOCK_BEGIN if (!(_condition) ) { __builtin_unreachable(); } BX_MACRO_BLOCK_END
 #	define BX_ALIGN_DECL(_align, _decl) _decl __attribute__( (aligned(_align) ) )
-#	define BX_ALLOW_UNUSED __attribute__( (unused) )
 #	define BX_FORCE_INLINE inline __attribute__( (__always_inline__) )
 #	define BX_FUNCTION __PRETTY_FUNCTION__
 #	define BX_LIKELY(_x)   __builtin_expect(!!(_x), 1)
 #	define BX_UNLIKELY(_x) __builtin_expect(!!(_x), 0)
 #	define BX_NO_INLINE   __attribute__( (noinline) )
-#	define BX_NO_RETURN   __attribute__( (noreturn) )
 #	define BX_CONST_FUNC  __attribute__( (pure) )
 #	define BX_UNREACHABLE __builtin_unreachable()
-
-#	if BX_COMPILER_GCC >= 70000
-#		define BX_FALLTHROUGH __attribute__( (fallthrough) )
-#	else
-#		define BX_FALLTHROUGH BX_NOOP()
-#	endif // BX_COMPILER_GCC >= 70000
-
 #	define BX_NO_VTABLE
 #	define BX_PRINTF_ARGS(_format, _args) __attribute__( (format(__printf__, _format, _args) ) )
-
-#	if BX_CLANG_HAS_FEATURE(cxx_thread_local) \
-	|| (!BX_PLATFORM_OSX && (BX_COMPILER_GCC >= 40200) ) \
-	|| (BX_COMPILER_GCC >= 40500)
 #		define BX_THREAD_LOCAL __thread
-#	endif // BX_COMPILER_GCC
-
 #	define BX_ATTRIBUTE(_x) __attribute__( (_x) )
+#	define BX_ATTRIBUTE_INTRINSIC BX_FORCE_INLINE
 #	define BX_STACK_ALLOC(_size) __builtin_alloca(_size)
 
 #	if BX_CRT_MSVC
 #		define __stdcall
 #	endif // BX_CRT_MSVC
+
 #elif BX_COMPILER_MSVC
 #	define BX_ASSUME(_condition) __assume(_condition)
 #	define BX_ALIGN_DECL(_align, _decl) __declspec(align(_align) ) _decl
-#	define BX_ALLOW_UNUSED
 #	define BX_FORCE_INLINE __forceinline
 #	define BX_FUNCTION __FUNCTION__
 #	define BX_LIKELY(_x)   (_x)
 #	define BX_UNLIKELY(_x) (_x)
 #	define BX_NO_INLINE __declspec(noinline)
-#	define BX_NO_RETURN
 #	define BX_CONST_FUNC  __declspec(noalias)
 #	define BX_UNREACHABLE __assume(false)
-#	define BX_FALLTHROUGH BX_NOOP()
 #	define BX_NO_VTABLE __declspec(novtable)
 #	define BX_PRINTF_ARGS(_format, _args)
 #	define BX_THREAD_LOCAL __declspec(thread)
 #	define BX_ATTRIBUTE(_x)
+#	define BX_ATTRIBUTE_INTRINSIC [[msvc::intrinsic]]
 
 extern "C" void* __cdecl _alloca(size_t _size);
 #	define BX_STACK_ALLOC(_size) ::_alloca(_size)
@@ -115,9 +100,17 @@ extern "C" void* __cdecl _alloca(size_t _size);
 #	error "Unknown BX_COMPILER_?"
 #endif
 
+#if BX_COMPILER_CLANG
+#	define BX_REQUIRE_CONSTANT(_x) BX_ATTRIBUTE(__diagnose_if__(!__builtin_constant_p(_x), #_x " must be constant!", "error") )
+#else
+#	define BX_REQUIRE_CONSTANT(_x)
+#endif // if BX_COMPILER_CLANG
+
 /// The return value of the function is solely a function of the arguments.
 ///
-#define BX_CONSTEXPR_FUNC constexpr BX_CONST_FUNC
+//!!!!betauser
+#define BX_CONSTEXPR_FUNC BX_CONST_FUNC
+//#define BX_CONSTEXPR_FUNC constexpr BX_CONST_FUNC
 
 ///
 #define BX_STATIC_ASSERT(_condition, ...) static_assert(_condition, "" __VA_ARGS__)
@@ -128,8 +121,8 @@ extern "C" void* __cdecl _alloca(size_t _size);
 #define BX_ALIGN_DECL_CACHE_LINE(_decl) BX_ALIGN_DECL(BX_CACHE_LINE_SIZE, _decl)
 
 ///
-#define BX_MACRO_BLOCK_BEGIN for(;;) {
-#define BX_MACRO_BLOCK_END break; }
+#define BX_MACRO_BLOCK_BEGIN do {
+#define BX_MACRO_BLOCK_END } while (false)
 #define BX_NOOP(...) BX_MACRO_BLOCK_BEGIN BX_MACRO_BLOCK_END
 
 ///
@@ -171,7 +164,7 @@ extern "C" void* __cdecl _alloca(size_t _size);
 #	define BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG(_x)
 #endif // BX_COMPILER_CLANG
 
-#if BX_COMPILER_GCC && BX_COMPILER_GCC >= 40600
+#if BX_COMPILER_GCC
 #	define BX_PRAGMA_DIAGNOSTIC_PUSH_GCC_()       _Pragma("GCC diagnostic push")
 #	define BX_PRAGMA_DIAGNOSTIC_POP_GCC_()        _Pragma("GCC diagnostic pop")
 #	define BX_PRAGMA_DIAGNOSTIC_IGNORED_GCC(_x)   _Pragma(BX_STRINGIZE(GCC diagnostic ignored _x) )
@@ -244,7 +237,7 @@ extern "C" void* __cdecl _alloca(size_t _size);
 #	if BX_CONFIG_DEBUG
 #		define BX_ASSERT _BX_ASSERT
 #	else
-#		define BX_ASSERT(_condition, ...) BX_NOOP()
+#		define BX_ASSERT(...) BX_NOOP()
 #	endif // BX_CONFIG_DEBUG
 #endif // BX_ASSERT
 
@@ -252,7 +245,7 @@ extern "C" void* __cdecl _alloca(size_t _size);
 #	if BX_CONFIG_DEBUG
 #		define BX_ASSERT_LOC _BX_ASSERT_LOC
 #	else
-#		define BX_ASSERT_LOC(...) BX_NOOP()
+#		define BX_ASSERT_LOC(_location, ...) BX_MACRO_BLOCK_BEGIN BX_UNUSED(_location); BX_MACRO_BLOCK_END
 #	endif // BX_CONFIG_DEBUG
 #endif // BX_ASSERT_LOC
 
@@ -268,7 +261,7 @@ extern "C" void* __cdecl _alloca(size_t _size);
 #	if BX_CONFIG_DEBUG
 #		define BX_TRACE_LOC _BX_TRACE_LOC
 #	else
-#		define BX_TRACE_LOC(...) BX_NOOP()
+#		define BX_TRACE_LOC(_location, ...) BX_MACRO_BLOCK_BEGIN BX_UNUSED(_location); BX_MACRO_BLOCK_END
 #	endif // BX_CONFIG_DEBUG
 #endif // BX_TRACE_LOC
 
@@ -276,7 +269,7 @@ extern "C" void* __cdecl _alloca(size_t _size);
 #	if BX_CONFIG_DEBUG
 #		define BX_WARN _BX_WARN
 #	else
-#		define BX_WARN(_condition, ...) BX_NOOP()
+#		define BX_WARN(...) BX_NOOP()
 #	endif // BX_CONFIG_DEBUG
 #endif // BX_ASSERT
 
@@ -284,7 +277,7 @@ extern "C" void* __cdecl _alloca(size_t _size);
 #	if BX_CONFIG_DEBUG
 #		define BX_WARN_LOC _BX_WARN_LOC
 #	else
-#		define BX_WARN_LOC(...) BX_NOOP()
+#		define BX_WARN_LOC(_location, ...) BX_MACRO_BLOCK_BEGIN BX_UNUSED(_location); BX_MACRO_BLOCK_END
 #	endif // BX_CONFIG_DEBUG
 #endif // BX_WARN_LOC
 
@@ -298,29 +291,29 @@ extern "C" void* __cdecl _alloca(size_t _size);
 		bx::debugPrintf("%s(%d): BX " _format "\n", _location.filePath, _location.line, ##__VA_ARGS__); \
 	BX_MACRO_BLOCK_END
 
-#define _BX_WARN(_condition, _format, ...)            \
+#define _BX_ASSERT(_condition, _format, ...)                                                                      \
 	BX_MACRO_BLOCK_BEGIN                              \
-		if (!BX_IGNORE_C4127(_condition) )            \
+		if (!BX_IGNORE_C4127(_condition)                                                                          \
+		&&  bx::assertFunction(bx::Location::current(), 0, "ASSERT %s -> " _format, #_condition, ##__VA_ARGS__) ) \
 		{                                             \
-			BX_TRACE("WARN " _format, ##__VA_ARGS__); \
+			bx::debugBreak();                                                                                     \
 		}                                             \
 	BX_MACRO_BLOCK_END
 
-#define _BX_ASSERT(_condition, _format, ...)            \
+#define _BX_ASSERT_LOC(_location, _condition, _format, ...)                                          \
 	BX_MACRO_BLOCK_BEGIN                                \
-		if (!BX_IGNORE_C4127(_condition) )              \
+		if  (!BX_IGNORE_C4127(_condition)                                                            \
+		&&   bx::assertFunction(_location, 0, "ASSERT %s -> " _format, #_condition, ##__VA_ARGS__) ) \
 		{                                               \
-			BX_TRACE("ASSERT " _format, ##__VA_ARGS__); \
 			bx::debugBreak();                           \
 		}                                               \
 	BX_MACRO_BLOCK_END
 
-#define _BX_ASSERT_LOC(_location, _condition, _format, ...)             \
+#define _BX_WARN(_condition, _format, ...)            \
 	BX_MACRO_BLOCK_BEGIN                                                \
 		if (!BX_IGNORE_C4127(_condition) )                              \
 		{                                                               \
-			_BX_TRACE_LOC(_location, "ASSERT " _format, ##__VA_ARGS__); \
-			bx::debugBreak();                                           \
+			BX_TRACE("WARN " _format, ##__VA_ARGS__); \
 		}                                                               \
 	BX_MACRO_BLOCK_END
 

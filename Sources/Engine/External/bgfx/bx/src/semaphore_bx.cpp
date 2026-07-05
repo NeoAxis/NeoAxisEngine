@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -9,8 +9,9 @@
 
 #if BX_CRT_NONE
 #elif  BX_PLATFORM_OSX \
-	|| BX_PLATFORM_IOS
-#	include <dispatch/dispatch.h>
+	|| BX_PLATFORM_IOS   \
+	|| BX_PLATFORM_VISIONOS
+#	include <CoreFoundation/CoreFoundation.h>
 #elif BX_PLATFORM_POSIX
 #	include <errno.h>
 #	include <pthread.h>
@@ -36,7 +37,8 @@ namespace bx
 #if BX_CRT_NONE
 
 #elif  BX_PLATFORM_OSX \
-	|| BX_PLATFORM_IOS
+	|| BX_PLATFORM_IOS   \
+	|| BX_PLATFORM_VISIONOS
 		dispatch_semaphore_t m_handle;
 #elif BX_PLATFORM_POSIX
 		pthread_mutex_t m_mutex;
@@ -52,7 +54,7 @@ namespace bx
 #if BX_CRT_NONE
 	Semaphore::Semaphore()
 	{
-		BX_STATIC_ASSERT(sizeof(SemaphoreInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(SemaphoreInternal) <= sizeof(m_internal) );
 	}
 
 	Semaphore::~Semaphore()
@@ -70,11 +72,12 @@ namespace bx
 		return false;
 	}
 #elif  BX_PLATFORM_OSX \
-	|| BX_PLATFORM_IOS
+	|| BX_PLATFORM_IOS   \
+	|| BX_PLATFORM_VISIONOS
 
 	Semaphore::Semaphore()
 	{
-		BX_STATIC_ASSERT(sizeof(SemaphoreInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(SemaphoreInternal) <= sizeof(m_internal) );
 
 		SemaphoreInternal* si = (SemaphoreInternal*)m_internal;
 		si->m_handle = dispatch_semaphore_create(0);
@@ -101,10 +104,31 @@ namespace bx
 	{
 		SemaphoreInternal* si = (SemaphoreInternal*)m_internal;
 
-		dispatch_time_t dt = 0 > _msecs
-			? DISPATCH_TIME_FOREVER
-			: dispatch_time(DISPATCH_TIME_NOW, int64_t(_msecs)*1000000)
-			;
+		static constexpr int64_t kNanosecondsInMilisecond = 1000000;
+
+		if (0 > _msecs)
+		{
+			while (true)
+			{
+				const dispatch_time_t dt = dispatch_time(
+					  DISPATCH_TIME_NOW
+					, 300*kNanosecondsInMilisecond
+					);
+				if (0 == dispatch_semaphore_wait(si->m_handle, dt) )
+				{
+					return true;
+				}
+
+				CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0, true);
+			}
+
+			BX_UNREACHABLE;
+		}
+
+		const dispatch_time_t dt = dispatch_time(
+			  DISPATCH_TIME_NOW
+			, int64_t(_msecs)*kNanosecondsInMilisecond
+			);
 		return !dispatch_semaphore_wait(si->m_handle, dt);
 	}
 
@@ -134,7 +158,7 @@ namespace bx
 
 	Semaphore::Semaphore()
 	{
-		BX_STATIC_ASSERT(sizeof(SemaphoreInternal) <= sizeof(m_internal) );
+		static_assert(sizeof(SemaphoreInternal) <= sizeof(m_internal) );
 
 		SemaphoreInternal* si = (SemaphoreInternal*)m_internal;
 		si->m_count = 0;

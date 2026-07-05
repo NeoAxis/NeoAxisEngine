@@ -220,16 +220,16 @@ namespace Internal.SharpBgfx
         /// <summary>
         /// Advances to the next frame.
         /// </summary>
-        /// <param name="capture">If <c>true</c> the frame is captured for debugging.</param>
+        /// <param name="flags">Flags used to control frame rendering.</param>
         /// <returns>The current frame number.</returns>
         /// <remarks>
         /// When using a multithreaded renderer, this call
         /// just swaps internal buffers, kicks render thread, and returns. In a
         /// singlethreaded renderer this call does frame rendering.
         /// </remarks>
-        public static int Frame( bool capture = false )
+        public static int Frame( byte flags = 0 ) // bool capture = false )
         {
-            return NativeMethods.bgfx_frame( capture );
+            return NativeMethods.bgfx_frame( flags );
         }
 
         /// <summary>
@@ -250,7 +250,8 @@ namespace Internal.SharpBgfx
             //native.Capabilities = ulong.MaxValue;
             native.Debug = (byte)( settings.Debug ? 1 : 0 );
             native.Profiling = (byte)( settings.Profiling ? 1 : 0 );
-            native.Resolution.Format = settings.Format;
+            native.Resolution.FormatColor = settings.FormatColor;
+            native.Resolution.FormatDepthStencil = settings.FormatDepthStencil;
             native.Resolution.Width = (uint)settings.Width;
             native.Resolution.Height = (uint)settings.Height;
             native.Resolution.Flags = (uint)settings.ResetFlags;
@@ -293,14 +294,14 @@ namespace Internal.SharpBgfx
             NativeMethods.bgfx_set_debug( features );
         }
 
-        /// <summary>
-        /// Sets a marker that can be used for debugging purposes.
-        /// </summary>
-        /// <param name="marker">The user-defined name of the marker.</param>
-        public static void SetDebugMarker( string marker )
-        {
-            NativeMethods.bgfx_set_marker( marker );
-        }
+        ///// <summary>
+        ///// Sets a marker that can be used for debugging purposes.
+        ///// </summary>
+        ///// <param name="marker">The user-defined name of the marker.</param>
+        //public static void SetDebugMarker( string marker )
+        //{
+        //    NativeMethods.bgfx_set_marker( marker, marker.Length );
+        //}
 
         /// <summary>
         /// Clears the debug text buffer.
@@ -388,15 +389,15 @@ namespace Internal.SharpBgfx
                 NativeMethods.bgfx_dbg_text_image( (ushort)x, (ushort)y, (ushort)width, (ushort)height, new IntPtr( ptr ), (ushort)pitch );
         }
 
-        /// <summary>
-        /// Sets the name of a rendering view, for debugging purposes.
-        /// </summary>
-        /// <param name="id">The index of the view.</param>
-        /// <param name="name">The name of the view.</param>
-        public static void SetViewName( ushort id, string name )
-        {
-            NativeMethods.bgfx_set_view_name( id, name );
-        }
+        ///// <summary>
+        ///// Sets the name of a rendering view, for debugging purposes.
+        ///// </summary>
+        ///// <param name="id">The index of the view.</param>
+        ///// <param name="name">The name of the view.</param>
+        //public static void SetViewName( ushort id, string name )
+        //{
+        //    NativeMethods.bgfx_set_view_name( id, name, name.Length );
+        //}
 
         /// <summary>
         /// Sets the viewport for the given rendering view.
@@ -1089,7 +1090,7 @@ namespace Internal.SharpBgfx
         [MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
         public static void Dispatch( ushort id, Program program, IndirectBuffer indirectBuffer, int startIndex, int count, DiscardFlags flags )
         {
-            NativeMethods.bgfx_dispatch_indirect( id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count, flags );
+            NativeMethods.bgfx_dispatch_indirect( id, program.handle, indirectBuffer.handle, (uint)startIndex, (uint)count, flags );
         }
         ///// <summary>
         ///// Dispatches an indirect compute job.
@@ -1103,24 +1104,24 @@ namespace Internal.SharpBgfx
         //    NativeMethods.bgfx_dispatch_indirect(id, program.handle, indirectBuffer.handle, (ushort)startIndex, (ushort)count);
         //}
 
-        /// <summary>
-        /// Requests that a screenshot be saved. The ScreenshotTaken event will be fired to save the result.
-        /// </summary>
-        /// <param name="filePath">The file path that will be passed to the callback event.</param>
-        public static void RequestScreenShot( string filePath )
-        {
-            NativeMethods.bgfx_request_screen_shot( ushort.MaxValue, filePath );
-        }
+        ///// <summary>
+        ///// Requests that a screenshot be saved. The ScreenshotTaken event will be fired to save the result.
+        ///// </summary>
+        ///// <param name="filePath">The file path that will be passed to the callback event.</param>
+        //public static void RequestScreenShot( string filePath )
+        //{
+        //    NativeMethods.bgfx_request_screen_shot( ushort.MaxValue, filePath );
+        //}
 
-        /// <summary>
-        /// Requests that a screenshot be saved. The ScreenshotTaken event will be fired to save the result.
-        /// </summary>
-        /// <param name="frameBuffer">The frame buffer to save.</param>
-        /// <param name="filePath">The file path that will be passed to the callback event.</param>
-        public static void RequestScreenShot( FrameBuffer frameBuffer, string filePath )
-        {
-            NativeMethods.bgfx_request_screen_shot( frameBuffer.handle, filePath );
-        }
+        ///// <summary>
+        ///// Requests that a screenshot be saved. The ScreenshotTaken event will be fired to save the result.
+        ///// </summary>
+        ///// <param name="frameBuffer">The frame buffer to save.</param>
+        ///// <param name="filePath">The file path that will be passed to the callback event.</param>
+        //public static void RequestScreenShot( FrameBuffer frameBuffer, string filePath )
+        //{
+        //    NativeMethods.bgfx_request_screen_shot( frameBuffer.handle, filePath );
+        //}
 
         /// <summary>
         /// Set rendering states used to draw primitives.

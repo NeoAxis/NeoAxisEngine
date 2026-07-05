@@ -134,9 +134,11 @@ namespace bgfx { namespace gl
 
 	static const GLenum s_attribType[] =
 	{
+		GL_BYTE,                     // Int8
 		GL_UNSIGNED_BYTE,            // Uint8
 		GL_UNSIGNED_INT_10_10_10_2,  // Uint10
 		GL_SHORT,                    // Int16
+		GL_UNSIGNED_SHORT,           // Uint16
 		GL_HALF_FLOAT,               // Half
 		GL_FLOAT,                    // Float
 	};
@@ -273,9 +275,13 @@ namespace bgfx { namespace gl
 		{ GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB,     GL_ZERO,                                      GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB,     GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB,     GL_ZERO,                         false, { $_, $_, $_, $_ } }, // BC6H
 		{ GL_COMPRESSED_RGBA_BPTC_UNORM_ARB,           GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB,      GL_COMPRESSED_RGBA_BPTC_UNORM_ARB,           GL_COMPRESSED_RGBA_BPTC_UNORM_ARB,           GL_ZERO,                         false, { $_, $_, $_, $_ } }, // BC7
 		{ GL_ETC1_RGB8_OES,                            GL_ZERO,                                      GL_ETC1_RGB8_OES,                            GL_ETC1_RGB8_OES,                            GL_ZERO,                         false, { $_, $_, $_, $_ } }, // ETC1
-		{ GL_COMPRESSED_RGB8_ETC2,                     GL_ZERO,                                      GL_COMPRESSED_RGB8_ETC2,                     GL_COMPRESSED_RGB8_ETC2,                     GL_ZERO,                         false, { $_, $_, $_, $_ } }, // ETC2
-		{ GL_COMPRESSED_RGBA8_ETC2_EAC,                GL_COMPRESSED_SRGB8_ETC2,                     GL_COMPRESSED_RGBA8_ETC2_EAC,                GL_COMPRESSED_RGBA8_ETC2_EAC,                GL_ZERO,                         false, { $_, $_, $_, $_ } }, // ETC2A
+		{ GL_COMPRESSED_RGB8_ETC2,                     GL_COMPRESSED_SRGB8_ETC2,                     GL_COMPRESSED_RGB8_ETC2,                     GL_COMPRESSED_RGB8_ETC2,                     GL_ZERO,                         false, { $_, $_, $_, $_ } }, // ETC2
+		{ GL_COMPRESSED_RGBA8_ETC2_EAC,                GL_COMPRESSED_SRGB8_ALPHA8_ETC2_EAC,          GL_COMPRESSED_RGBA8_ETC2_EAC,                GL_COMPRESSED_RGBA8_ETC2_EAC,                GL_ZERO,                         false, { $_, $_, $_, $_ } }, // ETC2A
 		{ GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, GL_COMPRESSED_RGB8_PUNCHTHROUGH_ALPHA1_ETC2, GL_ZERO,                         false, { $_, $_, $_, $_ } }, // ETC2A1
+		{ GL_COMPRESSED_R11_EAC,                       GL_ZERO,                                      GL_COMPRESSED_R11_EAC,                       GL_COMPRESSED_R11_EAC,                       GL_ZERO,                         false, { $_, $_, $_, $_ } }, // EACR11 UNORM
+		{ GL_COMPRESSED_SIGNED_R11_EAC,                GL_ZERO,                                      GL_COMPRESSED_SIGNED_R11_EAC,                GL_COMPRESSED_SIGNED_R11_EAC,                GL_ZERO,                         false, { $_, $_, $_, $_ } }, // EACR11 SNORM
+		{ GL_COMPRESSED_RG11_EAC,                      GL_ZERO,                                      GL_COMPRESSED_RG11_EAC,                      GL_COMPRESSED_RG11_EAC,                      GL_ZERO,                         false, { $_, $_, $_, $_ } }, // EACRG11 UNORM
+		{ GL_COMPRESSED_SIGNED_RG11_EAC,               GL_ZERO,                                      GL_COMPRESSED_SIGNED_RG11_EAC,               GL_COMPRESSED_SIGNED_RG11_EAC,               GL_ZERO,                         false, { $_, $_, $_, $_ } }, // EACRG11 SNORM
 		{ GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG,          GL_COMPRESSED_SRGB_PVRTC_2BPPV1_EXT,          GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG,          GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG,          GL_ZERO,                         false, { $_, $_, $_, $_ } }, // PTC12
 		{ GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG,          GL_COMPRESSED_SRGB_PVRTC_4BPPV1_EXT,          GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG,          GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG,          GL_ZERO,                         false, { $_, $_, $_, $_ } }, // PTC14
 		{ GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG,         GL_COMPRESSED_SRGB_ALPHA_PVRTC_2BPPV1_EXT,    GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG,         GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG,         GL_ZERO,                         false, { $_, $_, $_, $_ } }, // PTC12A
@@ -386,6 +392,10 @@ namespace bgfx { namespace gl
 		GL_ZERO,               // ETC2
 		GL_ZERO,               // ETC2A
 		GL_ZERO,               // ETC2A1
+		GL_ZERO,               // EACR11 UNORM
+		GL_ZERO,               // EACR11 SNORM
+		GL_ZERO,               // EACRG11 UNORM
+		GL_ZERO,               // EACRG11 SNORM
 		GL_ZERO,               // PTC12
 		GL_ZERO,               // PTC14
 		GL_ZERO,               // PTC12A
@@ -487,6 +497,10 @@ namespace bgfx { namespace gl
 		GL_ZERO,           // ETC2
 		GL_ZERO,           // ETC2A
 		GL_ZERO,           // ETC2A1
+		GL_ZERO,           // EACR11 UNORM
+		GL_ZERO,           // EACR11 SNORM
+		GL_ZERO,           // EACRG11 UNORM
+		GL_ZERO,           // EACRG11 SNORM
 		GL_ZERO,           // PTC12
 		GL_ZERO,           // PTC14
 		GL_ZERO,           // PTC12A
@@ -3420,8 +3434,9 @@ namespace bgfx { namespace gl
 			m_program[_handle.idx].destroy();
 		}
 
-		void* createTexture(TextureHandle _handle, const Memory* _mem, uint64_t _flags, uint8_t _skip) override
+		void* createTexture(TextureHandle _handle, const Memory* _mem, uint64_t _flags, uint8_t _skip, uint64_t _external) override
 		{
+			BX_UNUSED(_external);
 			m_textures[_handle.idx].create(_mem, _flags, _skip);
 			return NULL;
 		}
@@ -3439,7 +3454,7 @@ namespace bgfx { namespace gl
 		{
 		}
 
-		void readTexture(TextureHandle _handle, void* _data, uint8_t _mip) override
+		void readTexture(TextureHandle _handle, void* _data, uint16_t _layer, uint8_t _mip) override
 		{
 			if (m_readBackSupported)
 			{
@@ -3519,8 +3534,7 @@ namespace bgfx { namespace gl
 			const Memory* mem = alloc(size);
 
 			bx::StaticMemoryBlockWriter writer(mem->data, mem->size);
-			uint32_t magic = BGFX_CHUNK_MAGIC_TEX;
-			bx::write(&writer, magic, bx::ErrorAssert{});
+			bx::write(&writer, kChunkMagicTex, bx::ErrorAssert{});
 
 			TextureCreate tc;
 			tc.m_width     = _width;
@@ -3539,7 +3553,7 @@ namespace bgfx { namespace gl
 			release(mem);
 		}
 
-		void overrideInternal(TextureHandle _handle, uintptr_t _ptr) override
+		void overrideInternal(TextureHandle _handle, uintptr_t _ptr, uint16_t /*_layerIndex*/) override
 		{
 			m_textures[_handle.idx].overrideInternal(_ptr);
 		}
@@ -3606,49 +3620,49 @@ namespace bgfx { namespace gl
 			m_uniformReg.remove(_handle);
 		}
 
-		void requestScreenShot(FrameBufferHandle _handle, const char* _filePath) override
-		{
-			SwapChainGL* swapChain = NULL;
-			uint32_t width  = m_resolution.width;
-			uint32_t height = m_resolution.height;
+		//void requestScreenShot(FrameBufferHandle _handle, const char* _filePath) override
+		//{
+		//	SwapChainGL* swapChain = NULL;
+		//	uint32_t width  = m_resolution.width;
+		//	uint32_t height = m_resolution.height;
 
-			if (isValid(_handle) )
-			{
-				const FrameBufferGL& frameBuffer = m_frameBuffers[_handle.idx];
-				swapChain = frameBuffer.m_swapChain;
-				width  = frameBuffer.m_width;
-				height = frameBuffer.m_height;
-			}
+		//	if (isValid(_handle) )
+		//	{
+		//		const FrameBufferGL& frameBuffer = m_frameBuffers[_handle.idx];
+		//		swapChain = frameBuffer.m_swapChain;
+		//		width  = frameBuffer.m_width;
+		//		height = frameBuffer.m_height;
+		//	}
 
-			m_glctx.makeCurrent(swapChain);
+		//	m_glctx.makeCurrent(swapChain);
 
-			uint32_t length = width*height*4;
-			uint8_t* data = (uint8_t*)bx::alloc(g_allocator, length);
+		//	uint32_t length = width*height*4;
+		//	uint8_t* data = (uint8_t*)bx::alloc(g_allocator, length);
 
-			GL_CHECK(glReadPixels(0
-				, 0
-				, width
-				, height
-				, m_readPixelsFmt
-				, GL_UNSIGNED_BYTE
-				, data
-				) );
+		//	GL_CHECK(glReadPixels(0
+		//		, 0
+		//		, width
+		//		, height
+		//		, m_readPixelsFmt
+		//		, GL_UNSIGNED_BYTE
+		//		, data
+		//		) );
 
-			if (GL_RGBA == m_readPixelsFmt)
-			{
-				bimg::imageSwizzleBgra8(data, width*4, width, height, data, width*4);
-			}
+		//	if (GL_RGBA == m_readPixelsFmt)
+		//	{
+		//		bimg::imageSwizzleBgra8(data, width*4, width, height, data, width*4);
+		//	}
 
-			g_callback->screenShot(_filePath
-				, width
-				, height
-				, width*4
-				, data
-				, length
-				, true
-				);
-			bx::free(g_allocator, data);
-		}
+		//	g_callback->screenShot(_filePath
+		//		, width
+		//		, height
+		//		, width*4
+		//		, data
+		//		, length
+		//		, true
+		//		);
+		//	bx::free(g_allocator, data);
+		//}
 
 		void updateViewName(ViewId _id, const char* _name) override
 		{
@@ -7567,7 +7581,7 @@ namespace bgfx { namespace gl
 
 	void OcclusionQueryGL::resolve(Frame* _render, bool _wait)
 	{
-		while (0 != m_control.available() )
+		while (0 != m_control.getNumUsed() )
 		{
 			Query& query = m_query[m_control.m_read];
 
@@ -7597,7 +7611,7 @@ namespace bgfx { namespace gl
 	{
 		const uint32_t size = m_control.m_size;
 
-		for (uint32_t ii = 0, num = m_control.available(); ii < num; ++ii)
+		for (uint32_t ii = 0, num = m_control.getNumUsed(); ii < num; ++ii)
 		{
 			Query& query = m_query[(m_control.m_read + ii) % size];
 			if (query.m_handle.idx == _handle.idx)

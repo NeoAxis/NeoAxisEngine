@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bimg/blob/master/LICENSE
  */
 
@@ -31,13 +31,13 @@
 		}                                             \
 	BX_MACRO_BLOCK_END
 
-#define _BIMG_ASSERT(_condition, _format, ...)                                                                 \
-	BX_MACRO_BLOCK_BEGIN                                                                                       \
-		if (!BX_IGNORE_C4127(_condition) )              \
-		{                                                                                                      \
-			BX_TRACE("ASSERT " _format, ##__VA_ARGS__); \
-			bx::debugBreak();                                                                                  \
-		}                                                                                                      \
+#define _BIMG_ASSERT(_condition, _format, ...)                                                                    \
+	BX_MACRO_BLOCK_BEGIN                                                                                          \
+		if (!BX_IGNORE_C4127(_condition)                                                                          \
+		&&  bx::assertFunction(bx::Location::current(), 0, "ASSERT " #_condition " -> " _format, ##__VA_ARGS__) ) \
+		{                                                                                                         \
+			bx::debugBreak();                                                                                     \
+		}                                                                                                         \
 	BX_MACRO_BLOCK_END
 
 #include <bimg/bimg.h>
@@ -52,7 +52,6 @@
 #include "config.h"
 
 #define BIMG_CHUNK_MAGIC_TEX BX_MAKEFOURCC('T', 'E', 'X', 0x0)
-#define BIMG_CHUNK_MAGIC_GNF BX_MAKEFOURCC('G', 'N', 'F', ' ')
 
 BX_ERROR_RESULT(BIMG_ERROR, BX_MAKEFOURCC('b', 'i', 'm', 'g') );
 
@@ -80,7 +79,7 @@ namespace bimg
 		const Memory* m_mem;
 	};
 
-	inline uint8_t calcNumMips(bool _hasMips, uint16_t _width, uint16_t _height, uint16_t _depth = 1)
+	inline uint8_t calcNumMips(bool _hasMips, uint32_t _width, uint32_t _height, uint32_t _depth = 1)
 	{
 		if (_hasMips)
 		{
@@ -117,9 +116,18 @@ namespace bimg
 		);
 
 	///
-	bool imageParseGnf(
+	bool imageParseKtx2(
 		  ImageContainer& _imageContainer
-		, bx::ReaderSeekerI* _reader
+		, const void* _src
+		, uint32_t _size
+		, bx::Error* _err
+		);
+
+	///
+	ImageContainer* imageParseWic(
+		  bx::AllocatorI* _allocator
+		, const void* _data
+		, uint32_t _size
 		, bx::Error* _err
 		);
 

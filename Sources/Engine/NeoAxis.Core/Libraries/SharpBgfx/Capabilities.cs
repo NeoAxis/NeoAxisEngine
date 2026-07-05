@@ -176,14 +176,14 @@ namespace Internal.SharpBgfx {
         /// The amount of transient vertex buffer space reserved.
         /// </summary>
         public int TransientVertexBufferSize {
-            get { return (int)data->TransientVbSize; }
+            get { return (int)data->MaxTransientVbSize; }
         }
 
         /// <summary>
         /// The amount of transient index buffer space reserved.
         /// </summary>
         public int TransientIndexBufferSize {
-            get { return (int)data->TransientIbSize; }
+            get { return (int)data->MaxTransientIbSize; }
         }
 
         /// <summary>
@@ -360,8 +360,8 @@ namespace Internal.SharpBgfx {
             public uint MaxOcclusionQueries;
             public uint MaxEncoders;
             public uint MinResourceCbSize;
-            public uint TransientVbSize;
-            public uint TransientIbSize;
+            public uint MaxTransientVbSize;
+            public uint MaxTransientIbSize;
 
             public fixed ushort Formats[(int)TextureFormat.Count];
         }
@@ -1058,7 +1058,9 @@ namespace Internal.SharpBgfx {
         /// <summary>
         /// The initial texture format of the screen.
         /// </summary>
-        public TextureFormat Format { get; set; }
+        public TextureFormat FormatColor { get; set; }
+
+        public TextureFormat FormatDepthStencil { get; set; }
 
         /// <summary>
         /// The initial width of the screen.
@@ -1123,7 +1125,8 @@ namespace Internal.SharpBgfx {
             Adapter = new Adapter((Vendor)native.VendorId, native.DeviceId);
             Debug = native.Debug != 0;
             Profiling = native.Profiling != 0;
-            Format = native.Resolution.Format;
+            FormatColor = native.Resolution.FormatColor;
+            FormatDepthStencil = native.Resolution.FormatDepthStencil;
             Width = (int)native.Resolution.Width;
             Height = (int)native.Resolution.Height;
             ResetFlags = (ResetFlags)native.Resolution.Flags;
@@ -1147,7 +1150,8 @@ namespace Internal.SharpBgfx {
         }
 
         internal struct ResolutionNative {
-            public TextureFormat Format;
+            public TextureFormat FormatColor;
+            public TextureFormat FormatDepthStencil;
             public uint Width;
             public uint Height;
             public uint Flags;
@@ -1159,8 +1163,8 @@ namespace Internal.SharpBgfx {
         internal struct InitLimits {
             public ushort MaxEncoders;
             public uint MinResourceCbSize;
-            public uint TransientVbSize;
-            public uint TransientIbSize;
+            public uint MaxTransientVbSize;
+            public uint MaxTransientIbSize;
         }
 
         internal struct Native {

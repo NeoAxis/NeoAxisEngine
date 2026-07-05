@@ -64,6 +64,12 @@ namespace bgfx
 	typedef ::IGraphicsUnknown IUnknown;
 #endif // BX_PLATFORM_WINDOWS || BX_PLATFORM_WINRT
 
+	inline constexpr uint32_t toPixColor(uint32_t _abgr)
+	{
+		// ABGR -> BGRA
+		return (_abgr >> 8) | (_abgr << 24);
+	}
+
 #define _DX_CHECK(_call) \
 			BX_MACRO_BLOCK_BEGIN \
 				HRESULT __hr__ = _call; \
@@ -151,7 +157,7 @@ namespace bgfx
 	}
 
 	template<typename Ty>
-	class StateCacheT
+	class StateCacheT_D3D
 	{
 	public:
 		void add(uint64_t _key, Ty* _value)

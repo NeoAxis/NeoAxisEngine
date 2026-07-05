@@ -615,29 +615,29 @@ namespace bx
 		return _a * (_b / uint32_gcd(_a, _b) );
 	}
 
-	inline BX_CONSTEXPR_FUNC uint32_t strideAlign(uint32_t _offset, uint32_t _stride)
-	{
-		const uint32_t mod    = uint32_mod(_offset, _stride);
-		const uint32_t add    = uint32_sub(_stride, mod);
-		const uint32_t mask   = uint32_cmpeq(mod, 0);
-		const uint32_t tmp    = uint32_selb(mask, 0, add);
-		const uint32_t result = uint32_add(_offset, tmp);
+	//inline BX_CONSTEXPR_FUNC uint32_t strideAlign(uint32_t _offset, uint32_t _stride)
+	//{
+	//	const uint32_t mod    = uint32_mod(_offset, _stride);
+	//	const uint32_t add    = uint32_sub(_stride, mod);
+	//	const uint32_t mask   = uint32_cmpeq(mod, 0);
+	//	const uint32_t tmp    = uint32_selb(mask, 0, add);
+	//	const uint32_t result = uint32_add(_offset, tmp);
 
-		return result;
-	}
+	//	return result;
+	//}
 
-	template<uint32_t Min>
-	inline BX_CONSTEXPR_FUNC uint32_t strideAlign(uint32_t _offset, uint32_t _stride)
-	{
-		const uint32_t align  = uint32_lcm(Min, _stride);
-		const uint32_t mod    = uint32_mod(_offset, align);
-		const uint32_t mask   = uint32_cmpeq(mod, 0);
-		const uint32_t tmp0   = uint32_selb(mask, 0, align);
-		const uint32_t tmp1   = uint32_add(_offset, tmp0);
-		const uint32_t result = uint32_sub(tmp1, mod);
+	//template<uint32_t Min>
+	//inline BX_CONSTEXPR_FUNC uint32_t strideAlign(uint32_t _offset, uint32_t _stride)
+	//{
+	//	const uint32_t align  = uint32_lcm(Min, _stride);
+	//	const uint32_t mod    = uint32_mod(_offset, align);
+	//	const uint32_t mask   = uint32_cmpeq(mod, 0);
+	//	const uint32_t tmp0   = uint32_selb(mask, 0, align);
+	//	const uint32_t tmp1   = uint32_add(_offset, tmp0);
+	//	const uint32_t result = uint32_sub(tmp1, mod);
 
-		return result;
-	}
+	//	return result;
+	//}
 
 	template<typename Ty>
 	inline BX_CONSTEXPR_FUNC bool isAligned(Ty _a, int32_t _align)
@@ -683,20 +683,20 @@ namespace bx
 		return un.ptr;
 	}
 
-	template<typename Ty>
-	inline BX_CONSTEXPR_FUNC Ty alignUp(Ty _a, int32_t _align)
-	{
-		const Ty mask = Ty(max(1, _align) - 1);
-		return Ty( (_a + mask) & ~mask);
-	}
+	//template<typename Ty>
+	//inline BX_CONSTEXPR_FUNC Ty alignUp(Ty _a, int32_t _align)
+	//{
+	//	const Ty mask = Ty(max(1, _align) - 1);
+	//	return Ty( (_a + mask) & ~mask);
+	//}
 
-	template<typename Ty>
-	inline BX_CONSTEXPR_FUNC Ty* alignUp(Ty* _ptr, int32_t _align)
-	{
-		union { Ty* ptr; uintptr_t addr; } un = { _ptr };
-		un.addr = alignUp(un.addr, _align);
-		return un.ptr;
-	}
+	//template<typename Ty>
+	//inline BX_CONSTEXPR_FUNC Ty* alignUp(Ty* _ptr, int32_t _align)
+	//{
+	//	union { Ty* ptr; uintptr_t addr; } un = { _ptr };
+	//	un.addr = alignUp(un.addr, _align);
+	//	return un.ptr;
+	//}
 
 	template<typename Ty>
 	inline BX_CONSTEXPR_FUNC const Ty* alignUp(const Ty* _ptr, int32_t _align)
@@ -706,120 +706,120 @@ namespace bx
 		return un.ptr;
 	}
 
-	inline BX_CONST_FUNC uint16_t halfFromFloat(float _a)
-	{
-		union { uint32_t ui; float flt; } ftou;
-		ftou.flt = _a;
+	//inline BX_CONST_FUNC uint16_t halfFromFloat(float _a)
+	//{
+	//	union { uint32_t ui; float flt; } ftou;
+	//	ftou.flt = _a;
 
-		const uint32_t one                       = uint32_li(0x00000001);
-		const uint32_t f_s_mask                  = uint32_li(kFloatSignMask);
-		const uint32_t f_e_mask                  = uint32_li(kFloatExponentMask);
-		const uint32_t f_m_mask                  = uint32_li(kFloatMantissaMask);
-		const uint32_t f_m_hidden_bit            = uint32_li(0x00800000);
-		const uint32_t f_m_round_bit             = uint32_li(0x00001000);
-		const uint32_t f_snan_mask               = uint32_li(0x7fc00000);
-		const uint32_t f_e_pos                   = uint32_li(0x00000017);
-		const uint32_t h_e_pos                   = uint32_li(0x0000000a);
-		const uint32_t h_e_mask                  = uint32_li(kHalfExponentMask);
-		const uint32_t h_snan_mask               = uint32_li(0x00007e00);
-		const uint32_t h_e_mask_value            = uint32_li(0x0000001f);
-		const uint32_t f_h_s_pos_offset          = uint32_li(0x00000010);
-		const uint32_t f_h_bias_offset           = uint32_li(0x00000070);
-		const uint32_t f_h_m_pos_offset          = uint32_li(0x0000000d);
-		const uint32_t h_nan_min                 = uint32_li(0x00007c01);
-		const uint32_t f_h_e_biased_flag         = uint32_li(0x0000008f);
-		const uint32_t f_s                       = uint32_and(ftou.ui, f_s_mask);
-		const uint32_t f_e                       = uint32_and(ftou.ui, f_e_mask);
-		const uint16_t h_s                       = (uint16_t)uint32_srl(f_s, f_h_s_pos_offset);
-		const uint32_t f_m                       = uint32_and(ftou.ui, f_m_mask);
-		const uint16_t f_e_amount                = (uint16_t)uint32_srl(f_e, f_e_pos);
-		const uint32_t f_e_half_bias             = uint32_sub(f_e_amount, f_h_bias_offset);
-		const uint32_t f_snan                    = uint32_and(ftou.ui, f_snan_mask);
-		const uint32_t f_m_round_mask            = uint32_and(f_m, f_m_round_bit);
-		const uint32_t f_m_round_offset          = uint32_sll(f_m_round_mask, one);
-		const uint32_t f_m_rounded               = uint32_add(f_m, f_m_round_offset);
-		const uint32_t f_m_denorm_sa             = uint32_sub(one, f_e_half_bias);
-		const uint32_t f_m_with_hidden           = uint32_or(f_m_rounded, f_m_hidden_bit);
-		const uint32_t f_m_denorm                = uint32_srl(f_m_with_hidden, f_m_denorm_sa);
-		const uint32_t h_m_denorm                = uint32_srl(f_m_denorm, f_h_m_pos_offset);
-		const uint32_t f_m_rounded_overflow      = uint32_and(f_m_rounded, f_m_hidden_bit);
-		const uint32_t m_nan                     = uint32_srl(f_m, f_h_m_pos_offset);
-		const uint32_t h_em_nan                  = uint32_or(h_e_mask, m_nan);
-		const uint32_t h_e_norm_overflow_offset  = uint32_inc(f_e_half_bias);
-		const uint32_t h_e_norm_overflow         = uint32_sll(h_e_norm_overflow_offset, h_e_pos);
-		const uint32_t h_e_norm                  = uint32_sll(f_e_half_bias, h_e_pos);
-		const uint32_t h_m_norm                  = uint32_srl(f_m_rounded, f_h_m_pos_offset);
-		const uint32_t h_em_norm                 = uint32_or(h_e_norm, h_m_norm);
-		const uint32_t is_h_ndenorm_msb          = uint32_sub(f_h_bias_offset, f_e_amount);
-		const uint32_t is_f_e_flagged_msb        = uint32_sub(f_h_e_biased_flag, f_e_half_bias);
-		const uint32_t is_h_denorm_msb           = uint32_not(is_h_ndenorm_msb);
-		const uint32_t is_f_m_eqz_msb            = uint32_dec(f_m);
-		const uint32_t is_h_nan_eqz_msb          = uint32_dec(m_nan);
-		const uint32_t is_f_inf_msb              = uint32_and(is_f_e_flagged_msb, is_f_m_eqz_msb);
-		const uint32_t is_f_nan_underflow_msb    = uint32_and(is_f_e_flagged_msb, is_h_nan_eqz_msb);
-		const uint32_t is_e_overflow_msb         = uint32_sub(h_e_mask_value, f_e_half_bias);
-		const uint32_t is_h_inf_msb              = uint32_or(is_e_overflow_msb, is_f_inf_msb);
-		const uint32_t is_f_nsnan_msb            = uint32_sub(f_snan, f_snan_mask);
-		const uint32_t is_m_norm_overflow_msb    = uint32_neg(f_m_rounded_overflow);
-		const uint32_t is_f_snan_msb             = uint32_not(is_f_nsnan_msb);
-		const uint32_t h_em_overflow_result      = uint32_sels(is_m_norm_overflow_msb, h_e_norm_overflow, h_em_norm);
-		const uint32_t h_em_nan_result           = uint32_sels(is_f_e_flagged_msb, h_em_nan, h_em_overflow_result);
-		const uint32_t h_em_nan_underflow_result = uint32_sels(is_f_nan_underflow_msb, h_nan_min, h_em_nan_result);
-		const uint32_t h_em_inf_result           = uint32_sels(is_h_inf_msb, h_e_mask, h_em_nan_underflow_result);
-		const uint32_t h_em_denorm_result        = uint32_sels(is_h_denorm_msb, h_m_denorm, h_em_inf_result);
-		const uint32_t h_em_snan_result          = uint32_sels(is_f_snan_msb, h_snan_mask, h_em_denorm_result);
-		const uint32_t h_result                  = uint32_or(h_s, h_em_snan_result);
+	//	const uint32_t one                       = uint32_li(0x00000001);
+	//	const uint32_t f_s_mask                  = uint32_li(kFloatSignMask);
+	//	const uint32_t f_e_mask                  = uint32_li(kFloatExponentMask);
+	//	const uint32_t f_m_mask                  = uint32_li(kFloatMantissaMask);
+	//	const uint32_t f_m_hidden_bit            = uint32_li(0x00800000);
+	//	const uint32_t f_m_round_bit             = uint32_li(0x00001000);
+	//	const uint32_t f_snan_mask               = uint32_li(0x7fc00000);
+	//	const uint32_t f_e_pos                   = uint32_li(0x00000017);
+	//	const uint32_t h_e_pos                   = uint32_li(0x0000000a);
+	//	const uint32_t h_e_mask                  = uint32_li(kHalfExponentMask);
+	//	const uint32_t h_snan_mask               = uint32_li(0x00007e00);
+	//	const uint32_t h_e_mask_value            = uint32_li(0x0000001f);
+	//	const uint32_t f_h_s_pos_offset          = uint32_li(0x00000010);
+	//	const uint32_t f_h_bias_offset           = uint32_li(0x00000070);
+	//	const uint32_t f_h_m_pos_offset          = uint32_li(0x0000000d);
+	//	const uint32_t h_nan_min                 = uint32_li(0x00007c01);
+	//	const uint32_t f_h_e_biased_flag         = uint32_li(0x0000008f);
+	//	const uint32_t f_s                       = uint32_and(ftou.ui, f_s_mask);
+	//	const uint32_t f_e                       = uint32_and(ftou.ui, f_e_mask);
+	//	const uint16_t h_s                       = (uint16_t)uint32_srl(f_s, f_h_s_pos_offset);
+	//	const uint32_t f_m                       = uint32_and(ftou.ui, f_m_mask);
+	//	const uint16_t f_e_amount                = (uint16_t)uint32_srl(f_e, f_e_pos);
+	//	const uint32_t f_e_half_bias             = uint32_sub(f_e_amount, f_h_bias_offset);
+	//	const uint32_t f_snan                    = uint32_and(ftou.ui, f_snan_mask);
+	//	const uint32_t f_m_round_mask            = uint32_and(f_m, f_m_round_bit);
+	//	const uint32_t f_m_round_offset          = uint32_sll(f_m_round_mask, one);
+	//	const uint32_t f_m_rounded               = uint32_add(f_m, f_m_round_offset);
+	//	const uint32_t f_m_denorm_sa             = uint32_sub(one, f_e_half_bias);
+	//	const uint32_t f_m_with_hidden           = uint32_or(f_m_rounded, f_m_hidden_bit);
+	//	const uint32_t f_m_denorm                = uint32_srl(f_m_with_hidden, f_m_denorm_sa);
+	//	const uint32_t h_m_denorm                = uint32_srl(f_m_denorm, f_h_m_pos_offset);
+	//	const uint32_t f_m_rounded_overflow      = uint32_and(f_m_rounded, f_m_hidden_bit);
+	//	const uint32_t m_nan                     = uint32_srl(f_m, f_h_m_pos_offset);
+	//	const uint32_t h_em_nan                  = uint32_or(h_e_mask, m_nan);
+	//	const uint32_t h_e_norm_overflow_offset  = uint32_inc(f_e_half_bias);
+	//	const uint32_t h_e_norm_overflow         = uint32_sll(h_e_norm_overflow_offset, h_e_pos);
+	//	const uint32_t h_e_norm                  = uint32_sll(f_e_half_bias, h_e_pos);
+	//	const uint32_t h_m_norm                  = uint32_srl(f_m_rounded, f_h_m_pos_offset);
+	//	const uint32_t h_em_norm                 = uint32_or(h_e_norm, h_m_norm);
+	//	const uint32_t is_h_ndenorm_msb          = uint32_sub(f_h_bias_offset, f_e_amount);
+	//	const uint32_t is_f_e_flagged_msb        = uint32_sub(f_h_e_biased_flag, f_e_half_bias);
+	//	const uint32_t is_h_denorm_msb           = uint32_not(is_h_ndenorm_msb);
+	//	const uint32_t is_f_m_eqz_msb            = uint32_dec(f_m);
+	//	const uint32_t is_h_nan_eqz_msb          = uint32_dec(m_nan);
+	//	const uint32_t is_f_inf_msb              = uint32_and(is_f_e_flagged_msb, is_f_m_eqz_msb);
+	//	const uint32_t is_f_nan_underflow_msb    = uint32_and(is_f_e_flagged_msb, is_h_nan_eqz_msb);
+	//	const uint32_t is_e_overflow_msb         = uint32_sub(h_e_mask_value, f_e_half_bias);
+	//	const uint32_t is_h_inf_msb              = uint32_or(is_e_overflow_msb, is_f_inf_msb);
+	//	const uint32_t is_f_nsnan_msb            = uint32_sub(f_snan, f_snan_mask);
+	//	const uint32_t is_m_norm_overflow_msb    = uint32_neg(f_m_rounded_overflow);
+	//	const uint32_t is_f_snan_msb             = uint32_not(is_f_nsnan_msb);
+	//	const uint32_t h_em_overflow_result      = uint32_sels(is_m_norm_overflow_msb, h_e_norm_overflow, h_em_norm);
+	//	const uint32_t h_em_nan_result           = uint32_sels(is_f_e_flagged_msb, h_em_nan, h_em_overflow_result);
+	//	const uint32_t h_em_nan_underflow_result = uint32_sels(is_f_nan_underflow_msb, h_nan_min, h_em_nan_result);
+	//	const uint32_t h_em_inf_result           = uint32_sels(is_h_inf_msb, h_e_mask, h_em_nan_underflow_result);
+	//	const uint32_t h_em_denorm_result        = uint32_sels(is_h_denorm_msb, h_m_denorm, h_em_inf_result);
+	//	const uint32_t h_em_snan_result          = uint32_sels(is_f_snan_msb, h_snan_mask, h_em_denorm_result);
+	//	const uint32_t h_result                  = uint32_or(h_s, h_em_snan_result);
 
-		return (uint16_t)(h_result);
-	}
+	//	return (uint16_t)(h_result);
+	//}
 
-	inline BX_CONST_FUNC float halfToFloat(uint16_t _a)
-	{
-		const uint32_t h_e_mask             = uint32_li(kHalfExponentMask);
-		const uint32_t h_m_mask             = uint32_li(kHalfMantissaMask);
-		const uint32_t h_s_mask             = uint32_li(kHalfSignMask);
-		const uint32_t h_f_s_pos_offset     = uint32_li(0x00000010);
-		const uint32_t h_f_e_pos_offset     = uint32_li(0x0000000d);
-		const uint32_t h_f_bias_offset      = uint32_li(0x0001c000);
-		const uint32_t f_e_mask             = uint32_li(kFloatExponentMask);
-		const uint32_t f_m_mask             = uint32_li(kFloatMantissaMask);
-		const uint32_t h_f_e_denorm_bias    = uint32_li(0x0000007e);
-		const uint32_t h_f_m_denorm_sa_bias = uint32_li(0x00000008);
-		const uint32_t f_e_pos              = uint32_li(0x00000017);
-		const uint32_t h_e_mask_minus_one   = uint32_li(0x00007bff);
-		const uint32_t h_e                  = uint32_and(_a, h_e_mask);
-		const uint32_t h_m                  = uint32_and(_a, h_m_mask);
-		const uint32_t h_s                  = uint32_and(_a, h_s_mask);
-		const uint32_t h_e_f_bias           = uint32_add(h_e, h_f_bias_offset);
-		const uint32_t h_m_nlz              = uint32_cntlz(h_m);
-		const uint32_t f_s                  = uint32_sll(h_s, h_f_s_pos_offset);
-		const uint32_t f_e                  = uint32_sll(h_e_f_bias, h_f_e_pos_offset);
-		const uint32_t f_m                  = uint32_sll(h_m, h_f_e_pos_offset);
-		const uint32_t f_em                 = uint32_or(f_e, f_m);
-		const uint32_t h_f_m_sa             = uint32_sub(h_m_nlz, h_f_m_denorm_sa_bias);
-		const uint32_t f_e_denorm_unpacked  = uint32_sub(h_f_e_denorm_bias, h_f_m_sa);
-		const uint32_t h_f_m                = uint32_sll(h_m, h_f_m_sa);
-		const uint32_t f_m_denorm           = uint32_and(h_f_m, f_m_mask);
-		const uint32_t f_e_denorm           = uint32_sll(f_e_denorm_unpacked, f_e_pos);
-		const uint32_t f_em_denorm          = uint32_or(f_e_denorm, f_m_denorm);
-		const uint32_t f_em_nan             = uint32_or(f_e_mask, f_m);
-		const uint32_t is_e_eqz_msb         = uint32_dec(h_e);
-		const uint32_t is_m_nez_msb         = uint32_neg(h_m);
-		const uint32_t is_e_flagged_msb     = uint32_sub(h_e_mask_minus_one, h_e);
-		const uint32_t is_zero_msb          = uint32_andc(is_e_eqz_msb, is_m_nez_msb);
-		const uint32_t is_inf_msb           = uint32_andc(is_e_flagged_msb, is_m_nez_msb);
-		const uint32_t is_denorm_msb        = uint32_and(is_m_nez_msb, is_e_eqz_msb);
-		const uint32_t is_nan_msb           = uint32_and(is_e_flagged_msb, is_m_nez_msb);
-		const uint32_t is_zero              = uint32_ext(is_zero_msb);
-		const uint32_t f_zero_result        = uint32_andc(f_em, is_zero);
-		const uint32_t f_denorm_result      = uint32_sels(is_denorm_msb, f_em_denorm, f_zero_result);
-		const uint32_t f_inf_result         = uint32_sels(is_inf_msb, f_e_mask, f_denorm_result);
-		const uint32_t f_nan_result         = uint32_sels(is_nan_msb, f_em_nan, f_inf_result);
-		const uint32_t f_result             = uint32_or(f_s, f_nan_result);
+	//inline BX_CONST_FUNC float halfToFloat(uint16_t _a)
+	//{
+	//	const uint32_t h_e_mask             = uint32_li(kHalfExponentMask);
+	//	const uint32_t h_m_mask             = uint32_li(kHalfMantissaMask);
+	//	const uint32_t h_s_mask             = uint32_li(kHalfSignMask);
+	//	const uint32_t h_f_s_pos_offset     = uint32_li(0x00000010);
+	//	const uint32_t h_f_e_pos_offset     = uint32_li(0x0000000d);
+	//	const uint32_t h_f_bias_offset      = uint32_li(0x0001c000);
+	//	const uint32_t f_e_mask             = uint32_li(kFloatExponentMask);
+	//	const uint32_t f_m_mask             = uint32_li(kFloatMantissaMask);
+	//	const uint32_t h_f_e_denorm_bias    = uint32_li(0x0000007e);
+	//	const uint32_t h_f_m_denorm_sa_bias = uint32_li(0x00000008);
+	//	const uint32_t f_e_pos              = uint32_li(0x00000017);
+	//	const uint32_t h_e_mask_minus_one   = uint32_li(0x00007bff);
+	//	const uint32_t h_e                  = uint32_and(_a, h_e_mask);
+	//	const uint32_t h_m                  = uint32_and(_a, h_m_mask);
+	//	const uint32_t h_s                  = uint32_and(_a, h_s_mask);
+	//	const uint32_t h_e_f_bias           = uint32_add(h_e, h_f_bias_offset);
+	//	const uint32_t h_m_nlz              = uint32_cntlz(h_m);
+	//	const uint32_t f_s                  = uint32_sll(h_s, h_f_s_pos_offset);
+	//	const uint32_t f_e                  = uint32_sll(h_e_f_bias, h_f_e_pos_offset);
+	//	const uint32_t f_m                  = uint32_sll(h_m, h_f_e_pos_offset);
+	//	const uint32_t f_em                 = uint32_or(f_e, f_m);
+	//	const uint32_t h_f_m_sa             = uint32_sub(h_m_nlz, h_f_m_denorm_sa_bias);
+	//	const uint32_t f_e_denorm_unpacked  = uint32_sub(h_f_e_denorm_bias, h_f_m_sa);
+	//	const uint32_t h_f_m                = uint32_sll(h_m, h_f_m_sa);
+	//	const uint32_t f_m_denorm           = uint32_and(h_f_m, f_m_mask);
+	//	const uint32_t f_e_denorm           = uint32_sll(f_e_denorm_unpacked, f_e_pos);
+	//	const uint32_t f_em_denorm          = uint32_or(f_e_denorm, f_m_denorm);
+	//	const uint32_t f_em_nan             = uint32_or(f_e_mask, f_m);
+	//	const uint32_t is_e_eqz_msb         = uint32_dec(h_e);
+	//	const uint32_t is_m_nez_msb         = uint32_neg(h_m);
+	//	const uint32_t is_e_flagged_msb     = uint32_sub(h_e_mask_minus_one, h_e);
+	//	const uint32_t is_zero_msb          = uint32_andc(is_e_eqz_msb, is_m_nez_msb);
+	//	const uint32_t is_inf_msb           = uint32_andc(is_e_flagged_msb, is_m_nez_msb);
+	//	const uint32_t is_denorm_msb        = uint32_and(is_m_nez_msb, is_e_eqz_msb);
+	//	const uint32_t is_nan_msb           = uint32_and(is_e_flagged_msb, is_m_nez_msb);
+	//	const uint32_t is_zero              = uint32_ext(is_zero_msb);
+	//	const uint32_t f_zero_result        = uint32_andc(f_em, is_zero);
+	//	const uint32_t f_denorm_result      = uint32_sels(is_denorm_msb, f_em_denorm, f_zero_result);
+	//	const uint32_t f_inf_result         = uint32_sels(is_inf_msb, f_e_mask, f_denorm_result);
+	//	const uint32_t f_nan_result         = uint32_sels(is_nan_msb, f_em_nan, f_inf_result);
+	//	const uint32_t f_result             = uint32_or(f_s, f_nan_result);
 
-		union { uint32_t ui; float flt; } utof;
-		utof.ui = f_result;
-		return utof.flt;
-	}
+	//	union { uint32_t ui; float flt; } utof;
+	//	utof.ui = f_result;
+	//	return utof.flt;
+	//}
 
 } // namespace bx

@@ -1636,7 +1636,6 @@
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_lerc.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_stream.cxx" />
     <ClCompile Include="..\External\FreeImage\Source\LibTIFF4\tif_unix.c">
       <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
@@ -2057,7 +2056,6 @@
     <ClCompile Include="..\External\bgfx\bgfx\src\renderer_nvn.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\renderer_vk.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\shader.cpp" />
-    <ClCompile Include="..\External\bgfx\bgfx\src\special.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\topology.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\vertexlayout.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\Library.cpp" />
@@ -2088,7 +2086,6 @@
     <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_weight_align.cpp" />
     <ClCompile Include="..\External\bgfx\bimg\3rdparty\astc-encoder\source\astcenc_weight_quant_xfer_tables.cpp" />
     <ClCompile Include="..\External\bgfx\bimg\src\image_bimg.cpp" />
-    <ClCompile Include="..\External\bgfx\bimg\src\image_gnf.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\allocator.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\bx.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\commandline.cpp" />
@@ -2406,6 +2403,16 @@
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validate_type.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\3rdparty\spirv-tools\source\val\validation_state.cpp" />
     <ClCompile Include="..\External\bgfx\bx\src\timer_bx.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslAttributes.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslGrammar.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslOpMap.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseables.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslParseHelper.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslScanContext.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\3rdparty\glslang\glslang\HLSL\hlslTokenStream.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_spirv_glsl.cpp" />
+    <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp" />
+    <ClCompile Include="..\External\bgfx\bgfx\src\renderer_webgpu.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A49B1604-5C02-3455-8543-8A45A6E6C450}</ProjectGuid>

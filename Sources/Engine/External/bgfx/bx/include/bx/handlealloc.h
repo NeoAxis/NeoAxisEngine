@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2026 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx/blob/master/LICENSE
  */
 
@@ -8,7 +8,7 @@
 
 #include "bx.h"
 #include "allocator.h"
-#include "uint32_t.h"
+#include "simd_t.h"
 
 namespace bx
 {
