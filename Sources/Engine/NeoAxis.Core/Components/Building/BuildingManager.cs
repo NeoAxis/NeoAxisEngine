@@ -87,7 +87,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The size of the sector in the scene. The sector size allows to optimize the culling and rendering of objects.
 		/// </summary>
-		[DefaultValue( "200 200 10000" )]//[DefaultValue( "100 100 10000" )]
+		[DefaultValue( "100 100 10000" )]//[DefaultValue( "200 200 10000" )]
 		[Category( "Optimization" )]
 		public Reference<Vector3> SectorSize
 		{
@@ -107,7 +107,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="SectorSize"/> property value changes.</summary>
 		public event Action<BuildingManager> SectorSizeChanged;
-		ReferenceField<Vector3> _sectorSize = new Vector3( 200, 200, 10000 ); //new Vector3( 100, 100, 10000 );
+		ReferenceField<Vector3> _sectorSize = new Vector3( 100, 100, 10000 ); //new Vector3( 200, 200, 10000 );
 
 		////!!!!default
 		///// <summary>

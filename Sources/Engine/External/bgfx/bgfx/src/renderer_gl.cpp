@@ -4475,7 +4475,7 @@ namespace bgfx { namespace gl
 					break;
 				}
 
-				UniformType::Enum type;
+				uint8_t type;
 				uint16_t ignore;
 				uint16_t num;
 				uint16_t copy;

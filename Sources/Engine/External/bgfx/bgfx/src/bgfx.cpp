@@ -681,9 +681,9 @@ namespace bgfx
 		}
 	}
 
-	static const uint32_t numCharsPerBatch = 1024;
-	static const uint32_t numBatchVertices = numCharsPerBatch*4;
-	static const uint32_t numBatchIndices  = numCharsPerBatch*6;
+	static const uint32_t kNumCharsPerBatch = 1024;
+	static const uint32_t kNumBatchVertices = kNumCharsPerBatch*4;
+	static const uint32_t kNumBatchIndices  = kNumCharsPerBatch*6;
 
 	void TextVideoMemBlitter::init(uint8_t scale)
 	{
@@ -696,10 +696,10 @@ namespace bgfx
 			.add(Attrib::TexCoord0, 2, AttribType::Float)
 			.end();
 
-		uint16_t width  = 2048;
-		uint16_t height = 24;
-		uint8_t  bpp    = 1;
-		uint32_t pitch  = width*bpp;
+		const uint16_t width  = 2048;
+		const uint16_t height = 24;
+		const uint8_t  bpp    = 1;
+		const uint32_t pitch  = width*bpp;
 
 		const Memory* mem;
 
@@ -723,8 +723,8 @@ namespace bgfx
 
 		m_program = createProgram(vsh, fsh, true);
 
-		m_vb = s_ctx->createTransientVertexBuffer(numBatchVertices*m_layout.m_stride, &m_layout);
-		m_ib = s_ctx->createTransientIndexBuffer(numBatchIndices*2);
+		m_vb = s_ctx->createTransientVertexBuffer(kNumBatchVertices*m_layout.m_stride, &m_layout);
+		m_ib = s_ctx->createTransientIndexBuffer(kNumBatchIndices*2);
 		m_scale = bx::max<uint8_t>(scale, 1);
 	}
 
@@ -816,17 +816,17 @@ namespace bgfx
 
 		for (;yy < _mem.m_height;)
 		{
-			Vertex* vertex = (Vertex*)_blitter.m_vb->data;
+			Vertex*   vertex  = (Vertex  *)_blitter.m_vb->data;
 			uint16_t* indices = (uint16_t*)_blitter.m_ib->data;
 			uint32_t startVertex = 0;
 			uint32_t numIndices = 0;
 
-			for (; yy < _mem.m_height && numIndices < numBatchIndices; ++yy)
+			for (; yy < _mem.m_height && numIndices < kNumBatchIndices; ++yy)
 			{
 				xx = xx < _mem.m_width ? xx : 0;
 				const TextVideoMem::MemSlot* line = &_mem.m_mem[yy*_mem.m_width+xx];
 
-				for (; xx < _mem.m_width && numIndices < numBatchIndices; ++xx)
+				for (; xx < _mem.m_width && numIndices < kNumBatchIndices; ++xx)
 				{
 					uint32_t ch = line->character;
 					const uint8_t attr = line->attribute;
@@ -842,7 +842,7 @@ namespace bgfx
 						const uint32_t fg = palette[attr&0xf];
 						const uint32_t bg = palette[(attr>>4)&0xf];
 
-						Vertex vert[4] =
+						const Vertex vert[4] =
 						{
 							{ (xx  )*fontWidth, (yy  )*fontHeight, 0.0f, fg, bg, (ch  )*8.0f*texelWidth, utop },
 							{ (xx+1)*fontWidth, (yy  )*fontHeight, 0.0f, fg, bg, (ch+1)*8.0f*texelWidth, utop },
@@ -869,7 +869,7 @@ namespace bgfx
 					line++;
 				}
 
-				if (numIndices >= numBatchIndices)
+				if (numIndices >= kNumBatchIndices)
 				{
 					break;
 				}
@@ -1535,14 +1535,14 @@ namespace bgfx
 
 	void UniformBuffer::writeUniform(UniformType::Enum _type, uint16_t _loc, const void* _value, uint16_t _num)
 	{
-		uint32_t opcode = encodeOpcode(_type, _loc, _num, true);
+		const uint32_t opcode = encodeOpcode(uint8_t(_type), _loc, _num, true);
 		write(opcode);
 		write(_value, g_uniformTypeSize[_type]*_num);
 	}
 
-	void UniformBuffer::writeUniformHandle(UniformType::Enum _type, uint16_t _loc, UniformHandle _handle, uint16_t _num)
+	void UniformBuffer::writeUniformHandle(uint8_t _type, uint16_t _loc, UniformHandle _handle, uint16_t _num)
 	{
-		uint32_t opcode = encodeOpcode(_type, _loc, _num, false);
+		const uint32_t opcode = encodeOpcode(_type, _loc, _num, false);
 		write(opcode);
 		write(&_handle, sizeof(UniformHandle) );
 	}
@@ -2616,14 +2616,15 @@ namespace bgfx
 				break;
 			}
 
-			UniformType::Enum type;
+			uint8_t type;
 			uint16_t loc;
 			uint16_t num;
 			uint16_t copy;
 			UniformBuffer::decodeOpcode(opcode, type, loc, num, copy);
 
-			uint32_t size = g_uniformTypeSize[type]*num;
+			const uint32_t size = g_uniformTypeSize[type]*num;
 			const char* data = _uniformBuffer->read(size);
+
 			if (UniformType::Count > type)
 			{
 				if (copy)

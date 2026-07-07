@@ -166,8 +166,6 @@ namespace bgfx
 #include "vertexlayout.h"
 #include "version.h"
 
-#define BGFX_CHUNK_MAGIC_TEX BX_MAKEFOURCC('T', 'E', 'X', 0x0)
-
 #define BGFX_CLEAR_COLOR_USE_PALETTE UINT16_C(0x8000)
 #define BGFX_CLEAR_MASK (0                 \
 			| BGFX_CLEAR_COLOR             \
@@ -1611,7 +1609,7 @@ namespace bgfx
 			}
 		}
 
-		static uint32_t encodeOpcode(UniformType::Enum _type, uint16_t _loc, uint16_t _num, uint16_t _copy)
+		static uint32_t encodeOpcode(uint8_t _type, uint16_t _loc, uint16_t _num, uint16_t _copy)
 		{
 			const uint32_t type = _type << kConstantOpcodeTypeShift;
 			const uint32_t loc  = _loc  << kConstantOpcodeLocShift;
@@ -1620,14 +1618,14 @@ namespace bgfx
 			return type|loc|num|copy;
 		}
 
-		static void decodeOpcode(uint32_t _opcode, UniformType::Enum& _type, uint16_t& _loc, uint16_t& _num, uint16_t& _copy)
+		static void decodeOpcode(uint32_t _opcode, uint8_t& _type, uint16_t& _loc, uint16_t& _num, uint16_t& _copy)
 		{
 			const uint32_t type = (_opcode&kConstantOpcodeTypeMask) >> kConstantOpcodeTypeShift;
 			const uint32_t loc  = (_opcode&kConstantOpcodeLocMask ) >> kConstantOpcodeLocShift;
 			const uint32_t num  = (_opcode&kConstantOpcodeNumMask ) >> kConstantOpcodeNumShift;
 			const uint32_t copy = (_opcode&kConstantOpcodeCopyMask); // >> kConstantOpcodeCopyShift;
 
-			_type = (UniformType::Enum)(type);
+			_type = (uint8_t )type;
 			_copy = (uint16_t)copy;
 			_num  = (uint16_t)num;
 			_loc  = (uint16_t)loc;
@@ -1686,7 +1684,7 @@ namespace bgfx
 		}
 
 		void writeUniform(UniformType::Enum _type, uint16_t _loc, const void* _value, uint16_t _num = 1);
-		void writeUniformHandle(UniformType::Enum _type, uint16_t _loc, UniformHandle _handle, uint16_t _num = 1);
+		void writeUniformHandle(uint8_t _type, uint16_t _loc, UniformHandle _handle, uint16_t _num = 1);
 		void writeMarker(const bx::StringView& _name);
 
 	private:
