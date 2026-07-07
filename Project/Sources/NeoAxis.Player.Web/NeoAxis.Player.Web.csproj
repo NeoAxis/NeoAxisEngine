@@ -36,8 +36,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
-    <Optimize>False</Optimize>
-    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    <DebugType>portable</DebugType>
     <DebugSymbols>false</DebugSymbols>
     <RunAOTCompilation>true</RunAOTCompilation>
   </PropertyGroup>
@@ -98,8 +99,5 @@
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if EXIST &quot;$(ProjectDir)..\..\Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.Web.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot; ) )&#xD;&#xA;&#xD;&#xA;rem set Product=Base\Build\Demo Web.product&#xD;&#xA;set Product=Base\Build\Simple Game Web.product&#xD;&#xA;if exist &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -prepareProductAssets 1 -productFile &quot;%25Product%25&quot; -destinationFolder &quot;$(ProjectDir)wwwroot\Assets&quot; -platform Web" />
-  </Target>
-  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
-    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
   </Target>
 </Project>

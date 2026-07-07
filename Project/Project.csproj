@@ -19,7 +19,9 @@
     <NoWarn>1701;1702;CS1591;CS8632</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>false</Optimize>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    <DebugType>portable</DebugType>
     <OutputPath>Binaries\</OutputPath>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -80,7 +82,4 @@
     <Compile Include="Assets\Base\UI\Screens\MatchesWindow.cs" />
     <Compile Include="Assets\Base\UI\Screens\MatchWindow.cs" />
   </ItemGroup>
-  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
-    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
-  </Target>
 </Project>

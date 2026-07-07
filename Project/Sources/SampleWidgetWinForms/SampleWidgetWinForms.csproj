@@ -15,7 +15,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\Binaries\</OutputPath>
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    <DebugType>portable</DebugType>
     <NoWarn>1701;1702;CA1416;MSB3277;MSB3277</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

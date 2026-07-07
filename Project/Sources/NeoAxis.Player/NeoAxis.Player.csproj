@@ -44,7 +44,9 @@
     <OutputType>WinExe</OutputType>
     <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
     <PlatformTarget>x64</PlatformTarget>
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug-Linux-x64'">
@@ -62,7 +64,9 @@
     <OutputType>Exe</OutputType>
     <DefineConstants>$(DefineConstants);LINUX</DefineConstants>
     <PlatformTarget>x64</PlatformTarget>
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug-macOS'">
@@ -80,12 +84,10 @@
     <OutputType>Exe</OutputType>
     <DefineConstants>$(DefineConstants);MACOS</DefineConstants>
     <PlatformTarget>arm64</PlatformTarget>
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
-
-  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
-    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
-  </Target>
 
   <ItemGroup>
     <Reference Include="NeoAxis.Core">

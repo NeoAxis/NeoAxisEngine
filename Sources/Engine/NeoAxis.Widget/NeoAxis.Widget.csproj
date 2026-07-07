@@ -18,7 +18,9 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>false</Optimize>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    <DebugType>portable</DebugType>
     <OutputPath>..\..\..\Project\Binaries\</OutputPath>
     <DocumentationFile>..\..\..\Project\Binaries\NeoAxis.Widget.xml</DocumentationFile>
     <NoWarn>CS1591;CA1416</NoWarn>

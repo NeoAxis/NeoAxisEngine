@@ -42,7 +42,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <DefineConstants>UWP;DEPLOY;CLIENT;RELEASE</DefineConstants>
-    <Optimize>false</Optimize>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    <DebugType>portable</DebugType>
     <NoWarn>2008</NoWarn>
     <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
@@ -132,7 +134,9 @@
     <Exec Condition="Exists('$(ProjectDir)..\..\Project.csproj') and Exists('$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe')" Command="&quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.UWP.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot;" />
   </Target>  
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">
-    <Optimize>False</Optimize>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    <DebugType>portable</DebugType>
     <IsPublishable>True</IsPublishable>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">
@@ -145,7 +149,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
-    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
-  </Target>
 </Project>

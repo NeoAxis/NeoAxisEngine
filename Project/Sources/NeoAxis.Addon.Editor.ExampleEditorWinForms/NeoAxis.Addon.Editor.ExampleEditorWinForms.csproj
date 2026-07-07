@@ -14,7 +14,9 @@
     <NoWarn>1701;1702;MSB3277;CA1416</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Optimize>false</Optimize>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    <DebugType>portable</DebugType>
     <OutputPath>..\..\Binaries\</OutputPath>
     <CodeAnalysisRuleSet />
     <NoWarn>1701;1702;MSB3277;CA1416</NoWarn>

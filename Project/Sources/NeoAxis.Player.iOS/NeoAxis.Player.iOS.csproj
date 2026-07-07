@@ -22,9 +22,10 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
-    <Optimize>False</Optimize>
-    <DebugSymbols>true</DebugSymbols>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
     <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug-Simulator'">
     <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
@@ -34,9 +35,10 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release-Simulator'">
     <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
-    <Optimize>False</Optimize>
-    <DebugSymbols>true</DebugSymbols>
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
     <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
     <EnableCodeSigning>false</EnableCodeSigning>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -127,8 +129,5 @@
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if EXIST &quot;$(ProjectDir)..\..\Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.iOS.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot; ) )&#xD;&#xA;&#xD;&#xA;set Product=Base\Build\Demo iOS.product&#xD;&#xA;rem set Product=Base\Build\Simple Game iOS.product&#xD;&#xA;if exist &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -prepareProductAssets 1 -productFile &quot;%25Product%25&quot; -destinationFolder &quot;$(ProjectDir)Resources&quot; -platform iOS" />
-  </Target>
-  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
-    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
   </Target>
 </Project>

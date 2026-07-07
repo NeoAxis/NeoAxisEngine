@@ -32,6 +32,10 @@
     </NoWarn>
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
     <Optimize>False</Optimize>
+    <!-- Need test to enable Optimize
+    <Optimize>True</Optimize>
+    <DebugOptimization>True</DebugOptimization>
+    -->
     <!-- Optional: produce symbols like Debug so stack traces are useful -->
     <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>
@@ -109,8 +113,5 @@
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if EXIST &quot;$(ProjectDir)..\..\Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.Android.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot; ) )&#xD;&#xA;&#xD;&#xA;set Product=Base\Build\Demo Android.product&#xD;&#xA;rem set Product=Base\Build\Simple Game Android.product&#xD;&#xA;if exist &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -prepareProductAssets 1 -productFile &quot;%25Product%25&quot; -destinationFolder &quot;$(ProjectDir)Assets&quot; -platform Android" />
-  </Target>
-  <Target Name="FailIfOptimizeEnabled" BeforeTargets="BeforeBuild">
-    <Error Condition="'$(Optimize)' == 'true'" Text="Optimize must be disabled. Current configuration has Optimize=$(Optimize)." />
   </Target>
 </Project>
