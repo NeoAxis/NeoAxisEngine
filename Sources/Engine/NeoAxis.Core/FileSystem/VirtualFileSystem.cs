@@ -884,10 +884,6 @@ namespace NeoAxis
 			if( !string.IsNullOrEmpty( v ) )
 				EngineApp.InitSettings.RenderingScene = (bool)SimpleTypes.ParseValue( typeof( bool ), v );
 
-			//!!!!temp
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
-				EngineApp.InitSettings.RenderingScene = false;
-
 			//v = DefaultSettingsConfig.GetAttribute( "AnisotropicFiltering" );
 			//if( !string.IsNullOrEmpty( v ) )
 			//	EngineApp.InitSettings.AnisotropicFiltering = (bool)SimpleTypes.ParseValue( typeof( bool ), v );

@@ -1,9 +1,12 @@
 import { dotnet } from './_framework/dotnet.js'
 
-const { setModuleImports, getAssemblyExports, getConfig } = await dotnet
-    .withDiagnosticTracing(false)
-    .withApplicationArgumentsFromQuery()
-    .create();
+// dotnet.withEnvironmentVariable("MONO_LOG_LEVEL", "debug");
+// dotnet.withEnvironmentVariable("MONO_LOG_MASK", "all");
+//.withDiagnosticTracing(false)
+
+dotnet.withDiagnosticTracing(true);
+dotnet.withApplicationArgumentsFromQuery();
+const { setModuleImports, getAssemblyExports, getConfig } = await dotnet.create();
 
 const config = getConfig();
 const exports = await getAssemblyExports(config.mainAssemblyName);
@@ -65,8 +68,9 @@ setModuleImports("main.js", {
         }
 
         const mouseMove = (e) => {
-            var x = e.offsetX;
-            var y = e.offsetY;
+            var devicePixelRatio = window.devicePixelRatio || 1.0;
+            var x = e.offsetX * devicePixelRatio;
+            var y = e.offsetY * devicePixelRatio;
             interop.OnMouseMove(x, y);
         }
 
@@ -81,7 +85,7 @@ setModuleImports("main.js", {
         const mouseWheel = (e) => {
             interop.OnMouseWheel(e.deltaX, e.deltaY);
             e.stopPropagation();
-            e.preventDefault();
+            //e.preventDefault();
             return false;
         }
 
@@ -95,11 +99,12 @@ setModuleImports("main.js", {
                 return;
 
             var bcr = e.target.getBoundingClientRect();
+            var devicePixelRatio = window.devicePixelRatio || 1.0;
             var touches = e.changedTouches;
             for (var i in touches.length) {
                 var touch = e.changedTouches[i];
-                var x = touch.clientX - bcr.x;
-                var y = touch.clientY - bcr.y;
+                var x = (touch.clientX - bcr.x) * devicePixelRatio;
+                var y = (touch.clientY - bcr.y) * devicePixelRatio;
                 interop.OnTouchStart(touch.identifier, x, y, getEventModifiers(e));
             }
         }
@@ -109,11 +114,12 @@ setModuleImports("main.js", {
                 return;
 
             var bcr = e.target.getBoundingClientRect();
+            var devicePixelRatio = window.devicePixelRatio || 1.0;
             var touches = e.changedTouches;
             for (var i in touches.length) {
                 var touch = e.changedTouches[i];
-                var x = touch.clientX - bcr.x;
-                var y = touch.clientY - bcr.y;
+                var x = (touch.clientX - bcr.x) * devicePixelRatio;
+                var y = (touch.clientY - bcr.y) * devicePixelRatio;
                 interop.OnTouchMouve(touch.identifier, x, y);
             }
         }
@@ -123,11 +129,12 @@ setModuleImports("main.js", {
                 return;
 
             var bcr = e.target.getBoundingClientRect();
+            var devicePixelRatio = window.devicePixelRatio || 1.0;
             var touches = e.changedTouches;
             for (var i in touches.length) {
                 var touch = e.changedTouches[i];
-                var x = touch.clientX - bcr.x;
-                var y = touch.clientY - bcr.y;
+                var x = (touch.clientX - bcr.x) * devicePixelRatio;
+                var y = (touch.clientY - bcr.y) * devicePixelRatio;
                 interop.OnTouchEnd(touch.identifier, x, y, getEventModifiers(e));
             }
         }
