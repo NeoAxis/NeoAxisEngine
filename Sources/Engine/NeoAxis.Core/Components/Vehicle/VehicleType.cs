@@ -810,7 +810,7 @@ namespace NeoAxis
 					light.FlareSize = new Vector2( 0.8, 0.8 );
 					light.FlareSizeFadeByDistance = true;
 					light.FlareDepthCheckOffset = 0.2;
-					light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sparkle_blurred.png" );
+					light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sun2.png" );
 				}
 
 				{
@@ -830,7 +830,7 @@ namespace NeoAxis
 					light.FlareSize = new Vector2( 0.8, 0.8 );
 					light.FlareSizeFadeByDistance = true;
 					light.FlareDepthCheckOffset = 0.2;
-					light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sparkle_blurred.png" );
+					light.FlareImage = new Reference<ImageComponent>( null, @"Base\Images\Lens flares\sun2.png" );
 				}
 
 				{

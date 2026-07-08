@@ -318,7 +318,7 @@
 	.component NeoAxis.Light
 	{
 		Name = Headlight Low Left
-		Transform = "1.62393839859369 0.53 0.26085662047027; 0 0.0871557427476582 0 0.996194698091746; 1 1 1"
+		Transform = "1.58 0.53 0.26085662047027; 0 0.0871557427476582 0 0.996194698091746; 1 1 1"
 		Type = Spotlight
 		Brightness = 250000
 		Color = 0.987098 1 0.683647
@@ -328,12 +328,12 @@
 		StartDistance = 0.3
 		ShadowNearClipDistance = 0.2
 		FlareColor = "0.987098 1 0.812; 1.5"
-		FlareSize = 0.8 0.8
+		FlareSize = 0.4 0.4
 		FlareSizeFadeByDistance = True
-		FlareDepthCheckOffset = 0.2
+		FlareDepthCheckOffset = 0.05
 		FlareImage
 		{
-			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
+			GetByReference = "Base\\Images\\Lens flares\\sun2.png"
 		}
 	}
 	.component NeoAxis.Light
@@ -351,7 +351,7 @@
 		FlareSizeFadeByDistance = True
 		FlareImage
 		{
-			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
+			GetByReference = "Base\\Images\\Lens flares\\sun2.png"
 		}
 	}
 	.component NeoAxis.Light
@@ -369,7 +369,7 @@
 		FlareSizeFadeByDistance = True
 		FlareImage
 		{
-			GetByReference = "Base\\Images\\Lens flares\\sparkle_blurred.png"
+			GetByReference = "Base\\Images\\Lens flares\\sun2.png"
 		}
 	}
 }
