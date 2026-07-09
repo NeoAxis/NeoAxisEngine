@@ -2811,97 +2811,101 @@ namespace bgfx
 
 	RendererContextI* rendererCreate(const Init& _init)
 	{
-		int32_t scores[RendererType::Count];
-		uint32_t numScores = 0;
+		//!!!!betauser
+		return s_rendererCreator[_init.type].createFn(_init);
 
-		for (uint32_t ii = 0; ii < RendererType::Count; ++ii)
-		{
-			RendererType::Enum renderer = RendererType::Enum(ii);
-			if (s_rendererCreator[ii].supported)
-			{
-				int32_t score = 0;
-				if (_init.type == renderer)
-				{
-					score += 1000;
-				}
 
-				score += RendererType::Noop != renderer ? 1 : 0;
+		//int32_t scores[RendererType::Count];
+		//uint32_t numScores = 0;
 
-				if (BX_ENABLED(BX_PLATFORM_WINDOWS) )
-				{
-					if (windowsVersionIs(Condition::GreaterEqual, 0x0602) )
-					{
-						score += RendererType::Direct3D11 == renderer ? 20 : 0;
-						score += RendererType::Direct3D12 == renderer ? 10 : 0;
-					}
-					else if (windowsVersionIs(Condition::GreaterEqual, 0x0601) )
-					{
-						score += RendererType::Direct3D11 == renderer ?   20 : 0;
-						score += RendererType::Direct3D12 == renderer ? -100 : 0;
-					}
-					else
-					{
-						score += RendererType::Direct3D12 == renderer ? -100 : 0;
-					}
-				}
-				else if (BX_ENABLED(BX_PLATFORM_LINUX) )
-				{
-					score += RendererType::Vulkan     == renderer ? 50 : 0;
-					score += RendererType::OpenGL     == renderer ? 40 : 0;
-					score += RendererType::OpenGLES   == renderer ? 30 : 0;
-					score += RendererType::Direct3D12 == renderer ? 20 : 0;
-					score += RendererType::Direct3D11 == renderer ? 10 : 0;
-				}
-				else if (BX_ENABLED(BX_PLATFORM_OSX) )
-				{
-					score += RendererType::Metal    == renderer ? 20 : 0;
-					score += RendererType::Vulkan   == renderer ? 10 : 0;
-				}
-				else if (BX_ENABLED(BX_PLATFORM_IOS) || BX_ENABLED(BX_PLATFORM_VISIONOS))
-				{
-					score += RendererType::Metal    == renderer ? 20 : 0;
-				}
-				else if (BX_ENABLED(0
-					 ||  BX_PLATFORM_ANDROID
-					 ||  BX_PLATFORM_EMSCRIPTEN
-					 ||  BX_PLATFORM_RPI
-					 ) )
-				{
-					score += RendererType::OpenGLES == renderer ? 20 : 0;
-				}
-				else if (BX_ENABLED(BX_PLATFORM_PS4) )
-				{
-					score += RendererType::Gnm      == renderer ? 20 : 0;
-				}
-				else if (BX_ENABLED(0
-					 ||  BX_PLATFORM_XBOXONE
-					 ||  BX_PLATFORM_WINRT
-					 ) )
-				{
-					score += RendererType::Direct3D12 == renderer ? 20 : 0;
-					score += RendererType::Direct3D11 == renderer ? 10 : 0;
-				}
+		//for (uint32_t ii = 0; ii < RendererType::Count; ++ii)
+		//{
+		//	RendererType::Enum renderer = RendererType::Enum(ii);
+		//	if (s_rendererCreator[ii].supported)
+		//	{
+		//		int32_t score = 0;
+		//		if (_init.type == renderer)
+		//		{
+		//			score += 1000;
+		//		}
 
-				scores[numScores++] = (score<<8) | uint8_t(renderer);
-			}
-		}
+		//		score += RendererType::Noop != renderer ? 1 : 0;
 
-		bx::quickSort(scores, numScores, bx::compareDescending<int32_t>);
+		//		if (BX_ENABLED(BX_PLATFORM_WINDOWS) )
+		//		{
+		//			if (windowsVersionIs(Condition::GreaterEqual, 0x0602) )
+		//			{
+		//				score += RendererType::Direct3D11 == renderer ? 20 : 0;
+		//				score += RendererType::Direct3D12 == renderer ? 10 : 0;
+		//			}
+		//			else if (windowsVersionIs(Condition::GreaterEqual, 0x0601) )
+		//			{
+		//				score += RendererType::Direct3D11 == renderer ?   20 : 0;
+		//				score += RendererType::Direct3D12 == renderer ? -100 : 0;
+		//			}
+		//			else
+		//			{
+		//				score += RendererType::Direct3D12 == renderer ? -100 : 0;
+		//			}
+		//		}
+		//		else if (BX_ENABLED(BX_PLATFORM_LINUX) )
+		//		{
+		//			score += RendererType::Vulkan     == renderer ? 50 : 0;
+		//			score += RendererType::OpenGL     == renderer ? 40 : 0;
+		//			score += RendererType::OpenGLES   == renderer ? 30 : 0;
+		//			score += RendererType::Direct3D12 == renderer ? 20 : 0;
+		//			score += RendererType::Direct3D11 == renderer ? 10 : 0;
+		//		}
+		//		else if (BX_ENABLED(BX_PLATFORM_OSX) )
+		//		{
+		//			score += RendererType::Metal    == renderer ? 20 : 0;
+		//			score += RendererType::Vulkan   == renderer ? 10 : 0;
+		//		}
+		//		else if (BX_ENABLED(BX_PLATFORM_IOS) || BX_ENABLED(BX_PLATFORM_VISIONOS))
+		//		{
+		//			score += RendererType::Metal    == renderer ? 20 : 0;
+		//		}
+		//		else if (BX_ENABLED(0
+		//			 ||  BX_PLATFORM_ANDROID
+		//			 ||  BX_PLATFORM_EMSCRIPTEN
+		//			 ||  BX_PLATFORM_RPI
+		//			 ) )
+		//		{
+		//			score += RendererType::OpenGLES == renderer ? 20 : 0;
+		//		}
+		//		else if (BX_ENABLED(BX_PLATFORM_PS4) )
+		//		{
+		//			score += RendererType::Gnm      == renderer ? 20 : 0;
+		//		}
+		//		else if (BX_ENABLED(0
+		//			 ||  BX_PLATFORM_XBOXONE
+		//			 ||  BX_PLATFORM_WINRT
+		//			 ) )
+		//		{
+		//			score += RendererType::Direct3D12 == renderer ? 20 : 0;
+		//			score += RendererType::Direct3D11 == renderer ? 10 : 0;
+		//		}
 
-		RendererContextI* renderCtx = NULL;
-		for (uint32_t ii = 0; ii < numScores; ++ii)
-		{
-			RendererType::Enum renderer = RendererType::Enum(scores[ii] & 0xff);
-			renderCtx = s_rendererCreator[renderer].createFn(_init);
-			if (NULL != renderCtx)
-			{
-				break;
-			}
+		//		scores[numScores++] = (score<<8) | uint8_t(renderer);
+		//	}
+		//}
 
-			s_rendererCreator[renderer].supported = false;
-		}
+		//bx::quickSort(scores, numScores, bx::compareDescending<int32_t>);
 
-		return renderCtx;
+		//RendererContextI* renderCtx = NULL;
+		//for (uint32_t ii = 0; ii < numScores; ++ii)
+		//{
+		//	RendererType::Enum renderer = RendererType::Enum(scores[ii] & 0xff);
+		//	renderCtx = s_rendererCreator[renderer].createFn(_init);
+		//	if (NULL != renderCtx)
+		//	{
+		//		break;
+		//	}
+
+		//	s_rendererCreator[renderer].supported = false;
+		//}
+
+		//return renderCtx;
 	}
 
 	void rendererDestroy(RendererContextI* _renderCtx)

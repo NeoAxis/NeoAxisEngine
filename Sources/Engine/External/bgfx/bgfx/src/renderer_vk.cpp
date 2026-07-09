@@ -1286,11 +1286,12 @@ VK_IMPORT
 				}
 
 				uint32_t numEnabledExtensions = 0;
-				const char* enabledExtension[Extension::Count + 1];
+				const char* enabledExtension[Extension::Count + 2];
 
 				if (!headless)
 				{
 					enabledExtension[numEnabledExtensions++] = VK_KHR_SURFACE_EXTENSION_NAME;
+					enabledExtension[numEnabledExtensions++] = KHR_SURFACE_EXTENSION_NAME;
 				}
 
 				for (uint32_t ii = 0; ii < Extension::Count; ++ii)

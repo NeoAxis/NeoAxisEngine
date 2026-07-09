@@ -456,8 +456,23 @@ namespace Native {
 	//
 	uint Image::getFlagsFromHeader(const WString& strFileName, const String& group)
 	{
-		DataStreamPtr encoded = root->mResourceGroupManager->openResource(strFileName, group);
-		return getFlagsFromHeader(encoded);
+		std::string fileExtension = StringUtil::toUTF8(strFileName.substr(strFileName.find_last_of(L".") + 1));
+		Codec* pCodec = root->getCodec(fileExtension);
+
+		if (pCodec != nullptr && pCodec->getType() == "dds")
+		{
+			auto ddsCodec = dynamic_cast<DDSCodec*>(pCodec);
+			if (ddsCodec != nullptr)
+			{
+				DataStreamPtr stream = root->mResourceGroupManager->openResource(strFileName, group);
+				return ddsCodec->getImageFlags(stream);
+			}
+		}
+
+		OGRE_EXCEPT(Exception::ERR_NOT_IMPLEMENTED, "Implemented only for DDS files.", "Image::getFlagsFromMagic");
+
+		//DataStreamPtr encoded = root->mResourceGroupManager->openResource(strFileName, group);
+		//return getFlagsFromHeader(encoded);
 	}
 	//---------------------------------------------------------------------
 	uint Image::getFlagsFromHeader(DataStreamPtr stream)

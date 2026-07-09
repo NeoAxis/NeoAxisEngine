@@ -25,6 +25,24 @@ setModuleImports("main.js", {
         };
 
         const checkCanvasResize = (dispatch) => {
+
+            // const dpr = window.devicePixelRatio || 1.0;
+            // const rect = canvas.getBoundingClientRect();
+
+            // const displayWidth = Math.round(rect.width * dpr);
+            // const displayHeight = Math.round(rect.height * dpr);
+
+            // if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
+            //     canvas.width = displayWidth;
+            //     canvas.height = displayHeight;
+            //     dispatch = true;
+            // }
+
+            // if (dispatch) {
+            //     interop.OnCanvasResize(canvas.width, canvas.height, dpr);
+            // }
+
+
             var devicePixelRatio = window.devicePixelRatio || 1.0;
             var displayWidth = canvas.clientWidth * devicePixelRatio;
             var displayHeight = canvas.clientHeight * devicePixelRatio;
@@ -101,6 +119,11 @@ setModuleImports("main.js", {
             var bcr = e.target.getBoundingClientRect();
             var devicePixelRatio = window.devicePixelRatio || 1.0;
             var touches = e.changedTouches;
+
+            //!!!!gpt:
+            //Это неверно, потому что touches.length — число, а for...in тут не подходит.Нужно:
+            //for (let i = 0; i < touches.length; i++)
+
             for (var i in touches.length) {
                 var touch = e.changedTouches[i];
                 var x = (touch.clientX - bcr.x) * devicePixelRatio;
@@ -120,7 +143,7 @@ setModuleImports("main.js", {
                 var touch = e.changedTouches[i];
                 var x = (touch.clientX - bcr.x) * devicePixelRatio;
                 var y = (touch.clientY - bcr.y) * devicePixelRatio;
-                interop.OnTouchMouve(touch.identifier, x, y);
+                interop.OnTouchMove(touch.identifier, x, y);
             }
         }
 
