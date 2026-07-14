@@ -10,7 +10,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.IO;
-using DirectInput;
 using Internal;
 
 namespace NeoAxis

@@ -12,9 +12,12 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "fencetype" )]
 	[AddToResourcesWindow( @"Addons\Fence\Fence Type", 500 )]
-	[EditorControl( typeof( FenceTypeEditor ) )]
-	[Preview( typeof( FenceTypePreview ) )]
-	[PreviewImage( typeof( FenceTypePreviewImage ) )]
+	[EditorControl( "NeoAxis.Editor.FenceTypeEditor" )]
+	[Preview( "NeoAxis.Editor.FenceTypePreview" )]
+	[PreviewImage( "NeoAxis.Editor.FenceTypePreviewImage" )]
+	//[EditorControl( typeof( FenceTypeEditor ) )]
+	//[Preview( typeof( FenceTypePreview ) )]
+	//[PreviewImage( typeof( FenceTypePreviewImage ) )]
 	public class FenceType : Component
 	{
 		/// <summary>

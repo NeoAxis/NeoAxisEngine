@@ -728,6 +728,8 @@ namespace Internal
 		public WindowsPlatformFunctionality()
 		{
 			instance = this;
+			SetInstance( this, SystemSettings.Platform.Windows );
+			new PlatformSpecificUtilityWindows();
 
 			if( SystemSettings.OSVersion.Major >= 6 )
 			{
@@ -1087,7 +1089,7 @@ namespace Internal
 				return DefWindowProc( hWnd, message, wParam, lParam );
 
 			bool processMessageByEngine = true;
-			EngineApp.PerformWindowsWndProcEvent( message, wParam, lParam, ref processMessageByEngine );
+			EngineApp._Internal_PerformWindowsWndProcEvent( message, wParam, lParam, ref processMessageByEngine );
 
 			Viewport viewport = null;
 			if( !RenderingSystem.Disposed && RenderingSystem.ApplicationRenderTarget != null )
@@ -1176,7 +1178,7 @@ namespace Internal
 									if( EngineApp.WindowedMode == WindowedModeEnum.Fullscreen ) //if( EngineApp.FullscreenEnabled )
 									{
 										if( EngineApp.WindowedModeSize != instance.GetScreenSize() )
-											EngineApp.MustChangeWindowedModeOrVideoMode();
+											EngineApp._Internal_MustChangeWindowedModeOrVideoMode();
 									}
 								}
 								else
@@ -1746,7 +1748,7 @@ namespace Internal
 							}
 
 							//if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving && !instance.intoMenuLoop && !instance.goingToWindowedMode && !instance.goingToFullScreenMode && !instance.goingToChangeWindowRectangle )
-							if( EngineApp.insideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving && !instance.intoMenuLoop && instance.goingToAnotherWindowedMode == null && !instance.goingToChangeWindowRectangle )
+							if( EngineApp._Internal_InsideRunMessageLoop && EngineApp.EnginePaused && !instance.resizingMoving && !instance.intoMenuLoop && instance.goingToAnotherWindowedMode == null && !instance.goingToChangeWindowRectangle )
 							{
 								EngineApp.CreatedWindowApplicationIdle( false );
 							}

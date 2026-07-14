@@ -34,7 +34,7 @@ namespace NeoAxis
 			OnUpdateState();
 		}
 
-		internal void CallOnShutdown()
+		public void CallOnShutdown()
 		{
 			OnShutdown();
 		}

@@ -7,10 +7,9 @@ $output v_color0, v_texCoord0
 uniform vec4 u_canvasColorMultiplier;
 uniform vec4 u_canvasOcclusionDepthCheck;
 
-#ifndef MOBILE
+#ifndef LIMITED_DEVICE
 	SAMPLER2D( s_depthTexture, 1 );
 	#include "VertexFunctions.sh"
-//	#include "FragmentFunctions.sh"
 #endif
 
 void main()
@@ -27,7 +26,7 @@ void main()
 	v_color0 = a_color0 * u_canvasColorMultiplier;
 
 	//depth texture check. for lens flares
-#ifndef MOBILE
+#ifndef LIMITED_DEVICE
 	BRANCH
 	if( u_canvasOcclusionDepthCheck.w > 0.0 )
 	{

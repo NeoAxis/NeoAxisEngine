@@ -175,10 +175,10 @@ namespace NeoAxis.Editor
 			EditorAssemblyInterface.Instance.OpenSelectTypeWindow( initData );
 		}
 
-		public static void Product_Store_ImageGenerator_WriteBitmapToStream( Stream writeStream, Product_Store.ImageGenerator.ImageFormat writeImageFormat, Vector2I imageSizeRender, Vector2I imageSizeOutput, IntPtr imageData )
-		{
-			EditorAssemblyInterface.Instance.Product_Store_ImageGenerator_WriteBitmapToStream( writeStream, writeImageFormat, imageSizeRender, imageSizeOutput, imageData );
-		}
+		//public static void Product_Store_ImageGenerator_WriteBitmapToStream( Stream writeStream, Product_Store.ImageGenerator.ImageFormat writeImageFormat, Vector2I imageSizeRender, Vector2I imageSizeOutput, IntPtr imageData )
+		//{
+		//	EditorAssemblyInterface.Instance.Product_Store_ImageGenerator_WriteBitmapToStream( writeStream, writeImageFormat, imageSizeRender, imageSizeOutput, imageData );
+		//}
 
 		/// <summary>
 		/// Register an editor action. Use this method for the code which not referencing to NeoAxis.Core.Editor.dll directly. As example when need to call the method from Project.csproj.

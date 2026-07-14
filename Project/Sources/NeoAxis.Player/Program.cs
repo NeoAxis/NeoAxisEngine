@@ -39,6 +39,9 @@ namespace NeoAxis.Player
 
 		static void Main2()
 		{
+			//create platform classes
+			Platforms.Initialize();
+
 			//set application type
 			EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Simulation;
 

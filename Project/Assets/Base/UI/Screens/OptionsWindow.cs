@@ -265,22 +265,48 @@ namespace Project
 			var comboWindowedMode = GetComboWindowedMode();
 			if( comboWindowedMode != null )
 			{
-				comboWindowedMode.SelectedIndex = (int)SimulationApp.WindowedMode;
-				comboWindowedMode.SelectedIndexChanged += delegate ( UICombo sender )
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				{
-					SimulationApp.WindowedMode = (WindowedModeEnum)sender.SelectedIndex;
+					//Web specific for windowed mode
 
-					MessageBoxWindow.Show( this, "Change the windowed mode right now?", "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender2, EDialogResult result, object anyData )
+					//remove Borderless mode
+					comboWindowedMode.RemoveItem( 1 );
+
+					//set current value
+					comboWindowedMode.SelectedIndex = SimulationApp.WindowedMode == WindowedModeEnum.Windowed ? 1 : 0;
+
+					//change value
+					comboWindowedMode.SelectedIndexChanged += delegate ( UICombo sender )
 					{
-						if( result == EDialogResult.Yes )
-							EngineApp.SetWindowedMode( SimulationApp.WindowedMode, EngineApp.WindowedModeSize );
-						else
-							ShowTextRestartToApplyChanges();
-					} );
+						SimulationApp.WindowedMode = sender.SelectedIndex == 1 ? WindowedModeEnum.Windowed : WindowedModeEnum.Fullscreen;
+						EngineApp.SetWindowedMode( SimulationApp.WindowedMode, EngineApp.WindowedModeSize );
+					};
+					comboWindowedMode.ReadOnly = SystemSettings.MobileDevice;
+				}
+				else
+				{
+					//Common for windowed mode
 
-					//ShowTextRestartToApplyChanges();
-				};
-				comboWindowedMode.ReadOnly = SystemSettings.MobileDevice;
+					//set current value
+					comboWindowedMode.SelectedIndex = (int)SimulationApp.WindowedMode;
+
+					//change value
+					comboWindowedMode.SelectedIndexChanged += delegate ( UICombo sender )
+					{
+						SimulationApp.WindowedMode = (WindowedModeEnum)sender.SelectedIndex;
+
+						MessageBoxWindow.Show( this, "Change the windowed mode right now?", "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender2, EDialogResult result, object anyData )
+						{
+							if( result == EDialogResult.Yes )
+								EngineApp.SetWindowedMode( SimulationApp.WindowedMode, EngineApp.WindowedModeSize );
+							else
+								ShowTextRestartToApplyChanges();
+						} );
+
+						//ShowTextRestartToApplyChanges();
+					};
+					comboWindowedMode.ReadOnly = SystemSettings.MobileDevice;
+				}
 			}
 
 			//Video mode

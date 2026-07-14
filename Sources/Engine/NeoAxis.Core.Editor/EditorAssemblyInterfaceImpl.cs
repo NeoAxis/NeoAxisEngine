@@ -379,56 +379,56 @@ namespace NeoAxis.Editor
 			EditorForm.Instance.WorkspaceController.AddDockWindow( window, true, true );
 		}
 
-		public override void Product_Store_ImageGenerator_WriteBitmapToStream( Stream writeStream, Product_Store.ImageGenerator.ImageFormat writeImageFormat, Vector2I imageSizeRender, Vector2I imageSizeOutput, IntPtr imageData )
-		{
-			const PixelFormat imageFormat = PixelFormat.A8R8G8B8;
+		//public override void Product_Store_ImageGenerator_WriteBitmapToStream( Stream writeStream, Product_Store.ImageGenerator.ImageFormat writeImageFormat, Vector2I imageSizeRender, Vector2I imageSizeOutput, IntPtr imageData )
+		//{
+		//	const PixelFormat imageFormat = PixelFormat.A8R8G8B8;
 
-			using( var bitmap = new Bitmap( imageSizeRender.X, imageSizeRender.Y, imageSizeRender.X * PixelFormatUtility.GetNumElemBytes( imageFormat ), System.Drawing.Imaging.PixelFormat.Format32bppArgb, imageData ) )
-			{
-				Bitmap ResizeImage( Image image, int width, int height )
-				{
-					Bitmap result = new Bitmap( width, height );
-					using( Graphics g = Graphics.FromImage( result ) )
-					{
-						g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+		//	using( var bitmap = new Bitmap( imageSizeRender.X, imageSizeRender.Y, imageSizeRender.X * PixelFormatUtility.GetNumElemBytes( imageFormat ), System.Drawing.Imaging.PixelFormat.Format32bppArgb, imageData ) )
+		//	{
+		//		Bitmap ResizeImage( Image image, int width, int height )
+		//		{
+		//			Bitmap result = new Bitmap( width, height );
+		//			using( Graphics g = Graphics.FromImage( result ) )
+		//			{
+		//				g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
-						//downscale and clip
-						var offsetX = (int)( (double)width * 0.05 );
-						var offsetY = (int)( (double)height * 0.05 );
-						g.DrawImage( image, -offsetX, -offsetY, width + offsetX * 2, height + offsetY * 2 );
+		//				//downscale and clip
+		//				var offsetX = (int)( (double)width * 0.05 );
+		//				var offsetY = (int)( (double)height * 0.05 );
+		//				g.DrawImage( image, -offsetX, -offsetY, width + offsetX * 2, height + offsetY * 2 );
 
-						////fix borders
-						//g.DrawImage( image, -2, -2, width + 4, height + 4 );
-						////g.DrawImage( image, 0, 0, width, height );
-					}
-					return result;
-				}
+		//				////fix borders
+		//				//g.DrawImage( image, -2, -2, width + 4, height + 4 );
+		//				////g.DrawImage( image, 0, 0, width, height );
+		//			}
+		//			return result;
+		//		}
 
-				using( var resized = ResizeImage( bitmap, imageSizeOutput.X, imageSizeOutput.Y ) )
-				{
-					if( writeImageFormat == Product_Store.ImageGenerator.ImageFormat.Png )
-						resized.Save( writeStream, ImageFormat.Png );
-					else if( writeImageFormat == Product_Store.ImageGenerator.ImageFormat.Jpeg )
-					{
-						var encoder = ImageCodecInfo.GetImageEncoders().First( codec => codec.FormatID == ImageFormat.Jpeg.Guid );
-						var parameters = new EncoderParameters( 1 );
-						parameters.Param[ 0 ] = new EncoderParameter( System.Drawing.Imaging.Encoder.Quality, 95L );
-						resized.Save( writeStream, encoder, parameters );
-					}
+		//		using( var resized = ResizeImage( bitmap, imageSizeOutput.X, imageSizeOutput.Y ) )
+		//		{
+		//			if( writeImageFormat == Product_Store.ImageGenerator.ImageFormat.Png )
+		//				resized.Save( writeStream, ImageFormat.Png );
+		//			else if( writeImageFormat == Product_Store.ImageGenerator.ImageFormat.Jpeg )
+		//			{
+		//				var encoder = ImageCodecInfo.GetImageEncoders().First( codec => codec.FormatID == ImageFormat.Jpeg.Guid );
+		//				var parameters = new EncoderParameters( 1 );
+		//				parameters.Param[ 0 ] = new EncoderParameter( System.Drawing.Imaging.Encoder.Quality, 95L );
+		//				resized.Save( writeStream, encoder, parameters );
+		//			}
 
-					//var ext = Path.GetExtension( writeRealFileName );
-					//if( ext == ".png" )
-					//	resized.Save( writeRealFileName, ImageFormat.Png );
-					//else if( ext == ".jpg" )
-					//{
-					//	var encoder = ImageCodecInfo.GetImageEncoders().First( codec => codec.FormatID == ImageFormat.Jpeg.Guid );
-					//	var parameters = new EncoderParameters( 1 );
-					//	parameters.Param[ 0 ] = new EncoderParameter( System.Drawing.Imaging.Encoder.Quality, 95L );
-					//	resized.Save( writeRealFileName, encoder, parameters );
-					//}
-				}
-			}
-		}
+		//			//var ext = Path.GetExtension( writeRealFileName );
+		//			//if( ext == ".png" )
+		//			//	resized.Save( writeRealFileName, ImageFormat.Png );
+		//			//else if( ext == ".jpg" )
+		//			//{
+		//			//	var encoder = ImageCodecInfo.GetImageEncoders().First( codec => codec.FormatID == ImageFormat.Jpeg.Guid );
+		//			//	var parameters = new EncoderParameters( 1 );
+		//			//	parameters.Param[ 0 ] = new EncoderParameter( System.Drawing.Imaging.Encoder.Quality, 95L );
+		//			//	resized.Save( writeRealFileName, encoder, parameters );
+		//			//}
+		//		}
+		//	}
+		//}
 
 		public override EditorContextMenu.Item EditorContextMenuNewItem( string text, EventHandler clickHandler )
 		{

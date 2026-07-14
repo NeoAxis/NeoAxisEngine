@@ -1,5 +1,5 @@
 vec3 a_position : POSITION;
-uvec4 a_indices : BLENDINDICES;
+vec4 a_indices : BLENDINDICES;
 vec4 a_weight : BLENDWEIGHT;
 vec2 a_texcoord0 : TEXCOORD0;
 vec4 i_data0 : TEXCOORD7;

@@ -50,7 +50,6 @@
     <Compile Include="Implementation\FunctionalityAndroid.Input.cs" />
     <Compile Include="Implementation\FunctionalityAndroid.Utility.cs" />
     <Compile Include="Implementation\FunctionalityAndroid.Video.cs" />
-    <Compile Include="Implementation\LogPlatformFunctionalityAndroid.cs" />
     <Compile Include="Implementation\PlatformSpecificUtilityAndroid.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Implementation\OpenGLES.cs" />

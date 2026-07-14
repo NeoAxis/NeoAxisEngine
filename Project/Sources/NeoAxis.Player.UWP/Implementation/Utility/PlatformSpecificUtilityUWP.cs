@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Windows.ApplicationModel.DataTransfer;
 using System.Threading.Tasks;
+using NeoAxis.Editor;
 
 namespace NeoAxis
 {
@@ -18,11 +19,6 @@ namespace NeoAxis
 		public static extern IntPtr LoadPackagedLibrary( string lpwLibFileName, uint Reserved );
 
 		//
-
-		public PlatformSpecificUtilityUWP()
-		{
-			SetInstance( this );
-		}
 
 		public override string GetExecutableDirectoryPath()
 		{
@@ -65,6 +61,47 @@ namespace NeoAxis
 				Clipboard.SetContent( dataPackage );
 			}
 			catch { }
+		}
+
+		///////////////////////////////////////////////
+
+		[DllImport( "user32.dll" )]
+		static extern int ShowCursor( int show );
+
+		[DllImport( "user32.dll", CharSet = CharSet.Unicode )]
+		static extern int MessageBox( IntPtr hWnd, string text, string caption, int type );
+		const int MB_OK = 0x00000000;
+		const int MB_ICONEXCLAMATION = 0x00000030;
+
+		///////////////////////////////////////////
+
+		public override EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons )
+		{
+			{
+				var counter = 0;
+				while( ShowCursor( 1 ) < 0 && counter < 100 ) { counter++; }
+			}
+
+			if( EngineApp.IsEditor )
+			{
+				if( buttons != EMessageBoxButtons.OK )
+					return EditorMessageBox.ShowQuestion( text, buttons, caption );
+				else
+				{
+					EditorMessageBox.ShowWarning( text, caption );
+					return EDialogResult.OK;
+				}
+			}
+			else
+			{
+				IntPtr hwnd = IntPtr.Zero;
+				if( EngineApp.IsSimulation && EngineApp.CreatedInsideEngineWindow != null )
+					hwnd = EngineApp.CreatedInsideEngineWindow.Handle;
+				if( EngineApp.IsEditor && Process.GetCurrentProcess().MainWindowHandle != IntPtr.Zero )
+					hwnd = Process.GetCurrentProcess().MainWindowHandle;
+
+				return (EDialogResult)MessageBox( hwnd, text, caption, (int)buttons | MB_ICONEXCLAMATION );
+			}
 		}
 	}
 }

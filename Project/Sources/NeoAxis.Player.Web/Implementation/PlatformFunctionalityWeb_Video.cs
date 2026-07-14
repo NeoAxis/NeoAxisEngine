@@ -1,5 +1,7 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
+using NeoAxis.Player.Web;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NeoAxis
 {
@@ -7,14 +9,18 @@ namespace NeoAxis
 	{
 		public override List<Vector2I> GetVideoModes()
 		{
-			return new List<Vector2I>() { GetScreenSize() };
+			return new List<Vector2I>();
+
+			//return new List<Vector2I>() { GetScreenSize() };
 		}
 
 		public override bool ChangeVideoMode( Vector2I mode )
 		{
-			if( mode == GetScreenSize() )
-				return true;
-			return false;
+			return true;
+
+			//if( mode == GetScreenSize() )
+			//	return true;
+			//return false;
 		}
 
 		public override void RestoreVideoMode()
@@ -27,6 +33,11 @@ namespace NeoAxis
 
 		public override void ProcessChangingVideoMode()
 		{
+			var fullscreen = EngineApp.WindowedMode != WindowedModeEnum.Windowed;
+			Task.Run( async () =>
+			{
+				await Interop.SetFullscreenAsync( fullscreen );
+			} );
 		}
 
 		public override IList<SystemSettings.DisplayInfo> GetAllDisplays()

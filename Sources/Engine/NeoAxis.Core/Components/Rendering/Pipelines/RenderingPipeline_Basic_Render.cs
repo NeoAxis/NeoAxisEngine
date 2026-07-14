@@ -14435,7 +14435,8 @@ namespace NeoAxis
 
 
 				//use half on mobile
-				if( SystemSettings.LimitedDevice )
+				//if( SystemSettings.LimitedDevice )
+				if( RenderingSystem.SkeletalAnimation == ProjectSettingsPage_Rendering.SkeletalAnimationEnum.Precision16Bit )
 				{
 					//half
 

@@ -93,6 +93,9 @@
     <Reference Include="NeoAxis.Core">
       <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
     </Reference>
+    <Reference Include="NeoAxis.Platforms">
+      <HintPath>..\..\Binaries\NeoAxis.Platforms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   
 </Project>

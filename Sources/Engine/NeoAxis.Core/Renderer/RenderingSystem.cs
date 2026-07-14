@@ -1599,8 +1599,8 @@ namespace NeoAxis
 			}
 		}
 
-		static bool? skeletalAnimation;
-		public static bool SkeletalAnimation
+		static ProjectSettingsPage_Rendering.SkeletalAnimationEnum? skeletalAnimation;
+		public static ProjectSettingsPage_Rendering.SkeletalAnimationEnum SkeletalAnimation
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get

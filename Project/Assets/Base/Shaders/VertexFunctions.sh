@@ -12,18 +12,19 @@ mat4 getBoneTransform(sampler2D bones, int bonesIndex, int index)
 	return mtxFromCols(item0, item1, item2, item3);
 }
 
-void getAnimationData(vec4 renderOperationData, sampler2D bones, uvec4 indices, vec4 weight, inout vec3 position, inout vec3 normal, inout vec4 tangent)
+void getAnimationData(vec4 renderOperationData, sampler2D bones, vec4 indices, vec4 weight, inout vec3 position, inout vec3 normal, inout vec4 tangent)
 {
 	BRANCH
 	if(renderOperationData.y > 0.0)
 	{
 		int bonesIndex = int(renderOperationData.y) - 1;
+		uvec4 indices2 = floatBitsToUint(indices);
 		
 		mat4 transform = 
-			getBoneTransform(bones, bonesIndex, int(indices.x)) * weight.x +
-			getBoneTransform(bones, bonesIndex, int(indices.y)) * weight.y +
-			getBoneTransform(bones, bonesIndex, int(indices.z)) * weight.z +
-			getBoneTransform(bones, bonesIndex, int(indices.w)) * weight.w;
+			getBoneTransform(bones, bonesIndex, int(indices2.x)) * weight.x +
+			getBoneTransform(bones, bonesIndex, int(indices2.y)) * weight.y +
+			getBoneTransform(bones, bonesIndex, int(indices2.z)) * weight.z +
+			getBoneTransform(bones, bonesIndex, int(indices2.w)) * weight.w;
 		mat3 transform3 = toMat3(transform);
 		position = (mul(transform, vec4(position, 1.0))).xyz;
 		normal = normalize(mul(transform3, normal));

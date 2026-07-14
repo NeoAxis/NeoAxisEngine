@@ -1611,20 +1611,20 @@ namespace Tao.OpenAl
 		public static extern void alDopplerFactor( float val );
 		#endregion alDopplerFactor(float val)
 
-		#region alDopplerVelocity(float val)
-		/// <summary>
-		///     Selects the OpenAL Doppler velocity value.
-		/// </summary>
-		/// <param name="val">
-		///     The Doppler velocity value to set.
-		/// </param>
-		/// <remarks>
-		///     The default Doppler velocity value is 343.3.
-		/// </remarks>
-		// ALAPI ALvoid ALAPIENTRY alDopplerVelocity(ALfloat value);
-		[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
-		public static extern void alDopplerVelocity( float val );
-		#endregion alDopplerVelocity(float val)
+		//#region alDopplerVelocity(float val)
+		///// <summary>
+		/////     Selects the OpenAL Doppler velocity value.
+		///// </summary>
+		///// <param name="val">
+		/////     The Doppler velocity value to set.
+		///// </param>
+		///// <remarks>
+		/////     The default Doppler velocity value is 343.3.
+		///// </remarks>
+		//// ALAPI ALvoid ALAPIENTRY alDopplerVelocity(ALfloat value);
+		//[DllImport( AL_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION ), SuppressUnmanagedCodeSecurity]
+		//public static extern void alDopplerVelocity( float val );
+		//#endregion alDopplerVelocity(float val)
 
 		#region alSpeedOfSound(float val)
 		/// <summary>

@@ -1516,6 +1516,11 @@ namespace bgfx { namespace gl
 			, m_numPredefined(0)
 		{
 			m_instanceData[0] = -1;
+
+			//!!!!betauser
+#if BX_PLATFORM_EMSCRIPTEN
+			m_autoBindingSamplerIndexCount = 0;
+#endif
 		}
 
 		void create(const ShaderGL& _vsh, const ShaderGL& _fsh);
@@ -1545,6 +1550,14 @@ namespace bgfx { namespace gl
 		UniformBuffer* m_constantBuffer;
 		PredefinedUniform m_predefined[PredefinedUniform::Count];
 		uint8_t m_numPredefined;
+
+		//!!!!betauser
+		//WebGL autobinding samplers (getting index from name)
+#if BX_PLATFORM_EMSCRIPTEN
+		int m_autoBindingSamplerIndexCount;
+		std::vector<int> m_autoBindingSamplerIndex;
+#endif
+
 	};
 
 	struct TimerQueryGL

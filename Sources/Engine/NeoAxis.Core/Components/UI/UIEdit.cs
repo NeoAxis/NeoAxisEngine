@@ -6,6 +6,7 @@ using System.ComponentModel;
 using NeoAxis.Editor;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
+using Internal;
 
 namespace NeoAxis
 {
@@ -708,8 +709,9 @@ namespace NeoAxis
 
 					//!!!!maybe for Linux, macOS another keys
 
-					//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-					if( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+					////if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+
+					//if( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					{
 						switch( e.Key )
 						{
@@ -802,37 +804,6 @@ namespace NeoAxis
 								} );
 
 								return true;
-
-
-								//try
-								//{
-								//	var text = PlatformSpecificUtility.Instance.GetClipboardText();
-								//	if( !string.IsNullOrEmpty( text ) )
-								//	{
-								//		var font = GetFont();
-								//		var caret = GetCaretPosition();
-
-								//		var newText = Text.Value;
-								//		foreach( var c in text )
-								//		{
-								//			if( IsAllowCharacter( font, textControl, c ) && OnTextTypingFilter( e.Key, c, newText ) )
-								//			{
-								//				newText = newText.Insert( caret, c.ToString() );
-								//				caret++;
-								//			}
-								//		}
-								//		Text = newText;
-
-								//		if( caret == Text.Value.Length )
-								//			caret = -1;
-								//		CaretPosition = caret;
-								//	}
-								//}
-								//catch { }
-
-								//DeselectAll();
-								//EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
-								//return true;
 							}
 							break;
 

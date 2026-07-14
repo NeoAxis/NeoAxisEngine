@@ -3,8 +3,8 @@ $input v_texCoord0
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 #include "../Common.sh"
 
-SAMPLER2D(s_sourceTexture, 0);
-SAMPLER2D(s_noiseTexture, 1);
+SAMPLER2D(s_sourceTexture_0, 0);
+SAMPLER2D(s_noiseTexture_1, 1);
 uniform vec4/*float*/ intensity;
 uniform vec4/*vec2*/ multiply;
 uniform vec4/*vec2*/ add;
@@ -25,11 +25,11 @@ float random2( vec2 p )
 
 void main()
 {
-	vec4 sourceColor = texture2D(s_sourceTexture, v_texCoord0);
+	vec4 sourceColor = texture2D(s_sourceTexture_0, v_texCoord0);
 
 	vec2 noiseUV = v_texCoord0 * viewportSize.xy * noiseTextureSize.zw;
 	noiseUV += seeds.xy;
-	vec4 noise = texture2D(s_noiseTexture, noiseUV);
+	vec4 noise = texture2D(s_noiseTexture_1, noiseUV);
 
 	float m = (random2(noise.xy) + 1.0) / 2.0;
 	m = lerp(multiply.x, multiply.y, m);

@@ -442,11 +442,14 @@ namespace Project
 			EngineConfig.RegisterClassParameters( typeof( SimulationApp ) );
 
 			//creation settings
-			EngineApp.InitSettings.CreateWindowedMode = WindowedMode;
-			if( WindowedMode == WindowedModeEnum.Fullscreen && VideoMode != Vector2I.Zero && SystemSettings.VideoModeExists( VideoMode ) )
-				EngineApp.InitSettings.CreateWindowSize = VideoMode;
-			if( WindowedMode == WindowedModeEnum.Windowed && VideoMode != Vector2I.Zero )
-				EngineApp.InitSettings.CreateWindowSize = VideoMode;
+			if( EngineApp.InitSettings.CreateWindowedMode == null )
+			{
+				EngineApp.InitSettings.CreateWindowedMode = WindowedMode;
+				if( WindowedMode == WindowedModeEnum.Fullscreen && VideoMode != Vector2I.Zero && SystemSettings.VideoModeExists( VideoMode ) )
+					EngineApp.InitSettings.CreateWindowSize = VideoMode;
+				if( WindowedMode == WindowedModeEnum.Windowed && VideoMode != Vector2I.Zero )
+					EngineApp.InitSettings.CreateWindowSize = VideoMode;
+			}
 
 			if( !VerticalSync )
 				EngineApp.InitSettings.SimulationVSync = false;

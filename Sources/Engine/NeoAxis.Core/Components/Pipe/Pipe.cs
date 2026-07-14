@@ -11,7 +11,8 @@ namespace NeoAxis
 	/// An instance of a pipe.
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Pipe\Pipe", 9200 )]
-	[SettingsCell( typeof( PipeSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.PipeSettingsCell" )]
+	//[SettingsCell( typeof( PipeSettingsCell ) )]
 	public class Pipe : CurveInSpace
 	{
 		//readonly bool useGroupOfObjects = true;

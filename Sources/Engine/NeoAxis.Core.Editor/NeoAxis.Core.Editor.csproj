@@ -41,6 +41,15 @@
     <None Remove="Libraries\Krypton\.editorconfig" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Components\Build\Product_Linux.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Components\Build\Product_macOS.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Components\Build\Product_Store.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Components\Font\FontPreview.designer.cs">
       <DependentUpon>FontPreview.cs</DependentUpon>
     </Compile>
@@ -638,6 +647,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
     <ProjectReference Include="..\NeoAxis.Core\NeoAxis.Core.csproj" />
+    <ProjectReference Include="..\NeoAxis.Platforms\NeoAxis.Platforms.csproj" />
     <ProjectReference Include="..\RoslynPad\RoslynPad.Common\RoslynPad.Common.csproj" />
     <ProjectReference Include="..\RoslynPad\RoslynPad.Editor.Windows\RoslynPad.Editor.Windows.csproj" />
     <ProjectReference Include="..\RoslynPad\RoslynPad.Roslyn.Windows\RoslynPad.Roslyn.Windows.csproj" />

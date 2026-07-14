@@ -10,7 +10,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.IO;
-using DirectInput;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.Graphics.Display;

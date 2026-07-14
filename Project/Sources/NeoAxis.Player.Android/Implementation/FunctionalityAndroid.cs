@@ -15,8 +15,6 @@ namespace NeoAxis
 		{
 			instance = this;
 			SetInstance( instance, SystemSettings.Platform.Android );
-
-			new LogPlatformFunctionalityAndroid();
 			new PlatformSpecificUtilityAndroid();
 		}
 

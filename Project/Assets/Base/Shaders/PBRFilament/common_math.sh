@@ -15,7 +15,7 @@
 #define MEDIUMP_FLT_MAX    65504.0
 #define MEDIUMP_FLT_MIN    0.00006103515625
 
-#ifdef MOBILE
+#ifdef LIMITED_DEVICE // #ifdef MOBILE
 	#define FLT_EPS            MEDIUMP_FLT_MIN
 	#define saturateMediump(x) min(x, MEDIUMP_FLT_MAX)
 #else

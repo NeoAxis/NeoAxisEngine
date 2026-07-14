@@ -46,6 +46,15 @@ void LogLongText(std::string s)
 
 #endif
 
+//!!!!betauser
+#if BX_PLATFORM_EMSCRIPTEN
+namespace bx
+{
+	extern void debugOutput(const char* _out);
+}
+#endif
+
+
 //!!!!
 //!!!!МОЖЕТ в фатале показывает не тот сорц.
 //bool replace(std::string& str, const std::string& from, const std::string& to)
@@ -5168,6 +5177,20 @@ namespace bgfx { namespace gl
 		}
 	}
 
+	//!!!!betauser
+	bool isDigits(const char* s)
+	{
+		if (!s || *s == '\0')
+			return false;
+
+		for (const char* p = s; *p; ++p)
+		{
+			if (!std::isdigit((unsigned char)*p))
+				return false;
+		}
+		return true;
+	}
+
 	void ProgramGL::init()
 	{
 		GLint activeAttribs  = 0;
@@ -5204,6 +5227,9 @@ namespace bgfx { namespace gl
 
 		uint32_t maxLength = bx::uint32_max(max0, max1);
 		char* name = (char*)alloca(maxLength + 1);
+
+		//!!!!betauser
+		std::string samplerNames;
 
 		BX_TRACE("Program %d", m_id);
 		BX_TRACE("Attributes (%d):", activeAttribs);
@@ -5344,6 +5370,35 @@ namespace bgfx { namespace gl
 					BX_TRACE("Sampler #%d at location %d.", m_numSamplers, loc);
 					m_sampler[m_numSamplers] = loc;
 					m_numSamplers++;
+
+					//!!!!betauser
+					//WebGL samplers autobinding
+					#if BX_PLATFORM_EMSCRIPTEN
+					{
+						//get index of sampler from the name. examples: s_bones_0, s_brdfLUT_6
+						int index = -1;
+						char* lastUnderscore = strrchr(name, '_');
+						if (lastUnderscore && *(lastUnderscore + 1) != '\0' && isDigits(lastUnderscore + 1))
+							index = atoi(lastUnderscore + 1);
+
+						//char qq[256] = { 0 };
+						//snprintf(qq, sizeof(qq), "SAMPLER: name: %s, index %d, location: %d", name, index, loc);
+						//bx::debugOutput(qq);
+
+						//save the index in the table
+						if (index != -1)
+						{
+							m_autoBindingSamplerIndexCount++;
+
+							while (m_autoBindingSamplerIndex.size() <= index)
+								m_autoBindingSamplerIndex.push_back(0);
+							m_autoBindingSamplerIndex[index] = loc;
+						}
+
+						samplerNames += std::string(name) + std::string(" ");
+					}
+					#endif
+
 				}
 				else
 				{
@@ -5473,6 +5528,18 @@ namespace bgfx { namespace gl
 				, BX_COUNTOF(m_instanceData)
 				);
 		m_instanceData[used] = -1;
+
+		//!!!!betauser
+#if BX_PLATFORM_EMSCRIPTEN
+		if (m_numSamplers > 1 && m_numSamplers != m_autoBindingSamplerIndexCount)
+		{
+			BGFX_FATAL(false, bgfx::Fatal::DebugCheck, "WEBGL INVALID AUTOBINDING SAMPLER NAMES: %s", samplerNames.c_str());
+
+			//char qq[1024] = { 0 };
+			//snprintf(qq, sizeof(qq), "WEBGL INVALID AUTOBINDING SAMPLER NAMES: %s", samplerNames.c_str());
+			//bx::debugOutput(qq);
+		}
+#endif
 	}
 
 	void ProgramGL::bindAttributesBegin()
@@ -8464,6 +8531,13 @@ namespace bgfx { namespace gl
 										{
 											TextureGL& texture = m_textures[bind.m_idx];
 											texture.commit(stage, bind.m_samplerFlags, _render->m_colorPalette);
+
+											//!!!!betauser
+											#if BX_PLATFORM_EMSCRIPTEN
+											if(program.m_autoBindingSamplerIndexCount > 0 && stage < program.m_autoBindingSamplerIndex.size())
+												glUniform1i(program.m_autoBindingSamplerIndex[stage], stage);
+											#endif
+
 										}
 										break;
 

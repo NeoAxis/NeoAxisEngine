@@ -61,6 +61,9 @@
     <Reference Include="NeoAxis.Core.Editor">
       <HintPath>..\..\Binaries\NeoAxis.Core.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="NeoAxis.Platforms">
+      <HintPath>..\..\Binaries\NeoAxis.Platforms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <Optimize>True</Optimize>

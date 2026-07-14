@@ -477,7 +477,7 @@ namespace NeoAxis
 
 					var transformMatrixRelativeToSkinLocal = transformMatrixRelativeToSkin;
 
-					if( transformMatrixRelativeToSkinLocal != null && transformMatrixRelativeToSkinLocal.Length != 0 && RenderingSystem.SkeletalAnimation )
+					if( transformMatrixRelativeToSkinLocal != null && transformMatrixRelativeToSkinLocal.Length != 0 && RenderingSystem.SkeletalAnimation != ProjectSettingsPage_Rendering.SkeletalAnimationEnum.None )
 					{
 						if( cachedAnimationData == null )
 							cachedAnimationData = new RenderingPipeline.RenderSceneData.MeshItem.AnimationDataClass();

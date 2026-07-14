@@ -298,9 +298,9 @@ namespace Tao.OpenAl
 		public static extern int alcCloseDevice( [In] IntPtr device );
 		#endregion alcCloseDevice([In] IntPtr device)
 
-		//!!!!betauser
-        [DllImport(ALC_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION), SuppressUnmanagedCodeSecurity]
-        public static extern void alcSetJNIEnvironmentAndJavaVM([In] IntPtr jniEnv, [In] IntPtr javaVM);
+		////!!!!betauser
+		//[DllImport(ALC_NATIVE_LIBRARY, CallingConvention = CALLING_CONVENTION), SuppressUnmanagedCodeSecurity]
+		//public static extern void alcSetJNIEnvironmentAndJavaVM([In] IntPtr jniEnv, [In] IntPtr javaVM);
 
 		#region IntPtr alcCreateContext([In] IntPtr device, [In] ref int attribute)
 		/// <summary>

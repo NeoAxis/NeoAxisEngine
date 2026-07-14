@@ -396,8 +396,8 @@ namespace OpenALSoundSystem
 
 			Al.alDopplerFactor( (float)dopplerScale );
 			CheckError();
-			Al.alDopplerVelocity( 1.0f );
-			CheckError();
+			//Al.alDopplerVelocity( 1.0f );
+			//CheckError();
 
 			criticalSection.Leave();
 		}

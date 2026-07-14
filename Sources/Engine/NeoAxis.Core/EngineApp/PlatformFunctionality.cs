@@ -145,24 +145,24 @@ namespace Internal//NeoAxis
 			{
 				if( instance == null )
 				{
-					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
-						instance = new WindowsPlatformFunctionality();
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
-						instance = new LinuxPlatformFunctionality();
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
-					{
-						instance = new MacOSPlatformFunctionality();
-					}
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
-						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
-						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
-						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
-					else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
-						Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
-					else
-						Log.Fatal( "PlatformFunctionality: Get: Unknown platform." );
+					Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
+
+					//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
+					//	instance = new WindowsPlatformFunctionality();
+					//else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+					//	instance = new LinuxPlatformFunctionality();
+					//else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+					//	instance = new MacOSPlatformFunctionality();
+					//else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+					//	Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
+					//else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+					//	Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
+					//else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+					//	Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
+					//else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+					//	Log.Fatal( "PlatformFunctionality: Get: Instance must be already initialized." );
+					//else
+					//	Log.Fatal( "PlatformFunctionality: Get: Unknown platform." );
 				}
 				return instance;
 			}

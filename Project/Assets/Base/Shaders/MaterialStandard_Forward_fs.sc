@@ -10,13 +10,10 @@ $input v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tange
 //#include "Common/bgfx_compute.sh"
 //#endif
 
-//uniform vec4 u_renderOperationData[8];
-//uniform vec4 u_materialCustomParameters[2];
-//uniform vec4 u_objectInstanceParameters[2];
-
-SAMPLER2D(s_materials, 1);
+SAMPLER2D(s_materials_1, 1);
+#define s_materials s_materials_1
 #if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
-	SAMPLER2D(s_voxelData, 2);
+	SAMPLER2D(s_voxelData_2, 2);
 #endif
 
 #include "CustomFunctions.sh"
@@ -41,27 +38,20 @@ SAMPLER2D(s_materials, 1);
 
 ////BUFFER_RW( s_oitScreen, uint, 3 );
 ////BUFFER_RW( s_oitLists, vec4, 4 );
-SAMPLERCUBE(s_environmentTexture1, 3);
-SAMPLERCUBE(s_environmentTexture2, 4);
 
-/*
-uniform vec4 u_forwardEnvironmentData[5];
-#define u_forwardEnvironmentDataRotation1 u_forwardEnvironmentData[0]
-#define u_forwardEnvironmentDataMultiplierAndAffect1 u_forwardEnvironmentData[1]
-#define u_forwardEnvironmentDataRotation2 u_forwardEnvironmentData[2]
-#define u_forwardEnvironmentDataMultiplierAndAffect2 u_forwardEnvironmentData[3]
-#define u_forwardEnvironmentDataBlendingFactor u_forwardEnvironmentData[4].x
-uniform vec4 u_forwardEnvironmentIrradiance1[9];
-uniform vec4 u_forwardEnvironmentIrradiance2[9];
-*/
+SAMPLERCUBE(s_environmentTexture1_3, 3);
+SAMPLERCUBE(s_environmentTexture2_4, 4);
 
-SAMPLER2D(s_drawBufferTexture, 5);
+SAMPLER2D(s_drawBufferTexture_5, 5);
+#define s_drawBufferTexture s_drawBufferTexture_5
 #include "DrawBuffer.sh"
 //!!!!5 is used by s_drawBufferTexture. binded in s_linearSamplerFragment
 //SAMPLER2D(s_colorDepthTextureCopy, 5);
 
-SAMPLER2D(s_brdfLUT, 6);
-SAMPLER2D(s_lightsTexture, 7);
+SAMPLER2D(s_brdfLUT_6, 6);
+#define s_brdfLUT s_brdfLUT_6
+SAMPLER2D(s_lightsTexture_7, 7);
+#define s_lightsTexture s_lightsTexture_7
 #ifdef GLOBAL_LIGHT_GRID
 	SAMPLER3D(s_lightGrid, 8);
 #endif
@@ -113,7 +103,7 @@ SAMPLER2D(s_lightsTexture, 7);
 			SAMPLERCUBEARRAYSHADOW(s_shadowMapShadowPoint, 12);
 		#endif
 		
-	#endif	
+	#endif
 #endif
 
 //on limited devices masks and shadow maps are managed inside one shadow map array
@@ -215,7 +205,7 @@ void main()
 	int materialIndex = int(round(v_worldNormal_materialIndex.w));
 	float depthOffset = 0.0;
 #if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
-	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, d_renderOperationData0, d_renderOperationData5, d_renderOperationData6, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex, v_colorParameter);
+	voxelDataModeCalculateParametersF(voxelDataMode, s_voxelData_2, fragCoord, v_objectSpacePosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2, d_renderOperationData0, d_renderOperationData5, d_renderOperationData6, fromCameraDirection, inputWorldNormal, tangent, texCoord0, texCoord1, texCoord2, color0, depthOffset, materialIndex, v_colorParameter);
 #endif
 	worldPosition += fromCameraDirection * depthOffset;
 
@@ -266,9 +256,6 @@ void main()
 #endif
 
 	int frameMaterialIndex = int( d_renderOperationData0.x );
-	////get material data
-	//vec4 materialStandardFragment[ MATERIAL_STANDARD_FRAGMENT_SIZE ];
-	//getMaterialData( s_materials, uint( u_renderOperationData[ 0 ].x ), materialStandardFragment );
 
 	//multi material
 #ifdef MULTI_MATERIAL_SEPARATE_PASS
@@ -766,17 +753,17 @@ void main()
 				vec4 forwardEnvironmentIrradiance2[ 9 ];
 				for( int n = 0; n < 9; n++ )
 					forwardEnvironmentIrradiance2[ n ] = d_forwardEnvironmentIrradiance2_get( n );				
-				
+
 				vec3 color1 = 
-					iblDiffuse(material, pixel, shading, forwardEnvironmentIrradiance1, data1, s_environmentTexture1, data1, true, true) +
-					iblSpecular(material, pixel, shading, screenSpaceReflection.xyz, screenSpaceReflection.w, s_environmentTexture1, data1);
+					iblDiffuse(material, pixel, shading, forwardEnvironmentIrradiance1, data1, s_environmentTexture1_3, data1, true, true) +
+					iblSpecular(material, pixel, shading, screenSpaceReflection.xyz, screenSpaceReflection.w, s_environmentTexture1_3, data1);
 #ifdef GLOBAL_ENVIRONMENT_MAP_MIXING
 				BRANCH
 				if( d_forwardEnvironmentDataBlendingFactor < 1.0 )
 				{
 					vec3 color2 = 
-						iblDiffuse(material, pixel, shading, forwardEnvironmentIrradiance2, data2, s_environmentTexture2, data2, true, true) + 
-						iblSpecular(material, pixel, shading, screenSpaceReflection.xyz, screenSpaceReflection.w, s_environmentTexture2, data2);					
+						iblDiffuse(material, pixel, shading, forwardEnvironmentIrradiance2, data2, s_environmentTexture2_4, data2, true, true) + 
+						iblSpecular(material, pixel, shading, screenSpaceReflection.xyz, screenSpaceReflection.w, s_environmentTexture2_4, data2);					
 					resultColor.rgb += mix( color2, color1, d_forwardEnvironmentDataBlendingFactor ) * lightColor;
 				}
 				else
@@ -784,15 +771,15 @@ void main()
 #else
 				resultColor.rgb += color1 * d_forwardEnvironmentDataBlendingFactor * lightColor;
 #endif
-				
+
 
 				//can split blending factor to two, blending factor diffuse and blending factor specular
 				//{				
-				//	vec3 color1Diffuse = iblDiffuse(material, pixel, shading, u_forwardEnvironmentIrradiance1, data1, s_environmentTexture1, data1, true);
-				//	vec3 color1Specular = iblSpecular(material, pixel, shading, vec3_splat(0), 0.0, s_environmentTexture1, data1);
+				//	vec3 color1Diffuse = iblDiffuse(material, pixel, shading, u_forwardEnvironmentIrradiance1, data1, s_environmentTexture1_3, data1, true);
+				//	vec3 color1Specular = iblSpecular(material, pixel, shading, vec3_splat(0), 0.0, s_environmentTexture1_3, data1);
 
-				//	vec3 color2Diffuse = iblDiffuse(material, pixel, shading, u_forwardEnvironmentIrradiance2, data2, s_environmentTexture2, data2, true);
-				//	vec3 color2Specular = iblSpecular(material, pixel, shading, vec3_splat(0), 0.0, s_environmentTexture2, data2);
+				//	vec3 color2Diffuse = iblDiffuse(material, pixel, shading, u_forwardEnvironmentIrradiance2, data2, s_environmentTexture2_4, data2, true);
+				//	vec3 color2Specular = iblSpecular(material, pixel, shading, vec3_splat(0), 0.0, s_environmentTexture2_4, data2);
 					
 				//	float diffuseFactor = u_forwardEnvironmentDataBlendingFactor;
 				//	float specularFactor = u_forwardEnvironmentDataBlendingFactor;
@@ -923,7 +910,7 @@ void main()
 			case DebugMode_Roughness: resultColor.rgb = vec3_splat(roughness); break;
 			case DebugMode_Reflectance: resultColor.rgb = vec3_splat(reflectance); break;
 			case DebugMode_Emissive: resultColor.rgb = emissive; break;
-			case DebugMode_Normal: resultColor.rgb = normal * 0.5 + 0.5; break;//inputWorldNormal * 0.5 + 0.5; break
+			case DebugMode_Normal: resultColor.rgb = normal * 0.5 + vec3_splat(0.5); break;
 			case DebugMode_SubsurfaceColor: resultColor.rgb = subsurfaceColor; break;
 			case DebugMode_TextureCoordinate0: resultColor.rgb = vec3(v_texCoord01.xy, 0); break;
 			case DebugMode_TextureCoordinate1: resultColor.rgb = vec3(v_texCoord01.zw, 0); break;
@@ -941,7 +928,7 @@ void main()
 	gl_FragData[0] = resultColor;
 
 	//normal
-#ifndef MOBILE
+#ifndef LIMITED_DEVICE //#ifndef MOBILE
 	//#ifdef LIGHT_TYPE_AMBIENT
 		gl_FragData[1] = vec4(normal * 0.5 + 0.5, resultColor.a);
 	//#else
@@ -990,7 +977,6 @@ void main()
 //!!!!GLSL
 #ifndef GLSL
 #if (defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )) // || defined(DEPTH_OFFSET_MODE_GREATER_EQUAL)	
-//#if defined(GLOBAL_VOXEL_LOD) || defined(GLOBAL_VIRTUALIZED_GEOMETRY)// || defined(DEPTH_OFFSET_MODE_GREATER_EQUAL)
 	BRANCH
 	if(depthOffset != 0.0)
 	{

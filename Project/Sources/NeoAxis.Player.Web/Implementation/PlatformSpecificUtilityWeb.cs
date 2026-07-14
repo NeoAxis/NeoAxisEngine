@@ -1,42 +1,37 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 using System;
 using System.Threading.Tasks;
+using NeoAxis.Player.Web;
+using Internal;
 
 namespace NeoAxis
 {
-	internal class PlatformSpecificUtilityWeb : PlatformSpecificUtility
+	class PlatformSpecificUtilityWeb : PlatformSpecificUtility
 	{
-		public PlatformSpecificUtilityWeb()
-		{
-			SetInstance( this );
-		}
-
 		public override string GetExecutableDirectoryPath()
 		{
 			//!!!!
 			return "";
 		}
 
-		//public override IntPtr LoadLibrary( string path )
-		//{
-		//	return IntPtr.Zero;
-		//}
-
 		public override async Task<string> GetClipboardTextAsync()
 		{
-
-			//!!!!impl
-			//TODO: request copy from clipboard
-
-			return "";
+			return await Interop.GetClipboardTextAsync();
 		}
 
 		public override void SetClipboardText( string text )
 		{
+			Interop.SetClipboardText( text );
+		}
 
-			//!!!!impl
-			//TODO: request copy to clipboard
+		public override EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons = EMessageBoxButtons.OK )
+		{
+			//!!!!buttons, result
 
+			//TODO: message box
+			Console.WriteLine( "MESSAGE:\r\n" + caption + ":" + text );
+
+			return EDialogResult.OK;
 		}
 	}
 }

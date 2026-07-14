@@ -74,7 +74,7 @@ namespace NeoAxis
 				{
 					var error = $"Unable to compile solution {solutionFileName}. Continue?\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log.";
 
-					if( LogPlatformFunctionality.Instance.ShowMessageBox( error, "Error", EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
+					if( PlatformSpecificUtility.Instance.ShowMessageBox( error, "Error", EMessageBoxButtons.OKCancel ) == EDialogResult.Cancel )
 					{
 						Process.GetCurrentProcess().Kill();
 						Environment.Exit( 0 );

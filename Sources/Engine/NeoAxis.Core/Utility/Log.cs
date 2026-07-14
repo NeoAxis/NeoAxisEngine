@@ -263,7 +263,7 @@ namespace NeoAxis
 			bool handled = false;
 			Handlers.Warning( text, ref handled, ref dumpToLogFile );
 			if( !handled )
-				LogPlatformFunctionality.Instance.ShowMessageBox( text, "Warning" );
+				PlatformSpecificUtility.Instance.ShowMessageBox( text, "Warning" );
 		}
 
 		//static void HandlersWarning( string text )
@@ -314,7 +314,7 @@ namespace NeoAxis
 			bool handled = false;
 			Handlers.Error( text, ref handled, ref dumpToLogFile );
 			if( !handled )
-				LogPlatformFunctionality.Instance.ShowMessageBox( text, "Error" );
+				PlatformSpecificUtility.Instance.ShowMessageBox( text, "Error" );
 		}
 
 		static string GetStackTrace()
@@ -352,7 +352,7 @@ namespace NeoAxis
 				if( !handled )
 				{
 					string messageBoxText = text + "\r\n\r\n\r\n" + GetStackTrace();
-					LogPlatformFunctionality.Instance.ShowMessageBox( messageBoxText, "Fatal" );//: Exception" );
+					PlatformSpecificUtility.Instance.ShowMessageBox( messageBoxText, "Fatal" );//: Exception" );
 
 					Handlers.FatalAfter();
 					//if( AfterFatal != null )
@@ -397,7 +397,7 @@ namespace NeoAxis
 					//}
 					//else
 					//{
-					LogPlatformFunctionality.Instance.ShowMessageBox( text, "Fatal: Exception" );
+					PlatformSpecificUtility.Instance.ShowMessageBox( text, "Fatal: Exception" );
 
 					Handlers.FatalAfter();
 					//AfterFatal?.Invoke();

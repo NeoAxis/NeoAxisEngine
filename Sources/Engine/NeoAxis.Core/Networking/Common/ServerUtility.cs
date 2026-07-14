@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NeoAxis.Networking
 {
-	static class ServerUtility
+	public static class ServerUtility
 	{
 		public static string GetServerNodesCommonInfoText()
 		{

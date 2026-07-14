@@ -324,7 +324,8 @@ const struct {
     DECL(alGetBuffer3i),
     DECL(alGetBufferiv),
     DECL(alDopplerFactor),
-    DECL(alDopplerVelocity),
+    //!!!!betauser
+    //DECL(alDopplerVelocity),
     DECL(alSpeedOfSound),
     DECL(alDistanceModel),
 
@@ -603,7 +604,8 @@ constexpr struct {
     DECL(AL_EXTENSIONS),
 
     DECL(AL_DOPPLER_FACTOR),
-    DECL(AL_DOPPLER_VELOCITY),
+    //!!!!betauser
+    //DECL(AL_DOPPLER_VELOCITY),
     DECL(AL_DISTANCE_MODEL),
     DECL(AL_SPEED_OF_SOUND),
     DECL(AL_SOURCE_DISTANCE_MODEL),

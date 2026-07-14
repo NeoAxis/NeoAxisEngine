@@ -18,7 +18,7 @@ void main()
 	
 	vec4 rgba = texture2D(s_baseTexture, v_texCoord0);
 
-#ifndef MOBILE
+#ifndef LIMITED_DEVICE
 	BRANCH
 	if(u_bc5UNorm_L.x > 0.0)
 	{

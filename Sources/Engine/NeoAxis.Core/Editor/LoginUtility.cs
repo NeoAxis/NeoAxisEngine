@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using NeoAxis.Networking;
+using Internal;
 
 namespace NeoAxis.Editor
 {

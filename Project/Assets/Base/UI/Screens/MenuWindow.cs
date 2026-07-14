@@ -58,7 +58,11 @@ namespace Project
 			}
 
 			if( GetButtonExit() != null )
+			{
 				GetButtonExit().Click += ButtonExit_Click;
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+					GetButtonExit().ReadOnly = true;
+			}
 
 			//fix size of the window
 			if( !EnableButtonScenes )

@@ -11,7 +11,8 @@ namespace NeoAxis
 	/// Represents a fence in the scene.
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Fence\Fence", 510 )]
-	[SettingsCell( typeof( FenceSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.FenceSettingsCell" )]
+	//[SettingsCell( typeof( FenceSettingsCell ) )]
 	public class Fence : CurveInSpace
 	{
 		LogicalData logicalData;

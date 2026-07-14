@@ -1305,9 +1305,9 @@ namespace bgfx
 			for (profileId = 0; profileId < count; ++profileId)
 			{
 				if (0 == bx::strCmp(profileOpt, s_profiles[profileId].name) )
-			{
+				{
 					break;
-			}
+				}
 			}
 
 			if (profileId == count)
@@ -1315,12 +1315,12 @@ namespace bgfx
 				bx::write(_messageWriter, &messageErr, "Unknown profile: %S\n", &profileOpt);
 				return false;
 			}
-			}
+		}
 		else
-			{
+		{
 			bx::write(_messageWriter, &messageErr, "Shader profile must be specified.\n");
 				return false;
-			}
+		}
 
 		const Profile* profile = &s_profiles[profileId];
 
@@ -1350,28 +1350,30 @@ namespace bgfx
 			preprocessor.addDependency(_options.dependencies[ii].c_str() );
 		}
 
-		preprocessor.setDefaultDefine("BX_PLATFORM_ANDROID");
-		preprocessor.setDefaultDefine("BX_PLATFORM_EMSCRIPTEN");
-		preprocessor.setDefaultDefine("BX_PLATFORM_IOS");
-		preprocessor.setDefaultDefine("BX_PLATFORM_VISIONOS");
-		preprocessor.setDefaultDefine("BX_PLATFORM_LINUX");
-		preprocessor.setDefaultDefine("BX_PLATFORM_OSX");
-		preprocessor.setDefaultDefine("BX_PLATFORM_PS4");
-		preprocessor.setDefaultDefine("BX_PLATFORM_WINDOWS");
-		preprocessor.setDefaultDefine("BX_PLATFORM_XBOXONE");
+		//!!!!betauser
 
-		preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_GLSL");
-		preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_ESSL");
-		preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_HLSL");
-		preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_DXIL");
-		preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_METAL");
-		preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_PSSL");
-		preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_SPIRV");
-		preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_WGSL");
+		//preprocessor.setDefaultDefine("BX_PLATFORM_ANDROID");
+		//preprocessor.setDefaultDefine("BX_PLATFORM_EMSCRIPTEN");
+		//preprocessor.setDefaultDefine("BX_PLATFORM_IOS");
+		//preprocessor.setDefaultDefine("BX_PLATFORM_VISIONOS");
+		//preprocessor.setDefaultDefine("BX_PLATFORM_LINUX");
+		//preprocessor.setDefaultDefine("BX_PLATFORM_OSX");
+		//preprocessor.setDefaultDefine("BX_PLATFORM_PS4");
+		//preprocessor.setDefaultDefine("BX_PLATFORM_WINDOWS");
+		//preprocessor.setDefaultDefine("BX_PLATFORM_XBOXONE");
 
-		preprocessor.setDefaultDefine("BGFX_SHADER_TYPE_COMPUTE");
-		preprocessor.setDefaultDefine("BGFX_SHADER_TYPE_FRAGMENT");
-		preprocessor.setDefaultDefine("BGFX_SHADER_TYPE_VERTEX");
+		//preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_GLSL");
+		//preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_ESSL");
+		//preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_HLSL");
+		//preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_DXIL");
+		//preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_METAL");
+		//preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_PSSL");
+		//preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_SPIRV");
+		//preprocessor.setDefaultDefine("BGFX_SHADER_LANGUAGE_WGSL");
+
+		//preprocessor.setDefaultDefine("BGFX_SHADER_TYPE_COMPUTE");
+		//preprocessor.setDefaultDefine("BGFX_SHADER_TYPE_FRAGMENT");
+		//preprocessor.setDefaultDefine("BGFX_SHADER_TYPE_VERTEX");
 
 		char glslDefine[128] = { '\0' };
 		char esslDefine[128] = { '\0' };

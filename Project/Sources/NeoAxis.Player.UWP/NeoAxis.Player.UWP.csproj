@@ -59,8 +59,8 @@
     <Compile Include="Implementation\EngineApp\UWP Specific\FunctionalityUWP.Utility.cs" />
     <Compile Include="Implementation\EngineApp\UWP Specific\FunctionalityUWP.Video.cs" />
     <Compile Include="Implementation\EngineApp\UWP Specific\UWPInputDeviceManager.cs" />
-    <Compile Include="Implementation\FileSystem\DebugUtil.cs" />
-    <Compile Include="Implementation\FileSystem\PlatformSpecificUtilityUWP.cs" />
+    <Compile Include="Implementation\Utility\DebugUtil.cs" />
+    <Compile Include="Implementation\Utility\PlatformSpecificUtilityUWP.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Project\Assets\Base\Scripts\ClientUtility.cs" />
     <Compile Include="Project\Assets\Base\Scripts\RunServer.cs" />

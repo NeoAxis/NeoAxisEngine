@@ -63,7 +63,7 @@ namespace NeoAxis.Editor
 					( "UIList", typeof( UIList ) ),
 					( "UIGrid", typeof( UIGrid ) ),
 					( "UIVideo", typeof( UIVideo ) ),
-					( "UIWebBrowser", typeof( UIWebBrowser ) ),
+					( "UIWebBrowser", MetadataManager.GetType("NeoAxis.Addon.UIWebBrowser")?.GetNetType() ), //( "UIWebBrowser", typeof( UIWebBrowser ) ),
 					( "UIRenderTarget", typeof( UIRenderTarget ) ),
 					( "UITabControl", typeof( UITabControl ) ),
 					( "UIGrid", typeof( UIGrid ) ),
@@ -262,7 +262,10 @@ namespace NeoAxis.Editor
 				};
 
 				foreach( var item in items )
-					EditorAPI.DocumentationLinksManager_AddNameByType( item.Item2, item.Item1 );
+				{
+					if( item.Item2 != null )
+						EditorAPI.DocumentationLinksManager_AddNameByType( item.Item2, item.Item1 );
+				}
 			}
 		}
 	}

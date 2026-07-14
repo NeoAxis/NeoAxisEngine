@@ -77,16 +77,25 @@ namespace Project
 
 			EnabledInSimulationStatic?.Invoke( this );
 
+			//Scenes button
 			if( GetButtonScenes() != null )
 			{
 				var button = GetButtonScenes();
 				button.Click += ButtonScenes_Click;
 				button.ReadOnly = SimulationAppClient.Created;
 			}
+
+			//Options button
 			if( GetButtonOptions() != null )
 				GetButtonOptions().Click += ButtonOptions_Click;
+
+			//Exit button
 			if( GetButtonExit() != null )
+			{
 				GetButtonExit().Click += ButtonExit_Click;
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+					GetButtonExit().Enabled = false;
+			}
 
 			//play buttons
 			if( Components[ "Button Play City Demo" ] != null )

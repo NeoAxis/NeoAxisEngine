@@ -13,6 +13,8 @@ using NeoAxis.Networking;
 using System.Threading.Tasks;
 using System.Threading;
 using NeoAxis.Editor;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace NeoAxis
 {
@@ -907,6 +909,57 @@ namespace NeoAxis
 				Generate( objectInSpace, writeStream, ImageFormat.Png );
 			}
 
+			void Product_Store_ImageGenerator_WriteBitmapToStream( Stream writeStream, ImageFormat writeImageFormat, Vector2I imageSizeRender, Vector2I imageSizeOutput, IntPtr imageData )
+			{
+				const PixelFormat imageFormat = PixelFormat.A8R8G8B8;
+
+				using( var bitmap = new Bitmap( imageSizeRender.X, imageSizeRender.Y, imageSizeRender.X * PixelFormatUtility.GetNumElemBytes( imageFormat ), System.Drawing.Imaging.PixelFormat.Format32bppArgb, imageData ) )
+				{
+					Bitmap ResizeImage( Image image, int width, int height )
+					{
+						Bitmap result = new Bitmap( width, height );
+						using( Graphics g = Graphics.FromImage( result ) )
+						{
+							g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+							//downscale and clip
+							var offsetX = (int)( (double)width * 0.05 );
+							var offsetY = (int)( (double)height * 0.05 );
+							g.DrawImage( image, -offsetX, -offsetY, width + offsetX * 2, height + offsetY * 2 );
+
+							////fix borders
+							//g.DrawImage( image, -2, -2, width + 4, height + 4 );
+							////g.DrawImage( image, 0, 0, width, height );
+						}
+						return result;
+					}
+
+					using( var resized = ResizeImage( bitmap, imageSizeOutput.X, imageSizeOutput.Y ) )
+					{
+						if( writeImageFormat == ImageFormat.Png )
+							resized.Save( writeStream, System.Drawing.Imaging.ImageFormat.Png );
+						else if( writeImageFormat == ImageFormat.Jpeg )
+						{
+							var encoder = ImageCodecInfo.GetImageEncoders().First( codec => codec.FormatID == System.Drawing.Imaging.ImageFormat.Jpeg.Guid );
+							var parameters = new EncoderParameters( 1 );
+							parameters.Param[ 0 ] = new EncoderParameter( System.Drawing.Imaging.Encoder.Quality, 95L );
+							resized.Save( writeStream, encoder, parameters );
+						}
+
+						//var ext = Path.GetExtension( writeRealFileName );
+						//if( ext == ".png" )
+						//	resized.Save( writeRealFileName, ImageFormat.Png );
+						//else if( ext == ".jpg" )
+						//{
+						//	var encoder = ImageCodecInfo.GetImageEncoders().First( codec => codec.FormatID == ImageFormat.Jpeg.Guid );
+						//	var parameters = new EncoderParameters( 1 );
+						//	parameters.Param[ 0 ] = new EncoderParameter( System.Drawing.Imaging.Encoder.Quality, 95L );
+						//	resized.Save( writeRealFileName, encoder, parameters );
+						//}
+					}
+				}
+			}
+
 			void GenerateGeneral( Stream writeStream, ImageFormat writeImageFormat )// string writeRealFileName )
 			{
 				//generate an image
@@ -925,7 +978,8 @@ namespace NeoAxis
 				}
 
 				//write image
-				EditorAPI.Product_Store_ImageGenerator_WriteBitmapToStream( writeStream, writeImageFormat, ImageSizeRender, ImageSizeOutput, imageData );
+				Product_Store_ImageGenerator_WriteBitmapToStream( writeStream, writeImageFormat, ImageSizeRender, ImageSizeOutput, imageData );
+				//EditorAPI.Product_Store_ImageGenerator_WriteBitmapToStream( writeStream, writeImageFormat, ImageSizeRender, ImageSizeOutput, imageData );
 
 				DetachAndOrDestroyScene();
 				Shutdown();

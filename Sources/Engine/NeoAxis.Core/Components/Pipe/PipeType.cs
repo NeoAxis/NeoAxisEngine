@@ -97,9 +97,12 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "pipetype" )]
 	[AddToResourcesWindow( @"Addons\Pipe\Pipe Type", 9100 )]
-	[EditorControl( typeof( PipeTypeEditor ) )]
-	[Preview( typeof( PipeTypePreview ) )]
-	[PreviewImage( typeof( PipeTypePreviewImage ) )]
+	[EditorControl( "NeoAxis.Editor.PipeTypeEditor" )]
+	[Preview( "NeoAxis.Editor.PipeTypePreview" )]
+	[PreviewImage( "NeoAxis.Editor.PipeTypePreviewImage" )]
+	//[EditorControl( typeof( PipeTypeEditor ) )]
+	//[Preview( typeof( PipeTypePreview ) )]
+	//[PreviewImage( typeof( PipeTypePreviewImage ) )]
 	public class PipeType : Component
 	{
 		int version;

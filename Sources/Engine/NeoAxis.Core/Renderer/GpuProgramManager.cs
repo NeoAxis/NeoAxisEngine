@@ -202,7 +202,7 @@ namespace NeoAxis
 					if( RenderingSystem.NormalMapping )
 						list.Add( ("GLOBAL_NORMAL_MAPPING", "1") );
 
-					if( RenderingSystem.SkeletalAnimation )
+					if( RenderingSystem.SkeletalAnimation != ProjectSettingsPage_Rendering.SkeletalAnimationEnum.None )
 						list.Add( ("GLOBAL_SKELETAL_ANIMATION", "1") );
 
 					if( RenderingSystem.VoxelLOD )
@@ -236,6 +236,8 @@ namespace NeoAxis
 
 					if( SystemSettings.LimitedDevice )
 						list.Add( ("LIMITED_DEVICE", "1") );
+					//if( SystemSettings.MobileDevice )
+					//	list.Add( ("MOBILE_DEVICE", "1") );
 
 					globalDefines = list;
 				}

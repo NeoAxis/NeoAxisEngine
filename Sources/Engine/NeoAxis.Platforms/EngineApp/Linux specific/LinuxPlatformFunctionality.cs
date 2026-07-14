@@ -712,6 +712,8 @@ namespace Internal//NeoAxis
 		public LinuxPlatformFunctionality()
 		{
 			instance = this;
+			SetInstance( this, SystemSettings.Platform.Linux );
+			new PlatformSpecificUtilityLinux();
 
 			//if( SystemSettings.OSVersion.Major >= 6 )
 			//{

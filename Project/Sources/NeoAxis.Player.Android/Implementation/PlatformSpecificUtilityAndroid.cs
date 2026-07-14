@@ -4,16 +4,12 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
+using Internal;
 
 namespace NeoAxis
 {
 	class PlatformSpecificUtilityAndroid : PlatformSpecificUtility
 	{
-		public PlatformSpecificUtilityAndroid()
-		{
-			SetInstance( this );
-		}
-
 		public override string GetExecutableDirectoryPath()
 		{
 			//!!!!
@@ -116,6 +112,15 @@ namespace NeoAxis
 			//	CrossClipboard.Current.SetText( text );
 			//}
 			//catch { }
+		}
+
+		public override EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons = EMessageBoxButtons.OK )
+		{
+			//!!!!buttons, result
+
+			Android.Util.Log.WriteLine( Android.Util.LogPriority.Debug, "MyApp", "MESSAGE:\r\n" + caption + ":" + text );
+
+			return EDialogResult.OK;
 		}
 	}
 }

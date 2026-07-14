@@ -702,34 +702,35 @@ START_API_FUNC
 }
 END_API_FUNC
 
-AL_API ALvoid AL_APIENTRY alDopplerVelocity(ALfloat value)
-START_API_FUNC
-{
-    ContextRef context{GetContextRef()};
-    if UNLIKELY(!context) return;
-
-    if((context->mEnabledEvts.load(std::memory_order_relaxed)&EventType_Deprecated))
-    {
-        static constexpr ALCchar msg[] =
-            "alDopplerVelocity is deprecated in AL1.1, use alSpeedOfSound";
-        const ALsizei msglen = static_cast<ALsizei>(strlen(msg));
-        std::lock_guard<std::mutex> _{context->mEventCbLock};
-        ALbitfieldSOFT enabledevts{context->mEnabledEvts.load(std::memory_order_relaxed)};
-        if((enabledevts&EventType_Deprecated) && context->mEventCb)
-            (*context->mEventCb)(AL_EVENT_TYPE_DEPRECATED_SOFT, 0, 0, msglen, msg,
-                                context->mEventParam);
-    }
-
-    if(!(value >= 0.0f && std::isfinite(value)))
-        context->setError(AL_INVALID_VALUE, "Doppler velocity %f out of range", value);
-    else
-    {
-        std::lock_guard<std::mutex> _{context->mPropLock};
-        context->mDopplerVelocity = value;
-        DO_UPDATEPROPS();
-    }
-}
-END_API_FUNC
+//!!!!betauser
+//AL_API ALvoid AL_APIENTRY alDopplerVelocity(ALfloat value)
+//START_API_FUNC
+//{
+//    ContextRef context{GetContextRef()};
+//    if UNLIKELY(!context) return;
+//
+//    if((context->mEnabledEvts.load(std::memory_order_relaxed)&EventType_Deprecated))
+//    {
+//        static constexpr ALCchar msg[] =
+//            "alDopplerVelocity is deprecated in AL1.1, use alSpeedOfSound";
+//        const ALsizei msglen = static_cast<ALsizei>(strlen(msg));
+//        std::lock_guard<std::mutex> _{context->mEventCbLock};
+//        ALbitfieldSOFT enabledevts{context->mEnabledEvts.load(std::memory_order_relaxed)};
+//        if((enabledevts&EventType_Deprecated) && context->mEventCb)
+//            (*context->mEventCb)(AL_EVENT_TYPE_DEPRECATED_SOFT, 0, 0, msglen, msg,
+//                                context->mEventParam);
+//    }
+//
+//    if(!(value >= 0.0f && std::isfinite(value)))
+//        context->setError(AL_INVALID_VALUE, "Doppler velocity %f out of range", value);
+//    else
+//    {
+//        std::lock_guard<std::mutex> _{context->mPropLock};
+//        context->mDopplerVelocity = value;
+//        DO_UPDATEPROPS();
+//    }
+//}
+//END_API_FUNC
 
 AL_API ALvoid AL_APIENTRY alSpeedOfSound(ALfloat value)
 START_API_FUNC

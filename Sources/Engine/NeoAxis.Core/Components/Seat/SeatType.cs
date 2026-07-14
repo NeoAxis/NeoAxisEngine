@@ -12,9 +12,12 @@ namespace NeoAxis
 	/// </summary>
 	[ResourceFileExtension( "seattype" )]
 	[AddToResourcesWindow( @"Addons\Seat\Seat Type", 10577 )]
-	[EditorControl( typeof( SeatTypeEditor ) )]
-	[Preview( typeof( SeatTypePreview ) )]
-	[PreviewImage( typeof( SeatTypePreviewImage ) )]
+	[EditorControl( "NeoAxis.Editor.SeatTypeEditor" )]
+	[Preview( "NeoAxis.Editor.SeatTypePreview" )]
+	[PreviewImage( "NeoAxis.Editor.SeatTypePreviewImage" )]
+	//[EditorControl( typeof( SeatTypeEditor ) )]
+	//[Preview( typeof( SeatTypePreview ) )]
+	//[PreviewImage( typeof( SeatTypePreviewImage ) )]
 	public class SeatType : Component
 	{
 		int version;

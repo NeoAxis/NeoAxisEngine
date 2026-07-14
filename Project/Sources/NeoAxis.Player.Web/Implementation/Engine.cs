@@ -6,12 +6,15 @@ using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Internal;
+using Project;
 
 namespace NeoAxis.Player.Web
 {
 	static class Engine
 	{
 		public static Queue<InputEventItem> inputEventQueue = new Queue<InputEventItem>();
+
+		public static Dictionary<EKeys, bool> keyLockedStates = new Dictionary<EKeys, bool>();
 
 		/////////////////////////////////////////
 
@@ -33,6 +36,7 @@ namespace NeoAxis.Player.Web
 			Up,
 			Move,
 			Wheel,
+			DoubleClick
 		}
 
 		/////////////////////////////////////////
@@ -59,6 +63,8 @@ namespace NeoAxis.Player.Web
 		{
 			public EKeys Code;
 			public KeyEventType Type;
+			public InputModifiers Modifiers;
+			public bool KeyLocked;
 			public char Character;
 		}
 
@@ -66,7 +72,6 @@ namespace NeoAxis.Player.Web
 		{
 			Up,
 			Down,
-			Repeat
 		}
 
 		/////////////////////////////////////////
@@ -89,7 +94,6 @@ namespace NeoAxis.Player.Web
 			string userSettingsDirectory = "";
 			string binariesDirectory = "";
 			{
-				//!!!!
 				projectDirectory = projectDir;
 				userSettingsDirectory = Path.Combine( projectDirectory, "User settings" );
 				binariesDirectory = Path.Combine( projectDirectory, "Binaries" );
@@ -100,6 +104,9 @@ namespace NeoAxis.Player.Web
 
 			//configure general settings
 			EngineApp.InitSettings.ConfigVirtualFileName = "user:Configs/Player.config";
+			EngineApp.InitSettings.AllowChangeScreenVideoMode = true;
+			EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Windowed;
+			SimulationApp.WindowedMode = EngineApp.InitSettings.CreateWindowedMode.Value;
 
 			//these parameters are enabled by default
 			//EngineApp.EnginePauseWhenApplicationIsNotActive = false;
@@ -269,8 +276,7 @@ namespace NeoAxis.Player.Web
 				}
 
 				//sort by priority and distance to the control
-				CollectionUtility.SelectionSort( filtered,
-					delegate ( TouchData.TouchDownRequestToProcessTouch item1, TouchData.TouchDownRequestToProcessTouch item2 )
+				CollectionUtility.SelectionSort( filtered, delegate ( TouchData.TouchDownRequestToProcessTouch item1, TouchData.TouchDownRequestToProcessTouch item2 )
 					{
 						if( item1.ProcessPriority > item2.ProcessPriority )
 							return -1;
@@ -340,65 +346,90 @@ namespace NeoAxis.Player.Web
 		static void ProcessInputEvent_Mouse( MouseEventItem item )
 		{
 			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+			var handled = false;
 
 			switch( item.Action )
 			{
 			case ActionEnum.Down:
-				{
-					var handled = false;
-					viewport.PerformMouseDown( item.Button, ref handled );
-				}
+				viewport.PerformMouseDown( item.Button, ref handled );
 				break;
 			case ActionEnum.Up:
-				{
-					var handled = false;
-					viewport.PerformMouseUp( item.Button, ref handled );
-				}
+				viewport.PerformMouseUp( item.Button, ref handled );
+				break;
+			case ActionEnum.DoubleClick:
+				viewport.PerformMouseDoubleClick( item.Button, ref handled );
 				break;
 			case ActionEnum.Move:
-				{
-					viewport.PerformMouseMove( item.Vector.ToVector2() / viewport.SizeInPixels.ToVector2() );
-				}
+				viewport.PerformMouseMove( item.Vector.ToVector2() / viewport.SizeInPixels.ToVector2() );
 				break;
 			case ActionEnum.Wheel:
-				{
-					var handled = false;
-					viewport.PerformMouseWheel( (int)item.Vector.Y, ref handled );
-				}
+				viewport.PerformMouseWheel( (int)item.Vector.Y, ref handled );
 				break;
 			}
 		}
 
-		static void ProcessInputEvent_KeyDown( KeyEventItem item )
+		static void ProcessInputEvent_Key( KeyEventItem item )
 		{
 			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
-			if( item.Code != EKeys.None )
+			//process key locked state
+			if( item.Code == EKeys.Insert || item.Code == EKeys.NumLock || item.Code == EKeys.CapsLock || item.Code == EKeys.Scroll )
 			{
-				var data = new KeyEvent( item.Code );
-
-				switch( item.Type )
-				{
-				case KeyEventType.Down:
-					{
-						var handled = false;
-						viewport.PerformKeyDown( data, ref handled );
-					}
-					break;
-				case KeyEventType.Up:
-					{
-						var handled = false;
-						viewport.PerformKeyUp( data, ref handled );
-					}
-					break;
-				}
+				lock( keyLockedStates )
+					keyLockedStates[ item.Code ] = item.KeyLocked;
 			}
-			else if( item.Type != KeyEventType.Up )
-			{
-				var data = new KeyPressEvent( item.Character );
 
-				bool handled = false;
-				viewport.PerformKeyPress( data, ref handled );
+			switch( item.Type )
+			{
+			case KeyEventType.Down:
+				{
+					var data = new KeyEvent( item.Code );
+					var handled = false;
+					viewport.PerformKeyDown( data, ref handled );
+
+					if( !data.SuppressKeyPress && item.Character != '\0' )
+					{
+						var newCharacter = item.Character;
+
+						//!!!!other platforms
+
+						//Windows Control Characters
+						if( ( item.Modifiers & InputModifiers.Ctrl ) != 0 )
+						{
+							// Convert to uppercase since Ctrl+v and Ctrl+V must yield the same control code
+							char upperChar = char.ToUpperInvariant( newCharacter );
+
+							// Check if the character falls within the standard ASCII control character range ('@' through '_')
+							if( upperChar >= '@' && upperChar <= '_' )
+							{
+								// Applying mask 0x1F (31 decimal) clears high bits, leaving only the control code (1-31)
+								// For example: 'V' (86) & 0x1F = 22 (SYN)
+								newCharacter = (char)( upperChar & 0x1F );
+							}
+							else
+							{
+								// Windows does not fire keypress events for Ctrl combinations that don't produce an ASCII control character (e.g., Ctrl+Digits)
+								newCharacter = '\0';
+							}
+						}
+
+						if( newCharacter != '\0' )
+						{
+							var data2 = new KeyPressEvent( newCharacter );
+							var handled2 = false;
+							viewport.PerformKeyPress( data2, ref handled2 );
+						}
+					}
+				}
+				break;
+
+			case KeyEventType.Up:
+				{
+					var data = new KeyEvent( item.Code );
+					var handled = false;
+					viewport.PerformKeyUp( data, ref handled );
+				}
+				break;
 			}
 		}
 
@@ -416,9 +447,9 @@ namespace NeoAxis.Player.Web
 			if( mouseItem != null )
 				ProcessInputEvent_Mouse( mouseItem );
 
-			var keyDownItem = item as KeyEventItem;
-			if( keyDownItem != null )
-				ProcessInputEvent_KeyDown( keyDownItem );
+			var keyItem = item as KeyEventItem;
+			if( keyItem != null )
+				ProcessInputEvent_Key( keyItem );
 		}
 	}
 }

@@ -294,6 +294,9 @@ namespace Internal
 		public MacOSPlatformFunctionality()
 		{
 			instance = this;
+			SetInstance( this, SystemSettings.Platform.macOS );
+			new PlatformSpecificUtilityMacOS();
+
 			MacAppNativeWrapper.Initialize( messageEventdelegate, logInfoDelegate, logWarningDelegate, logFatalDelegate );
 		}
 

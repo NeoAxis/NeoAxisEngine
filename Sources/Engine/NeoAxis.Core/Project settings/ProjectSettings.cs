@@ -123,7 +123,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		internal static bool Initialized
+		public static bool Initialized
 		{
 			get { return settingsComponent != null; }
 		}

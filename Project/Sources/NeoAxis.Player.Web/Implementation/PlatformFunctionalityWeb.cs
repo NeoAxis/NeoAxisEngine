@@ -21,8 +21,6 @@ namespace NeoAxis
 		{
 			instance = this;
 			SetInstance( instance, SystemSettings.Platform.Web );
-
-			new LogPlatformFunctionalityWeb();
 			new PlatformSpecificUtilityWeb();
 		}
 

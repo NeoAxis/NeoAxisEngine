@@ -356,7 +356,7 @@ namespace NeoAxis
 	{
 		float magnitude;
 
-		internal ForceFeedbackConstantForceEffect( ForceFeedbackController owner, JoystickAxes[] axes )
+		public ForceFeedbackConstantForceEffect( ForceFeedbackController owner, JoystickAxes[] axes )
 			: base( owner, ForceFeedbackEffectTypes.ConstantForce, axes )
 		{
 		}
@@ -393,7 +393,7 @@ namespace NeoAxis
 
 		//
 
-		internal ForceFeedbackConditionEffect( ForceFeedbackController owner,
+		public ForceFeedbackConditionEffect( ForceFeedbackController owner,
 			ForceFeedbackEffectTypes effectType, JoystickAxes[] axes )
 			: base( owner, effectType, axes )
 		{
@@ -502,7 +502,7 @@ namespace NeoAxis
 		float phase;
 		float period;
 
-		internal ForceFeedbackPeriodicEffect( ForceFeedbackController owner,
+		public ForceFeedbackPeriodicEffect( ForceFeedbackController owner,
 			ForceFeedbackEffectTypes effectType, JoystickAxes[] axes )
 			: base( owner, effectType, axes )
 		{
@@ -579,7 +579,7 @@ namespace NeoAxis
 		float startForce;
 		float endForce;
 
-		internal ForceFeedbackRampEffect( ForceFeedbackController owner, JoystickAxes[] axes )
+		public ForceFeedbackRampEffect( ForceFeedbackController owner, JoystickAxes[] axes )
 			: base( owner, ForceFeedbackEffectTypes.Ramp, axes )
 		{
 		}

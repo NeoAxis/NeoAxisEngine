@@ -323,6 +323,8 @@ namespace NeoAxis
 			//Binaries
 
 			paths.Add( @"Binaries\NeoAxis.Internal" );
+			if( UIWebBrowser )
+				paths.Add( @"Binaries\NeoAxis.Addon.UIWebBrowser.dll" );
 
 			//exclude from Binaries
 			{

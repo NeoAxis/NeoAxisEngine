@@ -1905,7 +1905,7 @@ namespace NeoAxis
 			get { return windowedModeSize; }
 		}
 
-		public static void SetWindowedMode( WindowedModeEnum mode, Vector2I size )
+		public static void SetWindowedMode( WindowedModeEnum mode, Vector2I size, bool changeWindowedModeOrVideoMode = true )
 		{
 			if( !InitSettings.AllowChangeScreenVideoMode )
 				return;
@@ -1925,7 +1925,7 @@ namespace NeoAxis
 				windowedMode = mode;
 				windowedModeSize = size;
 
-				if( created && !closing )
+				if( created && !closing && changeWindowedModeOrVideoMode )
 					mustChangeWindowedModeOrVideoMode = true;
 			}
 		}
@@ -1974,12 +1974,12 @@ namespace NeoAxis
 			get { return closing; }
 		}
 
-		static internal void PerformWindowsWndProcEvent( uint message, IntPtr wParam, IntPtr lParam, ref bool processMessageByEngine )
+		public static void _Internal_PerformWindowsWndProcEvent( uint message, IntPtr wParam, IntPtr lParam, ref bool processMessageByEngine )
 		{
 			WindowsWndProc?.Invoke( message, wParam, lParam, ref processMessageByEngine );
 		}
 
-		static internal void MustChangeWindowedModeOrVideoMode()
+		public static void _Internal_MustChangeWindowedModeOrVideoMode()
 		{
 			mustChangeWindowedModeOrVideoMode = true;
 		}
@@ -2352,6 +2352,17 @@ namespace NeoAxis
 					}
 					catch { }
 				}
+				else //if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+				{
+					try
+					{
+						var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+						if( viewport != null )
+							return viewport.IsKeyLocked( EKeys.CapsLock );
+					}
+					catch { }
+				}
+
 				return false;
 			}
 		}
@@ -2480,6 +2491,11 @@ namespace NeoAxis
 		public static Vector2I GetSystemSmallIconSize()
 		{
 			return platform.GetSmallIconSize();
+		}
+
+		public static bool _Internal_InsideRunMessageLoop
+		{
+			get { return insideRunMessageLoop; }
 		}
 	}
 }

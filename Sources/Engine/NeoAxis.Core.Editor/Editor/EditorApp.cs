@@ -40,9 +40,9 @@ namespace NeoAxis.Editor
 			//				return;
 			//#endif
 
-
 			Application.SetHighDpiMode( HighDpiMode.SystemAware );
 
+			Platforms.Initialize();
 			EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Editor;
 
 			Log.Handlers.WarningHandler += delegate ( string text, ref bool handled, ref bool dumpToLogFile )

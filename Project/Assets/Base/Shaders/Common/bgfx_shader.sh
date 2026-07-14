@@ -678,7 +678,7 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 //!!!!betauser
 
 //!!!!
-#if BX_PLATFORM_EMSCRIPTEN != 1 //#	if BGFX_SHADER_LANGUAGE_GLSL >= 400
+#ifndef BX_PLATFORM_EMSCRIPTEN //#	if BGFX_SHADER_LANGUAGE_GLSL >= 400
 
 #	define SAMPLER2D(_name, _reg)       layout(binding=_reg) uniform sampler2D _name
 #	define SAMPLER2DMS(_name, _reg)     layout(binding=_reg) uniform sampler2DMS _name
@@ -720,10 +720,10 @@ vec4  mod(vec4  _a, vec4  _b) { return _a - _b * floor(_a / _b); }
 #	define SAMPLERCUBEARRAY(_name, _reg)     uniform samplerCubeArray _name
 #	define SAMPLER2DARRAYSHADOW(_name, _reg) uniform sampler2DArrayShadow _name
 
-#		define ISAMPLER2D(_name, _reg) uniform isampler2D _name
-#		define USAMPLER2D(_name, _reg) uniform usampler2D _name
-#		define ISAMPLER3D(_name, _reg) uniform isampler3D _name
-#		define USAMPLER3D(_name, _reg) uniform usampler3D _name
+# define ISAMPLER2D(_name, _reg) uniform isampler2D _name
+#	define USAMPLER2D(_name, _reg) uniform usampler2D _name
+#	define ISAMPLER3D(_name, _reg) uniform isampler3D _name
+#	define USAMPLER3D(_name, _reg) uniform usampler3D _name
 
 #endif
 
@@ -849,6 +849,10 @@ uniform vec4  u_alphaRef4;
 #if BGFX_SHADER_LANGUAGE_SPIRV
 	#define SPIRV 1
 	#define VULKAN 1
+#endif
+
+#ifdef BX_PLATFORM_EMSCRIPTEN
+	#define WEBGL 1
 #endif
 
 

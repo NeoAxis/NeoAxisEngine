@@ -57,6 +57,7 @@ namespace NeoAxis.Widget
 				catch { }
 			}
 
+			Platforms.Initialize();
 			EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Simulation;
 
 			//get project's directories

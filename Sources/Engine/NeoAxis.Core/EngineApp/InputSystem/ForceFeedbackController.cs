@@ -80,7 +80,7 @@ namespace NeoAxis
 			return false;
 		}
 
-		internal void OnUpdateState()
+		public void OnUpdateState()
 		{
 			for( int n = 0; n < effects.Count; n++ )
 			{

@@ -118,8 +118,10 @@ namespace Project
 
 		public static void Update()
 		{
+#if !ANDROID && !IOS && !WEB && !UWP
 			if( process != null && process.HasExited )
 				process = null;
+#endif
 		}
 	}
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using NeoAxis.Editor;
 using System.Linq;
 
-namespace NeoAxis
+namespace NeoAxis.Editor
 {
 	public class PipeSettingsCell : SettingsCellProcedureUI
 	{

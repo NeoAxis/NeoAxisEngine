@@ -4,6 +4,7 @@ root = true
 [*.cs]
 indent_style = tab
 end_of_line = crlf
+dotnet_diagnostic.IDE0017.severity = none
 
 # disabled conversion non unicode cs files to default unicode.
 # charset = utf-8-bom

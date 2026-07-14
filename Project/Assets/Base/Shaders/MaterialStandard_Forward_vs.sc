@@ -6,15 +6,14 @@ $output v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tang
 #include "Common.sh"
 #include "VertexFunctions.sh"
 
-//uniform vec4 u_renderOperationData[8];
-//uniform vec4 u_materialCustomParameters[2];
-//uniform vec4 u_objectInstanceParameters[2];
-
 #ifdef GLOBAL_SKELETAL_ANIMATION
-	SAMPLER2D(s_bones, 0);
+	SAMPLER2D(s_bones_0, 0);
 #endif
-SAMPLER2D(s_drawBufferTexture, 5);
+
+SAMPLER2D(s_drawBufferTexture_5, 5);
+#define s_drawBufferTexture s_drawBufferTexture_5
 #include "DrawBuffer.sh"
+
 #ifndef LIMITED_DEVICE
 	SAMPLER2D(s_linearSamplerVertex, 9);
 #endif
@@ -35,7 +34,7 @@ void main()
 	MEDIUMP vec3 normalLocal = a_normal;
 	MEDIUMP vec4 tangentLocal = a_tangent;
 #ifdef GLOBAL_SKELETAL_ANIMATION
-	getAnimationData(d_renderOperationData0, s_bones, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
+	getAnimationData(d_renderOperationData0, s_bones_0, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
 #endif
 
 	mat4 worldMatrix;
@@ -74,9 +73,6 @@ void main()
 		cullingByCameraDirectionData = asuint( d_renderOperationData3.w );
 	}
 	
-	//mat4 worldMatrixBeforeChanges = worldMatrix;
-	//vec3 worldObjectPositionBeforeChanges = getTranslate(worldMatrix);
-	
 	MEDIUMP vec4 billboardRotation;
 	billboardRotateWorldMatrix(d_renderOperationData0, worldMatrix, false, vec3_splat(0), billboardRotation);
 	vec4 worldPosition = mul(worldMatrix, vec4(positionLocal, 1.0));
@@ -102,12 +98,6 @@ void main()
 		#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_removeTextureTiling, u_mipBias)
 		#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_mipBias)
 	#endif
-
-/*
-	#define CODE_BODY_TEXTURE2D_REMOVE_TILING(_sampler, _uv) texture2DRemoveTiling(makeSampler(s_linearSamplerVertex, _sampler), _uv, u_removeTextureTiling, voxelDataMode != 0.0 ? -16.0 : u_mipBias)
-	#define CODE_BODY_TEXTURE2D(_sampler, _uv) texture2DBias(makeSampler(s_linearSamplerVertex, _sampler), _uv, voxelDataMode != 0.0 ? -16.0 : u_mipBias)
-*/
-	
 	{
 		VERTEX_CODE_BODY
 	}
@@ -130,8 +120,7 @@ void main()
 	v_tangent.xyz = normalize(mul(worldMatrix3, tangentLocal.xyz));
 	v_tangent.w = tangentLocal.w;
 
-	//!!!!GLSL
-#ifndef LIMITED_DEVICE //#ifndef GLSL
+#ifndef LIMITED_DEVICE
 	BRANCH
 	if( cullingByCameraDirectionData != 0 )
 	{
@@ -151,8 +140,6 @@ void main()
 	}
 #endif
 	
-	//v_reflectionVector = v_worldPosition - u_viewportOwnerCameraPosition;
-
 	//fog
 #ifdef GLOBAL_FOG
 	#if defined(BLEND_MODE_TRANSPARENT) || defined(BLEND_MODE_ADD)
@@ -197,7 +184,7 @@ void main()
 #endif
 
 	//geometry with voxel data
-#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL ) //#if defined(GLOBAL_VOXEL_LOD) || defined(GLOBAL_VIRTUALIZED_GEOMETRY)
+#if defined( GLOBAL_VOXEL_LOD ) && defined( VOXEL )
 	v_objectSpacePosition = positionLocal;
 	voxelOrVirtualizedDataModeCalculateParametersV(d_renderOperationData1, worldMatrix, u_viewportOwnerCameraPosition, v_cameraPositionObjectSpace, v_worldMatrix0, v_worldMatrix1, v_worldMatrix2);
 #endif

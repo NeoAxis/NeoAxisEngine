@@ -1,4 +1,5 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
+using NeoAxis.Player.Web;
 
 namespace NeoAxis
 {
@@ -36,6 +37,11 @@ namespace NeoAxis
 
 		public override bool IsKeyLocked( EKeys key )
 		{
+			lock( Engine.keyLockedStates )
+			{
+				if( Engine.keyLockedStates.TryGetValue( key, out var locked ) )
+					return locked;
+			}
 			return false;
 		}
 

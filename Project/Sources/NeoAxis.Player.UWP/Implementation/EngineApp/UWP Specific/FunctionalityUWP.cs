@@ -64,7 +64,6 @@ namespace NeoAxis
 		{
 			instance = this;
 			SetInstance( instance, SystemSettings.Platform.UWP );
-
 			new PlatformSpecificUtilityUWP();
 		}
 

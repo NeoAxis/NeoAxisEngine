@@ -138,7 +138,7 @@ namespace NeoAxis.Editor
 
 		public abstract void OpenSelectTypeWindow( SelectTypeWindowInitData initData );
 
-		public abstract void Product_Store_ImageGenerator_WriteBitmapToStream( Stream writeStream, Product_Store.ImageGenerator.ImageFormat writeImageFormat, Vector2I imageSizeRender, Vector2I imageSizeOutput, IntPtr imageData );
+		//public abstract void Product_Store_ImageGenerator_WriteBitmapToStream( Stream writeStream, Product_Store.ImageGenerator.ImageFormat writeImageFormat, Vector2I imageSizeRender, Vector2I imageSizeOutput, IntPtr imageData );
 
 		public abstract EditorContextMenu.Item EditorContextMenuNewItem( string text, EventHandler clickHandler );
 		public abstract EditorContextMenu.Separator EditorContextMenuNewSeparator();
