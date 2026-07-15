@@ -510,7 +510,7 @@ namespace NeoAxis
 
 			/////////////////////////////////////////
 
-			public Scene CreateSceneWithoutEnable()// bool enable )
+			public Scene CreateSceneWithoutEnable( bool is3DScene )// bool enable )
 			{
 				DetachAndOrDestroyScene();
 
@@ -534,13 +534,36 @@ namespace NeoAxis
 
 						pipeline.DeferredShading = AutoTrueFalse.False;
 						pipeline.LODRange = new RangeI( 0, 0 );
-						//pipeline.UseRenderTargets = false;
-						pipeline.ShadowDirectionalLightCascades = 4;
+						////pipeline.UseRenderTargets = false;
+						//pipeline.ShadowDirectionalLightCascades = 4;
 
-						scene.BackgroundColor = new ColorValue( 0.5, 0.5, 0.5 );
+						pipeline.UseMultiRenderTargets = AutoTrueFalse.False;
+						pipeline.Shadows = false;
+						pipeline.ProvideColorDepthTextureCopy = AutoTrueFalse.False;
+						pipeline.LightGrid = AutoTrueFalse.False;
+
+						scene.BackgroundColor = new ColorValue( 0.262, 0.262, 0.262 );//scene.BackgroundColor = new ColorValue( 0.5, 0.5, 0.5 );
 
 						scene.BackgroundColorAffectLighting = 1;
 						scene.BackgroundColorEnvironmentOverride = new ColorValue( 0.8, 0.8, 0.8 );
+
+						var sceneEffects = pipeline.CreateComponent<Component>();
+						sceneEffects.Name = "Scene Effects";
+
+						//tone mapping
+						if( is3DScene )
+						{
+							var toneMapping = sceneEffects.CreateComponent<RenderingEffect_ToneMapping>();
+							toneMapping.Intensity = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewToneMapping" );
+						}
+
+						//convert to LDR
+						sceneEffects.CreateComponent<RenderingEffect_ToLDR>();
+
+						//antialiasing
+						var antialiasing = sceneEffects.CreateComponent<RenderingEffect_Antialiasing>();
+						antialiasing.BasicTechnique = RenderingEffect_Antialiasing.BasicTechniqueEnum.SSAAx4;
+						antialiasing.MotionTechnique = RenderingEffect_Antialiasing.MotionTechniqueEnum.None;
 
 						pipeline.Enabled = true;
 					}
@@ -785,7 +808,7 @@ namespace NeoAxis
 				this.mesh = mesh;
 				Init();
 
-				var scene = CreateSceneWithoutEnable();
+				var scene = CreateSceneWithoutEnable( true );
 				if( mesh != null )
 				{
 					var objInSpace = scene.CreateComponent<MeshInSpace>();
@@ -806,7 +829,7 @@ namespace NeoAxis
 				this.surface = surface;
 				Init();
 
-				var scene = CreateSceneWithoutEnable();
+				var scene = CreateSceneWithoutEnable( true );
 				if( surface != null )
 				{
 					EditorAPI.SurfaceEditorUtility_CreatePreviewObjects( scene, surface );
@@ -826,7 +849,7 @@ namespace NeoAxis
 				this.material = material;
 				Init();
 
-				var scene = CreateSceneWithoutEnable();
+				var scene = CreateSceneWithoutEnable( true );
 
 				var mesh = scene.CreateComponent<Mesh>( enabled: false );
 				var sphere = mesh.CreateComponent<MeshGeometry_Sphere>();
@@ -848,7 +871,7 @@ namespace NeoAxis
 				this.sky = sky;
 				Init();
 
-				var scene = CreateSceneWithoutEnable();
+				var scene = CreateSceneWithoutEnable( false );
 
 				var instanceInScene = (Sky)sky.Clone();
 				scene.AddComponent( instanceInScene );
@@ -869,7 +892,7 @@ namespace NeoAxis
 
 				ObjectInSpace objectInSpaceInScene = null;
 
-				var scene = CreateSceneWithoutEnable();
+				var scene = CreateSceneWithoutEnable( true );
 				if( objectInSpace != null )
 				{
 					objectInSpaceInScene = (ObjectInSpace)objectInSpace.Clone();
@@ -913,7 +936,7 @@ namespace NeoAxis
 			{
 				const PixelFormat imageFormat = PixelFormat.A8R8G8B8;
 
-				using( var bitmap = new Bitmap( imageSizeRender.X, imageSizeRender.Y, imageSizeRender.X * PixelFormatUtility.GetNumElemBytes( imageFormat ), System.Drawing.Imaging.PixelFormat.Format32bppArgb, imageData ) )
+				using( var bitmap = new Bitmap( imageSizeRender.X, imageSizeRender.Y, imageSizeRender.X * PixelFormatUtility.GetNumElemBytes( imageFormat ), System.Drawing.Imaging.PixelFormat.Format32bppRgb/*Format32bppArgb*/, imageData ) )
 				{
 					Bitmap ResizeImage( Image image, int width, int height )
 					{

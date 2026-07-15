@@ -1274,7 +1274,7 @@ namespace NeoAxis
 				var meshData = new RoadUtility.MeshData();
 
 				//road geometry
-				if( RoadData.Points.Length > 1 )
+				if( RoadData.Points.Length > 1 && Owner.RoadType.Value != null )
 				{
 					var manager = Scene.GetComponent<RoadManager>();
 

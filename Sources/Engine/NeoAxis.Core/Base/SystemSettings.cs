@@ -468,7 +468,7 @@ namespace NeoAxis
 		{
 			try
 			{
-				var email = PlatformSpecificUtility.Instance.GetRegistryValue( @"HKEY_CURRENT_USER\SOFTWARE\NeoAxis", "LoginEmail", "" ) as string;
+				var email = PlatformSpecificRegistryUtility.GetRegistryValue( @"HKEY_CURRENT_USER\SOFTWARE\NeoAxis", "LoginEmail", "" ) as string;
 				if( !string.IsNullOrEmpty( email ) )
 					return false; //not in app container, because registry access is not available
 			}
@@ -520,7 +520,7 @@ namespace NeoAxis
 				{
 					try
 					{
-						int res = (int)PlatformSpecificUtility.Instance.GetRegistryValue( "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", -1 );
+						int res = (int)PlatformSpecificRegistryUtility.GetRegistryValue( "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", "AppsUseLightTheme", -1 );
 						if( res == 0 )
 							return true;
 					}

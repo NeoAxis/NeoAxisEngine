@@ -10,8 +10,16 @@ namespace NeoAxis
 	/// </summary>
 	public static class Platforms
 	{
+		static bool initialized;
+
+		//
+
 		public static void Initialize()
 		{
+			if( initialized )
+				return;
+			initialized = true;
+
 			switch( SystemSettings.CurrentPlatform )
 			{
 			case SystemSettings.Platform.Windows:

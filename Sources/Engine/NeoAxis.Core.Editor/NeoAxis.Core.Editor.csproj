@@ -47,9 +47,7 @@
     <Compile Update="Components\Build\Product_macOS.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="Components\Build\Product_Store.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Update="Components\Build\Product_Store.cs" />
     <Compile Update="Components\Font\FontPreview.designer.cs">
       <DependentUpon>FontPreview.cs</DependentUpon>
     </Compile>

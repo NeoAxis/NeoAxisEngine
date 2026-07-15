@@ -1633,8 +1633,10 @@ namespace NeoAxis.Editor
 					toneMapping.Intensity = ReferenceUtility.MakeReference( "Base\\ProjectSettings.component|$Preview\\PreviewToneMapping" );
 				}
 
-				//antialiasing
+				//convert to LDR
 				sceneEffects.CreateComponent<RenderingEffect_ToLDR>();
+
+				//antialiasing
 				var antialiasing = sceneEffects.CreateComponent<RenderingEffect_Antialiasing>();
 				antialiasing.BasicTechnique = RenderingEffect_Antialiasing.BasicTechniqueEnum.FXAA; //SSAAx4;
 				antialiasing.MotionTechnique = RenderingEffect_Antialiasing.MotionTechniqueEnum.None;

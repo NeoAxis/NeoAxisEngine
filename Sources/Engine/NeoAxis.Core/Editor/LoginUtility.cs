@@ -28,8 +28,8 @@ namespace NeoAxis.Editor
 		{
 			try
 			{
-				email = PlatformSpecificUtility.Instance.GetRegistryValue( registryPath, "LoginEmail", "" ) as string;
-				hash = PlatformSpecificUtility.Instance.GetRegistryValue( registryPath, "LoginHash", "" ) as string;
+				email = PlatformSpecificRegistryUtility.GetRegistryValue( registryPath, "LoginEmail", "" ) as string;
+				hash = PlatformSpecificRegistryUtility.GetRegistryValue( registryPath, "LoginHash", "" ) as string;
 				if( !string.IsNullOrEmpty( hash ) )
 					hash = EncryptDecrypt( hash );
 
@@ -58,8 +58,8 @@ namespace NeoAxis.Editor
 		{
 			try
 			{
-				PlatformSpecificUtility.Instance.SetRegistryValue( registryPath, "LoginEmail", email );
-				PlatformSpecificUtility.Instance.SetRegistryValue( registryPath, "LoginHash", EncryptDecrypt( hash ) );
+				PlatformSpecificRegistryUtility.SetRegistryValue( registryPath, "LoginEmail", email );
+				PlatformSpecificRegistryUtility.SetRegistryValue( registryPath, "LoginHash", EncryptDecrypt( hash ) );
 			}
 			catch( Exception e )
 			{
