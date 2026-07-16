@@ -361,9 +361,7 @@ namespace NeoAxis.Editor
 								//featured products
 								if( info.Author == "3845" )
 								{
-									//!!!!
-									if( info.Title == "Basic Materials 2K" || info.Title == "Basic Environments 4K" || info.Title == "Sci-fi Demo" )
-									//if( info.Title == "Basic Materials 2K" || info.Title == "Basic Environments 4K" || info.Title == "City Demo" || info.Title == "Nature Demo" )
+									if( info.Title == "Basic Materials 2K" || info.Title == "Basic Environments 4K" || info.Title == "Sci-fi Demo" || info.Title == "City Demo" || info.Title == "Nature Demo" )
 									{
 										featuredStoreItems.AddWithCheckAlreadyContained( info.Identifier );
 									}

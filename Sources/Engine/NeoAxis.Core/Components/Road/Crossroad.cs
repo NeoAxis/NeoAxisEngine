@@ -1257,10 +1257,10 @@ again:;
 						else
 							color = ProjectSettings.Get.Colors.SceneShowVolumeColor;
 
-						if( color.Alpha != 0 )
-						{
-							var renderer = context2.viewport.Simple3DRenderer;
+						var renderer = context2.viewport.Simple3DRenderer;
 
+						if( color.Alpha != 0 && renderer != null )
+						{
 							renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
 							renderer.AddCylinder( GetCylinder(), 64 );
 
