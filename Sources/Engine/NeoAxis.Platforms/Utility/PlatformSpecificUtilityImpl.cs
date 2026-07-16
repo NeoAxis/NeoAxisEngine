@@ -15,11 +15,11 @@ using NeoAxis.Editor;
 using System.Linq;
 using System.Threading;
 using System.ComponentModel;
-using Microsoft.Win32.SafeHandles;
-using System.Globalization;
-using System.Buffers;
-using System.Security;
-using System.Runtime.CompilerServices;
+//using Microsoft.Win32.SafeHandles;
+//using System.Globalization;
+//using System.Buffers;
+//using System.Security;
+//using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Internal
@@ -37,27 +37,27 @@ namespace Internal
 
 		public override string GetExecutableDirectoryPath()
 		{
-			var result = "";
+			var result = AppContext.BaseDirectory.TrimEnd( Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar );
 
-			try
-			{
-				var fileName = Process.GetCurrentProcess().MainModule.FileName;
-				result = Path.GetDirectoryName( fileName );
-			}
-			catch
-			{
-				//old implementation
-				//really need this code?
-				var module = Assembly.GetExecutingAssembly().GetModules()[ 0 ];
-				IntPtr hModule = Marshal.GetHINSTANCE( module );
-				if( hModule == new IntPtr( -1 ) )
-					hModule = IntPtr.Zero;
-				StringBuilder buffer = new StringBuilder( 260 );
-				int length = GetModuleFileName( hModule, buffer, buffer.Capacity );
-				result = Path.GetDirectoryName( Path.GetFullPath( buffer.ToString() ) );
-			}
+			//try
+			//{
+			//	var fileName = Process.GetCurrentProcess().MainModule.FileName;
+			//	result = Path.GetDirectoryName( fileName );
+			//}
+			//catch
+			//{
+			//	//old implementation
+			//	//really need this code?
+			//	var module = Assembly.GetExecutingAssembly().GetModules()[ 0 ];
+			//	IntPtr hModule = Marshal.GetHINSTANCE( module );
+			//	if( hModule == new IntPtr( -1 ) )
+			//		hModule = IntPtr.Zero;
+			//	StringBuilder buffer = new StringBuilder( 260 );
+			//	int length = GetModuleFileName( hModule, buffer, buffer.Capacity );
+			//	result = Path.GetDirectoryName( Path.GetFullPath( buffer.ToString() ) );
+			//}
 
-			result = VirtualPathUtility.NormalizePath( result );
+			//result = VirtualPathUtility.NormalizePath( result );
 
 			//when run by means built-in dotnet.exe from NeoAxis.Internal
 			{
@@ -487,49 +487,51 @@ namespace Internal
 	{
 		public override string GetExecutableDirectoryPath()
 		{
-			var result = "";
+			var result = AppContext.BaseDirectory.TrimEnd( Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar );
 
-			try
-			{
-				string fileName = Process.GetCurrentProcess().MainModule.FileName;
-				result = Path.GetDirectoryName( fileName );
-			}
-			catch { }
+			//var result = "";
 
-			result = VirtualPathUtility.NormalizePath( result );
-
-			////when run by means built-in dotnet.exe from NeoAxis.Internal
+			//try
 			//{
-			//	var remove = VirtualPathUtility.NormalizePath( @"\NeoAxis.Internal\Platforms\Windows\dotnet" );
-
-			//	var index = result.IndexOf( remove );
-			//	if( index != -1 )
-			//		result = result.Remove( index, remove.Length );
+			//	string fileName = Process.GetCurrentProcess().MainModule.FileName;
+			//	result = Path.GetDirectoryName( fileName );
 			//}
+			//catch { }
+
+			//result = VirtualPathUtility.NormalizePath( result );
+
+			//////when run by means built-in dotnet.exe from NeoAxis.Internal
+			////{
+			////	var remove = VirtualPathUtility.NormalizePath( @"\NeoAxis.Internal\Platforms\Windows\dotnet" );
+
+			////	var index = result.IndexOf( remove );
+			////	if( index != -1 )
+			////		result = result.Remove( index, remove.Length );
+			////}
 
 			return result;
 		}
 
-		//public override IntPtr LoadLibrary( string path )
-		//{
-		//	var result = IntPtr.Zero;
+		////public override IntPtr LoadLibrary( string path )
+		////{
+		////	var result = IntPtr.Zero;
 
-		//	//Console.WriteLine( "LoadLibrary: " + path );
+		////	//Console.WriteLine( "LoadLibrary: " + path );
 
-		//	//if( !NativeLibrary.TryLoad( path, out result ) )
-		//	//{
-		//	//	//try with "lib" prefix
-		//	//	var newPath = Path.Combine( Path.GetDirectoryName( path ), "lib" + Path.GetFileName( path ) );
+		////	//if( !NativeLibrary.TryLoad( path, out result ) )
+		////	//{
+		////	//	//try with "lib" prefix
+		////	//	var newPath = Path.Combine( Path.GetDirectoryName( path ), "lib" + Path.GetFileName( path ) );
 
-		//	//	Console.WriteLine( "second: " + newPath );
+		////	//	Console.WriteLine( "second: " + newPath );
 
-		//	//	NativeLibrary.TryLoad( newPath, out result );
-		//	//}
+		////	//	NativeLibrary.TryLoad( newPath, out result );
+		////	//}
 
-		//	//Console.WriteLine( "LoadLibrary Result: " + result.ToString() );
+		////	//Console.WriteLine( "LoadLibrary Result: " + result.ToString() );
 
-		//	return result;
-		//}
+		////	return result;
+		////}
 
 		///////////////////////////////////////////////
 
@@ -548,19 +550,7 @@ namespace Internal
 
 		public override EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons )
 		{
-			//!!!!buttons, result
-
 			Console.WriteLine( "MESSAGE:\n" + caption + ":" + text );
-
-			//Android.Util.Log.WriteLine( Android.Util.LogPriority.Debug, "MyApp", "MESSAGE:\r\n" + caption + ":" + text );
-
-			//while( ShowCursor( 1 ) < 0 ) { }
-
-			//IntPtr hwnd = IntPtr.Zero;
-			//if( EngineApp.IsSimulation && EngineApp.CreatedInsideEngineWindow != null )
-			//	hwnd = EngineApp.CreatedInsideEngineWindow.Handle;
-
-			//return (EDialogResult)MessageBox( hwnd, text, caption, (int)buttons | MB_ICONEXCLAMATION );
 
 			return EDialogResult.OK;
 		}
@@ -570,13 +560,27 @@ namespace Internal
 
 	class PlatformSpecificUtilityMacOS : PlatformSpecificUtility
 	{
+		////[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_LoadLibrary", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
+		////public static extern IntPtr MacLoadLibrary( string name );
 
-		////!!!!test
-		//[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_Test", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
-		//public static extern int TestPInvoke();
+		public override string GetExecutableDirectoryPath()
+		{
+			var result = AppContext.BaseDirectory.TrimEnd( Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar );
+			return result;
 
-		//[DllImport( "libNeoAxisCoreNative", EntryPoint = "MacAppNativeWrapper_LoadLibrary", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode )]
-		//public static extern IntPtr MacLoadLibrary( string name );
+
+			//var fileName = Process.GetCurrentProcess().MainModule.FileName;
+			//return Path.GetDirectoryName( fileName );
+
+			//////old: GetCallingAssembly
+			////string codeBaseURI = Assembly.GetExecutingAssembly().CodeBase;
+			////return Path.GetDirectoryName( codeBaseURI.Replace( "file://", "" ) );
+		}
+
+		////public override IntPtr LoadLibrary( string path )
+		////{
+		////	return MacLoadLibrary( path );
+		////}
 
 		public async override Task<string> GetClipboardTextAsync()
 		{
@@ -584,30 +588,6 @@ namespace Internal
 
 			return "";
 		}
-
-		public override string GetExecutableDirectoryPath()
-		{
-
-			//!!!!?
-			//AppContext.BaseDirectory
-
-			var fileName = Process.GetCurrentProcess().MainModule.FileName;
-			return Path.GetDirectoryName( fileName );
-
-			////old: GetCallingAssembly
-			//string codeBaseURI = Assembly.GetExecutingAssembly().CodeBase;
-			//return Path.GetDirectoryName( codeBaseURI.Replace( "file://", "" ) );
-		}
-
-		//public override IntPtr LoadLibrary( string path )
-		//{
-		//	//!!!!test
-		//	Console.WriteLine( "LoadLibrary: " + path );
-		//	var result = TestPInvoke();
-		//	Console.WriteLine( "TestPInvoke: " + result.ToString() );
-
-		//	return MacLoadLibrary( path );
-		//}
 
 		public override void SetClipboardText( string text )
 		{
@@ -624,8 +604,8 @@ namespace Internal
 		{
 			Console.WriteLine( "MESSAGE:\n" + caption + ":" + text );
 
-			//!!!!buttons, result
-			MacAppNativeWrapper.MessageBox( text, caption );
+			//MacAppNativeWrapper.MessageBox( text, caption );
+
 			return EDialogResult.OK;
 		}
 	}

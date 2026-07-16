@@ -445,7 +445,6 @@ void InitEKeyToKeyCodeArray()
 //}
 
 
-//!!!!new
 EXPORT void* MacAppNativeWrapper_CreateWindow(WindowedModeEnum windowedMode, const uint16* title, int positionX, int positionY, int sizeX, int sizeY)
 {
 	NSApplication* app = [NSApplication sharedApplication];
@@ -456,30 +455,41 @@ EXPORT void* MacAppNativeWrapper_CreateWindow(WindowedModeEnum windowedMode, con
 
 	//create window
 	{
-		NSRect initialRect = NSMakeRect(positionX, positionY, sizeX, sizeY);
-		NSUInteger styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable;
+		//!!!!temp macOS. before finished macOS
+		NSRect initialRect = NSMakeRect(100, 100, 500, 400);
+		//NSRect initialRect = NSMakeRect(positionX, positionY, sizeX, sizeY);
 
+		NSWindowStyleMask styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable;
 		mainWindow = [[NSWindow alloc]initWithContentRect:initialRect
 			styleMask : styleMask
 			backing : NSBackingStoreBuffered
 			defer : NO];
+
+		[mainWindow setIsZoomed:YES] ;
+		//[mainWindow center] ;
+
+
+		//NSRect initialRect = NSMakeRect(positionX, positionY, sizeX, sizeY);
+		//NSUInteger styleMask = NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable;
+
+		//mainWindow = [[NSWindow alloc]initWithContentRect:initialRect
+		//	styleMask : styleMask
+		//	backing : NSBackingStoreBuffered
+		//	defer : NO];
 	}
 
 
 	InitEKeyToKeyCodeArray();
 	ResetKeyPressedFlags();
 
-	//!!!!was in 3.5. before window was created by native app
-	//mainWindow = [[NSApp delegate]window];
-
-	//!!!!new
 	AppDelegate* delegate = [[[AppDelegate alloc]init] autorelease];
 	[NSApp setDelegate:delegate] ;
 	[mainWindow setDelegate:delegate] ;
 
-	//!!!!was in 3.5
-	//[NSApp setDelegate:[[[AppDelegate alloc]initDelegate] autorelease] ] ;
-	//[mainWindow setDelegate:[NSApp delegate] ] ;
+	////was in 3.5
+	////mainWindow = [[NSApp delegate]window];
+	////[NSApp setDelegate:[[[AppDelegate alloc]initDelegate] autorelease] ] ;
+	////[mainWindow setDelegate:[NSApp delegate] ] ;
 
 
 	NSString* nsTitle = GetNSStringFromUTF16(title);
@@ -497,69 +507,74 @@ EXPORT void* MacAppNativeWrapper_CreateWindow(WindowedModeEnum windowedMode, con
 		[pool release] ;
 	}
 
-	NSRect screenRect = [[NSScreen mainScreen]frame];
-	NSSize screenSize = screenRect.size;
 
-	if(windowedMode == WindowedModeEnum_Windowed) //if (!fullscreen)
-	{
-		//if (sizeX == screenSize.width && sizeY == screenSize.height)
-		//{
-		//	if ([mainWindow isZoomed] == NO)
-		//		[mainWindow zoom:nil];
-		//}
-		//else
-		{
-			int windowPositionX = (screenSize.width - sizeX) / 2;
-			int windowPositionY = (screenSize.height - sizeY) / 2;
 
-			NSRect frameRect = NSMakeRect(windowPositionX, windowPositionY, sizeX, sizeY);
-			[mainWindow setFrame:frameRect display : YES] ;
-		}
-	}
-	else
-	{
-		[mainWindow setLevel:NSMainMenuWindowLevel + 1] ;
+	//!!!!temp macOS. before finished macOS
+	//!!!!temp macOS. before finished macOS
+	//!!!!temp macOS. before finished macOS
 
-		//!!!!was in 3.5
-		//int major;
-		//int minor;
-		//int bugFix;
-		//GetOSVersion(&major, &minor, &bugFix);
-		//if (major == 10 && minor <= 5)
-		//	SetSystemUIMode(kUIModeAllHidden, 0);
-		//else
-		[mainWindow setStyleMask:NSBorderlessWindowMask];
 
-		//if (major == 10 && minor >= 7 || (major > 10))
-		{
-			const int _NSApplicationPresentationAutoHideDock = 1 << 0;
-			const int _NSApplicationPresentationAutoHideMenuBar = 1 << 2;
-			const int _NSWindowCollectionBehaviorFullScreenPrimary = 1 << 7;
+	//NSRect screenRect = [[NSScreen mainScreen]frame];
+	//NSSize screenSize = screenRect.size;
 
-			[[NSApplication sharedApplication]setPresentationOptions:
-			_NSApplicationPresentationAutoHideMenuBar | _NSApplicationPresentationAutoHideDock];
-			NSWindowCollectionBehavior collection = [mainWindow collectionBehavior];
-			collection |= _NSWindowCollectionBehaviorFullScreenPrimary;
-			[mainWindow setCollectionBehavior:collection] ;
-			//[mainWindow toggleFullScreen : self];
-		}
+	//if(windowedMode == WindowedModeEnum_Windowed) //if (!fullscreen)
+	//{
+	//	//if (sizeX == screenSize.width && sizeY == screenSize.height)
+	//	//{
+	//	//	if ([mainWindow isZoomed] == NO)
+	//	//		[mainWindow zoom:nil];
+	//	//}
+	//	//else
+	//	{
+	//		int windowPositionX = (screenSize.width - sizeX) / 2;
+	//		int windowPositionY = (screenSize.height - sizeY) / 2;
 
-		[mainWindow setBackingType:NSBackingStoreBuffered];
-		[mainWindow setOpaque:YES] ;
-		[mainWindow setFrame:screenRect display : YES] ;
-	}
+	//		NSRect frameRect = NSMakeRect(windowPositionX, windowPositionY, sizeX, sizeY);
+	//		[mainWindow setFrame:frameRect display : YES] ;
+	//	}
+	//}
+	//else
+	//{
+	//	[mainWindow setLevel:NSMainMenuWindowLevel + 1] ;
+
+	//	//!!!!was in 3.5
+	//	//int major;
+	//	//int minor;
+	//	//int bugFix;
+	//	//GetOSVersion(&major, &minor, &bugFix);
+	//	//if (major == 10 && minor <= 5)
+	//	//	SetSystemUIMode(kUIModeAllHidden, 0);
+	//	//else
+	//	[mainWindow setStyleMask:NSBorderlessWindowMask];
+
+	//	//if (major == 10 && minor >= 7 || (major > 10))
+	//	{
+	//		const int _NSApplicationPresentationAutoHideDock = 1 << 0;
+	//		const int _NSApplicationPresentationAutoHideMenuBar = 1 << 2;
+	//		const int _NSWindowCollectionBehaviorFullScreenPrimary = 1 << 7;
+
+	//		[[NSApplication sharedApplication]setPresentationOptions:
+	//		_NSApplicationPresentationAutoHideMenuBar | _NSApplicationPresentationAutoHideDock];
+	//		NSWindowCollectionBehavior collection = [mainWindow collectionBehavior];
+	//		collection |= _NSWindowCollectionBehaviorFullScreenPrimary;
+	//		[mainWindow setCollectionBehavior:collection] ;
+	//		//[mainWindow toggleFullScreen : self];
+	//	}
+
+	//	[mainWindow setBackingType:NSBackingStoreBuffered];
+	//	[mainWindow setOpaque:YES] ;
+	//	[mainWindow setFrame:screenRect display : YES] ;
+	//}
+
 
 	[mainWindow setIsVisible:TRUE] ;
-
 	[mainWindow setAcceptsMouseMovedEvents:YES] ;
-
 	[NSEvent startPeriodicEventsAfterDelay:0.0f withPeriod : 0.01f] ;
 
-	////!!!!need?
-	//InitGamma();
-
-	//!!!!new
+	[mainWindow makeKeyAndOrderFront:nil] ;
 	[app activateIgnoringOtherApps:YES] ;
+
+	////InitGamma();
 
 	return mainWindow;
 }
@@ -672,14 +687,12 @@ EXPORT bool MacAppNativeWrapper_IsWindowVisible()
 
 EXPORT bool MacAppNativeWrapper_IsWindowActive()
 {
-	return ([mainWindow isKeyWindow] || ([mainWindow level] == NSMainMenuWindowLevel + 1)) &&
-		![mainWindow isMiniaturized];
+	return ([mainWindow isKeyWindow] || ([mainWindow level] == NSMainMenuWindowLevel + 1)) && ![mainWindow isMiniaturized];
 }
 
 EXPORT bool MacAppNativeWrapper_IsWindowFocused()
 {
-	return ([mainWindow isKeyWindow] || ([mainWindow level] == NSMainMenuWindowLevel + 1)) &&
-		![mainWindow isMiniaturized];
+	return ([mainWindow isKeyWindow] || ([mainWindow level] == NSMainMenuWindowLevel + 1)) && ![mainWindow isMiniaturized];
 
 	//return [mainWindow isOnActiveSpace] && ![mainWindow isMiniaturized];
 }
@@ -1424,11 +1437,6 @@ EXPORT void MacAppNativeWrapper_ResetMouseMoveDelta(bool resetIgnoreCounter)
 	if (resetIgnoreCounter)
 		ignoreMouseMoveDeltaCounter = 3;
 }
-
-//EXPORT int MacAppNativeWrapper_Test()
-//{
-//	return 77;
-//}
 
 //EXPORT void* MacAppNativeWrapper_LoadLibrary(const uint16* path)
 //{

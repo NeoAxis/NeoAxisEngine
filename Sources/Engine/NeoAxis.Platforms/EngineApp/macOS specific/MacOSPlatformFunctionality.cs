@@ -297,6 +297,13 @@ namespace Internal
 			SetInstance( this, SystemSettings.Platform.macOS );
 			new PlatformSpecificUtilityMacOS();
 
+			//MacAppNativeWrapper.Initialize( messageEventdelegate, logInfoDelegate, logWarningDelegate, logFatalDelegate );
+		}
+
+		public override void Init( nint mainModuleData )
+		{
+			base.Init( mainModuleData );
+
 			MacAppNativeWrapper.Initialize( messageEventdelegate, logInfoDelegate, logWarningDelegate, logFatalDelegate );
 		}
 

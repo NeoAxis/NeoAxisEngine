@@ -39,7 +39,7 @@ namespace NeoAxis.Player
 
 		static void Main2()
 		{
-			//create platform classes
+			//create platform implementation class
 			Platforms.Initialize();
 
 			//set application type

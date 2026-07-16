@@ -19,9 +19,10 @@ SourceFileExtension: vcxproj
 
 Source: NeoAxisCoreNative_x64.vcxproj
 Source: NeoAxis/macOS/MacAppNativeWrapper.mm
-Output: ../../../Project/Binaries/NeoAxis.Internal/Platforms/macOS/libNeoAxisCoreNative.dylib
+Output: ../../../Project/Sources/NeoAxis.Player/libs/macOS/libNeoAxisCoreNative.dylib
 TempFolder: _build
 
+Out___put: ../../../Project/Binaries/NeoAxis.Internal/Platforms/macOS/libNeoAxisCoreNative.dylib
 Ou__tput: ../../../Project/Sources/NeoAxis.Player.macOS/lib/libNeoAxisCoreNative.a
 Te__mpFolder: ../../../_build/macOS/NeoAxisCoreNative.macOS
 

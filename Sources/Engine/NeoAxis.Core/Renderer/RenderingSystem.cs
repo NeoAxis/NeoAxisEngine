@@ -584,16 +584,24 @@ namespace NeoAxis
 			//set backend for iOS
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 			{
-				EngineApp.InitSettings.RendererBackend = RendererBackend.Metal;
-				//EngineApp.InitSettings.RendererBackend = RendererBackend.OpenGLES;
-				//EngineSettings.Init.RendererBackend = RendererBackend.Noop;
+				//!!!!temp iOS
+				EngineApp.InitSettings.RendererBackend = RendererBackend.Noop;
+				//EngineApp.InitSettings.RendererBackend = RendererBackend.Vulkan;
+
+				////EngineApp.InitSettings.RendererBackend = RendererBackend.Metal;
 			}
 			//set backend for Web
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				EngineApp.InitSettings.RendererBackend = RendererBackend.OpenGLES;
 			//set backend for macOS
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
-				EngineApp.InitSettings.RendererBackend = RendererBackend.Metal;
+			{
+				//!!!!temp macOS
+				EngineApp.InitSettings.RendererBackend = RendererBackend.Noop;
+				//EngineApp.InitSettings.RendererBackend = RendererBackend.Vulkan;
+
+				////EngineApp.InitSettings.RendererBackend = RendererBackend.Metal;
+			}
 
 			unsafe
 			{

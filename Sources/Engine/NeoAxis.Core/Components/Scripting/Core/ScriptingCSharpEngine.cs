@@ -121,7 +121,8 @@ namespace Internal
 				return;
 
 			//write CSharpScripts.cs
-			WriteCharpScriptsCsFile();
+			if( CanCompileScripts )
+				WriteCharpScriptsCsFile();
 
 			try
 			{
@@ -195,9 +196,16 @@ namespace Internal
 					if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out _ ) )
 						return false;
 
-					var dotnetDirectoryPath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet" );
-					if( !Directory.Exists( dotnetDirectoryPath ) )
+					try
+					{
+						var dotnetDirectoryPath = Path.Combine( VirtualFileSystem.Directories.EngineInternal, @"Platforms\Windows\dotnet" );
+						if( !Directory.Exists( dotnetDirectoryPath ) )
+							return false;
+					}
+					catch
+					{
 						return false;
+					}
 
 
 					//!!!!check NeoAxis.Core.CompileScripts.dll existence and loadability

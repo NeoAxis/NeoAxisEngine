@@ -97,5 +97,12 @@
       <HintPath>..\..\Binaries\NeoAxis.Platforms.dll</HintPath>
     </Reference>
   </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Debug-macOS' Or '$(Configuration)' == 'Release-macOS'">
+    <None Include="libs/macOS/libNeoAxisCoreNative.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>libNeoAxisCoreNative.dylib</Link>
+    </None>
+  </ItemGroup>
   
 </Project>

@@ -303,6 +303,10 @@ namespace NeoAxis
 		{
 			lock( preLoadLibraryLockObject )
 			{
+				var dllDirectory = VirtualFileSystem.Directories.PlatformSpecific;
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+					dllDirectory = VirtualFileSystem.Directories.Binaries;
+
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 				{
 					if( Path.GetExtension( baseName ) != ".dll" )
@@ -316,7 +320,7 @@ namespace NeoAxis
 					if( Path.GetExtension( baseName ) != ".dll" )
 						baseName = Path.ChangeExtension( baseName, null );
 
-					string checkPath = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, baseName + ".bundle" );
+					string checkPath = Path.Combine( dllDirectory/*VirtualFileSystem.Directories.PlatformSpecific*/, baseName + ".bundle" );
 					if( Directory.Exists( checkPath ) )
 						baseName += ".bundle";
 					else
@@ -369,25 +373,20 @@ namespace NeoAxis
 					if( !string.IsNullOrEmpty( overrideSetCurrentDirectory ) )
 						Directory.SetCurrentDirectory( overrideSetCurrentDirectory );
 					else
-						Directory.SetCurrentDirectory( VirtualFileSystem.Directories.PlatformSpecific );
+						Directory.SetCurrentDirectory( dllDirectory );// VirtualFileSystem.Directories.PlatformSpecific );
 
 					//set dll directory for dependent libraries
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
 					{
 						try
 						{
-							SetDllDirectory( VirtualFileSystem.Directories.PlatformSpecific );
+							SetDllDirectory( dllDirectory );// VirtualFileSystem.Directories.PlatformSpecific );
 						}
 						catch { }
 					}
 
 
-					var fullPath = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, baseName );
-
-					//////in macOS the library must be in the same directory as the executable
-					////if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
-					////	fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, baseName );
-
+					var fullPath = Path.Combine( dllDirectory/* VirtualFileSystem.Directories.PlatformSpecific*/, baseName );
 
 					//standard way to load library
 					var errorMessage = "";
