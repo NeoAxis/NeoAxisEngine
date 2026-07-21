@@ -26,13 +26,13 @@ public:
 	}
 
 	// Properties
-	inline Vec3 		GetCenter() const										{ return Vec3::sLoadFloat3Unsafe(mCenter); }
+	inline Vec3			GetCenter() const										{ return Vec3::sLoadFloat3Unsafe(mCenter); }
 	inline float		GetRadius() const										{ return mRadius; }
 
 	/// Test if two spheres overlap
-	inline bool			Overlaps(const Sphere &inB) const						
-	{ 
-		return (Vec3::sLoadFloat3Unsafe(mCenter) - Vec3::sLoadFloat3Unsafe(inB.mCenter)).LengthSq() <= Square(mRadius + inB.mRadius); 
+	inline bool			Overlaps(const Sphere &inB) const
+	{
+		return (Vec3::sLoadFloat3Unsafe(mCenter) - Vec3::sLoadFloat3Unsafe(inB.mCenter)).LengthSq() <= Square(mRadius + inB.mRadius);
 	}
 
 	/// Check if this sphere overlaps with a box
@@ -52,7 +52,7 @@ public:
 		{
 			// It is further away than radius, we need to widen the sphere
 			// The diameter of the new sphere is radius + d, so the new radius is half of that
-			float d = sqrt(d_sq);
+			float d = Sqrt(d_sq);
 			float radius = 0.5f * (mRadius + d);
 
 			// The center needs to shift by new radius - old radius in the direction of d

@@ -15,13 +15,13 @@ class TempAllocator;
 //#define JPH_VALIDATE_ISLAND_BUILDER
 
 /// Keeps track of connected bodies and builds islands for multithreaded velocity/position update
-class IslandBuilder : public NonCopyable
+class JPH_EXPORT IslandBuilder : public NonCopyable
 {
 public:
 	/// Destructor
 							~IslandBuilder();
 
-	/// Initialize the island builder with the maximum amount of bodies that could be active						
+	/// Initialize the island builder with the maximum amount of bodies that could be active
 	void					Init(uint32 inMaxActiveBodies);
 
 	/// Prepare for simulation step by allocating space for the contact constraints
@@ -34,10 +34,10 @@ public:
 	void					LinkBodies(uint32 inFirst, uint32 inSecond);
 
 	/// Link a constraint to a body by their index in the BodyManager::mActiveBodies
-	void					LinkConstraint(uint32 inConstraintIndex, uint32 inFirst, uint32 inSecond);
+	void					LinkConstraint(uint32 inConstraintIndex, uint32 inIndexInActiveBodyList);
 
 	/// Link a contact to a body by their index in the BodyManager::mActiveBodies
-	void					LinkContact(uint32 inContactIndex, uint32 inFirst, uint32 inSecond);
+	void					LinkContact(uint32 inContactIndex, uint32 inIndexInActiveBodyList);
 
 	/// Finalize the islands after all bodies have been Link()-ed
 	void					Finalize(const BodyID *inActiveBodies, uint32 inNumActiveBodies, uint32 inNumContacts, TempAllocator *inTempAllocator);
@@ -49,6 +49,25 @@ public:
 	void					GetBodiesInIsland(uint32 inIslandIndex, BodyID *&outBodiesBegin, BodyID *&outBodiesEnd) const;
 	bool					GetConstraintsInIsland(uint32 inIslandIndex, uint32 *&outConstraintsBegin, uint32 *&outConstraintsEnd) const;
 	bool					GetContactsInIsland(uint32 inIslandIndex, uint32 *&outContactsBegin, uint32 *&outContactsEnd) const;
+
+	/// The number of position iterations for each island
+	void					SetNumPositionSteps(uint32 inIslandIndex, uint inNumPositionSteps)	{ JPH_ASSERT(inIslandIndex < mNumIslands); JPH_ASSERT(inNumPositionSteps < 256); mNumPositionSteps[inIslandIndex] = uint8(inNumPositionSteps); }
+	uint					GetNumPositionSteps(uint32 inIslandIndex) const						{ JPH_ASSERT(inIslandIndex < mNumIslands); return mNumPositionSteps[inIslandIndex]; }
+
+#ifdef JPH_TRACK_SIMULATION_STATS
+	struct IslandStats
+	{
+		atomic<uint64>		mVelocityConstraintTicks = 0;
+		atomic<uint64>		mPositionConstraintTicks = 0;
+		atomic<uint64>		mUpdateBoundsTicks = 0;
+		uint8				mNumVelocitySteps = 0;
+		uint8				mNumPositionSteps = 0;												///< Tracking this a 2nd time since IslandBuilder::mNumPositionSteps is not filled in when there are no constraints or for large islands.
+		bool				mIsLargeIsland = false;
+	};
+
+	/// Tracks simulation stats per island
+	IslandStats &			GetIslandStats(uint32 inIslandIndex)								{ return mIslandStats[inIslandIndex]; }
+#endif
 
 	/// After you're done calling the three functions above, call this function to free associated data
 	void					ResetIslands(TempAllocator *inTempAllocator);
@@ -89,15 +108,21 @@ private:
 
 	uint32 *				mConstraintIslands = nullptr;					///< Constraints ordered by island
 	uint32 *				mConstraintIslandEnds = nullptr;				///< End index of each constraint island
-	
+
 	uint32 *				mContactIslands = nullptr;						///< Contacts ordered by island
 	uint32 *				mContactIslandEnds = nullptr;					///< End index of each contact island
 
 	uint32 *				mIslandsSorted = nullptr;						///< A list of island indices in order of most constraints first
 
+	uint8 *					mNumPositionSteps = nullptr;					///< Number of position steps for each island
+
+#ifdef JPH_TRACK_SIMULATION_STATS
+	IslandStats *			mIslandStats = nullptr;							///< Per island statistics
+#endif
+
 	// Counters
 	uint32					mMaxActiveBodies;								///< Maximum size of the active bodies list (see BodyManager::mActiveBodies)
-	uint32					mNumActiveBodies = 0;							///< Number of active bodies passed to 
+	uint32					mNumActiveBodies = 0;							///< Number of active bodies passed to
 	uint32					mNumConstraints = 0;							///< Size of the constraint list (see ConstraintManager::mConstraints)
 	uint32					mMaxContacts = 0;								///< Maximum amount of contacts supported
 	uint32					mNumContacts = 0;								///< Size of the contacts list (see ContactConstraintManager::mNumConstraints)

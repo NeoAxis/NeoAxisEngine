@@ -22,6 +22,9 @@ public:
 	/// Rewind the stream for reading
 	void				Rewind();
 
+	/// Clear the stream for reuse
+	void				Clear();
+
 	/// Read a string of bytes from the binary stream
 	virtual void		ReadBytes(void *outData, size_t inNumBytes) override;
 
@@ -35,7 +38,10 @@ public:
 	bool				IsEqual(StateRecorderImpl &inReference);
 
 	/// Convert the binary data to a string
-	string				GetData() const												{ return mStream.str(); }
+	std::string			GetData() const												{ return mStream.str(); }
+
+	/// Get size of the binary data in bytes
+	size_t				GetDataSize()												{ return size_t(mStream.tellp()); }
 
 private:
 	std::stringstream	mStream;

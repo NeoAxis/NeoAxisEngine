@@ -20,12 +20,12 @@ class WheelSettings;
 class Wheel;
 class StateRecorder;
 
-/// Basic settings object for interface that controls acceleration / decelleration of the vehicle
+/// Basic settings object for interface that controls acceleration / deceleration of the vehicle
 class JPH_EXPORT VehicleControllerSettings : public SerializableObject, public RefTarget<VehicleControllerSettings>
 {
-public:
 	JPH_DECLARE_SERIALIZABLE_ABSTRACT(JPH_EXPORT, VehicleControllerSettings)
 
+public:
 	/// Saves the contents of the controller settings in binary form to inStream.
 	virtual void				SaveBinaryState(StreamOut &inStream) const = 0;
 
@@ -36,8 +36,8 @@ public:
 	virtual VehicleController *	ConstructController(VehicleConstraint &inConstraint) const = 0;
 };
 
-/// Runtime data for interface that controls acceleration / decelleration of the vehicle
-class JPH_EXPORT VehicleController : public RefTarget<VehicleController>
+/// Runtime data for interface that controls acceleration / deceleration of the vehicle
+class JPH_EXPORT VehicleController : public NonCopyable
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -45,6 +45,13 @@ public:
 	/// Constructor / destructor
 	explicit					VehicleController(VehicleConstraint &inConstraint) : mConstraint(inConstraint) { }
 	virtual						~VehicleController() = default;
+
+	/// Access the vehicle constraint that this controller is part of
+	VehicleConstraint &			GetConstraint()								{ return mConstraint; }
+	const VehicleConstraint &	GetConstraint() const						{ return mConstraint; }
+
+	/// Recreate the settings for this controller
+	virtual Ref<VehicleControllerSettings> GetSettings() const = 0;
 
 protected:
 	// The functions below are only for the VehicleConstraint

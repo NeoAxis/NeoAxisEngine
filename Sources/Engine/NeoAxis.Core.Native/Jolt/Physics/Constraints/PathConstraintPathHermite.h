@@ -11,14 +11,14 @@ JPH_NAMESPACE_BEGIN
 /// A path that follows a Hermite spline
 class JPH_EXPORT PathConstraintPathHermite final : public PathConstraintPath
 {
-public:
 	JPH_DECLARE_SERIALIZABLE_VIRTUAL(JPH_EXPORT, PathConstraintPathHermite)
 
+public:
 	// See PathConstraintPath::GetPathMaxFraction
 	virtual float		GetPathMaxFraction() const override									{ return float(IsLooping()? mPoints.size() : mPoints.size() - 1); }
 
 	// See PathConstraintPath::GetClosestPoint
-	virtual float		GetClosestPoint(Vec3Arg inPosition) const override;
+	virtual float		GetClosestPoint(Vec3Arg inPosition, float inFractionHint) const override;
 
 	// See PathConstraintPath::GetPointOnPath
 	virtual void		GetPointOnPath(float inFraction, Vec3 &outPathPosition, Vec3 &outPathTangent, Vec3 &outPathNormal, Vec3 &outPathBinormal) const override;
@@ -47,7 +47,7 @@ private:
 	inline void			GetIndexAndT(float inFraction, int &outIndex, float &outT) const;
 
 	using Points = Array<Point>;
-	   
+
 	Points				mPoints;															///< Points on the Hermite spline
 };
 

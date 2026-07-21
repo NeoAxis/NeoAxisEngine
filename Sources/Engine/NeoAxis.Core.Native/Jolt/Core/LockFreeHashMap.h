@@ -38,7 +38,7 @@ public:
 	inline T *				FromOffset(uint32 inOffset) const;
 
 private:
-	uint8 *					mObjectStore = nullptr;			///< This contains a contigous list of objects (possibly of varying size)
+	uint8 *					mObjectStore = nullptr;			///< This contains a contiguous list of objects (possibly of varying size)
 	uint32					mObjectStoreSizeBytes = 0;		///< The size of mObjectStore in bytes
 	atomic<uint32>			mWriteOffset { 0 };				///< Next offset to write to in mObjectStore
 };
@@ -84,7 +84,7 @@ public:
 	/// Remove all elements.
 	/// Note that this cannot happen simultaneously with adding new elements.
 	void					Clear();
-	
+
 	/// Get the current amount of buckets that the map is using
 	uint32					GetNumBuckets() const			{ return mNumBuckets; }
 
@@ -115,7 +115,7 @@ public:
 	/// Multiple threads can be inserting in the map at the same time.
 	template <class... Params>
 	inline KeyValue *		Create(LFHMAllocatorContext &ioContext, const Key &inKey, uint64 inKeyHash, int inExtraBytes, Params &&... inConstructorParams);
-	
+
 	/// Find an element, returns null if not found
 	inline const KeyValue *	Find(const Key &inKey, uint64 inKeyHash) const;
 
@@ -127,6 +127,9 @@ public:
 
 	/// Convert uint32 handle back to key and value
 	inline const KeyValue *	FromHandle(uint32 inHandle) const;
+
+	/// Convert uint32 handle back to key and value (note that it is illegal to change the key this way)
+	inline KeyValue *		FromHandle(uint32 inHandle);
 
 #ifdef JPH_ENABLE_ASSERTS
 	/// Get the number of key value pairs that this map currently contains.
@@ -145,22 +148,22 @@ public:
 		bool				operator != (const Iterator &inRHS) const	{ return !(*this == inRHS); }
 
 		/// Convert to key value pair
-		KeyValue & 			operator * ();
+		KeyValue &			operator * ();
 
 		/// Next item
 		Iterator &			operator ++ ();
 
-		MapType *			mMap;		
+		MapType *			mMap;
 		uint32				mBucket;
 		uint32				mOffset;
 	};
 
-	/// Iterate over the map, note that it is not safe to do this in parallel to Clear(). 
+	/// Iterate over the map, note that it is not safe to do this in parallel to Clear().
 	/// It is safe to do this while adding elements to the map, but newly added elements may or may not be returned by the iterator.
 	Iterator				begin();
 	Iterator				end();
 
-#ifdef _DEBUG
+#ifdef JPH_DEBUG
 	/// Output stats about this map to the log
 	void					TraceStats() const;
 #endif

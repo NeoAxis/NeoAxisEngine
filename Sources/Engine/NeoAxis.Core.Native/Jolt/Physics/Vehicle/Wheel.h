@@ -15,11 +15,11 @@ JPH_NAMESPACE_BEGIN
 class VehicleConstraint;
 
 /// Base class for wheel settings, each VehicleController can implement a derived class of this
-class JPH_EXPORT WheelSettings : public SerializableObject, public RefTarget<WheelSettings>, public NonCopyable
+class JPH_EXPORT WheelSettings : public SerializableObject, public RefTarget<WheelSettings>
 {
-public:
 	JPH_DECLARE_SERIALIZABLE_VIRTUAL(JPH_EXPORT, WheelSettings)
 
+public:
 	/// Saves the contents in binary form to inStream.
 	virtual void			SaveBinaryState(StreamOut &inStream) const;
 
@@ -38,11 +38,11 @@ public:
 	SpringSettings			mSuspensionSpring { ESpringMode::FrequencyAndDamping, 1.5f, 0.5f }; ///< Settings for the suspension spring
 	float					mRadius = 0.3f;								///< Radius of the wheel (m)
 	float					mWidth = 0.1f;								///< Width of the wheel (m)
-	bool					mEnableSuspensionForcePoint = false;		///< Enables mSuspensionForcePoint, if disabled, the forces are applied at the collision contect point. This leads to a more accurate simulation when interacting with dynamic objects but makes the vehicle less stable. When settings this to true, all forces will be applied to a fixed point on the vehicle body.
+	bool					mEnableSuspensionForcePoint = false;		///< Enables mSuspensionForcePoint, if disabled, the forces are applied at the collision contact point. This leads to a more accurate simulation when interacting with dynamic objects but makes the vehicle less stable. When setting this to true, all forces will be applied to a fixed point on the vehicle body.
 };
 
 /// Base class for runtime data for a wheel, each VehicleController can implement a derived class of this
-class JPH_EXPORT Wheel
+class JPH_EXPORT Wheel : public NonCopyable
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -87,7 +87,7 @@ public:
 	/// Velocity of the contact point (m / s, not relative to the wheel but in world space)
 	Vec3					GetContactPointVelocity() const				{ JPH_ASSERT(HasContact()); return mContactPointVelocity; }
 
-	/// Returns the current contact mormal in world space (note by the time you call this the vehicle has moved)
+	/// Returns the current contact normal in world space (note by the time you call this the vehicle has moved)
 	Vec3					GetContactNormal() const					{ JPH_ASSERT(HasContact()); return mContactNormal; }
 
 	/// Returns longitudinal direction (direction along the wheel relative to floor) in world space (note by the time you call this the vehicle has moved)

@@ -12,13 +12,13 @@ JPH_NAMESPACE_BEGIN
 /// Gear constraint settings
 class JPH_EXPORT GearConstraintSettings final : public TwoBodyConstraintSettings
 {
-public:
 	JPH_DECLARE_SERIALIZABLE_VIRTUAL(JPH_EXPORT, GearConstraintSettings)
 
+public:
 	// See: ConstraintSettings::SaveBinaryState
 	virtual void				SaveBinaryState(StreamOut &inStream) const override;
 
-	/// Create an an instance of this constraint.
+	/// Create an instance of this constraint.
 	virtual TwoBodyConstraint *	Create(Body &inBody1, Body &inBody2) const override;
 
 	/// Defines the ratio between the rotation of both gears
@@ -35,7 +35,7 @@ public:
 
 	/// Body 1 constraint reference frame (space determined by mSpace).
 	Vec3						mHingeAxis1 = Vec3::sAxisX();
-	
+
 	/// Body 2 constraint reference frame (space determined by mSpace)
 	Vec3						mHingeAxis2 = Vec3::sAxisX();
 
@@ -61,6 +61,7 @@ public:
 	virtual EConstraintSubType	GetSubType() const override								{ return EConstraintSubType::Gear; }
 	virtual void				NotifyShapeChanged(const BodyID &inBodyID, Vec3Arg inDeltaCOM) override { /* Do nothing */ }
 	virtual void				SetupVelocityConstraint(float inDeltaTime) override;
+	virtual void				ResetWarmStart() override;
 	virtual void				WarmStartVelocityConstraint(float inWarmStartImpulseRatio) override;
 	virtual bool				SolveVelocityConstraint(float inDeltaTime) override;
 	virtual bool				SolvePositionConstraint(float inDeltaTime, float inBaumgarte) override;
@@ -78,7 +79,7 @@ public:
 	/// The constraints that constrain both gears (2 hinges), optional and used to calculate the rotation error and fix numerical drift.
 	void						SetConstraints(const Constraint *inGear1, const Constraint *inGear2)	{ mGear1Constraint = inGear1; mGear2Constraint = inGear2; }
 
-	///@name Get Lagrange multiplier from last physics update (relates to how much force/torque was applied to satisfy the constraint)
+	///@name Get Lagrange multiplier from last physics update (the angular impulse applied to satisfy the constraint)
 	inline float				GetTotalLambda() const									{ return mGearConstraintPart.GetTotalLambda(); }
 
 private:

@@ -4,13 +4,14 @@
 
 #pragma once
 
+#include <Jolt/Core/StaticArray.h>
 #include <Jolt/Math/Float3.h>
 #include <Jolt/Math/Swizzle.h>
 #include <Jolt/Math/MathTypes.h>
 
 JPH_NAMESPACE_BEGIN
 
-/// 3 component vector (stored as 4 vectors). 
+/// 3 component vector (stored as 4 vectors).
 /// Note that we keep the 4th component the same as the 3rd component to avoid divisions by zero when JPH_FLOATING_POINT_EXCEPTIONS_ENABLED defined
 class [[nodiscard]] alignas(JPH_VECTOR_ALIGNMENT) Vec3
 {
@@ -32,6 +33,7 @@ public:
 	/// Constructor
 								Vec3() = default; ///< Intentionally not initialized for performance reasons
 								Vec3(const Vec3 &inRHS) = default;
+	Vec3 &						operator = (const Vec3 &inRHS) = default;
 	explicit JPH_INLINE			Vec3(Vec4Arg inRHS);
 	JPH_INLINE					Vec3(Type inRHS) : mValue(inRHS)				{ CheckW(); }
 
@@ -44,6 +46,9 @@ public:
 	/// Vector with all zeros
 	static JPH_INLINE Vec3		sZero();
 
+	/// Vector with all ones
+	static JPH_INLINE Vec3		sOne();
+
 	/// Vector with all NaN's
 	static JPH_INLINE Vec3		sNaN();
 
@@ -54,7 +59,7 @@ public:
 
 	/// Replicate inV across all components
 	static JPH_INLINE Vec3		sReplicate(float inV);
-		
+
 	/// Load 3 floats from memory (reads 32 bits extra which it doesn't use)
 	static JPH_INLINE Vec3		sLoadFloat3Unsafe(const Float3 &inV);
 
@@ -85,8 +90,8 @@ public:
 	/// Calculates inMul1 * inMul2 + inAdd
 	static JPH_INLINE Vec3		sFusedMultiplyAdd(Vec3Arg inMul1, Vec3Arg inMul2, Vec3Arg inAdd);
 
-	/// Component wise select, returns inV1 when highest bit of inControl = 0 and inV2 when highest bit of inControl = 1
-	static JPH_INLINE Vec3		sSelect(Vec3Arg inV1, Vec3Arg inV2, UVec4Arg inControl);
+	/// Component wise select, returns inNotSet when highest bit of inControl = 0 and inSet when highest bit of inControl = 1
+	static JPH_INLINE Vec3		sSelect(Vec3Arg inNotSet, Vec3Arg inSet, UVec4Arg inControl);
 
 	/// Logical or (component wise)
 	static JPH_INLINE Vec3		sOr(Vec3Arg inV1, Vec3Arg inV2);
@@ -103,7 +108,7 @@ public:
 	static JPH_INLINE Vec3		sUnitSpherical(float inTheta, float inPhi);
 
 	/// A set of vectors uniformly spanning the surface of a unit sphere, usable for debug purposes
-	JPH_EXPORT static const std::vector<Vec3> sUnitSphere;
+	JPH_EXPORT static const StaticArray<Vec3, 1026> sUnitSphere;
 
 	/// Get random unit vector
 	template <class Random>
@@ -123,11 +128,14 @@ public:
 	JPH_INLINE float			GetY() const									{ return mF32[1]; }
 	JPH_INLINE float			GetZ() const									{ return mF32[2]; }
 #endif
-	
+
 	/// Set individual components
 	JPH_INLINE void				SetX(float inX)									{ mF32[0] = inX; }
 	JPH_INLINE void				SetY(float inY)									{ mF32[1] = inY; }
 	JPH_INLINE void				SetZ(float inZ)									{ mF32[2] = mF32[3] = inZ; } // Assure Z and W are the same
+
+	/// Set all components
+	JPH_INLINE void				Set(float inX, float inY, float inZ)			{ *this = Vec3(inX, inY, inZ); }
 
 	/// Get float component by index
 	JPH_INLINE float			operator [] (uint inCoordinate) const			{ JPH_ASSERT(inCoordinate < 3); return mF32[inCoordinate]; }
@@ -145,7 +153,7 @@ public:
 	/// Test if vector is near zero
 	JPH_INLINE bool				IsNearZero(float inMaxDistSq = 1.0e-12f) const;
 
-	/// Test if vector is normalized
+	/// Test if length^2 of this vector is within the range [1 - inTolerance, 1 + inTolerance]
 	JPH_INLINE bool				IsNormalized(float inTolerance = 1.0e-6f) const;
 
 	/// Test if vector contains NaN elements
@@ -184,7 +192,7 @@ public:
 	/// Subtract two float vectors (component wise)
 	JPH_INLINE Vec3				operator - (Vec3Arg inV2) const;
 
-	/// Add two float vectors (component wise)
+	/// Subtract two float vectors (component wise)
 	JPH_INLINE Vec3 &			operator -= (Vec3Arg inV2);
 
 	/// Divide (component wise)
@@ -215,8 +223,14 @@ public:
 	/// Reciprocal vector (1 / value) for each of the components
 	JPH_INLINE Vec3				Reciprocal() const;
 
+	/// Calculates inA * inB - inC * inD with more precision when FMA instructions are available. See DifferenceOfProducts.
+	JPH_INLINE static Vec3		sDifferenceOfProducts(Vec3Arg inA, Vec3Arg inB, Vec3Arg inC, Vec3Arg inD);
+
 	/// Cross product
 	JPH_INLINE Vec3				Cross(Vec3Arg inV2) const;
+
+	/// Cross product (more precise version when FMA is available)
+	JPH_INLINE Vec3				CrossPrecise(Vec3Arg inV2) const;
 
 	/// Dot product, returns the dot product in X, Y and Z components
 	JPH_INLINE Vec3				DotV(Vec3Arg inV2) const;
@@ -254,6 +268,9 @@ public:
 	/// Get the maximum of X, Y and Z
 	JPH_INLINE float			ReduceMax() const;
 
+	/// Get the sum of X, Y and Z
+	JPH_INLINE float			ReduceSum() const;
+
 	/// Component wise square root
 	JPH_INLINE Vec3				Sqrt() const;
 
@@ -262,6 +279,16 @@ public:
 
 	/// Get vector that contains the sign of each element (returns 1.0f if positive, -1.0f if negative)
 	JPH_INLINE Vec3				GetSign() const;
+
+	/// Flips the signs of the components, e.g. FlipSign<-1, 1, -1>() will flip the signs of the X and Z components
+	template <int X, int Y, int Z>
+	JPH_INLINE Vec3				FlipSign() const;
+
+	/// Compress a unit vector to a 32 bit value, precision is around 10^-4
+	JPH_INLINE uint32			CompressUnitVector() const;
+
+	/// Decompress a unit vector from a 32 bit value
+	JPH_INLINE static Vec3		sDecompressUnitVector(uint32 inValue);
 
 	/// To String
 	friend ostream &			operator << (ostream &inStream, Vec3Arg inV)
@@ -272,7 +299,7 @@ public:
 
 	/// Internal helper function that checks that W is equal to Z, so e.g. dividing by it should not generate div by 0
 	JPH_INLINE void				CheckW() const;
-	
+
 	/// Internal helper function that ensures that the Z component is replicated to the W component to prevent divisions by zero
 	static JPH_INLINE Type		sFixW(Type inValue);
 
@@ -283,7 +310,7 @@ public:
 	};
 };
 
-static_assert(is_trivial<Vec3>(), "Is supposed to be a trivial type!");
+static_assert(std::is_trivially_default_constructible<Vec3>() && std::is_trivially_copyable<Vec3>(), "Is supposed to be a trivial type!");
 
 JPH_NAMESPACE_END
 

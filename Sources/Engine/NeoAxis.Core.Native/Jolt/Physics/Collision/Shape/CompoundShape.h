@@ -16,9 +16,9 @@ class OrientedBox;
 /// Base class settings to construct a compound shape
 class JPH_EXPORT CompoundShapeSettings : public ShapeSettings
 {
-public:
 	JPH_DECLARE_SERIALIZABLE_ABSTRACT(JPH_EXPORT, CompoundShapeSettings)
 
+public:
 	/// Constructor. Use AddShape to add the parts.
 									CompoundShapeSettings() = default;
 
@@ -36,7 +36,11 @@ public:
 		RefConst<Shape>				mShapePtr;												///< Sub shape (either this or mShape needs to be filled up)
 		Vec3						mPosition;												///< Position of the sub shape
 		Quat						mRotation;												///< Rotation of the sub shape
-		uint32						mUserData = 0;											///< User data value (can be used by the application for any purpose)
+
+		/// User data value (can be used by the application for any purpose).
+		/// Note this value can be retrieved through GetSubShape(...).mUserData, not through GetSubShapeUserData(...) as that returns Shape::GetUserData() of the leaf shape.
+		/// Use GetSubShapeIndexFromID get a shape index from a SubShapeID to pass to GetSubShape.
+		uint32						mUserData = 0;
 	};
 
 	using SubShapes = Array<SubShapeSettings>;
@@ -62,7 +66,7 @@ public:
 
 	// See Shape::GetLocalBounds
 	virtual AABox					GetLocalBounds() const override							{ return mLocalBounds; }
-		
+
 	// See Shape::GetSubShapeIDBitsRecursive
 	virtual uint					GetSubShapeIDBitsRecursive() const override;
 
@@ -78,6 +82,9 @@ public:
 
 	// See Shape::GetMaterial
 	virtual const PhysicsMaterial *	GetMaterial(const SubShapeID &inSubShapeID) const override;
+
+	// See Shape::GetLeafShape
+	virtual const Shape *			GetLeafShape(const SubShapeID &inSubShapeID, SubShapeID &outRemainder) const override;
 
 	// See Shape::GetSubShapeUserData
 	virtual uint64					GetSubShapeUserData(const SubShapeID &inSubShapeID) const override;
@@ -104,6 +111,9 @@ public:
 	// See Shape::DrawGetSupportingFace
 	virtual void					DrawGetSupportingFace(DebugRenderer *inRenderer, RMat44Arg inCenterOfMassTransform, Vec3Arg inScale) const override;
 #endif // JPH_DEBUG_RENDERER
+
+	// See: Shape::CollideSoftBodyVertices
+	virtual void					CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale, const CollideSoftBodyVertexIterator &inVertices, uint inNumVertices, int inCollidingShapeIndex) const override;
 
 	// See Shape::TransformShape
 	virtual void					TransformShape(Mat44Arg inCenterOfMassTransform, TransformedShapeCollector &ioCollector) const override;
@@ -224,7 +234,7 @@ public:
 		{
 			return mIsRotationIdentity? Quat::sIdentity() : Quat::sLoadFloat3Unsafe(mRotation);
 		}
-		
+
 		RefConst<Shape>				mShape;
 		Float3						mPositionCOM;											///< Note: Position of center of mass of sub shape!
 		Float3						mRotation;												///< Note: X, Y, Z of rotation quaternion - note we read 4 bytes beyond this so make sure there's something there
@@ -233,7 +243,7 @@ public:
 		// 3 padding bytes left
 	};
 
-	static_assert(sizeof(SubShape) == (JPH_CPU_ADDRESS_BITS == 64? 40 : 36), "Compiler added unexpected padding");
+	static_assert(sizeof(SubShape) == (sizeof(void *) == 8? 40 : 36), "Compiler added unexpected padding");
 
 	using SubShapes = Array<SubShape>;
 
@@ -241,7 +251,7 @@ public:
 	const SubShapes &				GetSubShapes() const									{ return mSubShapes; }
 
 	/// Get the total number of sub shapes
-	uint							GetNumSubShapes() const									{ return (uint)mSubShapes.size(); }
+	uint							GetNumSubShapes() const									{ return uint(mSubShapes.size()); }
 
 	/// Access to a particular sub shape
 	const SubShape &				GetSubShape(uint inIdx) const							{ return mSubShapes[inIdx]; }
@@ -255,19 +265,19 @@ public:
 	/// Check if a sub shape ID is still valid for this shape
 	/// @param inSubShapeID Sub shape id that indicates the leaf shape relative to this shape
 	/// @return True if the ID is valid, false if not
-	inline bool						IsSubShapeIDValid(SubShapeID inSubShapeID) const 
+	inline bool						IsSubShapeIDValid(SubShapeID inSubShapeID) const
 	{
 		SubShapeID remainder;
-		return inSubShapeID.PopID(GetSubShapeIDBits(), remainder) < mSubShapes.size(); 
+		return inSubShapeID.PopID(GetSubShapeIDBits(), remainder) < mSubShapes.size();
 	}
 
 	/// Convert SubShapeID to sub shape index
 	/// @param inSubShapeID Sub shape id that indicates the leaf shape relative to this shape
 	/// @param outRemainder This is the sub shape ID for the sub shape of the compound after popping off the index
 	/// @return The index of the sub shape of this compound
-	inline uint32					GetSubShapeIndexFromID(SubShapeID inSubShapeID, SubShapeID &outRemainder) const 
-	{ 
-		uint32 idx = inSubShapeID.PopID(GetSubShapeIDBits(), outRemainder); 
+	inline uint32					GetSubShapeIndexFromID(SubShapeID inSubShapeID, SubShapeID &outRemainder) const
+	{
+		uint32 idx = inSubShapeID.PopID(GetSubShapeIDBits(), outRemainder);
 		JPH_ASSERT(idx < mSubShapes.size(), "Invalid SubShapeID");
 		return idx;
 	}
@@ -295,6 +305,9 @@ public:
 	// See Shape::IsValidScale
 	virtual bool					IsValidScale(Vec3Arg inScale) const override;
 
+	// See Shape::MakeScaleValid
+	virtual Vec3					MakeScaleValid(Vec3Arg inScale) const override;
+
 	// Register shape functions with the registry
 	static void						sRegister();
 
@@ -316,7 +329,7 @@ protected:
 	inline uint						GetSubShapeIDBits() const
 	{
 		// Ensure we have enough bits to encode our shape [0, n - 1]
-		uint32 n = (uint32)mSubShapes.size() - 1;
+		uint32 n = uint32(mSubShapes.size()) - 1;
 		return 32 - CountLeadingZeros(n);
 	}
 
@@ -329,7 +342,7 @@ protected:
 	}
 
 	Vec3							mCenterOfMass { Vec3::sZero() };						///< Center of mass of the compound
-	AABox							mLocalBounds;
+	AABox							mLocalBounds { Vec3::sZero(), Vec3::sZero() };
 	SubShapes						mSubShapes;
 	float							mInnerRadius = FLT_MAX;									///< Smallest radius of GetInnerRadius() of child shapes
 

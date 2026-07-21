@@ -11,6 +11,7 @@
 #include <Jolt/Physics/Body/MotionQuality.h>
 #include <Jolt/Physics/Body/AllowedDOFs.h>
 #include <Jolt/ObjectStream/SerializableObject.h>
+#include <Jolt/Core/ObjectToIDMap.h>
 
 JPH_NAMESPACE_BEGIN
 
@@ -22,19 +23,23 @@ enum class EOverrideMassProperties : uint8
 {
 	CalculateMassAndInertia,			///< Tells the system to calculate the mass and inertia based on density
 	CalculateInertia,					///< Tells the system to take the mass from mMassPropertiesOverride and to calculate the inertia based on density of the shapes and to scale it to the provided mass
-	MassAndInertiaProvided				///< Tells the system to take the mass and inertia from mMassPropertiesOverride 
+	MassAndInertiaProvided				///< Tells the system to take the mass and inertia from mMassPropertiesOverride
 };
 
 /// Settings for constructing a rigid body
 class JPH_EXPORT BodyCreationSettings
 {
-public:
 	JPH_DECLARE_SERIALIZABLE_NON_VIRTUAL(JPH_EXPORT, BodyCreationSettings)
 
+public:
 	/// Constructor
 							BodyCreationSettings() = default;
 							BodyCreationSettings(const ShapeSettings *inShape, RVec3Arg inPosition, QuatArg inRotation, EMotionType inMotionType, ObjectLayer inObjectLayer) : mPosition(inPosition), mRotation(inRotation), mObjectLayer(inObjectLayer), mMotionType(inMotionType), mShape(inShape) { }
 							BodyCreationSettings(const Shape *inShape, RVec3Arg inPosition, QuatArg inRotation, EMotionType inMotionType, ObjectLayer inObjectLayer) : mPosition(inPosition), mRotation(inRotation), mObjectLayer(inObjectLayer), mMotionType(inMotionType), mShapePtr(inShape) { }
+
+	/// Test if two BodyCreationSettings are equal
+	bool					operator == (const BodyCreationSettings &inRHS) const;
+	bool					operator != (const BodyCreationSettings &inRHS) const			{ return !(*this == inRHS); }
 
 	/// Access to the shape settings object. This contains serializable (non-runtime optimized) information about the Shape.
 	const ShapeSettings *	GetShapeSettings() const										{ return mShape; }
@@ -59,21 +64,21 @@ public:
 	/// Restore the state of this object from inStream. Doesn't restore the shape nor the group filter.
 	void					RestoreBinaryState(StreamIn &inStream);
 
-	using GroupFilterToIDMap = UnorderedMap<const GroupFilter *, uint32>;
-	using IDToGroupFilterMap = Array<RefConst<GroupFilter>>;
+	using GroupFilterToIDMap = StreamUtils::ObjectToIDMap<GroupFilter>;
+	using IDToGroupFilterMap = StreamUtils::IDToObjectMap<GroupFilter>;
 	using ShapeToIDMap = Shape::ShapeToIDMap;
 	using IDToShapeMap = Shape::IDToShapeMap;
-	using MaterialToIDMap = Shape::MaterialToIDMap;
-	using IDToMaterialMap = Shape::IDToMaterialMap;
+	using MaterialToIDMap = StreamUtils::ObjectToIDMap<PhysicsMaterial>;
+	using IDToMaterialMap = StreamUtils::IDToObjectMap<PhysicsMaterial>;
 
-	/// Save this body creation settings, its shape and gropu filter. Pass in an empty map in ioShapeMap / ioMaterialMap / ioGroupFilterMap or reuse the same map while saving multiple shapes to the same stream in order to avoid writing duplicates.
+	/// Save body creation settings, its shape, materials and group filter. Pass in an empty map in ioShapeMap / ioMaterialMap / ioGroupFilterMap or reuse the same map while saving multiple shapes to the same stream in order to avoid writing duplicates.
 	/// Pass nullptr to ioShapeMap and ioMaterial map to skip saving shapes
 	/// Pass nullptr to ioGroupFilterMap to skip saving group filters
 	void					SaveWithChildren(StreamOut &inStream, ShapeToIDMap *ioShapeMap, MaterialToIDMap *ioMaterialMap, GroupFilterToIDMap *ioGroupFilterMap) const;
 
 	using BCSResult = Result<BodyCreationSettings>;
 
-	/// Restore a shape, all its children and materials. Pass in an empty map in ioShapeMap / ioMaterialMap / ioGroupFilterMap or reuse the same map while reading multiple shapes from the same stream in order to restore duplicates.
+	/// Restore body creation settings, its shape, materials and group filter. Pass in an empty map in ioShapeMap / ioMaterialMap / ioGroupFilterMap or reuse the same map while reading multiple shapes from the same stream in order to restore duplicates.
 	static BCSResult		sRestoreWithChildren(StreamIn &inStream, IDToShapeMap &ioShapeMap, IDToMaterialMap &ioMaterialMap, IDToGroupFilterMap &ioGroupFilterMap);
 
 	RVec3					mPosition = RVec3::sZero();										///< Position of the body (not of the center of mass)
@@ -93,17 +98,21 @@ public:
 	EAllowedDOFs			mAllowedDOFs = EAllowedDOFs::All;								///< Which degrees of freedom this body has (can be used to limit simulation to 2D)
 	bool					mAllowDynamicOrKinematic = false;								///< When this body is created as static, this setting tells the system to create a MotionProperties object so that the object can be switched to kinematic or dynamic
 	bool					mIsSensor = false;												///< If this body is a sensor. A sensor will receive collision callbacks, but will not cause any collision responses and can be used as a trigger volume. See description at Body::SetIsSensor.
-	bool					mSensorDetectsStatic = false;									///< If this sensor detects static objects entering it. Note that the sensor must be kinematic and active for it to detect static objects.
+	bool					mCollideKinematicVsNonDynamic = false;							///< If kinematic objects can generate contact points against other kinematic or static objects. See description at Body::SetCollideKinematicVsNonDynamic.
 	bool					mUseManifoldReduction = true;									///< If this body should use manifold reduction (see description at Body::SetUseManifoldReduction)
+	bool					mApplyGyroscopicForce = false;									///< Set to indicate that the gyroscopic force should be applied to this body (aka Dzhanibekov effect, see https://en.wikipedia.org/wiki/Tennis_racket_theorem)
 	EMotionQuality			mMotionQuality = EMotionQuality::Discrete;						///< Motion quality, or how well it detects collisions when it has a high velocity
+	bool					mEnhancedInternalEdgeRemoval = false;							///< Set to indicate that extra effort should be made to try to remove ghost contacts (collisions with internal edges of a mesh). This is more expensive but makes bodies move smoother over a mesh with convex edges.
 	bool					mAllowSleeping = true;											///< If this body can go to sleep or not
 	float					mFriction = 0.2f;												///< Friction of the body (dimensionless number, usually between 0 and 1, 0 = no friction, 1 = friction force equals force that presses the two bodies together). Note that bodies can have negative friction but the combined friction (see PhysicsSystem::SetCombineFriction) should never go below zero.
 	float					mRestitution = 0.0f;											///< Restitution of body (dimensionless number, usually between 0 and 1, 0 = completely inelastic collision response, 1 = completely elastic collision response). Note that bodies can have negative restitution but the combined restitution (see PhysicsSystem::SetCombineRestitution) should never go below zero.
-	float					mLinearDamping = 0.05f;											///< Linear damping: dv/dt = -c * v. c must be between 0 and 1 but is usually close to 0.
-	float					mAngularDamping = 0.05f;										///< Angular damping: dw/dt = -c * w. c must be between 0 and 1 but is usually close to 0.
+	float					mLinearDamping = 0.05f;											///< Linear damping: dv/dt = -c * v. c. Value should be zero or positive and is usually close to 0.
+	float					mAngularDamping = 0.05f;										///< Angular damping: dw/dt = -c * w. c. Value should be zero or positive and is usually close to 0.
 	float					mMaxLinearVelocity = 500.0f;									///< Maximum linear velocity that this body can reach (m/s)
 	float					mMaxAngularVelocity = 0.25f * JPH_PI * 60.0f;					///< Maximum angular velocity that this body can reach (rad/s)
 	float					mGravityFactor = 1.0f;											///< Value to multiply gravity with for this body
+	uint					mNumVelocityStepsOverride = 0;									///< Used only when this body is dynamic and colliding. Override for the number of solver velocity iterations to run, 0 means use the default in PhysicsSettings::mNumVelocitySteps. The number of iterations to use is the max of all contacts and constraints in the island.
+	uint					mNumPositionStepsOverride = 0;									///< Used only when this body is dynamic and colliding. Override for the number of solver position iterations to run, 0 means use the default in PhysicsSettings::mNumPositionSteps. The number of iterations to use is the max of all contacts and constraints in the island.
 
 	///@name Mass properties of the body (by default calculated by the shape)
 	EOverrideMassProperties	mOverrideMassProperties = EOverrideMassProperties::CalculateMassAndInertia; ///< Determines how mMassPropertiesOverride will be used

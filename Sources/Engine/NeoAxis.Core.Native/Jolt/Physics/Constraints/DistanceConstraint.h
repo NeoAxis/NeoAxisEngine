@@ -12,13 +12,13 @@ JPH_NAMESPACE_BEGIN
 /// Distance constraint settings, used to create a distance constraint
 class JPH_EXPORT DistanceConstraintSettings final : public TwoBodyConstraintSettings
 {
-public:
 	JPH_DECLARE_SERIALIZABLE_VIRTUAL(JPH_EXPORT, DistanceConstraintSettings)
 
+public:
 	// See: ConstraintSettings::SaveBinaryState
 	virtual void				SaveBinaryState(StreamOut &inStream) const override;
 
-	/// Create an an instance of this constraint
+	/// Create an instance of this constraint
 	virtual TwoBodyConstraint *	Create(Body &inBody1, Body &inBody2) const override;
 
 	/// This determines in which space the constraint is setup, all properties below should be in the specified space
@@ -57,6 +57,7 @@ public:
 	virtual EConstraintSubType	GetSubType() const override									{ return EConstraintSubType::Distance; }
 	virtual void				NotifyShapeChanged(const BodyID &inBodyID, Vec3Arg inDeltaCOM) override;
 	virtual void				SetupVelocityConstraint(float inDeltaTime) override;
+	virtual void				ResetWarmStart() override;
 	virtual void				WarmStartVelocityConstraint(float inWarmStartImpulseRatio) override;
 	virtual bool				SolveVelocityConstraint(float inDeltaTime) override;
 	virtual bool				SolvePositionConstraint(float inDeltaTime, float inBaumgarte) override;
@@ -81,8 +82,8 @@ public:
 	SpringSettings &			GetLimitsSpringSettings()									{ return mLimitsSpringSettings; }
 	void						SetLimitsSpringSettings(const SpringSettings &inLimitsSpringSettings) { mLimitsSpringSettings = inLimitsSpringSettings; }
 
-	///@name Get Lagrange multiplier from last physics update (relates to how much force/torque was applied to satisfy the constraint)
-	inline float	 			GetTotalLambdaPosition() const								{ return mAxisConstraint.GetTotalLambda(); }
+	///@name Get Lagrange multiplier from last physics update (the linear impulse applied to satisfy the constraint)
+	inline float				GetTotalLambdaPosition() const								{ return mAxisConstraint.GetTotalLambda(); }
 
 private:
 	// Internal helper function to calculate the values below

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <Jolt/Physics/Body/Body.h>
+#include <Jolt/Core/NonCopyable.h>
 
 JPH_NAMESPACE_BEGIN
 
@@ -15,7 +16,7 @@ class ObjectLayerFilter;
 class BodyFilter;
 
 /// Class that does collision detection between wheels and ground
-class JPH_EXPORT VehicleCollisionTester : public RefTarget<VehicleCollisionTester>
+class JPH_EXPORT VehicleCollisionTester : public RefTarget<VehicleCollisionTester>, public NonCopyable
 {
 public:
 	JPH_OVERRIDE_NEW_DELETE
@@ -58,6 +59,20 @@ public:
 	/// @return True when collision found, false if not
 	virtual bool					Collide(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&outBody, SubShapeID &outSubShapeID, RVec3 &outContactPosition, Vec3 &outContactNormal, float &outSuspensionLength) const = 0;
 
+	/// Do a cheap contact properties prediction based on the contact properties from the last collision test (provided as input parameters)
+	/// @param inPhysicsSystem The physics system that should be tested against
+	/// @param inVehicleConstraint The vehicle constraint
+	/// @param inWheelIndex Index of the wheel that we're testing collision for
+	/// @param inOrigin Origin for the test, corresponds to the world space position for the suspension attachment point
+	/// @param inDirection Direction for the test (unit vector, world space)
+	/// @param inVehicleBodyID The body ID for the vehicle itself
+	/// @param ioBody Body that the wheel previously collided with
+	/// @param ioSubShapeID Sub shape ID that the wheel collided with during the last check
+	/// @param ioContactPosition Contact point between wheel and floor during the last check, in world space
+	/// @param ioContactNormal Contact normal between wheel and floor during the last check, pointing away from the floor
+	/// @param ioSuspensionLength New length of the suspension [0, inSuspensionMaxLength]
+	virtual void					PredictContactProperties(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&ioBody, SubShapeID &ioSubShapeID, RVec3 &ioContactPosition, Vec3 &ioContactNormal, float &ioSuspensionLength) const = 0;
+
 protected:
 	const BroadPhaseLayerFilter	*	mBroadPhaseLayerFilter = nullptr;
 	const ObjectLayerFilter *		mObjectLayerFilter = nullptr;
@@ -75,10 +90,11 @@ public:
 	/// @param inObjectLayer Object layer to test collision with
 	/// @param inUp World space up vector, used to avoid colliding with vertical walls.
 	/// @param inMaxSlopeAngle Max angle (rad) that is considered for colliding wheels. This is to avoid colliding with vertical walls.
-									VehicleCollisionTesterRay(ObjectLayer inObjectLayer, Vec3Arg inUp = Vec3::sAxisY(), float inMaxSlopeAngle = DegreesToRadians(80.0f)) : VehicleCollisionTester(inObjectLayer), mUp(inUp), mCosMaxSlopeAngle(Cos(inMaxSlopeAngle)) { }
+	explicit						VehicleCollisionTesterRay(ObjectLayer inObjectLayer, Vec3Arg inUp = Vec3::sAxisY(), float inMaxSlopeAngle = DegreesToRadians(80.0f)) : VehicleCollisionTester(inObjectLayer), mUp(inUp), mCosMaxSlopeAngle(Cos(inMaxSlopeAngle)) { }
 
 	// See: VehicleCollisionTester
 	virtual bool					Collide(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&outBody, SubShapeID &outSubShapeID, RVec3 &outContactPosition, Vec3 &outContactNormal, float &outSuspensionLength) const override;
+	virtual void					PredictContactProperties(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&ioBody, SubShapeID &ioSubShapeID, RVec3 &ioContactPosition, Vec3 &ioContactNormal, float &ioSuspensionLength) const override;
 
 private:
 	Vec3							mUp;
@@ -100,6 +116,7 @@ public:
 
 	// See: VehicleCollisionTester
 	virtual bool					Collide(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&outBody, SubShapeID &outSubShapeID, RVec3 &outContactPosition, Vec3 &outContactNormal, float &outSuspensionLength) const override;
+	virtual void					PredictContactProperties(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&ioBody, SubShapeID &ioSubShapeID, RVec3 &ioContactPosition, Vec3 &ioContactNormal, float &ioSuspensionLength) const override;
 
 private:
 	float							mRadius;
@@ -116,10 +133,11 @@ public:
 	/// Constructor
 	/// @param inObjectLayer Object layer to test collision with
 	/// @param inConvexRadiusFraction Fraction of half the wheel width (or wheel radius if it is smaller) that is used as the convex radius
-									VehicleCollisionTesterCastCylinder(ObjectLayer inObjectLayer, float inConvexRadiusFraction = 0.1f) : VehicleCollisionTester(inObjectLayer), mConvexRadiusFraction(inConvexRadiusFraction) { JPH_ASSERT(mConvexRadiusFraction >= 0.0f && mConvexRadiusFraction <= 1.0f); }
+	explicit						VehicleCollisionTesterCastCylinder(ObjectLayer inObjectLayer, float inConvexRadiusFraction = 0.1f) : VehicleCollisionTester(inObjectLayer), mConvexRadiusFraction(inConvexRadiusFraction) { JPH_ASSERT(mConvexRadiusFraction >= 0.0f && mConvexRadiusFraction <= 1.0f); }
 
 	// See: VehicleCollisionTester
 	virtual bool					Collide(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&outBody, SubShapeID &outSubShapeID, RVec3 &outContactPosition, Vec3 &outContactNormal, float &outSuspensionLength) const override;
+	virtual void					PredictContactProperties(PhysicsSystem &inPhysicsSystem, const VehicleConstraint &inVehicleConstraint, uint inWheelIndex, RVec3Arg inOrigin, Vec3Arg inDirection, const BodyID &inVehicleBodyID, Body *&ioBody, SubShapeID &ioSubShapeID, RVec3 &ioContactPosition, Vec3 &ioContactNormal, float &ioSuspensionLength) const override;
 
 private:
 	float							mConvexRadiusFraction;

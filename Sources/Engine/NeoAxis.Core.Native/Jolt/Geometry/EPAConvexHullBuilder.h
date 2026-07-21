@@ -11,6 +11,7 @@
 //#define JPH_EPA_CONVEX_BUILDER_DRAW
 
 #include <Jolt/Core/NonCopyable.h>
+#include <Jolt/Core/BinaryHeap.h>
 
 #ifdef JPH_EPA_CONVEX_BUILDER_DRAW
 	#include <Jolt/Renderer/DebugRenderer.h>
@@ -38,7 +39,7 @@ public:
 	// Constants
 	static constexpr int cMaxEdgeLength = 128;				///< Max number of edges in FindEdge
 	static constexpr float cMinTriangleArea = 1.0e-10f;		///< Minimum area of a triangle before, if smaller than this it will not be added to the priority queue
-	static constexpr float cBarycentricEpsilon = 1.0e-3f;	///< Epsilon value used to determine if a point is in the interior of a triangle 
+	static constexpr float cBarycentricEpsilon = 1.0e-3f;	///< Epsilon value used to determine if a point is in the interior of a triangle
 
 	// Forward declare
 	class Triangle;
@@ -50,7 +51,7 @@ public:
 		/// Information about neighbouring triangle
 		Triangle *		mNeighbourTriangle;					///< Triangle that neighbours this triangle
 		int				mNeighbourEdge;						///< Index in mEdge that specifies edge that this Edge is connected to
-															
+
 		int				mStartIdx;							///< Vertex index in mPositions that indicates the start vertex of this edge
 	};
 
@@ -152,7 +153,7 @@ public:
 		{
 			// Destruct triangle
 			inT->~Triangle();
-#ifdef _DEBUG
+#ifdef JPH_DEBUG
 			memset(inT, 0xcd, sizeof(Triangle));
 #endif
 
@@ -197,7 +198,7 @@ public:
 			inT->mInQueue = true;
 
 			// Resort heap
-			std::push_heap(begin(), end(), sTriangleSorter);
+			BinaryHeapPush(begin(), end(), sTriangleSorter);
 		}
 
 		/// Peek the next closest triangle without removing it
@@ -209,8 +210,8 @@ public:
 		/// Get next closest triangle
 		Triangle *		PopClosest()
 		{
-			// Move largest to end
-			std::pop_heap(begin(), end(), sTriangleSorter);
+			// Move closest to end
+			BinaryHeapPop(begin(), end(), sTriangleSorter);
 
 			// Remove last triangle
 			Triangle *t = back();
@@ -309,7 +310,7 @@ public:
 
 #ifdef JPH_EPA_CONVEX_BUILDER_DRAW
 		// Draw new support point
-		DrawMarker(pos, Color::sYellow, 1.0f); 
+		DrawMarker(pos, Color::sYellow, 1.0f);
 #endif
 
 #ifdef JPH_EPA_CONVEX_BUILDER_VALIDATE
@@ -337,7 +338,7 @@ public:
 				|| nt->mClosestLenSq < 0.0f)										// For when the origin is not inside the hull yet
 				mTriangleQueue.push_back(nt);
 		}
-		
+
 		// Link edges
 		for (int i = 0; i < num_edges; ++i)
 		{
@@ -555,19 +556,19 @@ private:
 		DrawState();
 #endif
 
-		// When we start with two triangles facing away from each other and adding a point that is on the plane, 
+		// When we start with two triangles facing away from each other and adding a point that is on the plane,
 		// sometimes we consider the point in front of both causing both triangles to be removed resulting in an empty edge list.
 		// In this case we fail to add the point which will result in no collision reported (the shapes are contacting in 1 point so there's 0 penetration)
 		return outEdges.size() >= 3;
 	}
-	
+
 #ifdef JPH_EPA_CONVEX_BUILDER_VALIDATE
 	/// Check consistency of 1 triangle
 	void				ValidateTriangle(const Triangle *inT) const
 	{
 		if (inT->mRemoved)
 		{
-			// Valdiate that removed triangles are not connected to anything
+			// Validate that removed triangles are not connected to anything
 			for (const Edge &my_edge : inT->mEdge)
 				JPH_ASSERT(my_edge.mNeighbourTriangle == nullptr);
 		}
@@ -649,6 +650,23 @@ public:
 		mOffset += Vec3(max_x - min_x + 0.5f, 0.0f, 0.0f);
 	}
 
+	/// Draw a label to indicate the next stage in the algorithm
+	void				DrawLabel(const string_view &inText)
+	{
+		DebugRenderer::sInstance->DrawText3D(cDrawScale * mOffset, inText, Color::sWhite, 0.1f * cDrawScale);
+
+		mOffset += Vec3(5.0f, 0.0f, 0.0f);
+	}
+
+	/// Draw geometry for debugging purposes
+	void				DrawGeometry(const DebugRenderer::GeometryRef &inGeometry, ColorArg inColor)
+	{
+		RMat44 origin = RMat44::sScale(Vec3::sReplicate(cDrawScale)) * RMat44::sTranslation(mOffset);
+		DebugRenderer::sInstance->DrawGeometry(origin, inGeometry->mBounds.Transformed(origin), inGeometry->mBounds.GetExtent().LengthSq(), inColor, inGeometry);
+
+		mOffset += Vec3(inGeometry->mBounds.GetSize().GetX(), 0, 0);
+	}
+
 	/// Draw a triangle for debugging purposes
 	void				DrawWireTriangle(const Triangle &inTriangle, ColorArg inColor)
 	{
@@ -675,22 +693,20 @@ public:
 #endif
 
 private:
-	TriangleFactory 	mFactory;							///< Factory to create new triangles and remove old ones
+	TriangleFactory		mFactory;							///< Factory to create new triangles and remove old ones
 	const Points &		mPositions;							///< List of positions (some of them are part of the hull)
-	TriangleQueue 		mTriangleQueue;						///< List of triangles that are part of the hull that still need to be checked (if !mRemoved)
+	TriangleQueue		mTriangleQueue;						///< List of triangles that are part of the hull that still need to be checked (if !mRemoved)
 
 #if defined(JPH_EPA_CONVEX_BUILDER_VALIDATE) || defined(JPH_EPA_CONVEX_BUILDER_DRAW)
-	Triangles			mTriangles;							///< The list of all triangles in this hull (for debug purposes)	
+	Triangles			mTriangles;							///< The list of all triangles in this hull (for debug purposes)
 #endif
 
 #ifdef JPH_EPA_CONVEX_BUILDER_DRAW
-	int					mIteration;							///< Number of iterations we've had so far (for debug purposes)	
+	int					mIteration;							///< Number of iterations we've had so far (for debug purposes)
 	RVec3				mOffset;							///< Offset to use for state drawing
 #endif
 };
 
-// The determinant that is calculated in the Triangle constructor is really sensitive
-// to numerical round off, disable the fmadd instructions to maintain precision.
 JPH_PRECISE_MATH_ON
 
 EPAConvexHullBuilder::Triangle::Triangle(int inIdx0, int inIdx1, int inIdx2, const Vec3 *inPositions)
@@ -729,7 +745,7 @@ EPAConvexHullBuilder::Triangle::Triangle(int inIdx0, int inIdx1, int inIdx2, con
 	if (y20_dot_y20 < y21_dot_y21)
 	{
 		// We select the edges y10 and y20
-		mNormal = y10.Cross(y20);
+		mNormal = y10.CrossPrecise(y20);
 
 		// Check if triangle is degenerate
 		float normal_len_sq = mNormal.LengthSq();
@@ -757,17 +773,17 @@ EPAConvexHullBuilder::Triangle::Triangle(int inIdx0, int inIdx1, int inIdx2, con
 			// Cramers rule to invert matrix:
 			float y10_dot_y10 = y10.LengthSq();
 			float y10_dot_y20 = y10.Dot(y20);
-			float determinant = y10_dot_y10 * y20_dot_y20 - y10_dot_y20 * y10_dot_y20;
+			float determinant = DifferenceOfProducts(y10_dot_y10, y20_dot_y20, y10_dot_y20, y10_dot_y20);
 			if (determinant > 0.0f) // If determinant == 0 then the system is linearly dependent and the triangle is degenerate, since y10.10 * y20.y20 > y10.y20^2 it should also be > 0
 			{
 				float y0_dot_y10 = y0.Dot(y10);
 				float y0_dot_y20 = y0.Dot(y20);
-				float l0 = (y10_dot_y20 * y0_dot_y20 - y20_dot_y20 * y0_dot_y10) / determinant;
-				float l1 = (y10_dot_y20 * y0_dot_y10 - y10_dot_y10 * y0_dot_y20) / determinant;
+				float l0 = DifferenceOfProducts(y10_dot_y20, y0_dot_y20, y20_dot_y20, y0_dot_y10) / determinant;
+				float l1 = DifferenceOfProducts(y10_dot_y20, y0_dot_y10, y10_dot_y10, y0_dot_y20) / determinant;
 				mLambda[0] = l0;
 				mLambda[1] = l1;
 				mLambdaRelativeTo0 = true;
-	
+
 				// Check if closest point is interior to the triangle. For a convex hull which contains the origin each face must contain the origin, but because
 				// our faces are triangles, we can have multiple coplanar triangles and only 1 will have the origin as an interior point. We want to use this triangle
 				// to calculate the contact points because it gives the most accurate results, so we will only add these triangles to the priority queue.
@@ -779,7 +795,7 @@ EPAConvexHullBuilder::Triangle::Triangle(int inIdx0, int inIdx1, int inIdx2, con
 	else
 	{
 		// We select the edges y10 and y21
-		mNormal = y10.Cross(y21);
+		mNormal = y10.CrossPrecise(y21);
 
 		// Check if triangle is degenerate
 		float normal_len_sq = mNormal.LengthSq();
@@ -803,13 +819,13 @@ EPAConvexHullBuilder::Triangle::Triangle(int inIdx0, int inIdx1, int inIdx2, con
 			// Cramers rule to invert matrix:
 			float y10_dot_y10 = y10.LengthSq();
 			float y10_dot_y21 = y10.Dot(y21);
-			float determinant = y10_dot_y10 * y21_dot_y21 - y10_dot_y21 * y10_dot_y21;
+			float determinant = DifferenceOfProducts(y10_dot_y10, y21_dot_y21, y10_dot_y21, y10_dot_y21);
 			if (determinant > 0.0f)
 			{
 				float y1_dot_y10 = y1.Dot(y10);
 				float y1_dot_y21 = y1.Dot(y21);
-				float l0 = (y21_dot_y21 * y1_dot_y10 - y10_dot_y21 * y1_dot_y21) / determinant;
-				float l1 = (y10_dot_y21 * y1_dot_y10 - y10_dot_y10 * y1_dot_y21) / determinant;
+				float l0 = DifferenceOfProducts(y21_dot_y21, y1_dot_y10, y10_dot_y21, y1_dot_y21) / determinant;
+				float l1 = DifferenceOfProducts(y10_dot_y21, y1_dot_y10, y10_dot_y10, y1_dot_y21) / determinant;
 				mLambda[0] = l0;
 				mLambda[1] = l1;
 				mLambdaRelativeTo0 = false;

@@ -8,6 +8,7 @@
 #include <Jolt/Physics/PhysicsSystem.h>
 #include <Jolt/Physics/Body/BodyLockMulti.h>
 #include <Jolt/ObjectStream/TypeDeclarations.h>
+#include <Jolt/Core/UnorderedMap.h>
 
 JPH_NAMESPACE_BEGIN
 
@@ -15,6 +16,7 @@ JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(PhysicsScene)
 {
 	JPH_ADD_ATTRIBUTE(PhysicsScene, mBodies)
 	JPH_ADD_ATTRIBUTE(PhysicsScene, mConstraints)
+	JPH_ADD_ATTRIBUTE(PhysicsScene, mSoftBodies)
 }
 
 JPH_IMPLEMENT_SERIALIZABLE_NON_VIRTUAL(PhysicsScene::ConnectedConstraint)
@@ -34,9 +36,14 @@ void PhysicsScene::AddConstraint(const TwoBodyConstraintSettings *inConstraint, 
 	mConstraints.emplace_back(inConstraint, inBody1, inBody2);
 }
 
+void PhysicsScene::AddSoftBody(const SoftBodyCreationSettings &inSoftBody)
+{
+	mSoftBodies.push_back(inSoftBody);
+}
+
 bool PhysicsScene::FixInvalidScales()
 {
-	const Vec3 unit_scale = Vec3::sReplicate(1.0f);
+	const Vec3 unit_scale = Vec3::sOne();
 
 	bool success = true;
 	for (BodyCreationSettings &b : mBodies)
@@ -60,12 +67,22 @@ bool PhysicsScene::CreateBodies(PhysicsSystem *inSystem) const
 {
 	BodyInterface &bi = inSystem->GetBodyInterface();
 
-	// Create bodies
 	BodyIDVector body_ids;
-	body_ids.reserve(mBodies.size());
+	body_ids.reserve(mBodies.size() + mSoftBodies.size());
+
+	// Create bodies
 	for (const BodyCreationSettings &b : mBodies)
 	{
 		const Body *body = bi.CreateBody(b);
+		if (body == nullptr)
+			break;
+		body_ids.push_back(body->GetID());
+	}
+
+	// Create soft bodies
+	for (const SoftBodyCreationSettings &b : mSoftBodies)
+	{
+		const Body *body = bi.CreateSoftBody(b);
 		if (body == nullptr)
 			break;
 		body_ids.push_back(body->GetID());
@@ -77,7 +94,7 @@ bool PhysicsScene::CreateBodies(PhysicsSystem *inSystem) const
 	bi.AddBodiesFinalize(temp_body_ids.data(), (int)temp_body_ids.size(), add_state, EActivation::Activate);
 
 	// If not all bodies are created, creating constraints will be unreliable
-	if (body_ids.size() != mBodies.size())
+	if (body_ids.size() != mBodies.size() + mSoftBodies.size())
 		return false;
 
 	// Create constraints
@@ -98,6 +115,7 @@ void PhysicsScene::SaveBinaryState(StreamOut &inStream, bool inSaveShapes, bool 
 	BodyCreationSettings::ShapeToIDMap shape_to_id;
 	BodyCreationSettings::MaterialToIDMap material_to_id;
 	BodyCreationSettings::GroupFilterToIDMap group_filter_to_id;
+	SoftBodyCreationSettings::SharedSettingsToIDMap settings_to_id;
 
 	// Save bodies
 	inStream.Write((uint32)mBodies.size());
@@ -112,6 +130,11 @@ void PhysicsScene::SaveBinaryState(StreamOut &inStream, bool inSaveShapes, bool 
 		inStream.Write(cc.mBody1);
 		inStream.Write(cc.mBody2);
 	}
+
+	// Save soft bodies
+	inStream.Write((uint32)mSoftBodies.size());
+	for (const SoftBodyCreationSettings &b : mSoftBodies)
+		b.SaveWithChildren(inStream, &settings_to_id, &material_to_id, inSaveGroupFilter? &group_filter_to_id : nullptr);
 }
 
 PhysicsScene::PhysicsSceneResult PhysicsScene::sRestoreFromBinaryState(StreamIn &inStream)
@@ -124,6 +147,7 @@ PhysicsScene::PhysicsSceneResult PhysicsScene::sRestoreFromBinaryState(StreamIn 
 	BodyCreationSettings::IDToShapeMap id_to_shape;
 	BodyCreationSettings::IDToMaterialMap id_to_material;
 	BodyCreationSettings::IDToGroupFilterMap id_to_group_filter;
+	SoftBodyCreationSettings::IDToSharedSettingsMap id_to_settings;
 
 	// Reserve some memory to avoid frequent reallocations
 	id_to_shape.reserve(1024);
@@ -158,9 +182,25 @@ PhysicsScene::PhysicsSceneResult PhysicsScene::sRestoreFromBinaryState(StreamIn 
 			result.SetError(c_result.GetError());
 			return result;
 		}
-		cc.mSettings = static_cast<const TwoBodyConstraintSettings *>(c_result.Get().GetPtr());
+		cc.mSettings = StaticCast<TwoBodyConstraintSettings>(c_result.Get());
 		inStream.Read(cc.mBody1);
 		inStream.Read(cc.mBody2);
+	}
+
+	// Read soft bodies
+	len = 0;
+	inStream.Read(len);
+	scene->mSoftBodies.resize(len);
+	for (SoftBodyCreationSettings &b : scene->mSoftBodies)
+	{
+		// Read creation settings
+		SoftBodyCreationSettings::SBCSResult sbcs_result = SoftBodyCreationSettings::sRestoreWithChildren(inStream, id_to_settings, id_to_material, id_to_group_filter);
+		if (sbcs_result.HasError())
+		{
+			result.SetError(sbcs_result.GetError());
+			return result;
+		}
+		b = sbcs_result.Get();
 	}
 
 	result.Set(scene);
@@ -190,8 +230,13 @@ void PhysicsScene::FromPhysicsSystem(const PhysicsSystem *inSystem)
 			// Store location of body
 			body_id_to_idx[id] = (uint32)mBodies.size();
 
+			const Body &body = lock.GetBody();
+
 			// Convert to body creation settings
-			AddBody(lock.GetBody().GetBodyCreationSettings());
+			if (body.IsRigidBody())
+				AddBody(body.GetBodyCreationSettings());
+			else
+				AddSoftBody(body.GetSoftBodyCreationSettings());
 		}
 	}
 
@@ -210,7 +255,7 @@ void PhysicsScene::FromPhysicsSystem(const PhysicsSystem *inSystem)
 
 			// Create constraint settings and add the constraint
 			Ref<ConstraintSettings> settings = c->GetConstraintSettings();
-			AddConstraint(static_cast<const TwoBodyConstraintSettings *>(settings.GetPtr()), b1->second, b2->second);
+			AddConstraint(StaticCast<TwoBodyConstraintSettings>(settings), b1->second, b2->second);
 		}
 }
 

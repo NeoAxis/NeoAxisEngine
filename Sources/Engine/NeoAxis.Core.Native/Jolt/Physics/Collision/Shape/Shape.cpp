@@ -9,9 +9,11 @@
 #include <Jolt/Physics/Collision/Shape/StaticCompoundShape.h>
 #include <Jolt/Physics/Collision/TransformedShape.h>
 #include <Jolt/Physics/Collision/PhysicsMaterial.h>
-#include <Jolt/Core/StreamIn.h>
-#include <Jolt/Core/StreamOut.h>
-#include <Jolt/Core/Factory.h>
+#include <Jolt/Physics/Collision/RayCast.h>
+#include <Jolt/Physics/Collision/CastResult.h>
+#include <Jolt/Physics/Collision/CollidePointResult.h>
+#include <Jolt/Core/StreamUtils.h>
+#include <Jolt/Core/UnorderedSet.h>
 #include <Jolt/ObjectStream/TypeDeclarations.h>
 
 JPH_NAMESPACE_BEGIN
@@ -28,6 +30,12 @@ bool Shape::sDrawSubmergedVolumes = false;
 #endif // JPH_DEBUG_RENDERER
 
 ShapeFunctions ShapeFunctions::sRegistry[NumSubShapeTypes];
+
+const Shape *Shape::GetLeafShape([[maybe_unused]] const SubShapeID &inSubShapeID, SubShapeID &outRemainder) const
+{
+	outRemainder = inSubShapeID;
+	return this;
+}
 
 TransformedShape Shape::GetSubShapeTransformedShape(const SubShapeID &inSubShapeID, Vec3Arg inPositionCOM, QuatArg inRotation, Vec3Arg inScale, SubShapeID &outRemainder) const
 {
@@ -55,13 +63,13 @@ void Shape::TransformShape(Mat44Arg inCenterOfMassTransform, TransformedShapeCol
 {
 	Vec3 scale;
 	Mat44 transform = inCenterOfMassTransform.Decompose(scale);
-	TransformedShape ts(RVec3(transform.GetTranslation()), transform.GetRotation().GetQuaternion(), this, BodyID(), SubShapeIDCreator());
-	ts.SetShapeScale(scale);
+	TransformedShape ts(RVec3(transform.GetTranslation()), transform.GetQuaternion(), this, BodyID(), SubShapeIDCreator());
+	ts.SetShapeScale(MakeScaleValid(scale));
 	ioCollector.AddHit(ts);
 }
 
 void Shape::SaveBinaryState(StreamOut &inStream) const
-{ 
+{
 	inStream.Write(mShapeSubType);
 	inStream.Write(mUserData);
 }
@@ -104,7 +112,7 @@ void Shape::SaveWithChildren(StreamOut &inStream, ShapeToIDMap &ioShapeMap, Mate
 	if (shape_id_iter == ioShapeMap.end())
 	{
 		// Write shape ID of this shape
-		uint32 shape_id = (uint32)ioShapeMap.size();
+		uint32 shape_id = ioShapeMap.size();
 		ioShapeMap[this] = shape_id;
 		inStream.Write(shape_id);
 
@@ -114,7 +122,7 @@ void Shape::SaveWithChildren(StreamOut &inStream, ShapeToIDMap &ioShapeMap, Mate
 		// Write the ID's of all sub shapes
 		ShapeList sub_shapes;
 		SaveSubShapeState(sub_shapes);
-		inStream.Write(sub_shapes.size());
+		inStream.Write(uint32(sub_shapes.size()));
 		for (const Shape *shape : sub_shapes)
 		{
 			if (shape == nullptr)
@@ -126,34 +134,7 @@ void Shape::SaveWithChildren(StreamOut &inStream, ShapeToIDMap &ioShapeMap, Mate
 		// Write the materials
 		PhysicsMaterialList materials;
 		SaveMaterialState(materials);
-		inStream.Write(materials.size());
-		for (const PhysicsMaterial *mat : materials)
-		{
-			if (mat == nullptr)
-			{
-				// Write nullptr
-				inStream.Write(~uint32(0));
-			}
-			else
-			{
-				MaterialToIDMap::const_iterator material_id = ioMaterialMap.find(mat);
-				if (material_id == ioMaterialMap.end())
-				{
-					// New material, write the ID
-					uint32 new_material_id = (uint32)ioMaterialMap.size();
-					ioMaterialMap[mat] = new_material_id;
-					inStream.Write(new_material_id);
-
-					// Write the material
-					mat->SaveBinaryState(inStream);
-				}
-				else
-				{
-					// Known material, just write the ID
-					inStream.Write(material_id->second);
-				}
-			}
-		}
+		StreamUtils::SaveObjectArray(inStream, materials, &ioMaterialMap);
 	}
 	else
 	{
@@ -197,7 +178,7 @@ Shape::ShapeResult Shape::sRestoreWithChildren(StreamIn &inStream, IDToShapeMap 
 	ioShapeMap.push_back(result.Get());
 
 	// Read the sub shapes
-	size_t len;
+	uint32 len;
 	inStream.Read(len);
 	if (inStream.IsEOF() || inStream.IsFailed())
 	{
@@ -216,46 +197,13 @@ Shape::ShapeResult Shape::sRestoreWithChildren(StreamIn &inStream, IDToShapeMap 
 	result.Get()->RestoreSubShapeState(sub_shapes.data(), (uint)sub_shapes.size());
 
 	// Read the materials
-	inStream.Read(len);
-	if (inStream.IsEOF() || inStream.IsFailed())
+	Result mlresult = StreamUtils::RestoreObjectArray<PhysicsMaterialList>(inStream, ioMaterialMap);
+	if (mlresult.HasError())
 	{
-		result.SetError("Failed to read stream");
+		result.SetError(mlresult.GetError());
 		return result;
 	}
-	PhysicsMaterialList materials;
-	materials.reserve(len);
-	for (size_t i = 0; i < len; ++i)
-	{
-		Ref<PhysicsMaterial> material;
-
-		uint32 material_id;
-		inStream.Read(material_id);
-
-		// Check nullptr
-		if (material_id != ~uint32(0))
-		{
-			if (material_id >= ioMaterialMap.size())
-			{
-				// New material, restore material
-				PhysicsMaterial::PhysicsMaterialResult material_result = PhysicsMaterial::sRestoreFromBinaryState(inStream);
-				if (material_result.HasError())
-				{
-					result.SetError(material_result.GetError());
-					return result;
-				}
-				material = material_result.Get();
-				JPH_ASSERT(material_id == ioMaterialMap.size());
-				ioMaterialMap.push_back(material);
-			}
-			else
-			{
-				// Existing material
-				material = ioMaterialMap[material_id];
-			}
-		}
-
-		materials.push_back(material);
-	}
+	const PhysicsMaterialList &materials = mlresult.Get();
 	result.Get()->RestoreMaterialState(materials.data(), (uint)materials.size());
 
 	return result;
@@ -272,9 +220,19 @@ Shape::Stats Shape::GetStatsRecursive(VisitedShapes &ioVisitedShapes) const
 	return stats;
 }
 
+bool Shape::IsValidScale(Vec3Arg inScale) const
+{
+	return !ScaleHelpers::IsZeroScale(inScale);
+}
+
+Vec3 Shape::MakeScaleValid(Vec3Arg inScale) const
+{
+	return ScaleHelpers::MakeNonZeroScale(inScale);
+}
+
 Shape::ShapeResult Shape::ScaleShape(Vec3Arg inScale) const
 {
-	const Vec3 unit_scale = Vec3::sReplicate(1.0f);
+	const Vec3 unit_scale = Vec3::sOne();
 
 	if (inScale.IsNearZero())
 	{
@@ -325,6 +283,42 @@ Shape::ShapeResult Shape::ScaleShape(Vec3Arg inScale) const
 	}
 
 	return compound.Create();
+}
+
+void Shape::sCollidePointUsingRayCast(const Shape &inShape, Vec3Arg inPoint, const SubShapeIDCreator &inSubShapeIDCreator, CollidePointCollector &ioCollector, const ShapeFilter &inShapeFilter)
+{
+	// First test if we're inside our bounding box
+	AABox bounds = inShape.GetLocalBounds();
+	if (bounds.Contains(inPoint))
+	{
+		// A collector that just counts the number of hits
+		class HitCountCollector : public CastRayCollector
+		{
+		public:
+			virtual void	AddHit(const RayCastResult &inResult) override
+			{
+				// Store the last sub shape ID so that we can provide something to our outer hit collector
+				mSubShapeID = inResult.mSubShapeID2;
+
+				++mHitCount;
+			}
+
+			int				mHitCount = 0;
+			SubShapeID		mSubShapeID;
+		};
+		HitCountCollector collector;
+
+		// Configure the raycast
+		RayCastSettings settings;
+		settings.SetBackFaceMode(EBackFaceMode::CollideWithBackFaces);
+
+		// Cast a ray that's 10% longer than the height of our bounding box
+		inShape.CastRay(RayCast { inPoint, 1.1f * bounds.GetSize().GetY() * Vec3::sAxisY() }, settings, inSubShapeIDCreator, collector, inShapeFilter);
+
+		// Odd amount of hits means inside
+		if ((collector.mHitCount & 1) == 1)
+			ioCollector.AddHit({ TransformedShape::sGetBodyID(ioCollector.GetContext()), collector.mSubShapeID });
+	}
 }
 
 JPH_NAMESPACE_END

@@ -19,8 +19,8 @@ CastConvexVsTriangles::CastConvexVsTriangles(const ShapeCast &inShapeCast, const
 	mCenterOfMassTransform2(inCenterOfMassTransform2),
 	mScale(inScale),
 	mSubShapeIDCreator1(inSubShapeIDCreator1),
-	mCollector(ioCollector) 
-{ 
+	mCollector(ioCollector)
+{
 	JPH_ASSERT(inShapeCast.mShape->GetType() == EShapeType::Convex);
 
 	// Determine if shape is inside out or not
@@ -29,8 +29,6 @@ CastConvexVsTriangles::CastConvexVsTriangles(const ShapeCast &inShapeCast, const
 
 void CastConvexVsTriangles::Cast(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8 inActiveEdges, const SubShapeID &inSubShapeID2)
 {
-	JPH_PROFILE_FUNCTION();
-
 	// Scale triangle
 	Vec3 v0 = mScale * inV0;
 	Vec3 v1 = mScale * inV1;
@@ -51,7 +49,7 @@ void CastConvexVsTriangles::Cast(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8
 	if (mSupport == nullptr)
 	{
 		// Determine if we want to use the actual shape or a shrunken shape with convex radius
-		ConvexShape::ESupportMode support_mode = mShapeCastSettings.mUseShrunkenShapeAndConvexRadius? ConvexShape::ESupportMode::ExcludeConvexRadius : ConvexShape::ESupportMode::IncludeConvexRadius;
+		ConvexShape::ESupportMode support_mode = mShapeCastSettings.mUseShrunkenShapeAndConvexRadius? ConvexShape::ESupportMode::ExcludeConvexRadius : ConvexShape::ESupportMode::Default;
 
 		// Create support function
 		mSupport = static_cast<const ConvexShape *>(mShapeCast.mShape)->GetSupportFunction(support_mode, mSupportBuffer, mShapeCast.mScale);
@@ -60,7 +58,7 @@ void CastConvexVsTriangles::Cast(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8
 	EPAPenetrationDepth epa;
 	float fraction = mCollector.GetEarlyOutFraction();
 	Vec3 contact_point_a, contact_point_b, contact_normal;
-	if (epa.CastShape(mShapeCast.mCenterOfMassStart, mShapeCast.mDirection, mShapeCastSettings.mCollisionTolerance, mShapeCastSettings.mPenetrationTolerance, *mSupport, triangle, mSupport->GetConvexRadius(), 0.0f, mShapeCastSettings.mReturnDeepestPoint, fraction, contact_point_a, contact_point_b, contact_normal))
+	if (epa.CastShape(mShapeCast.mCenterOfMassStart, mShapeCast.mDirection, mShapeCastSettings.mCollisionTolerance, mShapeCastSettings.mPenetrationTolerance, *mSupport, triangle, mSupport->GetConvexRadius() + mShapeCastSettings.mExtraConvexRadius, 0.0f, mShapeCastSettings.mReturnDeepestPoint, fraction, contact_point_a, contact_point_b, contact_normal))
 	{
 		// Check if we have enabled active edge detection
 		if (mShapeCastSettings.mActiveEdgeMode == EActiveEdgeMode::CollideOnlyWithActive && inActiveEdges != 0b111)
@@ -94,11 +92,14 @@ void CastConvexVsTriangles::Cast(Vec3Arg inV0, Vec3Arg inV1, Vec3Arg inV2, uint8
 			static_cast<const ConvexShape *>(mShapeCast.mShape)->GetSupportingFace(SubShapeID(), transform_1_to_2.Multiply3x3Transposed(-contact_normal), mShapeCast.mScale, mCenterOfMassTransform2 * transform_1_to_2, result.mShape1Face);
 
 			// Get face of the triangle
-			triangle.GetSupportingFace(contact_normal, result.mShape2Face);
+			result.mShape2Face.resize(3);
+			result.mShape2Face[0] = mCenterOfMassTransform2 * v0;
+			result.mShape2Face[1] = mCenterOfMassTransform2 * v1;
+			result.mShape2Face[2] = mCenterOfMassTransform2 * v2;
 
-			// Convert to world space
-			for (Vec3 &p : result.mShape2Face)
-				p = mCenterOfMassTransform2 * p;
+			// When inside out, we need to swap the triangle winding
+			if (mScaleSign < 0.0f)
+				std::swap(result.mShape2Face[1], result.mShape2Face[2]);
 		}
 
 		JPH_IF_TRACK_NARROWPHASE_STATS(TrackNarrowPhaseCollector track;)

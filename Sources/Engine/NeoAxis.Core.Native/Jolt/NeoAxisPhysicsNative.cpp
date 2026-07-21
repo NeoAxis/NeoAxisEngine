@@ -142,6 +142,11 @@ void* MemoryAlloc(size_t inSize)
 	return Memory_Alloc(MemoryAllocationType_Physics, inSize, __FILE__, __LINE__);
 }
 
+void* MemoryRealloc(void* inBlock, size_t inOldSize, size_t inNewSize)
+{
+	return Memory_Realloc(MemoryAllocationType_Physics, inBlock, inNewSize, __FILE__, __LINE__);
+}
+
 void* MemoryAlignedAlloc(size_t inSize, size_t inAlignment)
 {
 	return Memory_AllocAligned(MemoryAllocationType_Physics, inSize, inAlignment, __FILE__, __LINE__);
@@ -329,7 +334,8 @@ class PhysicsStepListenerForNewStepListeners : public PhysicsStepListener
 public:
 	PhysicsSystemItem* system;
 
-	virtual void OnStep(float inDeltaTime, PhysicsSystem& inPhysicsSystem) override;
+	virtual void OnStep(const PhysicsStepListenerContext& inContext) override;
+	//virtual void OnStep(float inDeltaTime, PhysicsSystem& inPhysicsSystem) override;
 };
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -651,7 +657,7 @@ public:
 		lines.push_back(item);
 	}
 
-	virtual void DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor) override
+	virtual void DrawTriangle(RVec3Arg inV1, RVec3Arg inV2, RVec3Arg inV3, ColorArg inColor, ECastShadow inCastShadow = ECastShadow::Off) override
 	{
 	}
 
@@ -887,6 +893,7 @@ EXPORT PhysicsSystemItem* JCreateSystem(int maxBodies, int maxBodyPairs, int max
 
 		// Register allocation hook
 		Allocate = MemoryAlloc;
+		Reallocate = MemoryRealloc;
 		Free = MemoryFree;
 		AlignedAllocate = MemoryAlignedAlloc;
 		AlignedFree = MemoryAlignedFree;
@@ -1147,7 +1154,7 @@ EXPORT void JPhysicsSystem_SetPhysicsSettingsStructure(PhysicsSystemItem* system
 	settings.mPenetrationSlop = settings2->mPenetrationSlop;
 	settings.mLinearCastThreshold = settings2->mLinearCastThreshold;
 	settings.mLinearCastMaxPenetration = settings2->mLinearCastMaxPenetration;
-	settings.mManifoldToleranceSq = settings2->mManifoldToleranceSq;
+	settings.mManifoldTolerance = sqrt(settings2->mManifoldToleranceSq); //settings.mManifoldToleranceSq = settings2->mManifoldToleranceSq;
 	settings.mMaxPenetrationDistance = settings2->mMaxPenetrationDistance;
 	settings.mBodyPairCacheMaxDeltaPositionSq = settings2->mBodyPairCacheMaxDeltaPositionSq;
 	settings.mBodyPairCacheCosMaxDeltaRotationDiv2 = settings2->mBodyPairCacheCosMaxDeltaRotationDiv2;
@@ -1193,8 +1200,8 @@ EXPORT void JPhysicsSystem_Update(PhysicsSystemItem* system, float deltaTime, in
 
 	//add step listeners to active bodies
 	{
-		auto activeBodies = system->system.GetActiveBodiesUnsafe();
-		auto count = system->system.GetNumActiveBodies();
+		auto activeBodies = system->system.GetActiveBodiesUnsafe(EBodyType::RigidBody);
+		auto count = system->system.GetNumActiveBodies(EBodyType::RigidBody);
 		for (int n = 0; n < count; n++)
 		{
 			BodyItem* body = (BodyItem*)system->system.GetBody(activeBodies[n]).GetUserData();
@@ -1537,11 +1544,11 @@ EXPORT void JPhysicsSystem_Update(PhysicsSystemItem* system, float deltaTime, in
 
 EXPORT void JPhysicsSystem_GetActiveBodies(PhysicsSystemItem* system, int& count, uint*& bodies)
 {
-	count = system->system.GetNumActiveBodies();
+	count = system->system.GetNumActiveBodies(EBodyType::RigidBody);
 
 	BodyIDVector list;
 	list.reserve(count);
-	system->system.GetActiveBodies(list);
+	system->system.GetActiveBodies(EBodyType::RigidBody, list);
 
 	if (list.size() != count)
 		Fatal("JPhysicsSystem_GetActiveBodies: list.size() != count.");
@@ -2275,7 +2282,9 @@ EXPORT void JPhysicsSystem_RayTest(PhysicsSystemItem* system, const RayD& ray, i
 
 	RayCastSettings settings;
 	//!!!!always need?
-	settings.mBackFaceMode = EBackFaceMode::CollideWithBackFaces;
+	settings.mBackFaceModeTriangles = EBackFaceMode::CollideWithBackFaces;
+	settings.mBackFaceModeConvex = EBackFaceMode::CollideWithBackFaces;
+	//settings.mBackFaceMode = EBackFaceMode::CollideWithBackFaces;
 	//!!!!
 	//settings.mTreatConvexAsSolid = false;
 
@@ -3726,11 +3735,20 @@ void MyBodyActivationListener::OnBodyDeactivated(const BodyID& inBodyID, std::ui
 {
 }
 
-void PhysicsStepListenerForNewStepListeners::OnStep(float inDeltaTime, PhysicsSystem& inPhysicsSystem)
+void PhysicsStepListenerForNewStepListeners::OnStep(const PhysicsStepListenerContext& inContext)
 {
 	for (VehicleConstraintItem* vehicleConstraint : system->vehiclesToActivate)
 	{
 		VehicleConstraint* vehicleConstraint2 = (VehicleConstraint*)vehicleConstraint->constraint.GetPtr();
-		vehicleConstraint2->CallOnStep(inDeltaTime, inPhysicsSystem);
+		vehicleConstraint2->CallOnStep(inContext);
 	}
 }
+
+//void PhysicsStepListenerForNewStepListeners::OnStep(float inDeltaTime, PhysicsSystem& inPhysicsSystem)
+//{
+//	for (VehicleConstraintItem* vehicleConstraint : system->vehiclesToActivate)
+//	{
+//		VehicleConstraint* vehicleConstraint2 = (VehicleConstraint*)vehicleConstraint->constraint.GetPtr();
+//		vehicleConstraint2->CallOnStep(inDeltaTime, inPhysicsSystem);
+//	}
+//}

@@ -8,7 +8,11 @@
 
 JPH_NAMESPACE_BEGIN
 
-#ifdef JPH_USE_SSE
+#if defined(JPH_CPU_WASM)
+
+// Not supported
+
+#elif defined(JPH_USE_SSE)
 
 /// Helper class that needs to be put on the stack to update the state of the floating point control word.
 /// This state is kept per thread.
@@ -28,7 +32,7 @@ public:
 	}
 
 private:
-	uint		mPrevState;	
+	uint		mPrevState;
 };
 
 #elif defined(JPH_CPU_ARM) && defined(JPH_COMPILER_MSVC)
@@ -60,7 +64,7 @@ private:
 	unsigned int mPrevState;
 };
 
-#elif defined(JPH_CPU_ARM)
+#elif defined(JPH_CPU_ARM) && defined(JPH_USE_NEON)
 
 /// Helper class that needs to be put on the stack to update the state of the floating point control word.
 /// This state is kept per thread.
@@ -68,7 +72,7 @@ template <uint64 Value, uint64 Mask>
 class FPControlWord : public NonCopyable
 {
 public:
-	FPControlWord()
+				FPControlWord()
 	{
 		//!!!!betauser. can't compile with Clang
 
@@ -80,7 +84,7 @@ public:
 		//asm volatile("msr fpcr, %0" : /* no output */ : "r" (val));
 	}
 
-	~FPControlWord()
+				~FPControlWord()
 	{
 		//!!!!betauser. can't compile with Clang
 
@@ -95,9 +99,44 @@ private:
 	uint64		mPrevState;
 };
 
-#elif defined(JPH_CPU_WASM)
+#elif defined(JPH_CPU_ARM)
 
-// Not supported
+/// Helper class that needs to be put on the stack to update the state of the floating point control word.
+/// This state is kept per thread.
+template <uint32 Value, uint32 Mask>
+class FPControlWord : public NonCopyable
+{
+public:
+	FPControlWord()
+	{
+		uint32 val;
+		asm volatile("vmrs %0, fpscr" : "=r" (val));
+		mPrevState = val;
+		val &= ~Mask;
+		val |= Value;
+		asm volatile("vmsr fpscr, %0" : /* no output */ : "r" (val));
+	}
+
+	~FPControlWord()
+	{
+		uint32 val;
+		asm volatile("vmrs %0, fpscr" : "=r" (val));
+		val &= ~Mask;
+		val |= mPrevState & Mask;
+		asm volatile("vmsr fpscr, %0" : /* no output */ : "r" (val));
+	}
+
+private:
+	uint32		mPrevState;
+};
+
+#elif defined(JPH_CPU_RISCV)
+
+// RISC-V only implements manually checking if exceptions occurred by reading the fcsr register. It doesn't generate exceptions.
+
+#elif defined(JPH_CPU_PPC) || defined(JPH_CPU_LOONGARCH)
+
+// Not implemented right now
 
 #else
 

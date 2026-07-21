@@ -35,7 +35,7 @@ bool MassProperties::DecomposePrincipalMomentsOfInertia(Mat44 &outRotation, Vec3
 	// Sort so that the biggest value goes first
 	int indices[] = { 0, 1, 2 };
 	InsertionSort(indices, indices + 3, [&eigen_val](int inLeft, int inRight) { return eigen_val[inLeft] > eigen_val[inRight]; });
-		
+
 	// Convert to a regular Mat44 and Vec3
 	outRotation = Mat44::sIdentity();
 	for (int i = 0; i < 3; ++i)
@@ -97,7 +97,7 @@ Vec3 MassProperties::sGetEquivalentSolidBoxSize(float inMass, Vec3Arg inInertiaD
 	// mass / 12 * [size_y^2 + size_z^2, size_x^2 + size_z^2, size_x^2 + size_y^2]
 	// Solving for size_x, size_y and size_y (diagonal and mass are known):
 	Vec3 diagonal = inInertiaDiagonal * (12.0f / inMass);
-	return Vec3(sqrt(0.5f * (-diagonal[0] + diagonal[1] + diagonal[2])), sqrt(0.5f * (diagonal[0] - diagonal[1] + diagonal[2])), sqrt(0.5f * (diagonal[0] + diagonal[1] - diagonal[2])));
+	return Vec3(Sqrt(0.5f * (-diagonal[0] + diagonal[1] + diagonal[2])), Sqrt(0.5f * (diagonal[0] - diagonal[1] + diagonal[2])), Sqrt(0.5f * (diagonal[0] + diagonal[1] - diagonal[2])));
 }
 
 void MassProperties::Scale(Vec3Arg inScale)
@@ -146,7 +146,7 @@ void MassProperties::Scale(Vec3Arg inScale)
 	// Mass scales linear with volume (note that the scaling can be negative and we don't want the mass to become negative)
 	float mass_scale = abs(inScale.GetX() * inScale.GetY() * inScale.GetZ());
 	mMass *= mass_scale;
-	
+
 	// Inertia scales linear with mass. This updates the m_k terms above.
 	mInertia *= mass_scale;
 

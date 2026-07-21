@@ -12,9 +12,9 @@ JPH_NAMESPACE_BEGIN
 /// Note: The motor cycle controller is still in development and may need a lot of tweaks/hacks to work properly!
 class JPH_EXPORT MotorcycleControllerSettings : public WheeledVehicleControllerSettings
 {
-public:
 	JPH_DECLARE_SERIALIZABLE_VIRTUAL(JPH_EXPORT, MotorcycleControllerSettings)
 
+public:
 	// See: VehicleControllerSettings
 	virtual VehicleController *	ConstructController(VehicleConstraint &inConstraint) const override;
 	virtual void				SaveBinaryState(StreamOut &inStream) const override;
@@ -58,18 +58,47 @@ public:
 	/// Check if the lean spring is enabled.
 	bool						IsLeanControllerEnabled() const						{ return mEnableLeanController; }
 
+	/// Enable or disable the lean steering limit. When enabled (default) the steering angle is limited based on the vehicle speed to prevent steering that would cause an inertial force that causes the motorcycle to topple over.
+	void						EnableLeanSteeringLimit(bool inEnable)				{ mEnableLeanSteeringLimit = inEnable; }
+	bool						IsLeanSteeringLimitEnabled() const					{ return mEnableLeanSteeringLimit; }
+
+	/// Spring constant for the lean spring
+	void						SetLeanSpringConstant(float inConstant)				{ mLeanSpringConstant = inConstant; }
+	float						GetLeanSpringConstant() const						{ return mLeanSpringConstant; }
+
+	/// Spring damping constant for the lean spring
+	void						SetLeanSpringDamping(float inDamping)				{ mLeanSpringDamping = inDamping; }
+	float						GetLeanSpringDamping() const						{ return mLeanSpringDamping; }
+
+	/// The lean spring applies an additional force equal to this coefficient * Integral(delta angle, 0, t), this effectively makes the lean spring a PID controller
+	void						SetLeanSpringIntegrationCoefficient(float inCoefficient) { mLeanSpringIntegrationCoefficient = inCoefficient; }
+	float						GetLeanSpringIntegrationCoefficient() const			{ return mLeanSpringIntegrationCoefficient; }
+
+	/// How much to decay the angle integral when the wheels are not touching the floor: new_value = e^(-decay * t) * initial_value
+	void						SetLeanSpringIntegrationCoefficientDecay(float inDecay) { mLeanSpringIntegrationCoefficientDecay = inDecay; }
+	float						GetLeanSpringIntegrationCoefficientDecay() const	{ return mLeanSpringIntegrationCoefficientDecay; }
+
+	/// How much to smooth the lean angle (0 = no smoothing, 1 = lean angle never changes)
+	/// Note that this is frame rate dependent because the formula is: smoothing_factor * previous + (1 - smoothing_factor) * current
+	void						SetLeanSmoothingFactor(float inFactor)				{ mLeanSmoothingFactor = inFactor; }
+	float						GetLeanSmoothingFactor() const						{ return mLeanSmoothingFactor; }
+
+	// See: VehicleController
+	virtual Ref<VehicleControllerSettings> GetSettings() const override;
+
 protected:
 	// See: VehicleController
 	virtual void				PreCollide(float inDeltaTime, PhysicsSystem &inPhysicsSystem) override;
 	virtual bool				SolveLongitudinalAndLateralConstraints(float inDeltaTime) override;
-	virtual void				SaveState(StateRecorder& inStream) const override;
-	virtual void				RestoreState(StateRecorder& inStream) override;
+	virtual void				SaveState(StateRecorder &inStream) const override;
+	virtual void				RestoreState(StateRecorder &inStream) override;
 #ifdef JPH_DEBUG_RENDERER
 	virtual void				Draw(DebugRenderer *inRenderer) const override;
 #endif // JPH_DEBUG_RENDERER
 
 	// Configuration properties
 	bool						mEnableLeanController = true;
+	bool						mEnableLeanSteeringLimit = true;
 	float						mMaxLeanAngle;
 	float						mLeanSpringConstant;
 	float						mLeanSpringDamping;
@@ -81,7 +110,7 @@ protected:
 	Vec3						mTargetLean = Vec3::sZero();
 
 	// Integrated error for the lean spring
-	float						mLeanSpringIntegratedDeltaAngle = 0.0f;	
+	float						mLeanSpringIntegratedDeltaAngle = 0.0f;
 
 	// Run-time total angular impulse applied to turn the cycle towards the target lean angle
 	float						mAppliedImpulse = 0.0f;

@@ -11,14 +11,14 @@ JPH_NAMESPACE_BEGIN
 /// Class that constructs a SphereShape
 class JPH_EXPORT SphereShapeSettings final : public ConvexShapeSettings
 {
-public:
 	JPH_DECLARE_SERIALIZABLE_VIRTUAL(JPH_EXPORT, SphereShapeSettings)
 
+public:
 	/// Default constructor for deserialization
 							SphereShapeSettings() = default;
 
 	/// Create a sphere with radius inRadius
-							SphereShapeSettings(float inRadius, const PhysicsMaterial *inMaterial = nullptr)	: ConvexShapeSettings(inMaterial), mRadius(inRadius) { }
+	explicit				SphereShapeSettings(float inRadius, const PhysicsMaterial *inMaterial = nullptr)	: ConvexShapeSettings(inMaterial), mRadius(inRadius) { }
 
 	// See: ShapeSettings
 	virtual ShapeResult		Create() const override;
@@ -38,14 +38,14 @@ public:
 							SphereShape(const SphereShapeSettings &inSettings, ShapeResult &outResult);
 
 	/// Create a sphere with radius inRadius
-							SphereShape(float inRadius, const PhysicsMaterial *inMaterial = nullptr)			: ConvexShape(EShapeSubType::Sphere, inMaterial), mRadius(inRadius) { JPH_ASSERT(inRadius > 0.0f); }
+	explicit				SphereShape(float inRadius, const PhysicsMaterial *inMaterial = nullptr)			: ConvexShape(EShapeSubType::Sphere, inMaterial), mRadius(inRadius) { JPH_ASSERT(inRadius > 0.0f); }
 
 	/// Radius of the sphere
 	float					GetRadius() const																	{ return mRadius; }
 
 	// See Shape::GetLocalBounds
 	virtual AABox			GetLocalBounds() const override;
-		
+
 	// See Shape::GetWorldSpaceBounds
 	virtual AABox			GetWorldSpaceBounds(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale) const override;
 	using Shape::GetWorldSpaceBounds;
@@ -80,8 +80,8 @@ public:
 	// See: Shape::CollidePoint
 	virtual void			CollidePoint(Vec3Arg inPoint, const SubShapeIDCreator &inSubShapeIDCreator, CollidePointCollector &ioCollector, const ShapeFilter &inShapeFilter = { }) const override;
 
-	// See Shape::TransformShape
-	virtual void			TransformShape(Mat44Arg inCenterOfMassTransform, TransformedShapeCollector &ioCollector) const override;
+	// See: Shape::CollideSoftBodyVertices
+	virtual void			CollideSoftBodyVertices(Mat44Arg inCenterOfMassTransform, Vec3Arg inScale, const CollideSoftBodyVertexIterator &inVertices, uint inNumVertices, int inCollidingShapeIndex) const override;
 
 	// See Shape::GetTrianglesStart
 	virtual void			GetTrianglesStart(GetTrianglesContext &ioContext, const AABox &inBox, Vec3Arg inPositionCOM, QuatArg inRotation, Vec3Arg inScale) const override;
@@ -101,6 +101,9 @@ public:
 	// See Shape::IsValidScale
 	virtual bool			IsValidScale(Vec3Arg inScale) const override;
 
+	// See Shape::MakeScaleValid
+	virtual Vec3			MakeScaleValid(Vec3Arg inScale) const override;
+
 	// Register shape functions with the registry
 	static void				sRegister();
 
@@ -113,8 +116,8 @@ private:
 	inline float			GetScaledRadius(Vec3Arg inScale) const;
 
 	// Classes for GetSupportFunction
-	class 					SphereNoConvex;
-	class 					SphereWithConvex;
+	class					SphereNoConvex;
+	class					SphereWithConvex;
 
 	float					mRadius = 0.0f;
 };

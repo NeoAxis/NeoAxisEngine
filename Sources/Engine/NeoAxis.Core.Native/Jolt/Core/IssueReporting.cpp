@@ -4,15 +4,11 @@
 
 #include <Jolt/Jolt.h>
 
-JPH_SUPPRESS_WARNINGS_STD_BEGIN
-#include <fstream>
-JPH_SUPPRESS_WARNINGS_STD_END
-
 JPH_NAMESPACE_BEGIN
 
-static void DummyTrace([[maybe_unused]] const char *inFMT, ...) 
-{ 
-	JPH_ASSERT(false); 
+static void DummyTrace([[maybe_unused]] const char *inFMT, ...)
+{
+	JPH_ASSERT(false);
 };
 
 TraceFunction Trace = DummyTrace;
@@ -20,7 +16,7 @@ TraceFunction Trace = DummyTrace;
 #ifdef JPH_ENABLE_ASSERTS
 
 static bool DummyAssertFailed(const char *inExpression, const char *inMessage, const char *inFile, uint inLine)
-{ 
+{
 	return true; // Trigger breakpoint
 };
 

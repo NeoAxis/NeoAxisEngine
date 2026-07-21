@@ -14,14 +14,25 @@ class StreamOut;
 /// Describes the mass and inertia properties of a body. Used during body construction only.
 class JPH_EXPORT MassProperties
 {
-public:
 	JPH_DECLARE_SERIALIZABLE_NON_VIRTUAL(JPH_EXPORT, MassProperties)
+
+public:
+	/// Test if two MassProperties are equal
+	bool					operator == (const MassProperties &inRHS) const
+	{
+		return mMass == inRHS.mMass && mInertia == inRHS.mInertia;
+	}
+
+	bool					operator != (const MassProperties &inRHS) const
+	{
+		return !(*this == inRHS);
+	}
 
 	/// Using eigendecomposition, decompose the inertia tensor into a diagonal matrix D and a right-handed rotation matrix R so that the inertia tensor is \f$R \: D \: R^{-1}\f$.
 	/// @see https://en.wikipedia.org/wiki/Moment_of_inertia section 'Principal axes'
 	/// @param outRotation The rotation matrix R
 	/// @param outDiagonal The diagonal of the diagonal matrix D
-	/// @return True if successful, false if failed 
+	/// @return True if successful, false if failed
 	bool					DecomposePrincipalMomentsOfInertia(Mat44 &outRotation, Vec3 &outDiagonal) const;
 
 	/// Set the mass and inertia of a box with edge size inBoxSize and density inDensity

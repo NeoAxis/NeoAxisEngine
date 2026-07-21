@@ -31,8 +31,10 @@ JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(WheeledVehicleControllerSettings)
 
 JPH_IMPLEMENT_SERIALIZABLE_VIRTUAL(WheelSettingsWV)
 {
+	JPH_ADD_BASE_CLASS(WheelSettingsWV, WheelSettings)
+
 	JPH_ADD_ATTRIBUTE(WheelSettingsWV, mInertia)
-	JPH_ADD_ATTRIBUTE(WheelSettingsWV, mAngularDamping)	
+	JPH_ADD_ATTRIBUTE(WheelSettingsWV, mAngularDamping)
 	JPH_ADD_ATTRIBUTE(WheelSettingsWV, mMaxSteerAngle)
 	JPH_ADD_ATTRIBUTE(WheelSettingsWV, mLongitudinalFriction)
 	JPH_ADD_ATTRIBUTE(WheelSettingsWV, mLateralFriction)
@@ -55,6 +57,8 @@ WheelSettingsWV::WheelSettingsWV()
 
 void WheelSettingsWV::SaveBinaryState(StreamOut &inStream) const
 {
+	WheelSettings::SaveBinaryState(inStream);
+
 	inStream.Write(mInertia);
 	inStream.Write(mAngularDamping);
 	inStream.Write(mMaxSteerAngle);
@@ -66,6 +70,8 @@ void WheelSettingsWV::SaveBinaryState(StreamOut &inStream) const
 
 void WheelSettingsWV::RestoreBinaryState(StreamIn &inStream)
 {
+	WheelSettings::RestoreBinaryState(inStream);
+
 	inStream.Read(mInertia);
 	inStream.Read(mAngularDamping);
 	inStream.Read(mMaxSteerAngle);
@@ -85,7 +91,7 @@ WheelWV::WheelWV(const WheelSettingsWV &inSettings) :
 	JPH_ASSERT(inSettings.mMaxHandBrakeTorque >= 0.0f);
 }
 
-void WheelWV::Update(float inDeltaTime, const VehicleConstraint &inConstraint)
+void WheelWV::Update(uint inWheelIndex, float inDeltaTime, const VehicleConstraint &inConstraint)
 {
 	const WheelSettingsWV *settings = GetSettings();
 
@@ -116,18 +122,21 @@ void WheelWV::Update(float inDeltaTime, const VehicleConstraint &inConstraint)
 
 		// Calculate lateral friction based on slip angle
 		float relative_velocity_len = relative_velocity.Length();
-		float lateral_slip_angle = relative_velocity_len < 1.0e-3f? 0.0f : RadiansToDegrees(ACos(abs(relative_longitudinal_velocity) / relative_velocity_len));
+		mLateralSlip = relative_velocity_len < 1.0e-3f ? 0.0f : ACos(abs(relative_longitudinal_velocity) / relative_velocity_len);
+		float lateral_slip_angle = RadiansToDegrees(mLateralSlip);
 		float lateral_slip_friction = settings->mLateralFriction.GetValue(lateral_slip_angle);
 
 		// Tire friction
 		VehicleConstraint::CombineFunction combine_friction = inConstraint.GetCombineFriction();
-		mCombinedLongitudinalFriction = combine_friction(longitudinal_slip_friction, *mContactBody, mContactSubShapeID);
-		mCombinedLateralFriction = combine_friction(lateral_slip_friction, *mContactBody, mContactSubShapeID);
+		mCombinedLongitudinalFriction = longitudinal_slip_friction;
+		mCombinedLateralFriction = lateral_slip_friction;
+		combine_friction(inWheelIndex, mCombinedLongitudinalFriction, mCombinedLateralFriction, *mContactBody, mContactSubShapeID);
 	}
 	else
 	{
 		// No collision
 		mLongitudinalSlip = 0.0f;
+		mLateralSlip = 0.0f;
 		mCombinedLongitudinalFriction = mCombinedLateralFriction = 0.0f;
 	}
 }
@@ -138,7 +147,7 @@ VehicleController *WheeledVehicleControllerSettings::ConstructController(Vehicle
 }
 
 void WheeledVehicleControllerSettings::SaveBinaryState(StreamOut &inStream) const
-{ 
+{
 	mEngine.SaveBinaryState(inStream);
 
 	mTransmission.SaveBinaryState(inStream);
@@ -173,6 +182,7 @@ WheeledVehicleController::WheeledVehicleController(const WheeledVehicleControlle
 	static_cast<VehicleEngineSettings &>(mEngine) = inSettings.mEngine;
 	JPH_ASSERT(inSettings.mEngine.mMinRPM >= 0.0f);
 	JPH_ASSERT(inSettings.mEngine.mMinRPM <= inSettings.mEngine.mMaxRPM);
+	mEngine.SetCurrentRPM(mEngine.mMinRPM);
 
 	// Copy transmission settings
 	static_cast<VehicleTransmissionSettings &>(mTransmission) = inSettings.mTransmission;
@@ -263,10 +273,10 @@ void WheeledVehicleController::PostCollide(float inDeltaTime, PhysicsSystem &inP
 	Wheels &wheels = mConstraint.GetWheels();
 
 	// Update wheel angle, do this before applying torque to the wheels (as friction will slow them down again)
-	for (Wheel *w_base : wheels)
+	for (uint wheel_index = 0, num_wheels = (uint)wheels.size(); wheel_index < num_wheels; ++wheel_index)
 	{
-		WheelWV *w = static_cast<WheelWV *>(w_base);
-		w->Update(inDeltaTime, mConstraint);
+		WheelWV *w = static_cast<WheelWV *>(wheels[wheel_index]);
+		w->Update(wheel_index, inDeltaTime, mConstraint);
 	}
 
 	// In auto transmission mode, don't accelerate the engine when switching gears
@@ -402,7 +412,7 @@ void WheeledVehicleController::PostCollide(float inDeltaTime, PhysicsSystem &inP
 	if (!driven_wheels.empty())
 	{
 		// Define the torque at the clutch at time t as:
-		// 
+		//
 		// tc(t):=S*(we(t)-sum(R(j)*ww(j,t),j,1,N)/N)
 		//
 		// Where:
@@ -413,7 +423,7 @@ void WheeledVehicleController::PostCollide(float inDeltaTime, PhysicsSystem &inP
 		// N is the amount of wheels
 		//
 		// The torque that increases the engine angular velocity at time t is:
-		// 
+		//
 		// te(t):=TE-tc(t)
 		//
 		// Where:
@@ -427,7 +437,7 @@ void WheeledVehicleController::PostCollide(float inDeltaTime, PhysicsSystem &inP
 		// TW(i) is the torque applied to the wheel outside of the engine (brake + torque due to friction with the ground)
 		// F(i) is the fraction of the engine torque applied from engine to wheel i
 		//
-		// Because the angular accelaration and torque are connected through: Torque = I * dw/dt
+		// Because the angular acceleration and torque are connected through: Torque = I * dw/dt
 		//
 		// We have the angular acceleration of the engine at time t:
 		//
@@ -454,7 +464,7 @@ void WheeledVehicleController::PostCollide(float inDeltaTime, PhysicsSystem &inP
 		// Expanding both equations (the equations above are in wxMaxima format and this can easily be done by expand(%)):
 		//
 		// For wheel:
-		// 
+		//
 		// ww(i,t+dt) + (S*dt*F(i)*R(i)*sum(R(j)*ww(j,t+dt),j,1,N))/(N*Iw(i)) - (S*dt*F(i)*R(i)*we(t+dt))/Iw(i) = ww(i,t)+(dt*TW(i))/Iw(i)
 		//
 		// For engine:
@@ -479,7 +489,7 @@ void WheeledVehicleController::PostCollide(float inDeltaTime, PhysicsSystem &inP
 
 		// Get number of driven wheels as a float
 		float num_driven_wheels_float = float(driven_wheels.size());
-	
+
 		// Angular velocity of engine
 		float w_engine = mEngine.GetAngularVelocity();
 
@@ -608,7 +618,7 @@ void WheeledVehicleController::PostCollide(float inDeltaTime, PhysicsSystem &inP
 
 	// Update transmission
 	mTransmission.Update(inDeltaTime, mEngine.GetCurrentRPM(), mForwardInput, can_shift_up);
-	
+
 	// Braking
 	for (Wheel *w_base : wheels)
 	{
@@ -645,18 +655,25 @@ void WheeledVehicleController::PostCollide(float inDeltaTime, PhysicsSystem &inP
 	mPreviousDeltaTime = inDeltaTime;
 }
 
-bool WheeledVehicleController::SolveLongitudinalAndLateralConstraints(float inDeltaTime) 
+bool WheeledVehicleController::SolveLongitudinalAndLateralConstraints(float inDeltaTime)
 {
 	bool impulse = false;
 
+	float *max_lateral_friction_impulse = (float *)JPH_STACK_ALLOC(mConstraint.GetWheels().size() * sizeof(float));
+
+	uint wheel_index = 0;
 	for (Wheel *w_base : mConstraint.GetWheels())
+	{
 		if (w_base->HasContact())
 		{
 			WheelWV *w = static_cast<WheelWV *>(w_base);
 			const WheelSettingsWV *settings = w->GetSettings();
 
 			// Calculate max impulse that we can apply on the ground
-			float max_longitudinal_friction_impulse = w->mCombinedLongitudinalFriction * w->GetSuspensionLambda();
+			float max_longitudinal_friction_impulse;
+			mTireMaxImpulseCallback(wheel_index,
+				max_longitudinal_friction_impulse, max_lateral_friction_impulse[wheel_index], w->GetSuspensionLambda(),
+				w->mCombinedLongitudinalFriction, w->mCombinedLateralFriction, w->mLongitudinalSlip, w->mLateralSlip, inDeltaTime);
 
 			// Calculate relative velocity between wheel contact point and floor in longitudinal direction
 			Vec3 relative_velocity = mConstraint.GetVehicleBody()->GetPointVelocity(w->GetContactPosition()) - w->GetContactPointVelocity();
@@ -691,33 +708,39 @@ bool WheeledVehicleController::SolveLongitudinalAndLateralConstraints(float inDe
 				float linear_impulse = (w->GetAngularVelocity() - desired_angular_velocity) * settings->mInertia / settings->mRadius;
 
 				// Limit the impulse by max tire friction
-				min_longitudinal_impulse = max_longitudinal_impulse = w->GetLongitudinalLambda() + Sign(linear_impulse) * min(abs(linear_impulse), max_longitudinal_friction_impulse);
+				float prev_lambda = w->GetLongitudinalLambda();
+				min_longitudinal_impulse = max_longitudinal_impulse = Clamp(prev_lambda + linear_impulse, -max_longitudinal_friction_impulse, max_longitudinal_friction_impulse);
 
 				// Longitudinal impulse
-				float prev_lambda = w->GetLongitudinalLambda();
 				impulse |= w->SolveLongitudinalConstraintPart(mConstraint, min_longitudinal_impulse, max_longitudinal_impulse);
 
 				// Update the angular velocity of the wheels according to the lambda that was applied
 				w->SetAngularVelocity(w->GetAngularVelocity() - (w->GetLongitudinalLambda() - prev_lambda) * settings->mRadius / settings->mInertia);
 			}
 		}
+		++wheel_index;
+	}
 
+	wheel_index = 0;
 	for (Wheel *w_base : mConstraint.GetWheels())
+	{
 		if (w_base->HasContact())
 		{
 			WheelWV *w = static_cast<WheelWV *>(w_base);
 
 			// Lateral friction
-			float max_lateral_friction_impulse = w->mCombinedLateralFriction * w->GetSuspensionLambda();
-			impulse |= w->SolveLateralConstraintPart(mConstraint, -max_lateral_friction_impulse, max_lateral_friction_impulse);
+			float max_lateral_impulse = max_lateral_friction_impulse[wheel_index];
+			impulse |= w->SolveLateralConstraintPart(mConstraint, -max_lateral_impulse, max_lateral_impulse);
 		}
+		++wheel_index;
+	}
 
 	return impulse;
 }
 
 #ifdef JPH_DEBUG_RENDERER
 
-void WheeledVehicleController::Draw(DebugRenderer *inRenderer) const 
+void WheeledVehicleController::Draw(DebugRenderer *inRenderer) const
 {
 	float constraint_size = mConstraint.GetDrawConstraintSize();
 
@@ -732,15 +755,15 @@ void WheeledVehicleController::Draw(DebugRenderer *inRenderer) const
 	{
 		// Calculate average wheel speed at clutch
 		float wheel_speed_at_clutch = GetWheelSpeedAtClutch();
-		
+
 		// Draw the average wheel speed measured at clutch to compare engine RPM with wheel RPM
 		inRenderer->DrawLine(rpm_meter_pos, rpm_meter_pos + Quat::sRotation(rpm_meter_fwd, mEngine.ConvertRPMToAngle(wheel_speed_at_clutch)) * (rpm_meter_up * 1.1f * mRPMMeterSize), Color::sYellow);
 	}
 
 	// Draw current vehicle state
 	String status = StringFormat("Forward: %.1f, Right: %.1f\nBrake: %.1f, HandBrake: %.1f\n"
-								 "Gear: %d, Clutch: %.1f\nEngineRPM: %.0f, V: %.1f km/h", 
-								 (double)mForwardInput, (double)mRightInput, (double)mBrakeInput, (double)mHandBrakeInput, 
+								 "Gear: %d, Clutch: %.1f\nEngineRPM: %.0f, V: %.1f km/h",
+								 (double)mForwardInput, (double)mRightInput, (double)mBrakeInput, (double)mHandBrakeInput,
 								 mTransmission.GetCurrentGear(), (double)mTransmission.GetClutchFriction(), (double)mEngine.GetCurrentRPM(), (double)body->GetLinearVelocity().Length() * 3.6);
 	inRenderer->DrawText3D(body->GetPosition(), status, Color::sWhite, constraint_size);
 
@@ -777,6 +800,11 @@ void WheeledVehicleController::Draw(DebugRenderer *inRenderer) const
 		inRenderer->DrawLine(wheel_pos, wheel_pos + wheel_right, Color::sBlue);
 		inRenderer->DrawLine(wheel_pos, wheel_pos + steering_axis, Color::sYellow);
 
+		// Draw wheel
+		RMat44 wheel_transform(Vec4(wheel_up, 0.0f), Vec4(wheel_right, 0.0f), Vec4(wheel_forward, 0.0f), wheel_pos);
+		wheel_transform.SetRotation(wheel_transform.GetRotation() * Mat44::sRotationY(-w->GetRotationAngle()));
+		inRenderer->DrawCylinder(wheel_transform, settings->mWidth * 0.5f, settings->mRadius, w->GetSuspensionLength() <= settings->mSuspensionMinLength? Color::sRed : Color::sGreen, DebugRenderer::ECastShadow::Off, DebugRenderer::EDrawMode::Wireframe);
+
 		if (w->HasContact())
 		{
 			// Draw contact
@@ -784,7 +812,7 @@ void WheeledVehicleController::Draw(DebugRenderer *inRenderer) const
 			inRenderer->DrawLine(w->GetContactPosition(), w->GetContactPosition() + w->GetContactLongitudinal(), Color::sRed);
 			inRenderer->DrawLine(w->GetContactPosition(), w->GetContactPosition() + w->GetContactLateral(), Color::sBlue);
 
-			DebugRenderer::sInstance->DrawText3D(wheel_pos, StringFormat("W: %.1f, S: %.2f\nSlip: %.2f, FrLateral: %.1f, FrLong: %.1f", (double)w->GetAngularVelocity(), (double)w->GetSuspensionLength(), (double)w->mLongitudinalSlip, (double)w->mCombinedLateralFriction, (double)w->mCombinedLongitudinalFriction), Color::sWhite, constraint_size);
+			DebugRenderer::sInstance->DrawText3D(wheel_pos, StringFormat("W: %.1f, S: %.2f\nSlipLateral: %.1f, SlipLong: %.2f\nFrLateral: %.1f, FrLong: %.1f", (double)w->GetAngularVelocity(), (double)w->GetSuspensionLength(), (double)RadiansToDegrees(w->mLateralSlip), (double)w->mLongitudinalSlip, (double)w->mCombinedLateralFriction, (double)w->mCombinedLongitudinalFriction), Color::sWhite, constraint_size);
 		}
 		else
 		{
@@ -818,6 +846,21 @@ void WheeledVehicleController::RestoreState(StateRecorder &inStream)
 
 	mEngine.RestoreState(inStream);
 	mTransmission.RestoreState(inStream);
+}
+
+void WheeledVehicleController::ToSettings(WheeledVehicleControllerSettings &outSettings) const
+{
+	outSettings.mEngine = static_cast<const VehicleEngineSettings &>(mEngine);
+	outSettings.mTransmission = static_cast<const VehicleTransmissionSettings &>(mTransmission);
+	outSettings.mDifferentials = mDifferentials;
+	outSettings.mDifferentialLimitedSlipRatio = mDifferentialLimitedSlipRatio;
+}
+
+Ref<VehicleControllerSettings> WheeledVehicleController::GetSettings() const
+{
+	WheeledVehicleControllerSettings *settings = new WheeledVehicleControllerSettings;
+	ToSettings(*settings);
+	return settings;
 }
 
 JPH_NAMESPACE_END
