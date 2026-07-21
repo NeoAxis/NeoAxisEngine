@@ -14,7 +14,6 @@
     <WasmMainJSPath>wwwroot/main.js</WasmMainJSPath>
     <WasmAllowUndefinedSymbols>true</WasmAllowUndefinedSymbols>
     <PublishTrimmed>false</PublishTrimmed>
-    <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
   <PropertyGroup>
     <WasmBuildNative>true</WasmBuildNative>

@@ -13,7 +13,6 @@
     <OutputPath>_Test</OutputPath>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <PublishTrimmed>True</PublishTrimmed>
-    <TieredCompilation>false</TieredCompilation>
 	<Configurations>Release;Release-Simulator;Debug;Debug-Simulator</Configurations>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">

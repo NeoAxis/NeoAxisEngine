@@ -19,7 +19,6 @@
     <SupportedOSPlatformVersion>33.0</SupportedOSPlatformVersion>
     <PublishTrimmed>False</PublishTrimmed>
     <RunAOTCompilation>false</RunAOTCompilation>
-    <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
