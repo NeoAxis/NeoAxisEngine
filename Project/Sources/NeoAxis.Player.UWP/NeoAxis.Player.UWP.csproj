@@ -25,6 +25,7 @@
     <PackageCertificateKeyFile>NeoAxis.Player.UWP_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <PackageCertificateThumbprint>2A2010862FA2191EF975658C1F5BB8F601888DB3</PackageCertificateThumbprint>
+    <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
 
   <PropertyGroup>

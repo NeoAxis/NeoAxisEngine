@@ -27,6 +27,7 @@
     <OutputPath>..\..\Binaries\</OutputPath>
     <AssemblyName>NeoAxis.Player</AssemblyName>
     <Configurations>Release-Windows-x64;Release-Linux-x64;Release-macOS;Debug-Windows-x64;Debug-Linux-x64;Debug-macOS</Configurations>
+    <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug-Windows-x64'">

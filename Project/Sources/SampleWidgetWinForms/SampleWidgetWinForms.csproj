@@ -2,16 +2,17 @@
   <PropertyGroup>
     <TargetFramework>net8.0-windows8.0</TargetFramework>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
-	<UseWindowsForms>true</UseWindowsForms>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
-  <SelfContained>true</SelfContained>
+  	<UseWindowsForms>true</UseWindowsForms>
+  	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  	<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <PlatformTarget>x64</PlatformTarget>
+    <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <OutputPath>..\..\Binaries\</OutputPath>
