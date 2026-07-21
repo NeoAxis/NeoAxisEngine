@@ -889,7 +889,8 @@ namespace NeoAxis.Editor
 				{
 					var attributes = new List<Attribute>();
 					attributes.Add( new DisplayNameAttribute( "NeoX Access Token" ) );
-					attributes.Add( new DescriptionAttribute( "Log in to the NeoX app to enable the store, or specify the access token." ) );
+					attributes.Add( new DescriptionAttribute( "To enable the NeoAxis Store, log in to the NeoX app, log in via the Project menu, or specify an access token." ) );
+					//attributes.Add( new DescriptionAttribute( "Log in to the NeoX app to enable the store, or specify the access token." ) );
 
 					var property = new ContentBrowserOptions.PropertyImpl( sender, "NeoXAccessToken", MetadataManager.GetTypeOfNetType( typeof( string ) ), attributes, "NeoX", "" );
 					property.DefaultValueSpecified = true;

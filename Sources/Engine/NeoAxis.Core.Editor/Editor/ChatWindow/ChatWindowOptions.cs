@@ -28,7 +28,7 @@ namespace NeoAxis.Editor
 
 		[DefaultValue( "" )]
 		[DisplayName( "NeoX Access Token" )]
-		[Description( "Log in to the NeoX app to enable the Chat AI, or specify the access token." )]
+		[Description( "To enable the NeoAxis Store, log in to the NeoX app, log in via the Project menu, or specify an access token." )]
 		public string NeoXAccessToken { get; set; } = "";
 
 		/////////////////////////////////////
