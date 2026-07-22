@@ -16,17 +16,19 @@ A. All redistributions must retain all occurrences of the above copyright notice
 
 B. Modified versions in binary or in source form must be plainly marked as such, and must not be misrepresented as being the original software. The license imposes restrictions on creating a competing product, as it is technically possible to do so by forking the source code. This license does not permit the creation of another game engine or other competing game engine technology based substantially on the Engine Code; a special license is required for that.
 
-C. You agree to pay the Licensor a royalty equal to 5% of all worldwide gross revenue from each Product, excluding the first $200,000 USD or equivalent in the lifetime of a Product. This includes gross revenue from any and all sales of a Product to end users through any and all media, revenue from any and all in-app purchases, in-app advertising, affiliate programs, downloadable content, microtransactions, subscriptions, sale, transfer, advance payments, exchange of content created by end users, and revenue in any other form. Payments must be made monthly. This requirement only applies if a Product includes the Engine Code.
+C. You agree to pay the Licensor a royalty equal to 5% of all worldwide gross revenue from each video game Product, excluding the first $200,000 USD or equivalent in the lifetime of a Product. This includes gross revenue from any and all sales of a Product to end users through any and all media, revenue from any and all in-app purchases, in-app advertising, affiliate programs, downloadable content, microtransactions, subscriptions, sales, transfers, advance payments, exchange of content created by end users, and revenue in any other form. Payments must be made monthly, within fifteen (15) calendar days after the end of each applicable month.
 
-D. A Product that uses Engine Code must display the Engine Logo upon startup for at least 3 seconds. The Engine Logo of NeoAxis Engine must be original, clearly readable, and be at least 1/15 of the horizontal or vertical size of the screen. Check the Engine Logo definition for more details. The Engine Logo can be displayed as a primary logo or as a secondary logo in addition to other information on the screen. You can run NeoAxis Player (Binaries/NeoAxis.Player.exe) to see the demonstration. To configure the logo use the project settings of the editor.
+D. You agree to purchase seat-based licenses from the Licensor at a rate of $1,000 USD or equivalent per seat, per year, for each user using Technology for making non-gaming projects if Licensee’s annual worldwide gross revenue exceeds $200,000 USD or equivalent in the then-current or immediately preceding fiscal year. Payments must be made monthly ($83.33 per seat), within fifteen (15) calendar days after the end of each applicable month.
 
-E. The Product information must indicate that it is powered by NeoAxis Engine and include a link to the website www.neoaxis.com. Example: "Made with NeoAxis Engine. www.neoaxis.com."
+E. A Product that uses Engine Code must display the Engine Logo upon startup for at least 3 seconds. The Engine Logo of NeoAxis Engine must be original, clearly readable, and be at least 1/15 of the horizontal or vertical size of the screen. Check the Engine Logo definition for more details. The Engine Logo can be displayed as a primary logo or as a secondary logo in addition to other information on the screen. You can run NeoAxis Player (Binaries/NeoAxis.Player.exe) to see the demonstration. To configure the logo use the project settings of the editor.
 
-F. Additional Content which is provided for an additional fee can be redistributed in its Source Code form only to those that have purchased the same products. It cannot be distributed in its Source Code form with a Product.
+F. The Product information must indicate that it is powered by NeoAxis Engine and include a link to the website www.neoaxis.com. Example: "Made with NeoAxis Engine. www.neoaxis.com."
 
-G. Certain Additional Content is distributed under the "Free to use with NeoAxis" license. This means that the content can only be used with the Engine Code.
+G. Additional Content which is provided for an additional fee can be redistributed in its Source Code form only to those that have purchased the same products. It cannot be distributed in its Source Code form with a Product.
 
-H. "NeoX Service" means a special case of this Agreement under which the Product may be distributed solely inside the NeoX cloud service.
+H. Certain Additional Content is distributed under the "Free to use with NeoAxis" license. This means that the content can only be used with the Engine Code.
+
+I. "NeoX Service" means a special case of this Agreement under which the Product may be distributed solely inside the NeoX cloud service.
 
 If you do not accept these conditions or they are not enforceable in your jurisdiction, then you may not use the software.
 
