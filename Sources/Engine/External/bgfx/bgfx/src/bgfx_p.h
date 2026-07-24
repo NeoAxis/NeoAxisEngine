@@ -651,6 +651,8 @@ namespace bgfx
 	const char* getName(ShaderHandle _handle);
 	const char* getName(Topology::Enum _topology);
 
+	const struct UniformRef& getUniformRef(UniformHandle _handle);
+
 	template<typename Ty>
 	inline void release(Ty)
 	{
@@ -937,6 +939,7 @@ namespace bgfx
 			InvViewProj,
 			Model,
 			ModelView,
+			InvModelView,
 			ModelViewProj,
 			AlphaRef,
 			Count
@@ -1767,6 +1770,26 @@ namespace bgfx
 			Count
 		};
 
+		void setTexture(TextureHandle _handle, uint32_t _samplerFlags, uint8_t _firstMip = 0, uint8_t _numMips = UINT8_MAX)
+		{
+			m_samplerFlags = _samplerFlags;
+			m_idx = _handle.idx;
+			m_type = uint8_t(Binding::Texture);
+			m_format = 0;
+			m_access = 0;
+			m_mip = _firstMip;
+		}
+
+		void setTexture(TextureHandle _handle, uint16_t _firstLayer, uint16_t _numLayers, uint8_t _firstMip, uint8_t _numMips, uint32_t _samplerFlags)
+		{
+			m_samplerFlags = _samplerFlags;
+			m_idx = _handle.idx;
+			m_type = uint8_t(Binding::Texture);
+			m_format = 0;
+			m_access = 0;
+			m_mip = _firstMip;
+		}
+
 		uint32_t m_samplerFlags;
 		uint16_t m_idx;
 		uint8_t  m_type;
@@ -2204,6 +2227,11 @@ namespace bgfx
 			m_mode = uint8_t(_mode);
 		}
 
+		void setShadingRate(ShadingRate::Enum _shadingRate)
+		{
+			m_shadingRate = uint8_t(_shadingRate);
+		}
+
 		void setFrameBuffer(FrameBufferHandle _handle)
 		{
 			m_fbh = _handle;
@@ -2237,6 +2265,7 @@ namespace bgfx
 		Matrix4 m_proj;
 		FrameBufferHandle m_fbh;
 		uint8_t m_mode;
+		uint8_t m_shadingRate;
 	};
 
 	struct UniformCacheKey
@@ -2983,12 +3012,33 @@ namespace bgfx
 		void setTexture(uint8_t _stage, UniformHandle _sampler, TextureHandle _handle, uint32_t _flags)
 		{
 			Binding& bind = m_bind.m_bind[_stage];
-			bind.m_idx    = _handle.idx;
-			bind.m_type   = uint8_t(Binding::Texture);
-			bind.m_samplerFlags = (_flags&BGFX_SAMPLER_INTERNAL_DEFAULT)
+			bind.setTexture(
+				  _handle
+				, 0 != (_flags&BGFX_SAMPLER_INTERNAL_DEFAULT)
+					? BGFX_SAMPLER_INTERNAL_DEFAULT
+					: _flags
+				);
+
+			if (isValid(_sampler) )
+			{
+				uint32_t stage = _stage;
+				setUniform(UniformType::Sampler, _sampler, &stage, 1);
+			}
+		}
+
+		void setTexture(uint8_t _stage, UniformHandle _sampler, TextureHandle _handle, uint16_t _firstLayer, uint16_t _numLayers, uint8_t _firstMip, uint8_t _numMips, uint32_t _flags)
+		{
+			Binding& bind = m_bind.m_bind[_stage];
+			bind.setTexture(
+				  _handle
+				, _firstLayer
+				, _numLayers
+				, _firstMip
+				, _numMips
+				, 0 != (_flags&BGFX_SAMPLER_INTERNAL_DEFAULT)
 				? BGFX_SAMPLER_INTERNAL_DEFAULT
 				: _flags
-				;
+				);
 
 			if (isValid(_sampler) )
 			{
@@ -5607,6 +5657,11 @@ namespace bgfx
 			{
 				bx::memCopy(&m_viewRemap[_id], _order, num*sizeof(ViewId) );
 			}
+		}
+
+		BGFX_API_FUNC(void setViewShadingRate(ViewId _id, ShadingRate::Enum _shadingRate) )
+		{
+			m_view[_id].setShadingRate(_shadingRate);
 		}
 
 		BGFX_API_FUNC(Encoder* begin(bool _forThread) );

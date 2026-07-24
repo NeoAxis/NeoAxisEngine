@@ -605,17 +605,19 @@ namespace NeoAxis
 
 			unsafe
 			{
-				NativeMethods.bgfx_check_wrapper( sizeof( InitSettings.Native ), sizeof( PlatformData ), sizeof( FrameBuffer.NativeAttachment ), sizeof( InitSettings.ResolutionNative ), sizeof( InitSettings.InitLimits ) );
+				NativeMethods.bgfx_check_wrapper( sizeof( InitSettings.Native ), sizeof( PlatformData ), sizeof( FrameBuffer.NativeAttachment ), sizeof( InitSettings.ResolutionNative ), sizeof( InitSettings.InitLimits ), sizeof( PerfStats.Stats ), sizeof( Capabilities.Caps ) );
 			}
 
 			//set platform data
+			PlatformData platformData;
 			if( ( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS ) && EngineApp.InitSettings.RendererBackend == RendererBackend.OpenGLES )
 			{
 				//Android, OpenGLES
-				Bgfx.SetPlatformData( new PlatformData { Context = (IntPtr)1 } );
+				platformData = new PlatformData { Context = (IntPtr)1 };
 			}
 			else
-				Bgfx.SetPlatformData( new PlatformData { WindowHandle = EngineApp.ApplicationWindowHandle } );
+				platformData = new PlatformData { WindowHandle = EngineApp.ApplicationWindowHandle };
+			Bgfx.SetPlatformData( platformData );
 
 			if( EngineApp.IsSimulation && EngineApp.InitSettings.SimulationTripleBuffering )
 				Bgfx.SetTripleBuffering();
@@ -636,6 +638,7 @@ namespace NeoAxis
 			//!!!!configurable to NeoAxis.DefaultSettings.config?
 			//initSettings.BackBufferCount = ;
 			//initSettings.MaxFrameLatency = ;
+			initSettings.PlatformData = platformData;
 
 
 			if( !Bgfx.Init( initSettings ) )

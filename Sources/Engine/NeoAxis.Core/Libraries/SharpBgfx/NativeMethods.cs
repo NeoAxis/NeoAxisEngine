@@ -665,7 +665,7 @@ namespace Internal.SharpBgfx
 
         //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-        public static extern void bgfx_check_wrapper( int initSettings, int platformData, int nativeAttachment, int resolutionSize, int initLimitsSize );
+        public static extern void bgfx_check_wrapper( int initSettings, int platformData, int nativeAttachment, int resolutionSize, int initLimitsSize, int statsSize, int capsSize );
 
         //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]

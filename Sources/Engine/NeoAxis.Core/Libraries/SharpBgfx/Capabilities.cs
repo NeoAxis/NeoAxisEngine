@@ -187,6 +187,14 @@ namespace Internal.SharpBgfx {
         }
 
         /// <summary>
+        /// Mimimum uniform buffer size.
+        /// </summary>
+        public int MinUniformBufferSize
+        {
+            get { return (int)data->MinUniformBufferSize; }
+        }
+
+        /// <summary>
         /// Indicates whether depth coordinates in NDC range from -1 to 1 (true) or 0 to 1 (false).
         /// </summary>
         public bool HomogeneousDepth {
@@ -362,6 +370,7 @@ namespace Internal.SharpBgfx {
             public uint MinResourceCbSize;
             public uint MaxTransientVbSize;
             public uint MaxTransientIbSize;
+            public uint MinUniformBufferSize;
 
             public fixed ushort Formats[(int)TextureFormat.Count];
         }
@@ -510,6 +519,14 @@ namespace Internal.SharpBgfx {
         /// </summary>
         public int BlitCallsSubmitted {
             get { return data->NumBlit; }
+        }
+
+        /// <summary>
+        /// Highest number of draw+compute calls requested in a single frame so far( peak demand, before any were dropped ).
+        /// </summary>
+        public int NumDrawCallsPeak
+        {
+            get { return data->NumDrawCallsPeak; }
         }
 
         /// <summary>
@@ -992,6 +1009,7 @@ namespace Internal.SharpBgfx {
             public int NumDraw;
             public int NumCompute;
             public int NumBlit;
+            public int NumDrawCallsPeak;
             public int MaxGpuLatency;
             public uint GpuFrameNum;
 
@@ -1054,6 +1072,16 @@ namespace Internal.SharpBgfx {
         /// Enable profling with the device.
         /// </summary>
         public bool Profiling { get; set; }
+
+        /// <summary>
+        /// Enable fallback to next available renderer.
+        /// </summary>
+        public bool Fallback { get; set; }
+
+        /// <summary>
+        /// Enable video decoding.
+        /// </summary>
+        public bool VideoDecoding { get; set; }
 
         /// <summary>
         /// The initial texture format of the screen.
@@ -1125,6 +1153,8 @@ namespace Internal.SharpBgfx {
             Adapter = new Adapter((Vendor)native.VendorId, native.DeviceId);
             Debug = native.Debug != 0;
             Profiling = native.Profiling != 0;
+            Fallback = native.Fallback != 0;
+            VideoDecoding = native.VideoDecoding != 0;
             FormatColor = native.Resolution.FormatColor;
             FormatDepthStencil = native.Resolution.FormatDepthStencil;
             Width = (int)native.Resolution.Width;
@@ -1162,9 +1192,12 @@ namespace Internal.SharpBgfx {
 
         internal struct InitLimits {
             public ushort MaxEncoders;
+            public uint NumDrawCalls;
+            public uint NumDrawCallPeakFrames;
             public uint MinResourceCbSize;
             public uint MaxTransientVbSize;
             public uint MaxTransientIbSize;
+            public uint MinUniformBufferSize;
         }
 
         internal struct Native {
@@ -1174,6 +1207,8 @@ namespace Internal.SharpBgfx {
             public ulong Capabilities; //!< Capabilities initialization mask (default: UINT64_MAX).
             public byte Debug;
             public byte Profiling;
+            public byte Fallback;
+            public byte VideoDecoding;
             public PlatformData PlatformData;
             public ResolutionNative Resolution;
             public InitLimits Limits;

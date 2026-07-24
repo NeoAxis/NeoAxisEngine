@@ -218,7 +218,6 @@
     <ClCompile Include="Jolt\ObjectStream\SerializableObject.cpp" />
     <ClCompile Include="Jolt\ObjectStream\TypeDeclarations.cpp" />
     <ClCompile Include="Jolt\Physics\Body\Body.cpp" />
-    <ClCompile Include="Jolt\Physics\Body\BodyAccess.cpp" />
     <ClCompile Include="Jolt\Physics\Body\BodyCreationSettings.cpp" />
     <ClCompile Include="Jolt\Physics\Body\BodyInterface.cpp" />
     <ClCompile Include="Jolt\Physics\Body\BodyManager.cpp" />
@@ -286,7 +285,6 @@
     <ClCompile Include="Jolt\Physics\DeterminismLog.cpp" />
     <ClCompile Include="Jolt\Physics\IslandBuilder.cpp" />
     <ClCompile Include="Jolt\Physics\LargeIslandSplitter.cpp" />
-    <ClCompile Include="Jolt\Physics\PhysicsLock.cpp" />
     <ClCompile Include="Jolt\Physics\PhysicsScene.cpp" />
     <ClCompile Include="Jolt\Physics\PhysicsSystem.cpp" />
     <ClCompile Include="Jolt\Physics\PhysicsUpdateContext.cpp" />
@@ -311,14 +309,9 @@
     <ClCompile Include="Jolt\Skeleton\Skeleton.cpp" />
     <ClCompile Include="Jolt\Skeleton\SkeletonMapper.cpp" />
     <ClCompile Include="Jolt\Skeleton\SkeletonPose.cpp" />
-    <ClCompile Include="Jolt\TriangleGrouper\TriangleGrouperClosestCentroid.cpp" />
-    <ClCompile Include="Jolt\TriangleGrouper\TriangleGrouperMorton.cpp" />
     <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitter.cpp" />
     <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitterBinning.cpp" />
-    <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitterFixedLeafSize.cpp" />
-    <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitterLongestAxis.cpp" />
     <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitterMean.cpp" />
-    <ClCompile Include="Jolt\TriangleSplitter\TriangleSplitterMorton.cpp" />
     <ClCompile Include="MemoryManager\CRTMemoryManager.cpp" />
     <ClCompile Include="MemoryManager\MemoryManagerInternal.cpp" />
     <ClCompile Include="MemoryManager\MemoryManagerInternal_precompiled.cpp" />
@@ -2375,6 +2368,22 @@
     <ClCompile Include="..\External\bgfx\bgfx\tools\shaderc\shaderc_spirv_glsl.cpp" />
     <ClCompile Include="Jolt\Core\JobSystemSingleThreaded.cpp" />
     <ClCompile Include="..\External\bgfx\bgfx\src\renderer_webgpu.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\EstimateCollisionResponse.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\EmptyShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\PlaneShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Collision\Shape\TaperedCylinderShape.cpp" />
+    <ClCompile Include="Jolt\Physics\Hair\Hair.cpp" />
+    <ClCompile Include="Jolt\Physics\Hair\HairSettings.cpp" />
+    <ClCompile Include="Jolt\Physics\Hair\HairShaders.cpp" />
+    <ClCompile Include="Jolt\Physics\Hair\RegisterHair.cpp" />
+    <ClCompile Include="Jolt\Physics\SoftBody\SoftBodyCreationSettings.cpp" />
+    <ClCompile Include="Jolt\Physics\SoftBody\SoftBodyMotionProperties.cpp" />
+    <ClCompile Include="Jolt\Physics\SoftBody\SoftBodyShape.cpp" />
+    <ClCompile Include="Jolt\Physics\SoftBody\SoftBodySharedSettings.cpp" />
+    <ClCompile Include="Jolt\Physics\Vehicle\MotorcycleController.cpp" />
+    <ClCompile Include="Jolt\Renderer\DebugRendererSimple.cpp" />
+    <ClCompile Include="Jolt\Shaders\HairWrapper.cpp" />
+    <ClCompile Include="Jolt\Shaders\TestComputeWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\External\OggVorbisTheora\libogg\include\ogg\ogg.h" />

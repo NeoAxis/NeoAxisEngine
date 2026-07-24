@@ -64,6 +64,7 @@ namespace Internal.SharpBgfx {
         /// u_invViewProj mat4 - concatenated inverted view projection matrix
         /// u_model mat4[BGFX_CONFIG_MAX_BONES] - array of model matrices.
         /// u_modelView mat4 - concatenated model view matrix, only first model matrix from array is used.
+        /// u_invModelView mat4 - inverted concatenated model view matrix.
         /// u_modelViewProj mat4 - concatenated model view projection matrix.
         /// u_alphaRef float - alpha reference value for alpha test.
         /// </remarks>

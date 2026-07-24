@@ -786,6 +786,8 @@ namespace bgfx
 
 		bool debug;   //!< Enable device for debugging.
 		bool profile; //!< Enable device for profiling.
+		bool fallback;             //!< Enable fallback to next available renderer.
+		bool videoDecode;          //!< Enable video decoding.
 
 		/// Platform data.
 		PlatformData platformData;
@@ -802,9 +804,17 @@ namespace bgfx
 			Limits();
 
 			uint16_t maxEncoders;       //!< Maximum number of encoder threads.
+			uint32_t numDrawCalls;          //!< Initial number of draw calls per frame. Rounded up to a
+			                                ///  multiple of 1024 (the minimum); 0 selects the default of 1024.
+			                                ///  The render-item buffers grow on demand up to
+			                                ///  `BGFX_CONFIG_MAX_DRAW_CALLS` and lazily shrink.
+			uint32_t numDrawCallPeakFrames; //!< Number of frames the draw-call peak (high-water mark) is observed
+			                                ///  before the render-item buffers are shrunk. Set to 0 to disable
+			                                ///  dynamic resizing and keep the buffers fixed at `numDrawCalls`.
 			uint32_t minResourceCbSize; //!< Minimum resource command buffer size.
 			uint32_t maxTransientVbSize;   //!< Maximum transient vertex buffer size.
 			uint32_t maxTransientIbSize;   //!< Maximum transient index buffer size.
+			uint32_t minUniformBufferSize; //!< Mimimum uniform buffer size.
 		};
 
 		Limits limits; //!< Configurable runtime limits.
@@ -905,6 +915,7 @@ namespace bgfx
 			uint32_t minResourceCbSize;       //!< Minimum resource command buffer size.
 			uint32_t maxTransientVbSize;         //!< Maximum transient vertex buffer size.
 			uint32_t maxTransientIbSize;         //!< Maximum transient index buffer size.
+			uint32_t minUniformBufferSize;    //!< Mimimum uniform buffer size.
 		};
 
 		Limits limits; //!< Renderer runtime limits.
@@ -1158,6 +1169,9 @@ namespace bgfx
 		uint32_t numDraw;                   //!< Number of draw calls submitted.
 		uint32_t numCompute;                //!< Number of compute calls submitted.
 		uint32_t numBlit;                   //!< Number of blit calls submitted.
+		uint32_t numDrawCallsPeak;          //!< Highest number of draw+compute calls requested in a single
+		                                    ///  frame so far (peak demand, before any were dropped). Useful
+		                                    ///  to tune `Init::Limits::numDrawCalls`.
 		uint32_t maxGpuLatency;             //!< GPU driver latency.
 		uint32_t gpuFrameNum;               //!< Frame which generated gpuTimeBegin, gpuTimeEnd.
 		uint16_t numDynamicIndexBuffers;    //!< Number of used dynamic index buffers.
@@ -1597,6 +1611,36 @@ namespace bgfx
 			, TextureHandle _handle
 			, uint32_t _flags = UINT32_MAX
 			);
+
+		/// Set texture stage for draw primitive, selecting a sub-range of the
+		/// texture's array layers and mip levels.
+		///
+		/// @param[in] _stage Texture unit.
+		/// @param[in] _sampler Program sampler.
+		/// @param[in] _handle Texture handle.
+		/// @param[in] _firstLayer First array layer.
+		/// @param[in] _numLayers Number of array layers.
+		/// @param[in] _firstMip First (most detailed) mip level.
+		/// @param[in] _numMips Number of mip levels.
+		/// @param[in] _flags Texture sampling mode. Default value UINT32_MAX uses
+		///   texture sampling settings from the texture.
+		///   - `BGFX_SAMPLER_[U/V/W]_[MIRROR/CLAMP]` - Mirror or clamp to edge wrap
+		///   mode.
+		///   - `BGFX_SAMPLER_[MIN/MAG/MIP]_[POINT/ANISOTROPIC]` - Point or anisotropic
+		///   sampling.
+		///
+		/// @attention C99's equivalent binding is `bgfx_encoder_set_texture_view`.
+		///
+		void setTexture(
+			uint8_t _stage
+			, UniformHandle _sampler
+			, TextureHandle _handle
+			, uint16_t _firstLayer
+			, uint16_t _numLayers
+			, uint8_t _firstMip
+			, uint8_t _numMips
+			, uint32_t _flags = UINT32_MAX
+		);
 
 		/// Submit an empty primitive for rendering. Uniforms and draw state
 		/// will be applied but no geometry will be submitted. Useful in cases
@@ -4229,6 +4273,36 @@ namespace bgfx
 		, TextureHandle _handle
 		, uint32_t _flags = UINT32_MAX
 		);
+
+	/// Set texture stage for draw primitive, selecting a sub-range of the
+	/// texture's array layers and mip levels.
+	///
+	/// @param[in] _stage Texture unit.
+	/// @param[in] _sampler Program sampler.
+	/// @param[in] _handle Texture handle.
+	/// @param[in] _firstLayer First array layer.
+	/// @param[in] _numLayers Number of array layers.
+	/// @param[in] _firstMip First (most detailed) mip level.
+	/// @param[in] _numMips Number of mip levels.
+	/// @param[in] _flags Texture sampling mode. Default value UINT32_MAX uses
+	///   texture sampling settings from the texture.
+	///   - `BGFX_SAMPLER_[U/V/W]_[MIRROR/CLAMP]` - Mirror or clamp to edge wrap
+	///   mode.
+	///   - `BGFX_SAMPLER_[MIN/MAG/MIP]_[POINT/ANISOTROPIC]` - Point or anisotropic
+	///   sampling.
+	///
+	/// @attention C99's equivalent binding is `bgfx_set_texture_view`.
+	///
+	void setTexture(
+		uint8_t _stage
+		, UniformHandle _sampler
+		, TextureHandle _handle
+		, uint16_t _firstLayer
+		, uint16_t _numLayers
+		, uint8_t _firstMip
+		, uint8_t _numMips
+		, uint32_t _flags = UINT32_MAX
+	);
 
 	/// Submit an empty primitive for rendering. Uniforms and draw state
 	/// will be applied but no geometry will be submitted.
