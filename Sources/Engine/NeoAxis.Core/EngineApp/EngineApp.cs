@@ -1354,17 +1354,10 @@ namespace NeoAxis
 
 		static void CompileAndLoadProjectAssembly()// string projectName, bool rebuild = false )
 		{
+			var projectName = "Project";
+
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows )
 			{
-				//var clientDll = false;
-				////use Project.Client.dll on a client in network mode
-				//if( SystemSettings.CommandLineParameters.TryGetValue( "-client", out var projectClient ) )
-				//	clientDll = true;
-
-				var projectName = "Project";
-				//if( clientDll )
-				//	projectName += ".Client";
-
 				var server = false;
 				if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) )
 				{
@@ -1416,9 +1409,28 @@ namespace NeoAxis
 				}
 
 				//load
-				string fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
+				var fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
 				projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
 			}
+
+
+			//!!!!add to support compile
+
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+			{
+				var fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
+				projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
+			}
+
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+			{
+				var fullPath = Path.Combine( VirtualFileSystem.Directories.Binaries, projectName + ".dll" );
+				projectAssembly = AssemblyUtility.LoadAssemblyByRealFileName( fullPath, true, loadWithoutLocking: true );
+			}
+
+
+			//other platforms compile sources from Project.dll inside Player app.
+			//UWP, Android, iOS, Web
 		}
 
 		static void RestoreVideoModeAndMinimize()
