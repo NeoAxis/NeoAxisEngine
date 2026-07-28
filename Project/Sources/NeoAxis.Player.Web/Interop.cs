@@ -144,5 +144,8 @@ namespace NeoAxis.Player.Web
 
 		[JSImport( "setFullscreenAsync", "main.js" )]
 		public static partial Task SetFullscreenAsync( bool enable );
+
+		[JSImport( "hideLogo", "main.js" )]
+		internal static partial void HideLogo();
 	}
 }

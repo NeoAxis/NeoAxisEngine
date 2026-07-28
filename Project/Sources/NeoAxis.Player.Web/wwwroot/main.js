@@ -1,6 +1,33 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 import { dotnet } from './_framework/dotnet.js'
 
+const splash = (() =>
+{
+	const el = document.createElement("div");
+	el.style.cssText =
+		"position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;" +
+		"background:#1b1b1b;pointer-events:none;opacity:1;transition:opacity .5s ease-out;";
+
+	const img = document.createElement("img");
+	img.src = new URL("./Assets/NeoAxisLogo_DarkBackground.png", import.meta.url).href;
+	img.draggable = false;
+	img.style.cssText = "max-width:30vw;max-height:30vh;object-fit:contain;user-select:none;";
+	el.appendChild(img);
+	document.body.appendChild(el);
+
+	let hidden = false;
+	return {
+		hide()
+		{
+			if (hidden) return;
+			hidden = true;
+			el.style.opacity = "0";
+			el.addEventListener("transitionend", () => el.remove(), { once: true });
+			setTimeout(() => el.remove(), 1500);
+		}
+	};
+})();
+
 // dotnet.withEnvironmentVariable("MONO_LOG_LEVEL", "debug");
 // dotnet.withEnvironmentVariable("MONO_LOG_MASK", "all");
 //.withDiagnosticTracing(false)
@@ -31,48 +58,129 @@ setModuleImports("main.js", {
 			Meta: 8
 		};
 
-		const checkCanvasResize = (dispatch) =>
+
+
+		let currentWidth = 0;
+		let currentHeight = 0;
+		let currentFullscreen = null;
+		let cachedRect = null;
+
+		const invalidateCanvasRect = () =>
 		{
-
-			// const dpr = window.devicePixelRatio || 1.0;
-			// const rect = canvas.getBoundingClientRect();
-
-			// const displayWidth = Math.round(rect.width * dpr);
-			// const displayHeight = Math.round(rect.height * dpr);
-
-			// if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
-			//     canvas.width = displayWidth;
-			//     canvas.height = displayHeight;
-			//     dispatch = true;
-			// }
-
-			// if (dispatch) {
-			//     interop.OnCanvasResize(canvas.width, canvas.height, dpr);
-			// }
-
-
-			var devicePixelRatio = window.devicePixelRatio || 1.0;
-			var displayWidth = canvas.clientWidth * devicePixelRatio;
-			var displayHeight = canvas.clientHeight * devicePixelRatio;
-
-			if (canvas.width != displayWidth || canvas.height != displayHeight)
-			{
-				canvas.width = displayWidth;
-				canvas.height = displayHeight;
-				dispatch = true;
-			}
-
-			//to update windowed mode in the engine
-			var fullscreenEnabled = document.fullscreenElement != null;
-
-			if (dispatch)
-				interop.OnCanvasResize(displayWidth, displayHeight/*, devicePixelRatio*/, fullscreenEnabled);
+			cachedRect = null;
 		}
 
-		function checkCanvasResizeFrame()
+		const getCanvasRect = () =>
 		{
-			checkCanvasResize(false);
+			if (cachedRect === null)
+				cachedRect = canvas.getBoundingClientRect();
+			return cachedRect;
+		}
+
+		const measureDevicePixelSize = () =>
+		{
+			const devicePixelRatio = window.devicePixelRatio || 1.0;
+			const rect = getCanvasRect();
+
+			const width = Math.round(rect.right * devicePixelRatio) - Math.round(rect.left * devicePixelRatio);
+			const height = Math.round(rect.bottom * devicePixelRatio) - Math.round(rect.top * devicePixelRatio);
+
+			return { width: Math.max(1, width), height: Math.max(1, height) };
+		}
+
+		const applyCanvasSize = (width, height) =>
+		{
+			width = Math.max(1, Math.round(width));
+			height = Math.max(1, Math.round(height));
+
+			const fullscreenEnabled = document.fullscreenElement != null;
+
+			if (width === currentWidth && height === currentHeight && fullscreenEnabled === currentFullscreen)
+				return;
+
+			currentWidth = width;
+			currentHeight = height;
+			currentFullscreen = fullscreenEnabled;
+
+			if (canvas.width !== width)
+				canvas.width = width;
+			if (canvas.height !== height)
+				canvas.height = height;
+
+			invalidateCanvasRect();
+
+			interop.OnCanvasResize(width, height, fullscreenEnabled);
+		}
+
+		const checkCanvasResize = () =>
+		{
+			invalidateCanvasRect();
+			const size = measureDevicePixelSize();
+			applyCanvasSize(size.width, size.height);
+		}
+
+		if (typeof ResizeObserver !== "undefined")
+		{
+			const observer = new ResizeObserver((entries) =>
+			{
+				const box = entries[entries.length - 1].devicePixelContentBoxSize;
+				if (box && box.length > 0)
+					applyCanvasSize(box[0].inlineSize, box[0].blockSize);
+				else
+					checkCanvasResize();
+			});
+
+			try
+			{
+				observer.observe(canvas, { box: "device-pixel-content-box" });
+			}
+			catch
+			{
+				observer.observe(canvas, { box: "content-box" });
+			}
+		}
+		else
+		{
+			const checkCanvasResizeFrame = () =>
+			{
+				checkCanvasResize();
+				requestAnimationFrame(checkCanvasResizeFrame);
+			}
 			requestAnimationFrame(checkCanvasResizeFrame);
+		}
+
+		let devicePixelRatioMedia = null;
+
+		function onDevicePixelRatioChanged()
+		{
+			watchDevicePixelRatio();
+			checkCanvasResize();
+		}
+
+		function watchDevicePixelRatio()
+		{
+			if (devicePixelRatioMedia !== null)
+				devicePixelRatioMedia.removeEventListener("change", onDevicePixelRatioChanged);
+			devicePixelRatioMedia = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+			devicePixelRatioMedia.addEventListener("change", onDevicePixelRatioChanged, { once: true });
+		}
+
+		watchDevicePixelRatio();
+
+		window.addEventListener("resize", checkCanvasResize);
+		window.addEventListener("scroll", invalidateCanvasRect, true);
+		document.addEventListener("fullscreenchange", checkCanvasResize);
+
+		const getCanvasPosition = (clientX, clientY) =>
+		{
+			const rect = getCanvasRect();
+			const scaleX = rect.width > 0 ? canvas.width / rect.width : 1.0;
+			const scaleY = rect.height > 0 ? canvas.height / rect.height : 1.0;
+
+			return {
+				x: (clientX - rect.left) * scaleX,
+				y: (clientY - rect.top) * scaleY
+			};
 		}
 
 		function getEventModifiers(/** @type {KeyboardEvent|MouseEvent|TouchEvent} */e)
@@ -123,10 +231,9 @@ setModuleImports("main.js", {
 
 		const mouseMove = (e) =>
 		{
-			var devicePixelRatio = window.devicePixelRatio || 1.0;
-			var x = e.offsetX * devicePixelRatio;
-			var y = e.offsetY * devicePixelRatio;
-			interop.OnMouseMove(x, y);
+			//CHANGED: was offsetX/offsetY * devicePixelRatio
+			const position = getCanvasPosition(e.clientX, e.clientY);
+			interop.OnMouseMove(position.x, position.y);
 		}
 
 		const mouseDown = (e) =>
@@ -168,7 +275,7 @@ setModuleImports("main.js", {
 
 		const shouldIgnore = (e) =>
 		{
-			e.preventDefault();
+			//CHANGED: preventDefault removed, it does nothing in a passive listener. gestures are disabled by touch-action: none in the css
 			return e.touches.length > 1 || e.type == "touchend" && e.touches.length > 0;
 		}
 
@@ -177,20 +284,12 @@ setModuleImports("main.js", {
 			if (shouldIgnore(e))
 				return;
 
-			var bcr = e.target.getBoundingClientRect();
-			var devicePixelRatio = window.devicePixelRatio || 1.0;
-			var touches = e.changedTouches;
-
-			//!!!!gpt:
-			//Это неверно, потому что touches.length — число, а for...in тут не подходит.Нужно:
-			//for (let i = 0; i < touches.length; i++)
-
-			for (var i in touches.length)
+			const touches = e.changedTouches;
+			for (let i = 0; i < touches.length; i++)
 			{
-				var touch = e.changedTouches[i];
-				var x = (touch.clientX - bcr.x) * devicePixelRatio;
-				var y = (touch.clientY - bcr.y) * devicePixelRatio;
-				interop.OnTouchStart(touch.identifier, x, y, getEventModifiers(e));
+				const touch = touches[i];
+				const position = getCanvasPosition(touch.clientX, touch.clientY);
+				interop.OnTouchStart(touch.identifier, position.x, position.y, getEventModifiers(e));
 			}
 		}
 
@@ -240,13 +339,13 @@ setModuleImports("main.js", {
 		canvas.addEventListener("touchstart", touchStart, { capture: false, passive: true });
 		canvas.addEventListener("touchmove", touchMove, { capture: false, passive: true });
 		canvas.addEventListener("touchend", touchEnd, { capture: false, passive: true });
-		checkCanvasResize(true);
-		checkCanvasResizeFrame();
+		checkCanvasResize();
 
 		canvas.tabIndex = 1000;
 
 		interop.SetRootUri(window.location.toString());
 	},
+	hideLogo: () => splash.hide(),
 	setClipboardText: (text) =>
 	{
 		if (globalThis.document.hasFocus())

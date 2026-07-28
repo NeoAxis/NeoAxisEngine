@@ -13,26 +13,22 @@ using NeoAxis.Networking;
 namespace Project
 {
 	/// <summary>
-	/// The class for general management of the server.
+	/// This class manages the server of the local client-server connection (not cloud service).
 	/// </summary>
 	public static class SimulationAppServer
 	{
 		public static double UpdateFrequency { get; set; } = 1.0 / 60.0;
 
 		static int serverPort;
-		//!!!!static long projectID;
 		static string directModePassword = "";
 
 		static SimulationAppServerNode serverNode;
 		static string LastError { get; set; } = "";
 
-		//!!!!
-		//static DateTime touchUserVerificationCodesLastTime;
-
 		//new client initial settings
 		public static double ConnectionDefaultMaxLifetime = 31536000;
 		public static double ConnectionKeepAliveTime = 60;
-		public static bool ConnectionAllowReconnect = false;//!!!!true;
+		public static bool ConnectionAllowReconnect = true;
 		public static string HelloFromServerMessage = "Hello from the server!";
 
 		static DateTime updateLastTime;
@@ -41,14 +37,7 @@ namespace Project
 
 		public class ClientData
 		{
-			public ConnectionModeEnum ConnectionMode;
-			public string VerificationCode;
-			//public bool Verified;
 			public ServerNode.Client Client;
-
-			//!!!!
-			////the ability to update user settings
-			//public DateTime TouchUserVerificationCodeLastTime;
 
 			//Direct mode
 			public string Username;
@@ -134,12 +123,6 @@ namespace Project
 			get { return serverPort; }
 		}
 
-		//!!!!
-		//public static long ProjectID
-		//{
-		//	get { return projectID; }
-		//}
-
 		public static string DirectModePassword
 		{
 			get { return directModePassword; }
@@ -157,27 +140,10 @@ namespace Project
 
 		public static void Init()
 		{
-			if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) && projectServer == "1" )
+			if( SystemSettings.CommandLineParameters.TryGetValue( "-server", out var projectServer ) && projectServer == "1" && !SystemSettings.CommandLineParameters.ContainsKey( "-projectID" ) )
 			{
-				//!!!!new commented
-				//EngineInfo.SetEngineMode( EngineInfo.EngineModeEnum.CloudServer, null );
-
 				EngineApp.AppDestroy += EngineApp_AppDestroy;
 				SimulationApp.MainViewportRenderUI += SimulationApp_MainViewportRenderUI;
-
-
-				//!!!!
-
-				////get network mode
-				//if( SystemSettings.CommandLineParameters.TryGetValue( "-networkMode", out var networkModeString ) )
-				//{
-				//	if( !Enum.TryParse( networkModeString, out connectionMode ) )
-				//	{
-				//		Log.Fatal( "SimulationAppServer: Init: '-networkMode' unknown mode." );
-				//		return;
-				//	}
-				//}
-
 
 				//get server port
 				if( !SystemSettings.CommandLineParameters.TryGetValue( "-serverPort", out var serverPortString ) )
@@ -191,23 +157,6 @@ namespace Project
 					return;
 
 				}
-
-				//!!!!
-
-				//if( connectionMode == ConnectionModeEnum.Cloud )
-				//{
-				//	//get project ID
-				//	if( !SystemSettings.CommandLineParameters.TryGetValue( "-projectID", out var projectIDString ) )
-				//	{
-				//		Log.Fatal( "SimulationAppServer: Init: '-projectID' is not specified." );
-				//		return;
-				//	}
-				//	if( !long.TryParse( projectIDString, out projectID ) )
-				//	{
-				//		Log.Fatal( "SimulationAppServer: Init: '-projectID' invalid value." );
-				//		return;
-				//	}
-				//}
 
 				//if( connectionMode == ConnectionModeEnum.Direct )
 				{
@@ -232,8 +181,6 @@ namespace Project
 
 		static bool CreateServer( out string error )
 		{
-
-			//!!!!
 			var fullPathToDatabase = "";
 			var databaseReadOnly = true;
 			var projectDirectory = "";
@@ -252,7 +199,6 @@ namespace Project
 			serverNode.ClientStatusChanged += Server_ClientStatusChanged;
 			serverNode.Messages.ReceiveMessageString += Messages_ReceiveMessageString;
 
-			//!!!!need?
 			//configure Chat service
 			//if( ChatDefaultRoom )
 			serverNode.Chat.CreateRoom( "Default" );
@@ -312,55 +258,21 @@ namespace Project
 				clientData.Client = client;
 				client.Tag = clientData;
 
-				clientData.ConnectionMode = block.AttributeExists( "VerificationCode" ) ? ConnectionModeEnum.Cloud : ConnectionModeEnum.Direct;
-				if( clientData.ConnectionMode == ConnectionModeEnum.Cloud )
+				clientData.Username = block.GetAttribute( "Username" );
+				if( directModePassword != block.GetAttribute( "Password" ) )
 				{
-					clientData.VerificationCode = block.GetAttribute( "VerificationCode" );
-
-					//start checking Cloud verification code
-					Task.Run( async delegate ()
-					{
-						var projectID = CloudServerProcessUtility.CommandLineParameters.ProjectID;
-						var serverCheckCode = CloudServerProcessUtility.CommandLineParameters.ServerCheckCode;
-
-						using var cts = new CancellationTokenSource( new TimeSpan( 0, 0, 30 ) );
-						var result = await CloudServiceFunctions.AccessGetUserByVerificationCodeAsync( projectID, client.UserRole, clientData.VerificationCode, false, serverCheckCode, cts.Token );
-
-						if( string.IsNullOrEmpty( result.Error ) )
-						{
-							approveResult.Reject( result.Error );
-						}
-						else
-						{
-							//set userID, username
-							client.LoginDataUserID = result.UserID;
-							client.LoginDataUsername = result.Username;
-
-							approveResult.Approve();
-
-							//!!!!
-							//clientData.TouchUserVerificationCodeLastTime = DateTime.UtcNow;
-						}
-					} );
+					approveResult.Reject( "Invalid password." );
+					return;
 				}
-				else
-				{
-					clientData.Username = block.GetAttribute( "Username" );
-					if( directModePassword != block.GetAttribute( "Password" ) )
-					{
-						approveResult.Reject( "Invalid password." );
-						return;
-					}
 
-					client.LoginDataUserID = serverNode.Users.GetDirectConnectionFreeUserID();
+				client.LoginDataUserID = serverNode.Users.GetDirectConnectionFreeUserID();
 
-					var username = clientData.Username;
-					if( string.IsNullOrEmpty( username ) )
-						username = "User" + client.LoginDataUserID.ToString();
-					client.LoginDataUsername = username;
+				var username = clientData.Username;
+				if( string.IsNullOrEmpty( username ) )
+					username = "User" + client.LoginDataUserID.ToString();
+				client.LoginDataUsername = username;
 
-					approveResult.Approve();
-				}
+				approveResult.Approve();
 			}
 			catch( Exception e )
 			{
@@ -385,7 +297,6 @@ namespace Project
 			//add to users service, with sending events to clients
 			var user = serverNode.Users.AddUser( client );
 
-			//!!!!?
 			//add user to Default chat room
 			var defaultRoom = serverNode.Chat.GetRoom( "Default" );
 			if( defaultRoom != null )
@@ -415,12 +326,7 @@ namespace Project
 			if( utcNow - updateLastTime > TimeSpan.FromSeconds( UpdateFrequency ) )
 			{
 				updateLastTime = utcNow;
-
 				serverNode?.Update( utcNow );
-
-				//!!!!
-				//if( serverNode != null && connectionMode == ConnectionModeEnum.Cloud )
-				//	TouchUserVerificationCodes();
 			}
 		}
 
@@ -492,119 +398,12 @@ namespace Project
 			}
 		}
 
-		//!!!!
-		//static void GeneralManagerExecuteRequestAvatarSettingsProcessed( GeneralManagerExecuteCommand command )
-		//{
-		//	var client = (ServerNode.Client)command.Tag;
-
-		//	if( !string.IsNullOrEmpty( command.Result.Error ) )
-		//	{
-		//		serverNode.DisconnectClient( client, command.Result.Error );
-		//		return;
-		//	}
-
-		//	var block = command.Result.Data;
-		//	var avatar = block.GetAttribute( "Avatar" );
-
-		//	if( serverNode != null )
-		//		serverNode.Messages.SendToClient( client, "AvatarSettings", avatar );
-		//}
-
 		private static void Messages_ReceiveMessageString( ServerNetworkService_Messages sender, ServerNode.Client client, string message, string data )
 		{
 			var clientData = GetClientData( client );
-			//if( !clientData.Verified )
-			//	return;
 
 			if( SimulationApp.NetworkLogging )
 				Log.Info( string.Format( "Message from {0}: {1}", client.LoginDataUserID, message ) );
-
-			if( serverNode != null )
-			{
-				if( clientData.ConnectionMode == ConnectionModeEnum.Cloud )
-				{
-					//cloud mode
-
-
-					//!!!!
-
-					//if( message == "RequestAvatarSettings" )
-					//{
-					//	var user = serverNode.Users.GetUser( source );
-					//	if( user != null )
-					//	{
-					//		serverNode?.Messages.SendToClient( source, "AvatarSettings", user.DirectServerAvatar );
-					//	}
-					//}
-					//else if( message == "SetAvatarSettings" )
-					//{
-					//	var user = serverNode.Users.GetUser( source );
-					//	if( user != null )
-					//		user.DirectServerAvatar = data;
-					//}
-
-
-					////if( message == "RequestAvatarSettings" )
-					////{
-					////	var user = server.Users.GetUser( source );
-					////	if( user != null )
-					////	{
-					////		var command = new GeneralManagerExecuteCommand();
-					////		command.FunctionName = "api/get_user_settings";
-					////		command.Parameters.Add( ("user", user.UserID.ToString()) );
-					////		command.Parameters.Add( ("property", "Avatar") );
-					////		command.Parameters.Add( ("defaultValue", "") );
-					////		command.Tag = source;
-					////		command.Processed += GeneralManagerExecuteRequestAvatarSettingsProcessed;
-					////		command.BeginExecution( true );
-					////	}
-					////}
-					////else if( message == "SetAvatarSettings" )
-					////{
-					////	var block = TextBlock.Parse( data, out var error );
-					////	//if( !string.IsNullOrEmpty( error ) )
-					////	//	Log.Warning( "Unable to parse avatar settings. " + error );
-
-					////	if( block != null )
-					////	{
-					////		var clientData = (ClientData)source.Tag;
-					////		if( clientData != null )
-					////		{
-					////			var command = new GeneralManagerExecuteCommand();
-					////			command.FunctionName = "api/set_user_settings";
-					////			command.Parameters.Add( ("project", projectID.ToString()) );
-					////			command.Parameters.Add( ("purpose", "Enter") );
-					////			command.Parameters.Add( ("code", clientData.VerificationCode) );
-					////			command.Parameters.Add( ("property", "Avatar") );
-					////			command.ContentData = Encoding.UTF8.GetBytes( block.DumpToString() );
-					////			//!!!!check Processed?
-					////			command.BeginExecution( true );
-					////		}
-					////	}
-					////}
-				}
-				else
-				{
-					//usual multiplayer mode
-
-					//!!!!
-
-					//if( message == "RequestAvatarSettings" )
-					//{
-					//	var user = serverNode.Users.GetUser( source );
-					//	if( user != null )
-					//	{
-					//		serverNode?.Messages.SendToClient( source, "AvatarSettings", user.DirectServerAvatar );
-					//	}
-					//}
-					//else if( message == "SetAvatarSettings" )
-					//{
-					//	var user = serverNode.Users.GetUser( source );
-					//	if( user != null )
-					//		user.DirectServerAvatar = data;
-					//}
-				}
-			}
 		}
 
 		public static ClientData GetClientData( ServerNode.Client client )
@@ -625,42 +424,6 @@ namespace Project
 			if( serverNode != null && serverNode.Components.Scene != null )
 				serverNode.Components.ResetScene();
 		}
-
-		//!!!!
-		//static void TouchUserVerificationCodes()
-		//{
-		//	var now = DateTime.UtcNow;
-		//	if( ( now - touchUserVerificationCodesLastTime ).TotalSeconds > 10 )
-		//	{
-		//		foreach( var client in serverNode.GetClientsArray() )
-		//		{
-
-		//			//!!!!check
-
-
-		//			var clientData = client.Tag as ClientData;
-		//			if( clientData != null && clientData.Verified && ( now - clientData.TouchUserVerificationCodeLastTime ).TotalMinutes > 5 )
-		//			{
-		//				var command = new GeneralManagerExecuteCommand();
-		//				command.FunctionName = "api/get_user_by_verification_code";
-		//				command.AddParameter( "project", projectID.ToString(), true );
-
-		//				//!!!!
-		//				Log.Fatal( "userRole" );
-
-		//				command.AddParameter( "purpose", "Enter", true );
-		//				command.AddParameter( "code", clientData.VerificationCode, true );
-		//				command.Tag = client;
-		//				//command.Processed += GeneralManagerExecuteCommandProcessed;
-		//				command.BeginExecution( false );
-
-		//				clientData.TouchUserVerificationCodeLastTime = now;
-		//			}
-		//		}
-
-		//		touchUserVerificationCodesLastTime = now;
-		//	}
-		//}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

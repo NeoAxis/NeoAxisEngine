@@ -1,6 +1,7 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Internal;
 
@@ -29,6 +30,8 @@ namespace NeoAxis
 		static float dpiScaleCached;
 
 		static bool? cloudAppContainer;
+
+		static bool? gpuExistsLinux;
 
 		//static bool? wine;
 
@@ -596,6 +599,49 @@ namespace NeoAxis
 				return 1;
 			}
 		}
+
+		static bool IsGpuExistsLinux2()
+		{
+			try
+			{
+				try
+				{
+					var startInfo = new ProcessStartInfo
+					{
+						FileName = "vulkaninfo",
+						Arguments = "--summary",
+						RedirectStandardOutput = true,
+						RedirectStandardError = true,
+						UseShellExecute = false,
+						CreateNoWindow = true
+					};
+
+					using var process = Process.Start( startInfo );
+					process?.WaitForExit();
+
+					return process?.ExitCode == 0;
+				}
+				catch
+				{
+					return false;
+				}
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		public static bool IsGpuExistsLinux()
+		{
+			if( CurrentPlatform != Platform.Linux )
+				return false;
+
+			if( gpuExistsLinux == null )
+				gpuExistsLinux = IsGpuExistsLinux2();
+			return gpuExistsLinux.Value;
+		}
+
 
 		////Windows specific
 		//[DllImport( "kernel32.dll", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true )]

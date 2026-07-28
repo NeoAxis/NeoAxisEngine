@@ -10,7 +10,7 @@ using NeoAxis;
 namespace Project
 {
 	/// <summary>
-	/// Implements a functionality of making a server from the Player app.
+	/// Implements a functionality of making a local server in the Player app.
 	/// </summary>
 	public static class RunServer
 	{

@@ -342,6 +342,8 @@ namespace Project
 				{
 					if( ControlListSettings == null )
 						return;
+					if( ControlListSettings.ParentContainer == null )
+						return;
 
 					var focusedControlName = ControlListSettings.ParentContainer.FocusedControl?.GetPathFromRoot() ?? "";
 

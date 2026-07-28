@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
   <PropertyGroup>
     <TargetFramework>net10.0-browser</TargetFramework>
     <LangVersion>latest</LangVersion>
@@ -90,6 +90,8 @@
     <Compile Include="Project\Assets\Base\UI\Screens\AvatarWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MatchesWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MatchWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ProjectSettingsPage_Extension.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ShaderFunctions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NeoAxis.Core">

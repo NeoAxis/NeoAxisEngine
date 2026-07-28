@@ -8,7 +8,7 @@ using NeoAxis.Networking;
 namespace Project
 {
 	/// <summary>
-	/// The class for general management of the client.
+	/// This class manages the client of the local client-server connection (not cloud service).
 	/// </summary>
 	public static class SimulationAppClient
 	{
@@ -211,7 +211,6 @@ namespace Project
 				Log.InvisibleInfo( "SimulationAppClient: GetInitSettings: Network mode: " + connectionMode.ToString() );
 				Log.InvisibleInfo( "SimulationAppClient: GetInitSettings: Server address: " + serverAddress );
 				Log.InvisibleInfo( "SimulationAppClient: GetInitSettings: Server port: " + serverPort.ToString() );
-				//Log.InvisibleInfo( "SimulationAppClient: GetInitSettings: AppContainer: " + SystemSettings.AppContainer.ToString() );
 
 				if( connectionMode == ConnectionModeEnum.Cloud )
 				{
@@ -311,7 +310,6 @@ namespace Project
 			if( utcNow - updateLastTime > TimeSpan.FromSeconds( UpdateFrequency ) )
 			{
 				updateLastTime = utcNow;
-
 				connectionNode?.Update( utcNow );
 			}
 		}
@@ -329,11 +327,6 @@ namespace Project
 				{
 					lines.Add( "SimulationAppClient is created." );
 					lines.Add( "Connection status: " + connectionNode.Status.ToString() );
-
-					//var fileSyncStatus = client.FileSync.Status;
-					//lines.Add( "File sync status: " + fileSyncStatus.Status.ToString() );
-					//if( fileSyncStatus.Status == ClientNetworkService_FileSync.StatusEnum.Error )
-					//	lines.Add( "File sync error: " + fileSyncStatus.Error );
 				}
 
 				if( !string.IsNullOrEmpty( LastError ) )

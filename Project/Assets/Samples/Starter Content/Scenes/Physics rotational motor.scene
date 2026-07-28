@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2026.1.
+// Made with NeoAxis Engine 2026.2.
 
 .component NeoAxis.Scene
 {
@@ -242,8 +242,11 @@
 	.component NeoAxis.Constraint_SixDOF
 	{
 		Name = Constraint
-		Transform = "3.20197196338417 1.27635926158248 1.24529500517329; 0 0 0 1; 1 1 1"
-		AngularZAxis = Free
+		Transform = "3.20197196338417 1.27635926158248 1.24529500517329; 0 -0.707106781186548 0 0.707106781186548; 1 1 1"
+		AngularXAxis = Free
+		AngularXAxisMotor = Velocity
+		AngularXAxisMotorLimit = -10 10
+		AngularXAxisMotorTarget = -20
 		AngularZAxisMotor = Velocity
 		AngularZAxisMotorLimit = -10 10
 		AngularZAxisMotorTarget = -20

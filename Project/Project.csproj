@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
@@ -26,7 +26,6 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet />
-<!--    <DefineConstants>TRACE</DefineConstants> -->
     <DocumentationFile>Binaries\Project.xml</DocumentationFile>
     <NoWarn>1701;1702;CS1591;CS8632</NoWarn>
   </PropertyGroup>
@@ -81,5 +80,7 @@
     <Compile Include="Assets\Base\UI\Screens\AvatarWindow.cs" />
     <Compile Include="Assets\Base\UI\Screens\MatchesWindow.cs" />
     <Compile Include="Assets\Base\UI\Screens\MatchWindow.cs" />
+    <Compile Include="Assets\Base\Scripts\ProjectSettingsPage_Extension.cs" />
+    <Compile Include="Assets\Base\Scripts\ShaderFunctions.cs" />
   </ItemGroup>
 </Project>

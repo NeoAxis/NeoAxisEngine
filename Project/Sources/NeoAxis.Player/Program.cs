@@ -63,6 +63,13 @@ namespace NeoAxis.Player
 
 			EngineApp.InitSettings.AllowChangeScreenVideoMode = true;
 
+			//disable graphics and sound on Linux server mode without GPU
+			if( isServer && SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux && !SystemSettings.IsGpuExistsLinux() )
+			{
+				EngineApp.InitSettings.RendererBackend = Internal.SharpBgfx.RendererBackend.Noop;
+				EngineApp.InitSettings.SoundSystem = "null";
+			}
+
 			//these parameters are enabled by default
 			//EngineApp.EnginePauseWhenApplicationIsNotActive = false;
 			//EngineApp.InitSettings.UseDirectInputForMouseRelativeMode = false;

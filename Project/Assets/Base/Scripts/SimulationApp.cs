@@ -792,6 +792,7 @@ namespace Project
 						lines.Add( "Lights: " + statistics.Lights.ToString( "N0" ) );
 						lines.Add( "Reflection probes: " + statistics.ReflectionProbes.ToString( "N0" ) );
 						lines.Add( "Occlusion culling buffers: " + statistics.OcclusionCullingBuffers.ToString( "N0" ) );
+						lines.Add( "Viewport size: " + MainViewport.SizeInPixels.ToString() );
 					}
 				}
 
