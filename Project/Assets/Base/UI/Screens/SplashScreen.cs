@@ -28,8 +28,10 @@ namespace Project
 		{
 			get
 			{
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+					return 0;
+
 				return drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground || drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.BlackBackground ? 2.0 : 0.0;
-				//return drawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled ? 2.0 : 0.0; 
 			}
 		}
 
@@ -107,12 +109,20 @@ namespace Project
 			}
 		}
 
+		double GetPoweredByTimeWithIdleAndFading()
+		{
+			if( PoweredByTime != 0 )
+				return 1.0 + FadingTime + PoweredByTime + FadingTime;
+			else
+				return 0;
+		}
+
 		double GetTotalTime()
 		{
 			if( ProjectTime == 0 )
-				return 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0;
+				return GetPoweredByTimeWithIdleAndFading() + 1.0;
 			else
-				return 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime + FadingTime;
+				return GetPoweredByTimeWithIdleAndFading() + 1.0 + FadingTime + ProjectTime + FadingTime;
 		}
 
 		void GetImagesTransparency( out double engine, out double project )
@@ -120,15 +130,18 @@ namespace Project
 			var curve = new CurveLine();
 			curve.AddPoint( 0, new Vector3( 0, 0, 0 ) );
 			curve.AddPoint( 1.0, new Vector3( 0, 0, 0 ) );
-			curve.AddPoint( 1.0 + FadingTime, new Vector3( 1, 0, 0 ) );
-			curve.AddPoint( 1.0 + FadingTime + PoweredByTime, new Vector3( 1, 0, 0 ) );
-			curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime, new Vector3( 0, 0, 0 ) );
-			curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0, new Vector3( 0, 0, 0 ) );
+			if( PoweredByTime != 0 )
+			{
+				curve.AddPoint( 1.0 + FadingTime, new Vector3( 1, 0, 0 ) );
+				curve.AddPoint( 1.0 + FadingTime + PoweredByTime, new Vector3( 1, 0, 0 ) );
+				curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime, new Vector3( 0, 0, 0 ) );
+				curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0, new Vector3( 0, 0, 0 ) );
+			}
 			if( ProjectTime != 0 )
 			{
-				curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime, new Vector3( 0, 1, 0 ) );
-				curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime, new Vector3( 0, 1, 0 ) );
-				curve.AddPoint( 1.0 + FadingTime + PoweredByTime + FadingTime + 1.0 + FadingTime + ProjectTime + FadingTime, new Vector3( 0, 0, 0 ) );
+				curve.AddPoint( GetPoweredByTimeWithIdleAndFading() + 1.0 + FadingTime, new Vector3( 0, 1, 0 ) );
+				curve.AddPoint( GetPoweredByTimeWithIdleAndFading() + 1.0 + FadingTime + ProjectTime, new Vector3( 0, 1, 0 ) );
+				curve.AddPoint( GetPoweredByTimeWithIdleAndFading() + 1.0 + FadingTime + ProjectTime + FadingTime, new Vector3( 0, 0, 0 ) );
 			}
 
 			var value = curve.CalculateValueByTime( resetTimeCounter != 0 ? 0 : Time );
@@ -149,14 +162,14 @@ namespace Project
 			var image = Components[ "NeoAxisLogo_DarkBackground" ] as UIImage;
 			if( image != null )
 			{
-				image.Visible = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.BlackBackground;
+				image.Visible = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.BlackBackground && PoweredByTime != 0;
 				image.ColorMultiplier = new ColorValue( 1, 1, 1, engine );
 			}
 
 			image = Components[ "NeoAxisLogo_LightBackground" ] as UIImage;
 			if( image != null )
 			{
-				image.Visible = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground;
+				image.Visible = drawSplashScreen == ProjectSettingsPage_General.EngineSplashScreenStyleEnum.WhiteBackground && PoweredByTime != 0;
 				image.ColorMultiplier = new ColorValue( 1, 1, 1, engine );
 			}
 
