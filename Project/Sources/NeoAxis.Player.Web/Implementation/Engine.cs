@@ -55,6 +55,7 @@ namespace NeoAxis.Player.Web
 			public EMouseButtons Button;
 			public ActionEnum Action;
 			public Vector2F Vector;
+			public bool Relative;
 		}
 
 		/////////////////////////////////////////
@@ -107,10 +108,6 @@ namespace NeoAxis.Player.Web
 			EngineApp.InitSettings.AllowChangeScreenVideoMode = true;
 			EngineApp.InitSettings.CreateWindowedMode = WindowedModeEnum.Windowed;
 			SimulationApp.WindowedMode = EngineApp.InitSettings.CreateWindowedMode.Value;
-
-			//these parameters are enabled by default
-			//EngineApp.EnginePauseWhenApplicationIsNotActive = false;
-			//EngineApp.InitSettings.AllowJoysticksAndSpecialInputDevices = false;
 
 			//specify Project assembly for scripts
 			AssemblyUtility.RegisterAssembly( typeof( Engine ).Assembly, "" );
@@ -353,15 +350,23 @@ namespace NeoAxis.Player.Web
 			case ActionEnum.Down:
 				viewport.PerformMouseDown( item.Button, ref handled );
 				break;
+
 			case ActionEnum.Up:
 				viewport.PerformMouseUp( item.Button, ref handled );
 				break;
+
 			case ActionEnum.DoubleClick:
 				viewport.PerformMouseDoubleClick( item.Button, ref handled );
 				break;
+
 			case ActionEnum.Move:
-				viewport.PerformMouseMove( item.Vector.ToVector2() / viewport.SizeInPixels.ToVector2() );
+				if( item.Relative )
+					PlatformFunctionalityWeb.mouseRelativeModeDelta += item.Vector;
+				else
+					PlatformFunctionalityWeb.cursorPosition = item.Vector;
+				EngineApp.CreatedInsideEngineWindow?.ProcessMouseMoveEvent();
 				break;
+
 			case ActionEnum.Wheel:
 				viewport.PerformMouseWheel( (int)item.Vector.Y, ref handled );
 				break;

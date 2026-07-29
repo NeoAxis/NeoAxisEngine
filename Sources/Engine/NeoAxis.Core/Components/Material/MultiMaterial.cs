@@ -94,6 +94,9 @@ namespace NeoAxis
 
 		public override CompiledMaterialData Compile( CompiledMaterialData.SpecialMode specialMode, CompileExtensionData extensionData, int multiMaterialStartIndexOfCombinedGroup, CompiledMaterialData[] multiMaterialSeparateMaterialsOfCombinedGroup, Material[] multiMaterialSourceMaterialsToGetProperties, int multiSubMaterialSeparatePassIndex )
 		{
+			if( !EngineApp.InitSettings.RenderingScene || RenderingSystem.BackendNull )
+				return new CompiledMaterialData();
+
 			//get material list
 			var materials = new Material[ Math.Max( Materials.Count, 1 ) ];
 			if( Materials.Count != 0 )

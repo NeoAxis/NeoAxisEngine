@@ -47,6 +47,8 @@ const interop = exports.NeoAxis.Player.Web.Interop;
 const canvas = globalThis.document.getElementById("canvas");
 dotnet.instance.Module["canvas"] = canvas;
 
+let mouseRelativeModeHandler = (enable) => { };
+
 setModuleImports("main.js", {
 	initialize: () =>
 	{
@@ -229,15 +231,110 @@ setModuleImports("main.js", {
 			return false;
 		}
 
+		let relativeModeRequested = false;
+
+		const POINTER_LOCK_COOLDOWN = 1500;
+		let pointerLockExitTime = 0;
+		let exitRequestedByPage = false;
+
+		let unadjustedMovementSupported = true;
+
+		const isPointerLocked = () => document.pointerLockElement === canvas;
+
+		const requestPointerLock = () =>
+		{
+			if (isPointerLocked())
+				return;
+
+			if (Date.now() - pointerLockExitTime < POINTER_LOCK_COOLDOWN)
+				return;
+
+			let promise;
+			try
+			{
+				promise = unadjustedMovementSupported
+					? canvas.requestPointerLock({ unadjustedMovement: true })
+					: canvas.requestPointerLock();
+			}
+			catch (err)
+			{
+				console.warn(`Pointer lock is not available: ${err.message}`);
+				return;
+			}
+
+			if (!promise || typeof promise.catch !== "function")
+				return;
+
+			promise.catch((err) =>
+			{
+				if (err.name === "NotSupportedError" && unadjustedMovementSupported)
+				{
+					unadjustedMovementSupported = false;
+
+					const retry = canvas.requestPointerLock();
+					if (retry && typeof retry.catch === "function")
+						retry.catch((retryError) => console.warn(`Pointer lock request failed: ${retryError.message}`));
+					return;
+				}
+
+				console.warn(`Pointer lock request failed: ${err.message}`);
+			});
+		}
+
+		const setMouseRelativeMode = (enable) =>
+		{
+			relativeModeRequested = enable;
+
+			if (enable)
+				requestPointerLock();
+			else if (isPointerLocked())
+			{
+				exitRequestedByPage = true;
+				document.exitPointerLock();
+			}
+		}
+
+		mouseRelativeModeHandler = setMouseRelativeMode;
+
+		//esc always leaves pointer lock and the page can not prevent it, so the engine has to be
+		//told. relativeModeRequested is deliberately not cleared here: the engine still wants the
+		//mode, so the next click inside the canvas grabs the mouse back.
+		document.addEventListener("pointerlockchange", () =>
+		{
+			const locked = isPointerLocked();
+
+			if (!locked)
+			{
+				if (!exitRequestedByPage)
+					pointerLockExitTime = Date.now();
+				exitRequestedByPage = false;
+			}
+
+			interop.OnMouseRelativeModeChanged(locked);
+		});
+
+		if (window.self !== window.top)
+			console.warn("The player runs inside an iframe. Pointer lock needs allow=\"pointer-lock\" on the iframe tag.");
+		const toCanvasPixels = (value) => value * (window.devicePixelRatio || 1.0);
+
+		//CHANGED end
+
 		const mouseMove = (e) =>
 		{
-			//CHANGED: was offsetX/offsetY * devicePixelRatio
-			const position = getCanvasPosition(e.clientX, e.clientY);
-			interop.OnMouseMove(position.x, position.y);
+			if (isPointerLocked())
+				interop.OnMouseMoveRelative(toCanvasPixels(e.movementX), toCanvasPixels(e.movementY));
+			else
+			{
+				const position = getCanvasPosition(e.clientX, e.clientY);
+				interop.OnMouseMove(position.x, position.y);
+			}
 		}
 
 		const mouseDown = (e) =>
 		{
+			if (relativeModeRequested && !isPointerLocked())
+				requestPointerLock();
+
 			interop.OnMouseDown(e.button, getEventModifiers(e));
 		}
 
@@ -275,7 +372,6 @@ setModuleImports("main.js", {
 
 		const shouldIgnore = (e) =>
 		{
-			//CHANGED: preventDefault removed, it does nothing in a passive listener. gestures are disabled by touch-action: none in the css
 			return e.touches.length > 1 || e.type == "touchend" && e.touches.length > 0;
 		}
 
@@ -346,6 +442,7 @@ setModuleImports("main.js", {
 		interop.SetRootUri(window.location.toString());
 	},
 	hideLogo: () => splash.hide(),
+	setMouseRelativeMode: (enable) => mouseRelativeModeHandler(enable),
 	setClipboardText: (text) =>
 	{
 		if (globalThis.document.hasFocus())

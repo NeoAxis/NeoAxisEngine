@@ -576,6 +576,9 @@ namespace NeoAxis
 
 		protected override void OnResultCompile()
 		{
+			if( EngineApp.IsSimulation && RenderingSystem.BackendNull )
+				return;
+
 			if( Result == null )
 			{
 				GpuTexture result = null;

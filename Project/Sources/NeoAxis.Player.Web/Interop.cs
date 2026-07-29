@@ -47,6 +47,24 @@ namespace NeoAxis.Player.Web
 		}
 
 		[JSExport]
+		public static void OnMouseMoveRelative( float deltaX, float deltaY )
+		{
+			Engine.inputEventQueue.Enqueue( new Engine.MouseEventItem()
+			{
+				Action = Engine.ActionEnum.Move,
+				Relative = true,
+				Vector = new Vector2F( deltaX, deltaY )
+			} );
+		}
+
+		[JSExport]
+		public static void OnMouseRelativeModeChanged( bool enabled )
+		{
+			PlatformFunctionalityWeb.mouseRelativeModeActive = enabled;
+			PlatformFunctionalityWeb.mouseRelativeModeDelta = Vector2F.Zero;
+		}
+
+		[JSExport]
 		public static void OnMouseWheel( float deltaX, float deltaY )
 		{
 			Engine.inputEventQueue.Enqueue( new Engine.MouseEventItem()
@@ -56,34 +74,56 @@ namespace NeoAxis.Player.Web
 			} );
 		}
 
+		static bool ConvertMouseButton( int browserButton, out EMouseButtons button )
+		{
+			switch( browserButton )
+			{
+			case 0: button = EMouseButtons.Left; return true;
+			case 1: button = EMouseButtons.Middle; return true;
+			case 2: button = EMouseButtons.Right; return true;
+			case 3: button = EMouseButtons.XButton1; return true;
+			case 4: button = EMouseButtons.XButton2; return true;
+			default: button = EMouseButtons.Left; return false;
+			}
+		}
+
 		[JSExport]
 		public static void OnMouseDown( int button, int modifiers )
 		{
-			Engine.inputEventQueue.Enqueue( new Engine.MouseEventItem()
+			if( ConvertMouseButton( button, out var button2 ) )
 			{
-				Action = Engine.ActionEnum.Down,
-				Button = (EMouseButtons)button
-			} );
+				Engine.inputEventQueue.Enqueue( new Engine.MouseEventItem()
+				{
+					Action = Engine.ActionEnum.Down,
+					Button = button2
+				} );
+			}
 		}
 
 		[JSExport]
 		public static void OnMouseUp( int button, int modifiers )
 		{
-			Engine.inputEventQueue.Enqueue( new Engine.MouseEventItem()
+			if( ConvertMouseButton( button, out var button2 ) )
 			{
-				Action = Engine.ActionEnum.Up,
-				Button = (EMouseButtons)button
-			} );
+				Engine.inputEventQueue.Enqueue( new Engine.MouseEventItem()
+				{
+					Action = Engine.ActionEnum.Up,
+					Button = button2
+				} );
+			}
 		}
 
 		[JSExport]
 		public static void OnMouseDoubleClick( int button, int modifiers )
 		{
-			Engine.inputEventQueue.Enqueue( new Engine.MouseEventItem()
+			if( ConvertMouseButton( button, out var button2 ) )
 			{
-				Action = Engine.ActionEnum.DoubleClick,
-				Button = (EMouseButtons)button
-			} );
+				Engine.inputEventQueue.Enqueue( new Engine.MouseEventItem()
+				{
+					Action = Engine.ActionEnum.DoubleClick,
+					Button = button2
+				} );
+			}
 		}
 
 		[JSExport]
@@ -144,6 +184,9 @@ namespace NeoAxis.Player.Web
 
 		[JSImport( "setFullscreenAsync", "main.js" )]
 		public static partial Task SetFullscreenAsync( bool enable );
+
+		[JSImport( "setMouseRelativeMode", "main.js" )]
+		public static partial void SetMouseRelativeMode( bool enable );
 
 		[JSImport( "hideLogo", "main.js" )]
 		internal static partial void HideLogo();

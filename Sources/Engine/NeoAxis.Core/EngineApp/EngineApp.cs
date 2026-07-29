@@ -314,6 +314,9 @@ namespace NeoAxis
 			public static bool RenderingScene = true;
 			//public static bool AnisotropicFiltering = true;
 
+			/// <summary>
+			/// Set "null" to disable sound system.
+			/// </summary>
 			public static string SoundSystem = "";
 			public static int SoundMaxReal2DChannels = 32;
 			public static int SoundMaxReal3DChannels = 50;
@@ -576,13 +579,15 @@ namespace NeoAxis
 			{
 				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
-				//!!!!must be IsFocused?
-				if( viewport.MouseRelativeMode && platform.IsFocused() && !InitSettings.UseDirectInputForMouseRelativeMode )
+				if( viewport.MouseRelativeMode && platform.IsFocused() )// && !InitSettings.UseDirectInputForMouseRelativeMode )
 				{
 					//!!!!what about mac
 
-					platform.CreatedWindow_UpdateMouseRelativeMove( out var delta );
-					viewport.PerformMouseMove( delta );
+					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows && !InitSettings.UseDirectInputForMouseRelativeMode || SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows )
+					{
+						platform.CreatedWindow_UpdateMouseRelativeMove( out var delta );
+						viewport.PerformMouseMove( delta );
+					}
 				}
 
 				if( !viewport.MouseRelativeMode )

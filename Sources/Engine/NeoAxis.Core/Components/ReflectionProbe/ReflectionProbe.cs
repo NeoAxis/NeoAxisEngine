@@ -1065,7 +1065,7 @@ namespace NeoAxis
 			//	processedCubemapNeedUpdate = true;
 			//}
 
-			if( processedCubemapNeedUpdate )//&& AllowProcessEnvironmentCubemap )
+			if( processedCubemapNeedUpdate && !RenderingSystem.BackendNull )//&& AllowProcessEnvironmentCubemap )
 			{
 				processedCubemapNeedUpdate = false;
 				ProcessCubemaps();

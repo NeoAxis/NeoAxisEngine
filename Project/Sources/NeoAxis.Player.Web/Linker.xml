@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+	<assembly fullname="NeoAxis.Core" preserve="all" />
+	<assembly fullname="NeoAxis.Player.Web" preserve="all" />
+</linker>

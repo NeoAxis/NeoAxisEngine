@@ -431,15 +431,15 @@ namespace NeoAxis
 			//		return;
 			//}
 
-			//copy Build.Web.sln or Build.Web.Extended.sln
-			if( File.Exists( Path.Combine( VirtualFileSystem.Directories.Project, "Build.Web.Extended.sln" ) ) )
-			{
-				CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Web.Extended.sln" );
-			}
-			else
-			{
-				CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Web.sln" );
-			}
+			////copy Build.Web.sln or Build.Web.Extended.sln
+			//if( File.Exists( Path.Combine( VirtualFileSystem.Directories.Project, "Build.Web.Extended.sln" ) ) )
+			//{
+			//	CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Web.Extended.sln" );
+			//}
+			//else
+			//{
+			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Web.sln" );
+			//}
 
 			//copy Project.Web.csproj
 			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Project.Web.csproj" );

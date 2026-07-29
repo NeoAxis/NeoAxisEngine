@@ -45,6 +45,7 @@
   <ItemGroup>
     <NativeFileReference Include="Native/emscripten.c" ScanForPInvokes="true" />
     <NativeFileReference Include="libs/libNeoAxisCoreNative.a" ScanForPInvokes="true" />
+	  <TrimmerRootDescriptor Include="Linker.xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Emscripten.cs" />
