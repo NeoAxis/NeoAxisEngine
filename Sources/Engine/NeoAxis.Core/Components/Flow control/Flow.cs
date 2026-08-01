@@ -23,7 +23,7 @@ namespace NeoAxis
 	public class Flow
 	{
 		[ThreadStatic]
-		static List<Flow> flowStack = new List<Flow>();
+		static List<Flow> flowStack;// = new List<Flow>();
 
 		static ESet<Flow> globalSleepingFlows = new ESet<Flow>();
 		static double globalSleepingFlowsLastEngineTime;
@@ -81,8 +81,7 @@ namespace NeoAxis
 
 		static void InitFlowStack()
 		{
-			if( flowStack == null )
-				flowStack = new List<Flow>();
+			flowStack ??= new List<Flow>();
 		}
 
 		public static Flow[] FlowStack

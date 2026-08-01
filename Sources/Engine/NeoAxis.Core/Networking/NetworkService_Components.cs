@@ -13,7 +13,7 @@ namespace NeoAxis
 	{
 		static bool initialized;
 		[ThreadStatic]
-		static ArrayDataWriter writer = new ArrayDataWriter();
+		static ArrayDataWriter writer;
 
 		//ObjectInSpace.Transform
 		[Flags]
@@ -44,6 +44,13 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		static ArrayDataWriter GetWriter()
+		{
+			writer ??= new ArrayDataWriter();
+			return writer;
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public static bool WriteSpecialSerialized( Metadata.Property property, Component component, out ArraySegment<byte> arraySegment )
 		{
 			Init();
@@ -70,6 +77,7 @@ namespace NeoAxis
 							mode |= ObjectInSpaceTransformModes.ScaleAllEqual;
 					}
 
+					var writer = GetWriter();
 					writer.Reset();
 					writer.Write( (byte)mode );
 

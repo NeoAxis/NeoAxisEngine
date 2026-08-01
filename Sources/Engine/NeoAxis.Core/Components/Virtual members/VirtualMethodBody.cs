@@ -22,7 +22,7 @@ namespace NeoAxis
 		PropertyImpl propertyPropertyValue;
 
 		[ThreadStatic]
-		static ConcurrentDictionary<VirtualMethodBody, Stack<InvokeStackItem>> invokeStack = new ConcurrentDictionary<VirtualMethodBody, Stack<InvokeStackItem>>();
+		static ConcurrentDictionary<VirtualMethodBody, Stack<InvokeStackItem>> invokeStack; // = new ConcurrentDictionary<VirtualMethodBody, Stack<InvokeStackItem>>();
 		//[ThreadStatic]
 		//Stack<InvokeStackItem> invokeStack;
 
@@ -512,6 +512,8 @@ namespace NeoAxis
 
 		static Stack<InvokeStackItem> GetInvokeStack( VirtualMethodBody body, bool allowCreate )
 		{
+			invokeStack ??= new ConcurrentDictionary<VirtualMethodBody, Stack<InvokeStackItem>>();
+
 			if( allowCreate )
 				return invokeStack.GetOrAdd( body, b => new Stack<InvokeStackItem>() );
 			else

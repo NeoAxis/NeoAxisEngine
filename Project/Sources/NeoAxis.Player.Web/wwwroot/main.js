@@ -6,7 +6,7 @@ const splash = (() =>
 	const el = document.createElement("div");
 	el.style.cssText =
 		"position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;" +
-		"background:#1b1b1b;pointer-events:none;opacity:1;transition:opacity .5s ease-out;";
+		"background:#000000;pointer-events:none;opacity:0;transition:opacity .5s ease-out;";
 
 	const img = document.createElement("img");
 	img.src = new URL("./Assets/NeoAxisLogo_DarkBackground.png", import.meta.url).href;
@@ -15,6 +15,12 @@ const splash = (() =>
 	el.appendChild(img);
 	document.body.appendChild(el);
 
+	setTimeout(() =>
+	{
+		el.style.opacity = "1";
+		el.style.transition = "opacity 1s ease-in";
+	}, 0);
+
 	let hidden = false;
 	return {
 		hide()
@@ -22,6 +28,7 @@ const splash = (() =>
 			if (hidden) return;
 			hidden = true;
 			el.style.opacity = "0";
+			el.style.transition = "opacity .5s ease-out";
 			el.addEventListener("transitionend", () => el.remove(), { once: true });
 			setTimeout(() => el.remove(), 1500);
 		}

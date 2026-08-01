@@ -13,10 +13,8 @@ namespace NeoAxis
 	public class CRC32 : HashAlgorithm
 	{
 		const uint AllOnes = 0xffffffff;
-		[ThreadStatic]
 		static Hashtable cachedCRC32Tables;
-		[ThreadStatic]
-		static bool autoCache;
+		//static bool autoCache;
 
 		uint[] crc32Table;
 		uint m_crc;
@@ -29,14 +27,14 @@ namespace NeoAxis
 			get { return 0x04C11DB7; }
 		}
 
-		/// <summary>
-		/// Gets or sets the auto-cache setting of this class.
-		/// </summary>
-		public static bool AutoCache
-		{
-			get { return autoCache; }
-			set { autoCache = value; }
-		}
+		///// <summary>
+		///// Gets or sets the auto-cache setting of this class.
+		///// </summary>
+		//public static bool AutoCache
+		//{
+		//	get { return autoCache; }
+		//	set { autoCache = value; }
+		//}
 
 		/// <summary>
 		/// Initialize the cache
@@ -44,13 +42,13 @@ namespace NeoAxis
 		static CRC32()
 		{
 			cachedCRC32Tables = Hashtable.Synchronized( new Hashtable() );
-			autoCache = true;
+			//autoCache = true;
 		}
 
-		public static void ClearCache()
-		{
-			cachedCRC32Tables.Clear();
-		}
+		//public static void ClearCache()
+		//{
+		//	cachedCRC32Tables.Clear();
+		//}
 
 
 		/// <summary>
@@ -85,7 +83,7 @@ namespace NeoAxis
 		}
 
 		//changes (for standard crc32 compability)
-		[MethodImpl(  (MethodImplOptions)512 )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		protected static uint Reflect( uint value, int count )
 		{
 			uint t = value;
@@ -109,28 +107,36 @@ namespace NeoAxis
 		{
 		}
 
-		/// <summary>
-		/// Creates a CRC32 object using the specified Creates a CRC32 object 
-		/// </summary>
-		public CRC32( uint polynomial )
-			: this( polynomial, CRC32.AutoCache )
-		{
-		}
+		///// <summary>
+		///// Creates a CRC32 object using the specified Creates a CRC32 object 
+		///// </summary>
+		//public CRC32( uint polynomial )
+		//	: this( polynomial, CRC32.AutoCache )
+		//{
+		//}
 
 		/// <summary>
-		/// Construct the 
+		/// Creates a CRC32 object using the specified polynomial.
 		/// </summary>
-		public CRC32( uint polynomial, bool cacheTable )
+		public CRC32( uint polynomial )//, bool cacheTable )
 		{
-			this.HashSizeValue = 32;
+			HashSizeValue = 32;
 
-			crc32Table = (uint[])cachedCRC32Tables[ polynomial ];
-			if( crc32Table == null )
+			//if( cacheTable )
+			//{
+			lock( cachedCRC32Tables.SyncRoot )
 			{
-				crc32Table = CRC32.BuildCRC32Table( polynomial );
-				if( cacheTable )
-					cachedCRC32Tables.Add( polynomial, crc32Table );
+				crc32Table = (uint[])cachedCRC32Tables[ polynomial ];
+				if( crc32Table == null )
+				{
+					crc32Table = BuildCRC32Table( polynomial );
+					cachedCRC32Tables[ polynomial ] = crc32Table;
+				}
 			}
+			//}
+			//else
+			//	crc32Table = BuildCRC32Table( polynomial );
+
 			Initialize();
 		}
 
@@ -181,6 +187,8 @@ namespace NeoAxis
 			finalHash[ 2 ] = (byte)( ( finalCRC >> 8 ) & 0xFF );
 			finalHash[ 3 ] = (byte)( ( finalCRC >> 0 ) & 0xFF );
 
+			HashValue = finalHash;
+
 			return finalHash;
 		}
 
@@ -216,6 +224,8 @@ namespace NeoAxis
 		/// <returns></returns>
 		new public byte[] ComputeHash( byte[] buffer, int offset, int count )
 		{
+			Initialize();
+
 			HashCore( buffer, offset, count );
 			return HashFinal();
 		}

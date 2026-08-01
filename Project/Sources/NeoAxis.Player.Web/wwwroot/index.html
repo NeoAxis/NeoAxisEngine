@@ -52,7 +52,17 @@
 	<body>
 		<canvas id="canvas" width="16" height="9">
 		</canvas>
-
+        <script>
+            (function () {
+                var orig = HTMLCanvasElement.prototype.getContext;
+                HTMLCanvasElement.prototype.getContext = function (type, attrs) {
+                    if (type === 'webgl' || type === 'webgl2' || type === 'experimental-webgl') {
+                        attrs = Object.assign({}, attrs || {}, { alpha: false });
+                    }
+                    return orig.apply(this, [type, attrs]);
+                };
+            })();
+        </script>
 		<script type="module" src="./main.js"></script>
 	</body>
 </html>
