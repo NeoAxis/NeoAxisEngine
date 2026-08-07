@@ -27,11 +27,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
     <WasmNativeStrip>false</WasmNativeStrip>
-    <WasmNativeDebugSymbols>true</WasmNativeDebugSymbols>
     <WasmEmitSymbolMap>true</WasmEmitSymbolMap>
+    <!--<WasmNativeDebugSymbols>true</WasmNativeDebugSymbols>
     <WasmEmitSourceMap>true</WasmEmitSourceMap>
-    <WasmStripILAfterAOT>false</WasmStripILAfterAOT>
-    <EmccFlags>$(EmccFlags) -g</EmccFlags>
+    <EmccFlags>$(EmccFlags) -g</EmccFlags>-->
     <!--<WasmResolveAssembliesBeforeBuild>true</WasmResolveAssembliesBeforeBuild>-->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
