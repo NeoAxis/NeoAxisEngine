@@ -622,7 +622,10 @@ namespace NeoAxis.Editor
 			kryptonButtonPackageBrowse.Enabled = !building;
 			contentBrowserPackage.Enabled = !building;
 			if( packageBuildInstance != null )
+			{
 				progressBarBuild.Value = (int)( packageBuildInstance.Progress * 100 );
+				progressBarBuild.ValueText = packageBuildInstance.ProgressText;
+			}
 			progressBarBuild.Visible = building;
 			kryptonButtonBuildCancel.Visible = building;
 		}

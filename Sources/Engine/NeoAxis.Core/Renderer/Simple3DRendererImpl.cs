@@ -1534,22 +1534,29 @@ namespace NeoAxis
 			if( vertices.Count == 0 )
 				return;
 
-			//!!!!use TransformTypeEnum.CameraPosition?
-			var positionOffset = vertices[ 0 ];
-
-			var transform2 = transform;
-			transform2.SetTranslation( transform2.GetTranslation() + positionOffset );
+			//!!!!apply Viewport.CameraSettings.Position?
 
 			var array = new Vector3F[ vertices.Count ];
 			for( int n = 0; n < vertices.Count; n++ )
-				array[ n ] = ( vertices[ n ] - positionOffset ).ToVector3F();
-			AddTriangles( array, indices, ref transform2/*, false*/, wireframe, culling );
+				array[ n ] = vertices[ n ].ToVector3F();
+			AddTriangles( array, indices, ref transform, wireframe, culling );
 
 
-			//Vector3F[] array = new Vector3F[ vertices.Count ];
+			//var positionOffset = vertices[ 0 ];
+
+			//var transform2 = transform;
+			//transform2.SetTranslation( transform2.GetTranslation() + positionOffset );
+
+			//var array = new Vector3F[ vertices.Count ];
 			//for( int n = 0; n < vertices.Count; n++ )
-			//	array[ n ] = vertices[ n ].ToVector3F();
-			//AddTriangles( array, indices, ref transform, false, wireframe, culling );
+			//	array[ n ] = ( vertices[ n ] - positionOffset ).ToVector3F();
+			//AddTriangles( array, indices, ref transform2, wireframe, culling );
+
+
+			////Vector3F[] array = new Vector3F[ vertices.Count ];
+			////for( int n = 0; n < vertices.Count; n++ )
+			////	array[ n ] = vertices[ n ].ToVector3F();
+			////AddTriangles( array, indices, ref transform, false, wireframe, culling );
 		}
 
 		public override void AddTriangles( IList<Vector3> vertices, IList<int> indices, bool wireframe, bool culling )

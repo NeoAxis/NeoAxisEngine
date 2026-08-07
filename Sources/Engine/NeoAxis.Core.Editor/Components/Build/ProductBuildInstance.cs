@@ -15,6 +15,7 @@ namespace NeoAxis.Editor
 		bool run;
 		volatile StateEnum state = StateEnum.Building;
 		volatile float progress;
+		volatile string progressText = "Building...";
 		volatile string error = "";
 
 		Task buildTask;
@@ -80,6 +81,12 @@ namespace NeoAxis.Editor
 					value = 1;
 				progress = value;
 			}
+		}
+
+		public string ProgressText
+		{
+			get { return progressText; }
+			set { progressText = value; }
 		}
 
 		public void SetProgressWithRange( double progress, Range progressRange )

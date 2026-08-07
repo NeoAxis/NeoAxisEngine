@@ -292,7 +292,7 @@ namespace NeoAxis
 			var notExists = new ESet<string>();
 			foreach( var path in GetProjectFileCSFiles( false, true ) )
 			{
-				if( !File.Exists( path ) )
+				if( !File.Exists( path ) && !path.Replace( '/', '\\' ).Contains( @"Caches\CSharpScripts\CSharpScripts.cs" ) )
 					notExists.AddWithCheckAlreadyContained( path );
 			}
 
@@ -344,7 +344,7 @@ namespace NeoAxis
 
 		public static bool UpdateProjectFile( ICollection<string> addFiles, ICollection<string> removeFiles, out string error )
 		{
-			if( !ProjectCSProjFileExists())// false ) )
+			if( !ProjectCSProjFileExists() )
 			{
 				error = $"Project file is not exists. Path: {GetProjectCSProjFullPath( /*false*/ )}.";
 				return false;

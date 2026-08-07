@@ -35,6 +35,20 @@ namespace NeoAxis.Editor
 		}
 		int _value;
 
+		[DefaultValue( "" )]
+		public string ValueText
+		{
+			get { return _valueText; }
+			set
+			{
+				if( _valueText == value )
+					return;
+				_valueText = value;
+				Invalidate();
+			}
+		}
+		string _valueText;
+
 		[DefaultValue( 100 )]
 		public int Maximum
 		{
@@ -57,6 +71,15 @@ namespace NeoAxis.Editor
 			var r = new System.Drawing.Rectangle( 2, 2, (int)( rect.Width * ( (double)Value / Maximum ) ) - 4, rect.Height - 4 );
 			using( var brush = new SolidBrush( EditorAPI2.DarkTheme ? Color.FromArgb( 0, 150, 0 ) : Color.FromArgb( 0, 190, 0 ) ) )
 				e.Graphics.FillRectangle( brush, r );
+
+			if( !string.IsNullOrEmpty( ValueText ) )
+			{
+				var text = ValueText;
+				var textSize = e.Graphics.MeasureString( text, Font );
+				var textPosition = new PointF( ( Width - textSize.Width ) / 2, ( Height - textSize.Height ) / 2 );
+				using( var brush = new SolidBrush( EditorAPI2.DarkTheme ? Color.FromArgb( 255, 255, 255 ) : Color.FromArgb( 0, 0, 0 ) ) )
+					e.Graphics.DrawString( text, Font, brush, textPosition );
+			}
 		}
 	}
 

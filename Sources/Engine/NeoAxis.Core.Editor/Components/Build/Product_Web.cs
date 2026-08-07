@@ -1,4 +1,5 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
+using Internal;
 using NeoAxis.Editor;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,27 @@ namespace NeoAxis
 	public class Product_Web : Product
 	{
 		static readonly DateTime setTimeToFilesInZip = new DateTime( 2001, 1, 1, 1, 1, 1 );
+
+		public enum ConfigurationEnum
+		{
+			Debug,
+			Release,
+		}
+
+		/// <summary>
+		/// The build configuration. Release enables AOT compilation.
+		/// </summary>
+		[Category( "Web" )]
+		[DefaultValue( ConfigurationEnum.Debug )]
+		public Reference<ConfigurationEnum> Configuration
+		{
+			get { if( _configuration.BeginGet() ) Configuration = _configuration.Get( this ); return _configuration.value; }
+			set { if( _configuration.BeginSet( this, ref value ) ) { try { ConfigurationChanged?.Invoke( this ); } finally { _configuration.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Configuration"/> property value changes.</summary>
+		public event Action<Product_Web> ConfigurationChanged;
+		ReferenceField<ConfigurationEnum> _configuration = ConfigurationEnum.Debug;
+
 
 		///// <summary>
 		///// The package name of the package.
@@ -265,22 +287,40 @@ namespace NeoAxis
 
 		public override void BuildFunction( ProductBuildInstance buildInstance )
 		{
+			var publishFolder = Path.Combine( buildInstance.DestinationFolder, "_Publish" );
+
 			try
 			{
+				buildInstance.ProgressText = "Checking requirements...";
+
+				var dotnetExePath = FindSystemDotnet();
+				if( string.IsNullOrEmpty( dotnetExePath ) )
+					throw new Exception( ".NET SDK is not found in the system. .NET 10 SDK is required to build for Web.\r\n\r\nDownload: https://dotnet.microsoft.com/download" );
+
+				CheckBuildRequirements( dotnetExePath );
+
 				PatchCSharpProjects( buildInstance );
 
+				buildInstance.ProgressText = "Copying files...";
 				CopyFilesToPackageFolder( buildInstance );
-				buildInstance.Progress = 0.8f;
-
+				buildInstance.Progress = 0.4f;
 				if( CheckCancel( buildInstance ) )
 					return;
 
-				//if( PatchProjectFiles )
-				//	DoPatchProjectFiles( buildInstance );
-				//buildInstance.Progress = 0.9f;
+				buildInstance.ProgressText = "Building projects...";
+				BuildProjects( buildInstance, dotnetExePath, publishFolder, new Range( 0.4, 0.85 ) );
+				if( CheckCancel( buildInstance ) )
+					return;
 
-				//if( CheckCancel( buildInstance ) )
-				//	return;
+				//the destination folder must contain the final build only
+				CleanDestinationFolder( buildInstance );
+
+				CollectPublishResult( buildInstance, publishFolder, new Range( 0.85, 0.97 ) );
+
+				if( Directory.Exists( publishFolder ) )
+					Directory.Delete( publishFolder, true );
+
+				buildInstance.Progress = 0.99f;
 			}
 			catch( Exception e )
 			{
@@ -325,44 +365,157 @@ namespace NeoAxis
 			}
 		}
 
+		static string FindSystemDotnet()
+		{
+			var checkPaths = new List<string>();
+
+			var programFiles = Environment.GetEnvironmentVariable( "ProgramFiles" );
+			if( !string.IsNullOrEmpty( programFiles ) )
+				checkPaths.Add( Path.Combine( programFiles, "dotnet", "dotnet.exe" ) );
+
+			var pathVariable = Environment.GetEnvironmentVariable( "PATH" );
+			if( !string.IsNullOrEmpty( pathVariable ) )
+			{
+				foreach( var folder in pathVariable.Split( Path.PathSeparator ) )
+				{
+					var folder2 = folder.Trim();
+					if( folder2 != "" )
+					{
+						try
+						{
+							checkPaths.Add( Path.Combine( folder2, "dotnet.exe" ) );
+						}
+						catch { }
+					}
+				}
+			}
+
+			var dotnetRoot = Environment.GetEnvironmentVariable( "DOTNET_ROOT" );
+			if( !string.IsNullOrEmpty( dotnetRoot ) )
+				checkPaths.Add( Path.Combine( dotnetRoot, "dotnet.exe" ) );
+
+			foreach( var path in checkPaths )
+			{
+				if( File.Exists( path ) )
+					return path;
+			}
+
+			return null;
+		}
+
+		void CheckBuildRequirements( string dotnetExePath )
+		{
+			//check .NET SDK
+			{
+				if( ProcessUtility.RunAndWait( dotnetExePath, "--list-sdks", out var result ) != 0 )
+					throw new Exception( "Unable to get the list of installed .NET SDKs.\r\n\r\n" + result );
+
+				var found = false;
+				foreach( var line in result.Split( '\n' ) )
+				{
+					if( line.TrimStart().StartsWith( "10." ) )
+					{
+						found = true;
+						break;
+					}
+				}
+
+				if( !found )
+					throw new Exception( ".NET 10 SDK is required to build for Web, but it was not found in the system.\r\n\r\nInstalled SDKs:\r\n" + result + "\r\n\r\nDownload: https://dotnet.microsoft.com/download" );
+			}
+
+			//check wasm-tools workload. Required for AOT only
+			if( Configuration.Value == ConfigurationEnum.Release )
+			{
+				ProcessUtility.RunAndWait( dotnetExePath, "workload list", out var result );
+
+				if( result == null || !result.Contains( "wasm-tools" ) )
+					throw new Exception( "The 'wasm-tools' workload is required to build with AOT compilation.\r\n\r\nRun the command as administrator:\r\ndotnet workload install wasm-tools\r\n\r\nOr select Debug configuration to build without AOT." );
+			}
+		}
+
+		void BuildProjects( ProductBuildInstance buildInstance, string dotnetExePath, string publishFolder, Range progressRange )
+		{
+			buildInstance.Progress = (float)progressRange.Minimum;
+
+			var release = Configuration.Value == ConfigurationEnum.Release;
+
+			var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player.Web\NeoAxis.Player.Web.csproj" );
+
+			var arguments = $"publish \"{projectFullPath}\"";
+			arguments += $" --configuration {( release ? "Release" : "Debug" )}";
+			arguments += $" --output \"{publishFolder}\"";
+			arguments += " --verbosity minimal";
+
+			if( release )
+				arguments += " -p:RunAOTCompilation=true -p:PublishTrimmed=true -p:TrimMode=partial";
+
+			//??
+			//var defineConstants = DefineConstants.Value.Trim();
+			//if( !string.IsNullOrEmpty( defineConstants ) )
+			//	arguments += $" -p:DefineConstants=\"{defineConstants}\"";
+
+			var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
+			if( !success )
+				throw new Exception( $"Unable to publish project.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+
+			buildInstance.Progress = (float)progressRange.Maximum;
+		}
+
+		void CollectPublishResult( ProductBuildInstance buildInstance, string publishFolder, Range progressRange )
+		{
+			var sourceFolder = Path.Combine( publishFolder, "wwwroot" );
+
+			if( !Directory.Exists( sourceFolder ) )
+				throw new Exception( $"The publish result folder is not found.\r\n\r\n{sourceFolder}" );
+
+			CopyFolder( sourceFolder, buildInstance.DestinationFolder, buildInstance, progressRange );
+		}
+
+		void CleanDestinationFolder( ProductBuildInstance buildInstance )
+		{
+			var items = new string[] { "Assets", "Caches", "Binaries", "Sources", "Properties", "Build.Web.sln", "Project.Web.csproj" };
+
+			foreach( var item in items )
+			{
+				var path = Path.Combine( buildInstance.DestinationFolder, item );
+
+				if( Directory.Exists( path ) )
+					Directory.Delete( path, true );
+				else if( File.Exists( path ) )
+					File.Delete( path );
+			}
+		}
+
 		void CopyFilesToPackageFolder( ProductBuildInstance buildInstance )
 		{
 			//copy files
-			try
-			{
-				var paths = GetPaths();
+			var copyPaths = GetPaths();
 
-				//var paths = new List<string>();
+			//var paths = new List<string>();
 
-				//paths.Add( "Caches" );
+			//paths.Add( "Caches" );
 
-				////Caches
-				//if( !ShaderCache )
-				//	paths.Add( @"exclude:Caches\ShaderCache" );
-				//if( !FileCache )
-				//	paths.Add( @"exclude:Caches\Files" );
+			////Caches
+			//if( !ShaderCache )
+			//	paths.Add( @"exclude:Caches\ShaderCache" );
+			//if( !FileCache )
+			//	paths.Add( @"exclude:Caches\Files" );
 
-				////Paths
-				//foreach( var path in Paths.Value.Split( '\n', StringSplitOptions.RemoveEmptyEntries ) )
-				//{
-				//	var path2 = path.Replace( "\r", "" ).Trim();
-				//	if( path2 != "" )
-				//		paths.Add( path2 );
-				//}
+			////Paths
+			//foreach( var path in Paths.Value.Split( '\n', StringSplitOptions.RemoveEmptyEntries ) )
+			//{
+			//	var path2 = path.Replace( "\r", "" ).Trim();
+			//	if( path2 != "" )
+			//		paths.Add( path2 );
+			//}
 
-				////remove rooted paths
-				//for( int n = 0; n < paths.Count; n++ )
-				//	paths[ n ] = paths[ n ].Replace( VirtualFileSystem.Directories.Project + Path.DirectorySeparatorChar, "" );
+			////remove rooted paths
+			//for( int n = 0; n < paths.Count; n++ )
+			//	paths[ n ] = paths[ n ].Replace( VirtualFileSystem.Directories.Project + Path.DirectorySeparatorChar, "" );
 
-				//execute
-				CopyIncludeExcludePaths( paths, buildInstance, new Range( 0, 0.4 ) );
-			}
-			catch( Exception e )
-			{
-				buildInstance.Error = e.Message;
-				buildInstance.State = ProductBuildInstance.StateEnum.Error;
-				return;
-			}
+			//execute
+			CopyIncludeExcludePaths( copyPaths, buildInstance, new Range( 0, 0.4 ) );
 
 			////copy Assets
 			//{
@@ -438,27 +591,27 @@ namespace NeoAxis
 			//}
 			//else
 			//{
-			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Web.sln" );
+			//CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Web.sln" );
+			////}
+
+			////copy Project.Web.csproj
+			//CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Project.Web.csproj" );
+
+			////copy Properties
+			//CopyFolder( Path.Combine( VirtualFileSystem.Directories.Project, "Properties" ), Path.Combine( buildInstance.DestinationFolder, "Properties" ), buildInstance, new Range( 0.4, 0.4 ) );
+
+			////copy part of Sources
+			//var sourceSourcesPath = Path.Combine( VirtualFileSystem.Directories.Project, "Sources" );
+			//string destSourcesPath = Path.Combine( buildInstance.DestinationFolder, "Sources" );
+
+			////copy Sources\NeoAxis.Player.Web exclude Project.zip.hash, Project.zip
+			//{
+			//	var excludePaths = new List<string>();
+			//	excludePaths.Add( @"Sources\NeoAxis.Player.Web\Assets\wwwroot\Project.zip.hash" );
+			//	excludePaths.Add( @"Sources\NeoAxis.Player.Web\Assets\wwwroot\Project.zip" );
+
+			//	CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.Player.Web" ), Path.Combine( destSourcesPath, "NeoAxis.Player.Web" ), buildInstance, new Range( 0.4, 0.45 ), excludePaths );
 			//}
-
-			//copy Project.Web.csproj
-			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Project.Web.csproj" );
-
-			//copy Properties
-			CopyFolder( Path.Combine( VirtualFileSystem.Directories.Project, "Properties" ), Path.Combine( buildInstance.DestinationFolder, "Properties" ), buildInstance, new Range( 0.4, 0.4 ) );
-
-			//copy part of Sources
-			var sourceSourcesPath = Path.Combine( VirtualFileSystem.Directories.Project, "Sources" );
-			string destSourcesPath = Path.Combine( buildInstance.DestinationFolder, "Sources" );
-
-			//copy Sources\NeoAxis.Player.Web exclude Project.zip.hash, Project.zip
-			{
-				var excludePaths = new List<string>();
-				excludePaths.Add( @"Sources\NeoAxis.Player.Web\Assets\wwwroot\Project.zip.hash" );
-				excludePaths.Add( @"Sources\NeoAxis.Player.Web\Assets\wwwroot\Project.zip" );
-
-				CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.Player.Web" ), Path.Combine( destSourcesPath, "NeoAxis.Player.Web" ), buildInstance, new Range( 0.4, 0.45 ), excludePaths );
-			}
 
 			////copy Sources\NeoAxis.CoreExtension
 			//CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.CoreExtension" ), Path.Combine( destSourcesPath, "NeoAxis.CoreExtension" ), buildInstance, new Range( 0.45, 0.5 ) );
@@ -466,8 +619,8 @@ namespace NeoAxis
 			var sourceBinariesPath = VirtualFileSystem.Directories.Binaries;
 			string destBinariesPath = Path.Combine( buildInstance.DestinationFolder, "Binaries" );
 
-			var sourcePlatformFolder = Path.Combine( sourceBinariesPath, "NeoAxis.Internal\\Platforms", Platform.ToString() );
-			var destPlatformFolder = Path.Combine( destBinariesPath, "NeoAxis.Internal\\Platforms", Platform.ToString() );
+			//var sourcePlatformFolder = Path.Combine( sourceBinariesPath, "NeoAxis.Internal\\Platforms", Platform.ToString() );
+			//var destPlatformFolder = Path.Combine( destBinariesPath, "NeoAxis.Internal\\Platforms", Platform.ToString() );
 
 			////copy managed dll references from original folder
 			//CopyFiles( VirtualFileSystem.Directories.Binaries, destBinariesPath, buildInstance, new Range( 0.5, 0.6 ), "*.dll" );
@@ -475,20 +628,24 @@ namespace NeoAxis
 			Directory.CreateDirectory( Path.Combine( destBinariesPath, "NeoAxis.Internal" ) );
 			File.Copy(
 				Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ),
-				Path.Combine( destBinariesPath, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ) );
-
+				Path.Combine( destBinariesPath, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ), true );
 			//!!!!unnecessary dlls are copied? we need a list of references?
 			//copy managed dll references from Web folder
-			CopyFiles(
-				Path.Combine( sourcePlatformFolder, "Managed" ),
-				Path.Combine( destPlatformFolder, "Managed" ), buildInstance, new Range( 0.6, 0.7 ), "*.dll" );
+
+			//managed dll references are not needed for the final build. dotnet publish resolves references by itself
+			//CopyFiles(
+			//	Path.Combine( sourcePlatformFolder, "Managed" ),
+			//	Path.Combine( destPlatformFolder, "Managed" ), buildInstance, new Range( 0.6, 0.7 ), "*.dll" );
 
 			if( CheckCancel( buildInstance ) )
 				return;
 
 			//create Project.zip
 			{
-				var destinationFileName = Path.Combine( buildInstance.DestinationFolder, @"Sources\NeoAxis.Player.Web\wwwroot\Assets\Project.zip" );
+				//the zip must be placed where the player project expects it, because we build in place
+				var destinationFileName = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player.Web\wwwroot\Assets\Project.zip" );
+				Directory.CreateDirectory( Path.GetDirectoryName( destinationFileName ) );
+
 				var compressionLevel = CompressData.Value ? CompressionLevel.Optimal : CompressionLevel.NoCompression;
 
 				if( File.Exists( destinationFileName ) )
@@ -558,25 +715,25 @@ namespace NeoAxis
 			}
 
 			//delete Assets, Caches, Binaries\NeoAxis.Internal\Tips, Binaries\NeoAxis.Internal\Tools
-			{
-				//need for cs files
-				//var destFolder = Path.Combine( buildInstance.DestinationFolder, "Assets" );
-				//if( Directory.Exists( destFolder ) )
-				//	Directory.Delete( destFolder, true );
+			//{
+			//	//need for cs files
+			//	//var destFolder = Path.Combine( buildInstance.DestinationFolder, "Assets" );
+			//	//if( Directory.Exists( destFolder ) )
+			//	//	Directory.Delete( destFolder, true );
 
-				//need for cs files
-				//destFolder = Path.Combine( buildInstance.DestinationFolder, "Caches" );
-				//if( Directory.Exists( destFolder ) )
-				//	Directory.Delete( destFolder, true );
+			//	//need for cs files
+			//	//destFolder = Path.Combine( buildInstance.DestinationFolder, "Caches" );
+			//	//if( Directory.Exists( destFolder ) )
+			//	//	Directory.Delete( destFolder, true );
 
-				var destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tips" );
-				if( Directory.Exists( destFolder ) )
-					Directory.Delete( destFolder, true );
+			//	var destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tips" );
+			//	if( Directory.Exists( destFolder ) )
+			//		Directory.Delete( destFolder, true );
 
-				destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tools" );
-				if( Directory.Exists( destFolder ) )
-					Directory.Delete( destFolder, true );
-			}
+			//	destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tools" );
+			//	if( Directory.Exists( destFolder ) )
+			//		Directory.Delete( destFolder, true );
+			//}
 
 		}
 

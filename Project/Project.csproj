@@ -65,7 +65,7 @@
     <Compile Include="Assets\Base\UI\Windows\MessageBoxWindow.cs" />
     <Compile Include="Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
     <Compile Include="Assets\Samples\Simple Game\SimpleGameGUI.cs" />
-    <Compile Include="Caches\CSharpScripts\CSharpScripts.cs" />
+    <Compile Include="Caches\CSharpScripts\CSharpScripts.cs" Condition="Exists('Caches\CSharpScripts\CSharpScripts.cs')" />
     <Compile Include="Assets\Base\WindowApp\WindowAppMainForm.cs" />
     <Compile Include="Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
     <Compile Include="Assets\Samples\Platform Game\PlatformGameGUI.cs" />
