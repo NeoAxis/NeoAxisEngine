@@ -202,7 +202,7 @@
 		}
 		Scene
 		{
-			GetByReference = "Samples\\Starter Content\\Scenes\\Character.scene"
+			GetByReference = "Samples\\Starter Content\\Scenes\\Character test.scene"
 		}
 		UIControl
 		{

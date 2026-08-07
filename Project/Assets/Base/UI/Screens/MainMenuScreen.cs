@@ -146,7 +146,7 @@ namespace Project
 			if( Components[ "Button Play Character Scene" ] != null )
 			{
 				var button = (UIButton)Components[ "Button Play Character Scene" ];
-				var fileName = @"Samples\Starter Content\Scenes\Character.scene";
+				var fileName = @"Samples\Starter Content\Scenes\Character test.scene";
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
