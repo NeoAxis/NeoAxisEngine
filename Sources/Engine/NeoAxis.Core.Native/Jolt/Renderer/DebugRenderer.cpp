@@ -785,6 +785,10 @@ void DebugRenderer::DrawCylinder(RMat44Arg inMatrix, float inHalfHeight, float i
 	Mat44 local_transform(Vec4(inRadius, 0, 0, 0), Vec4(0, inHalfHeight, 0, 0), Vec4(0, 0, inRadius, 0), Vec4(0, 0, 0, 1));
 	RMat44 transform = inMatrix * local_transform;
 
+	//!!!!betauser
+	if (mCylinder == NULL)
+		return;
+
 	DrawGeometry(transform, mCylinder->mBounds.Transformed(transform), Square(inRadius), inColor, mCylinder, ECullMode::CullBackFace, inCastShadow, inDrawMode);
 }
 
@@ -866,6 +870,10 @@ DebugRenderer::Geometry *DebugRenderer::CreateSwingLimitGeometry(int inNumSegmen
 void DebugRenderer::DrawSwingConeLimits(RMat44Arg inMatrix, float inSwingYHalfAngle, float inSwingZHalfAngle, float inEdgeLength, ColorArg inColor, ECastShadow inCastShadow, EDrawMode inDrawMode)
 {
 	JPH_PROFILE_FUNCTION();
+
+	//!!!!betauser
+	if (inEdgeLength <= 0.0f)
+		return;
 
 	// Assert sane input
 	JPH_ASSERT(inSwingYHalfAngle >= 0.0f && inSwingYHalfAngle <= JPH_PI);
