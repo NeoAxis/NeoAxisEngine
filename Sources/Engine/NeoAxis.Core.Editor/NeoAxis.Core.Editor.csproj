@@ -41,12 +41,8 @@
     <None Remove="Libraries\Krypton\.editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Components\Build\Product_Linux.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Components\Build\Product_macOS.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Update="Components\Build\Product_Linux.cs" />
+    <Compile Update="Components\Build\Product_macOS.cs" />
     <Compile Update="Components\Build\Product_Store.cs" />
     <Compile Update="Components\Font\FontPreview.designer.cs">
       <DependentUpon>FontPreview.cs</DependentUpon>

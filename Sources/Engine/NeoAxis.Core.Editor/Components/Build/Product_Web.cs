@@ -287,7 +287,8 @@ namespace NeoAxis
 
 		public override void BuildFunction( ProductBuildInstance buildInstance )
 		{
-			var publishFolder = Path.Combine( buildInstance.DestinationFolder, "_Publish" );
+			var tempFolder = Path.Combine( buildInstance.DestinationFolder, "_Temp" );
+			var publishFolder = Path.Combine( tempFolder, "Publish" );
 
 			try
 			{
@@ -302,7 +303,7 @@ namespace NeoAxis
 				PatchCSharpProjects( buildInstance );
 
 				buildInstance.ProgressText = "Copying files...";
-				CopyFilesToPackageFolder( buildInstance );
+				CopyFilesToPackageFolder( buildInstance, tempFolder );
 				buildInstance.Progress = 0.4f;
 				if( CheckCancel( buildInstance ) )
 					return;
@@ -314,11 +315,13 @@ namespace NeoAxis
 
 				//the destination folder must contain the final build only
 				CleanDestinationFolder( buildInstance );
+				CollectPublishResult( buildInstance, publishFolder, new Range( 0.85, 0.95 ) );
 
-				CollectPublishResult( buildInstance, publishFolder, new Range( 0.85, 0.97 ) );
+				//the archive must be placed after publishing to override the one created by the prebuild event
+				PlaceProjectArchive( buildInstance, tempFolder );
 
-				if( Directory.Exists( publishFolder ) )
-					Directory.Delete( publishFolder, true );
+				if( Directory.Exists( tempFolder ) )
+					Directory.Delete( tempFolder, true );
 
 				buildInstance.Progress = 0.99f;
 			}
@@ -440,12 +443,17 @@ namespace NeoAxis
 
 			var release = Configuration.Value == ConfigurationEnum.Release;
 
+			buildInstance.ProgressText = release
+				? "Building projects (can update up 30 min)..."
+				: "Building projects (up to 5 min)...";
+
 			var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player.Web\NeoAxis.Player.Web.csproj" );
 
 			var arguments = $"publish \"{projectFullPath}\"";
 			arguments += $" --configuration {( release ? "Release" : "Debug" )}";
 			arguments += $" --output \"{publishFolder}\"";
 			arguments += " --verbosity minimal";
+			arguments += " -p:NeoAxisProductBuild=true";
 
 			if( release )
 				arguments += " -p:RunAOTCompilation=true -p:PublishTrimmed=true -p:TrimMode=partial";
@@ -464,6 +472,7 @@ namespace NeoAxis
 
 		void CollectPublishResult( ProductBuildInstance buildInstance, string publishFolder, Range progressRange )
 		{
+			buildInstance.ProgressText = "Collecting result...";
 			var sourceFolder = Path.Combine( publishFolder, "wwwroot" );
 
 			if( !Directory.Exists( sourceFolder ) )
@@ -487,7 +496,18 @@ namespace NeoAxis
 			}
 		}
 
-		void CopyFilesToPackageFolder( ProductBuildInstance buildInstance )
+		void PlaceProjectArchive( ProductBuildInstance buildInstance, string tempFolder )
+		{
+			var sourceFileName = Path.Combine( tempFolder, "Project.zip" );
+			var destinationFileName = Path.Combine( buildInstance.DestinationFolder, @"Assets\Project.zip" );
+
+			Directory.CreateDirectory( Path.GetDirectoryName( destinationFileName ) );
+
+			File.Copy( sourceFileName, destinationFileName, true );
+			File.Copy( sourceFileName + ".hash", destinationFileName + ".hash", true );
+		}
+
+		void CopyFilesToPackageFolder( ProductBuildInstance buildInstance, string tempFolder )
 		{
 			//copy files
 			var copyPaths = GetPaths();
@@ -642,9 +662,10 @@ namespace NeoAxis
 
 			//create Project.zip
 			{
-				//the zip must be placed where the player project expects it, because we build in place
-				var destinationFileName = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player.Web\wwwroot\Assets\Project.zip" );
-				Directory.CreateDirectory( Path.GetDirectoryName( destinationFileName ) );
+				buildInstance.ProgressText = "Creating Project.zip...";
+				//the archive is placed into the destination after publishing, to not be overwritten by the prebuild event
+				var destinationFileName = Path.Combine( tempFolder, "Project.zip" );
+				Directory.CreateDirectory( tempFolder );
 
 				var compressionLevel = CompressData.Value ? CompressionLevel.Optimal : CompressionLevel.NoCompression;
 
