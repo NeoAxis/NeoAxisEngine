@@ -398,7 +398,7 @@
 			// kryptonButtonBuildCancel
 			// 
 			this.kryptonButtonBuildCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.kryptonButtonBuildCancel.Location = new System.Drawing.Point(584, 465);
+			this.kryptonButtonBuildCancel.Location = new System.Drawing.Point(684, 465);
 			this.kryptonButtonBuildCancel.Name = "kryptonButtonBuildCancel";
 			this.kryptonButtonBuildCancel.Size = new System.Drawing.Size(117, 32);
 			this.kryptonButtonBuildCancel.TabIndex = 6;
@@ -412,7 +412,7 @@
 			this.progressBarBuild.Location = new System.Drawing.Point(327, 465);
 			this.progressBarBuild.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this.progressBarBuild.Name = "progressBarBuild";
-			this.progressBarBuild.Size = new System.Drawing.Size(247, 32);
+			this.progressBarBuild.Size = new System.Drawing.Size(347, 32);
 			this.progressBarBuild.TabIndex = 5;
 			this.progressBarBuild.Visible = false;
 			// 

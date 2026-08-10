@@ -444,8 +444,8 @@ namespace NeoAxis
 			var release = Configuration.Value == ConfigurationEnum.Release;
 
 			buildInstance.ProgressText = release
-				? "Building projects (can update up 30 min)..."
-				: "Building projects (up to 5 min)...";
+				? "Building projects Release (can update up 30 min)..."
+				: "Building projects Debug (up to 5 min)...";
 
 			var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player.Web\NeoAxis.Player.Web.csproj" );
 
