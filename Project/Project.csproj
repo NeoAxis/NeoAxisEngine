@@ -45,10 +45,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Base\Scripts\ClientUtility.cs" />
+    <Compile Include="Assets\Base\Scripts\Cloud\MatchSceneClient.cs" />
     <Compile Include="Assets\Base\Scripts\RunServer.cs" />
-    <Compile Include="Assets\Base\Scripts\NetworkLogic.cs" />
-    <Compile Include="Assets\Base\Scripts\CloudServiceClient.cs" />
     <Compile Include="Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
     <Compile Include="Assets\Base\Scripts\SimulationAppClient.cs" />
     <Compile Include="Assets\Base\Scripts\SimulationAppServer.cs" />
@@ -63,21 +61,16 @@
     <Compile Include="Assets\Base\UI\Styles\UIStyleEditor.cs" />
     <Compile Include="Assets\Base\UI\Styles\UIStyleSimple.cs" />
     <Compile Include="Assets\Base\UI\Windows\MessageBoxWindow.cs" />
-    <Compile Include="Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
-    <Compile Include="Assets\Samples\Simple Game\SimpleGameGUI.cs" />
+    <Compile Include="Assets\Samples\Simple Game\SimpleGameScreen.cs" />
     <Compile Include="Caches\CSharpScripts\CSharpScripts.cs" Condition="Exists('Caches\CSharpScripts\CSharpScripts.cs')" />
     <Compile Include="Assets\Base\WindowApp\WindowAppMainForm.cs" />
-    <Compile Include="Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
-    <Compile Include="Assets\Samples\Platform Game\PlatformGameGUI.cs" />
-    <Compile Include="Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
-    <Compile Include="Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
-    <Compile Include="Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
+    <Compile Include="Assets\Samples\Spaceship Game\SpaceshipGameScreen.cs" />
+    <Compile Include="Assets\Samples\Platform Game\PlatformGameScreen.cs" />
+    <Compile Include="Assets\Samples\Shooter\Scripts\ShooterGameLogic.cs" />
+    <Compile Include="Assets\Samples\Shooter\UI\ShooterGameScreen.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
     <Compile Include="Assets\Base\UI\Screens\BasicSceneScreen.cs" />
-    <Compile Include="Assets\Base\UI\Screens\EntranceScreen.cs" />
-    <Compile Include="Assets\Base\UI\Screens\InGameContextScreen.cs" />
-    <Compile Include="Assets\Base\UI\Screens\AvatarWindow.cs" />
     <Compile Include="Assets\Base\UI\Screens\MatchesWindow.cs" />
     <Compile Include="Assets\Base\UI\Screens\MatchWindow.cs" />
     <Compile Include="Assets\Base\Scripts\ProjectSettingsPage_Extension.cs" />

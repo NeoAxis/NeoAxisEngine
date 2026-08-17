@@ -15,7 +15,7 @@ namespace NeoAxis
 			var from = position + new Vector3( 0, 0, maxHeight );
 			var to = position + new Vector3( 0, 0, minHeight );
 
-			for( var radius = 0.0; radius <= maxRadius; radius += characterRadius )
+			for( var radius = 0.0; radius <= maxRadius; radius += characterRadius * 1.1 )
 			{
 				for( var angle = 0.0; angle < Math.PI * 2; angle += Math.PI / 8 )
 				{

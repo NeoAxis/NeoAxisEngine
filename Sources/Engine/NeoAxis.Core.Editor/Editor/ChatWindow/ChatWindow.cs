@@ -10,7 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using NeoAxis.Networking;
-using NeoAxis.CloudServer;
+using NeoAxis.Cloud;
 using System.IO.Compression;
 
 namespace NeoAxis.Editor
@@ -263,7 +263,7 @@ namespace NeoAxis.Editor
 
 			//delete item
 			{
-				var result = await client2.CallMethodAsync( "Implementation", "DeleteItemsAndTasks", cts.Token, (object)new string[] { itemID } );
+				var result = await client2.CallMethodAsync( "CloudServerImplementation", "DeleteItemsAndTasks", cts.Token, (object)new string[] { itemID } );
 				if( !string.IsNullOrEmpty( result.Error ) && !result.Error.StartsWith( "Item not found" ) )
 					throw new Exception( result.Error );
 			}
@@ -649,7 +649,7 @@ namespace NeoAxis.Editor
 
 		static async Task<Chats.Message> WaitAnswerMessageAndEndedTaskAsync( CloudFunctionsClient client, long userID, long chatID, CancellationToken cancellationToken )
 		{
-			var result = await client.CallMethodAsync<Chats.Message>( "Implementation", "WaitAnswerMessageAndEndedTask", cancellationToken, chatID );
+			var result = await client.CallMethodAsync<Chats.Message>( "CloudServerImplementation", "WaitAnswerMessageAndEndedTask", cancellationToken, chatID );
 			if( !string.IsNullOrEmpty( result.Error ) )
 				throw new Exception( result.Error );
 			return result.Value;

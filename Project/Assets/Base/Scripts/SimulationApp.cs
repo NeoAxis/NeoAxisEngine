@@ -1053,10 +1053,12 @@ namespace Project
 			}
 		}
 
-		public static void NetworkClientSceneDestroyed()
+		public static void NetworkClientSceneDestroyed( bool anotherSceneWillLoaded )
 		{
 			if( PlayScreen.Instance != null )
 				PlayScreen.Instance.DestroyScene();
+
+			if( !anotherSceneWillLoaded )
 			ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", false );
 		}
 

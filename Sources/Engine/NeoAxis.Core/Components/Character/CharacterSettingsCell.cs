@@ -41,7 +41,7 @@ namespace NeoAxis.Editor
 
 						foreach( var character in GetObjects<Character>() )
 						{
-							Item3DInterface item = null;
+							ItemInterface item = null;
 							if( isWeaponType )
 							{
 								var weapon = ComponentUtility.CreateComponent<Weapon>( null, false, false );

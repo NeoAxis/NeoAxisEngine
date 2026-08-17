@@ -9,7 +9,7 @@ using System.Threading;
 using System.Linq;
 using System.Threading.Tasks;
 using NeoAxis.Networking;
-using NeoAxis.CloudServer;
+using NeoAxis.Cloud;
 using System.Windows.Controls;
 
 namespace NeoAxis.Editor
@@ -168,7 +168,7 @@ namespace NeoAxis.Editor
 
 
 						var cts2 = new CancellationTokenSource( new TimeSpan( 0, 2, 0 ) );
-						var getItemsResult = await client.CallMethodAsync<string>( "Implementation", "GetItemsTextBlock", cts2.Token, null, new[] { userID }, null, new[] { "Finished" }, new[] { "3D Model" } );
+						var getItemsResult = await client.CallMethodAsync<string>( "CloudServerImplementation", "GetItemsTextBlock", cts2.Token, null, new[] { userID }, null, new[] { "Finished" }, new[] { "3D Model" } );
 						if( !string.IsNullOrEmpty( getItemsResult.Error ) )
 							throw new Exception( getItemsResult.Error );
 

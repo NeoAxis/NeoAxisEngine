@@ -562,9 +562,9 @@
 		ScreenFadingTargetColor = 0 0 0 0
 		ScreenFadingSpeed = 0
 	}
-	.component NeoAxis.NetworkLogic
+	.component NeoAxis.GameLogic
 	{
-		Name = Network Logic
+		Name = Game Logic
 	}
 	.component NeoAxis.Text2D
 	{

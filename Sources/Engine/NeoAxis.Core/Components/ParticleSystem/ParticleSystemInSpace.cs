@@ -35,6 +35,7 @@ namespace NeoAxis
 		bool playingEnded;
 
 		int mergeSimulationStepsCounter;
+		double simulationTimeLastUpdate;
 
 		//!!!!удал€ть. когда опции мен€ютс€ тоже
 		//public Batch batch;
@@ -216,7 +217,7 @@ namespace NeoAxis
 
 		[DefaultValue( 2 )]
 		[Category( "Optimization" )]
-		[Range( 0, 4 )]
+		[Range( 1, 4 )] //[Range( 0, 4 )]
 		public Reference<int> MergeSimulationSteps
 		{
 			get { if( _mergeSimulationSteps.BeginGet() ) MergeSimulationSteps = _mergeSimulationSteps.Get( this ); return _mergeSimulationSteps.value; }
@@ -282,6 +283,11 @@ namespace NeoAxis
 			public Vector4F AnyData;
 			//public Vector4F Special1;
 			//public Vector4F Special2;
+
+			public int PreviousSimulationStepInitialized;
+			public Vector3 PositionPreviousSimulationStep;
+			public Matrix3F RotationPreviousSimulationStep;
+			public float SizePreviousSimulationStep;
 		}
 
 		/////////////////////////////////////////
@@ -369,6 +375,13 @@ namespace NeoAxis
 					particleSystemResult = currentParticleSystem;
 				}
 
+				float interpolationSimulationStepScale = 0;
+				if( RenderingSystem.Interpolation && TransformInterpolation && MergeSimulationSteps.Value > 0 )
+				{
+					var stepsPerSecond = Time.SimulationStepsPerSecond / MergeSimulationSteps.Value;
+					interpolationSimulationStepScale = (float)MathEx.Saturate( ( EngineApp.EngineTime - simulationTimeLastUpdate ) * stepsPerSecond );
+				}
+
 				if( particleSystemResult != null && ObjectsGetCount() != 0 )
 				{
 					//var context2 = context.objectInSpaceRenderingContext;
@@ -441,6 +454,24 @@ namespace NeoAxis
 						{
 							ref var particle = ref Objects[ particleIndex ];
 
+							//get interpolated particle transform
+							Vector3 particlePosition;
+							Matrix3F particleRotation;
+							float particleSize;
+							if( RenderingSystem.Interpolation && TransformInterpolation && particle.PreviousSimulationStepInitialized != 0 )
+							{
+								Vector3.Lerp( ref particle.PositionPreviousSimulationStep, ref particle.Position, interpolationSimulationStepScale, out particlePosition );
+								//!!!!slowly
+								particleRotation = QuaternionF.Slerp( particle.RotationPreviousSimulationStep.ToQuaternion(), particle.Rotation.ToQuaternion(), interpolationSimulationStepScale ).ToMatrix3();
+								particleSize = MathEx.Lerp( particle.SizePreviousSimulationStep, particle.Size, interpolationSimulationStepScale );
+							}
+							else
+							{
+								particlePosition = particle.Position;
+								particleRotation = particle.Rotation;
+								particleSize = particle.Size;
+							}
+
 							if( particle.Emitter < currentParticleSystem.Emitters.Length )
 							{
 								var compiledEmitter = currentParticleSystem.Emitters[ particle.Emitter ];
@@ -461,26 +492,26 @@ namespace NeoAxis
 										//Position
 										Vector3 p;
 										if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.Local )
-											Matrix4.Multiply( ref trMatrix, ref particle.Position, out p );
+											Matrix4.Multiply( ref trMatrix, ref particlePosition, out p );
 										else
-											p = particle.Position;
-
+											p = particlePosition;
 										context.ConvertToRelative( ref p, out billboardItem.PositionRelative );
 										//billboardItem.Position = p.ToVector3F();
 
 										//Size
 										if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.Local )
 										{
-											billboardItem.Size = new Vector2F( particle.Size * Math.Max( (float)tr.Scale.X, (float)tr.Scale.Y ), particle.Size * (float)tr.Scale.Z );
+											billboardItem.Size = new Vector2F( particleSize * Math.Max( (float)tr.Scale.X, (float)tr.Scale.Y ), particleSize * (float)tr.Scale.Z );
 										}
 										else
-											billboardItem.Size = new Vector2F( particle.Size, particle.Size );
+											billboardItem.Size = new Vector2F( particleSize, particleSize );
 
 										if( billboardItem.Size.X > 0 && billboardItem.Size.Y > 0 )
 										{
 											//Rotation
+
 											//!!!!slowly
-											billboardItem.RotationAngle = MathEx.DegreeToRadian( particle.Rotation.ToAngles().Roll );
+											billboardItem.RotationAngle = MathEx.DegreeToRadian( particleRotation.ToAngles().Roll );
 
 											//Color
 											billboardItem.Color = particle.Color * color;
@@ -602,22 +633,24 @@ namespace NeoAxis
 											if( meshItem.MeshData.BillboardMode != 0 )
 											{
 												//Position
+
 												Vector3 position;
 												if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.Local )
-													Matrix4.Multiply( ref trMatrix, ref particle.Position, out position );
+													Matrix4.Multiply( ref trMatrix, ref particlePosition, out position );
 												else
-													position = particle.Position;
+													position = particlePosition;
 
 												//Size
+
 												Vector2F size;
 												if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.Local )
 												{
 													var scale = tr.Scale;
 													var scaleH = (float)Math.Max( scale.X, scale.Y );
-													size = new Vector2F( particle.Size * scaleH, particle.Size * (float)scale.Z );
+													size = new Vector2F( particleSize * scaleH, particleSize * (float)scale.Z );
 												}
 												else
-													size = new Vector2F( particle.Size, particle.Size );
+													size = new Vector2F( particleSize, particleSize );
 
 												if( size.X > 0 && size.Y > 0 )
 												{
@@ -645,11 +678,11 @@ namespace NeoAxis
 											else
 											{
 												//Transform
-												Matrix3F.FromScale( particle.Size, out var scl );
-												Matrix3F.Multiply( ref particle.Rotation, ref scl, out var mat3 );
+												Matrix3F.FromScale( particleSize, out var scl );
+												Matrix3F.Multiply( ref particleRotation, ref scl, out var mat3 );
 
 												//!!!!good?
-												context.ConvertToRelative( ref particle.Position, out var positionF );
+												context.ConvertToRelative( ref particlePosition, out var positionF );
 												if( currentParticleSystem.SimulationSpace == NeoAxis.ParticleSystem.SimulationSpaceEnum.Local )
 												{
 													var mat4 = new Matrix4F( ref mat3, ref positionF );
@@ -875,6 +908,8 @@ namespace NeoAxis
 				mergeSimulationStepsCounter--;
 				if( mergeSimulationStepsCounter <= 0 )
 				{
+					simulationTimeLastUpdate = ParentRoot.HierarchyController?.SimulationTime ?? 0;
+
 					var mergeSteps = MergeSimulationSteps.Value;
 					mergeSimulationStepsCounter = mergeSteps;
 					Simulate( Time.SimulationDelta * currentParticleSystem.Owner.SimulationSpeed * mergeSteps, out var wasUpdated );
@@ -899,6 +934,8 @@ namespace NeoAxis
 				mergeSimulationStepsCounter--;
 				if( mergeSimulationStepsCounter <= 0 )
 				{
+					simulationTimeLastUpdate = ParentRoot.HierarchyController?.SimulationTime ?? 0;
+
 					var mergeSteps = MergeSimulationSteps.Value;
 					mergeSimulationStepsCounter = mergeSteps;
 					Simulate( Time.SimulationDelta * currentParticleSystem.Owner.SimulationSpeed * mergeSteps, out var wasUpdated );
@@ -1289,6 +1326,7 @@ namespace NeoAxis
 			var sceneRandom = Scene.GetRandomGuaranteed( ParentScene );
 
 			var wasUpdated2 = false;
+			var firstSimulation = playingTime == 0;
 
 			//update playing time
 			if( !playingEnded )
@@ -1302,7 +1340,7 @@ namespace NeoAxis
 					for( int nEmitter = 0; nEmitter < Emitters.Length; nEmitter++ )
 					{
 						ref var emitter = ref Emitters[ nEmitter ];
-						if( playingTime < emitter.StartTime + emitter.Duration )
+						if( playingTime < emitter.StartTime + emitter.Duration || firstSimulation )
 						{
 							replay = false;
 							break;
@@ -1354,7 +1392,7 @@ namespace NeoAxis
 					ref var emitter = ref Emitters[ nEmitter ];
 					var compiledEmitter = currentParticleSystem.Emitters[ nEmitter ];
 
-					if( playingTime >= emitter.StartTime && playingTime < emitter.StartTime + emitter.Duration )
+					if( playingTime >= emitter.StartTime && ( playingTime < emitter.StartTime + emitter.Duration || firstSimulation ) )
 						emitter.AvailableTimeToSpawn += delta;
 
 					//!!!!чтобы не зависло
@@ -1571,7 +1609,7 @@ namespace NeoAxis
 						}
 
 						particle.Time += delta;
-						if( particle.Time >= particle.Lifetime )
+						if( particle.Time >= particle.Lifetime && !firstSimulation )
 						{
 							//delete
 							//if( toDelete == null )
@@ -1757,6 +1795,37 @@ namespace NeoAxis
 		public override ScreenLabelInfo GetScreenLabelInfo()
 		{
 			return new ScreenLabelInfo( "ParticleSystemInSpace" );
+		}
+
+		internal override void SaveTransformPreviousSimulationStep()
+		{
+			base.SaveTransformPreviousSimulationStep();
+
+			if( Objects != null && mergeSimulationStepsCounter == 1 )
+			{
+				for( int n = 0; n < Objects.Length; n++ )
+				{
+					ref var particle = ref Objects[ n ];
+					particle.PreviousSimulationStepInitialized = 1;
+					particle.PositionPreviousSimulationStep = particle.Position;
+					particle.RotationPreviousSimulationStep = particle.Rotation;
+					particle.SizePreviousSimulationStep = particle.Size;
+				}
+			}
+		}
+
+		public override void TransformInterpolatedReset()
+		{
+			base.TransformInterpolatedReset();
+
+			if( Objects != null )
+			{
+				for( int n = 0; n < Objects.Length; n++ )
+				{
+					ref var particle = ref Objects[ n ];
+					particle.PreviousSimulationStepInitialized = 0;
+				}
+			}
 		}
 	}
 }

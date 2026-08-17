@@ -1,0 +1,102 @@
+// Made with NeoAxis Engine 2026.2.
+
+.component Project.SimpleGameScreen
+{
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	.component NeoAxis.UIButton
+	{
+		Name = Button Next Level
+		Text = Next Level
+		Size = Units 300 60
+		HorizontalAlignment = Center
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 70
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonNextLevel_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button In-Game Menu
+		Text = In-Game Menu
+		Size = Units 160 40
+		HorizontalAlignment = Right
+		Margin = Units 650 10 180 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonInGameMenu_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Open the in-game menu.
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button System Menu
+		Text = System Menu
+		Size = Units 160 40
+		HorizontalAlignment = Right
+		Margin = Units 650 10 10 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonSystemMenu_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Open the system menu.
+		}
+	}
+}

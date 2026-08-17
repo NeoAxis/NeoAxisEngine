@@ -6,10 +6,10 @@ using System.Collections.Generic;
 namespace NeoAxis
 {
 	/// <summary>
-	/// The object to interact Player app with the scene.
+	/// A component for player interaction with the scene.
 	/// </summary>
 	[AddToResourcesWindow( @"Base\Game framework\Game Mode", -9999 )]
-	public class GameMode : Component, IGameMode
+	public class GameMode : Component
 	{
 		static UIControl playScreen;
 		public static double MouseSensitivity = 1;
@@ -28,7 +28,7 @@ namespace NeoAxis
 		bool freeCameraMouseRotatingActivated;
 		Vector2 freeCameraRotatingStartPos;
 
-		/////////////////////////////////////////
+		///////////////////////////////////////////////
 
 		/// <summary>
 		/// The scene object under player control.
@@ -87,6 +87,7 @@ namespace NeoAxis
 			None,
 			FirstPerson,
 			ThirdPerson,
+			ThirdPersonAutoRotation,
 		}
 
 		/// <summary>
@@ -159,34 +160,20 @@ namespace NeoAxis
 		public event Action<GameMode> FirstPersonCameraPickInteractiveObjectDistanceChanged;
 		ReferenceField<double> _firstPersonCameraPickInteractiveObjectDistance = 2.0;
 
-		///// <summary>
-		///// Whether to change the position of the third person camera depending on the direction of the object.
-		///// </summary>
-		//[Category( "Camera" )]
-		//[DefaultValue( false )]
-		//public Reference<bool> ThirdPersonCameraFollowDirection
-		//{
-		//	get { if( _thirdPersonCameraFollowDirection.BeginGet() ) ThirdPersonCameraFollowDirection = _thirdPersonCameraFollowDirection.Get( this ); return _thirdPersonCameraFollowDirection.value; }
-		//	set { if( _thirdPersonCameraFollowDirection.BeginSet( this, ref value ) ) { try { ThirdPersonCameraFollowDirectionChanged?.Invoke( this ); } finally { _thirdPersonCameraFollowDirection.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="ThirdPersonCameraFollowDirection"/> property value changes.</summary>
-		//public event Action<GameMode> ThirdPersonCameraFollowDirectionChanged;
-		//ReferenceField<bool> _thirdPersonCameraFollowDirection = false;
-
-		///// <summary>
-		///// Third-person camera rotation speed. Degree per second.
-		///// </summary>
-		//[Category( "Camera" )]
-		//[DefaultValue( 180.0 )]
-		//[Range( 0, 360 )]
-		//public Reference<Degree> ThirdPersonCameraFollowDirectionSpeed
-		//{
-		//	get { if( _thirdPersonCameraFollowDirectionSpeed.BeginGet() ) ThirdPersonCameraFollowDirectionSpeed = _thirdPersonCameraFollowDirectionSpeed.Get( this ); return _thirdPersonCameraFollowDirectionSpeed.value; }
-		//	set { if( _thirdPersonCameraFollowDirectionSpeed.BeginSet( this, ref value ) ) { try { ThirdPersonCameraFollowDirectionSpeedChanged?.Invoke( this ); } finally { _thirdPersonCameraFollowDirectionSpeed.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="ThirdPersonCameraFollowDirectionSpeed"/> property value changes.</summary>
-		//public event Action<GameMode> ThirdPersonCameraFollowDirectionSpeedChanged;
-		//ReferenceField<Degree> _thirdPersonCameraFollowDirectionSpeed = new Degree( 180 );
+		/// <summary>
+		/// Third-person camera auto rotation speed in degrees per second.
+		/// </summary>
+		[Category( "Camera" )]
+		[DefaultValue( 180.0 )]
+		[Range( 0, 360 )]
+		public Reference<Degree> ThirdPersonAutoRotationCameraSpeed
+		{
+			get { if( _thirdPersonAutoRotationCameraSpeed.BeginGet() ) ThirdPersonAutoRotationCameraSpeed = _thirdPersonAutoRotationCameraSpeed.Get( this ); return _thirdPersonAutoRotationCameraSpeed.value; }
+			set { if( _thirdPersonAutoRotationCameraSpeed.BeginSet( this, ref value ) ) { try { ThirdPersonAutoRotationCameraSpeedChanged?.Invoke( this ); } finally { _thirdPersonAutoRotationCameraSpeed.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="ThirdPersonAutoRotationCameraSpeed"/> property value changes.</summary>
+		public event Action<GameMode> ThirdPersonAutoRotationCameraSpeedChanged;
+		ReferenceField<Degree> _thirdPersonAutoRotationCameraSpeed = new Degree( 180 );
 
 		/// <summary>
 		/// The horizontal angle of the camera in third-person mode.
@@ -692,7 +679,7 @@ namespace NeoAxis
 		/// The first key code to drop item.
 		/// </summary>
 		[Category( "Control Keys" )]
-		[DefaultValue( EKeys.Control )]//T )]
+		[DefaultValue( EKeys.Control )]
 		[DisplayName( "Key Drop 1" )]
 		public Reference<EKeys> KeyDrop1
 		{
@@ -701,7 +688,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="KeyDrop1"/> property value changes.</summary>
 		public event Action<GameMode> KeyDrop1Changed;
-		ReferenceField<EKeys> _keyDrop1 = EKeys.Control;//.T;
+		ReferenceField<EKeys> _keyDrop1 = EKeys.Control;
 
 		/// <summary>
 		/// The second key code to drop item.
@@ -717,6 +704,36 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="KeyDrop2"/> property value changes.</summary>
 		public event Action<GameMode> KeyDrop2Changed;
 		ReferenceField<EKeys> _keyDrop2 = EKeys.None;
+
+		/// <summary>
+		/// The first key code to fire.
+		/// </summary>
+		[Category( "Control Keys" )]
+		[DefaultValue( EKeys.None )]
+		[DisplayName( "Key Fire 1" )]
+		public Reference<EKeys> KeyFire1
+		{
+			get { if( _keyFire1.BeginGet() ) KeyFire1 = _keyFire1.Get( this ); return _keyFire1.value; }
+			set { if( _keyFire1.BeginSet( this, ref value ) ) { try { KeyFire1Changed?.Invoke( this ); } finally { _keyFire1.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="KeyFire1"/> property value changes.</summary>
+		public event Action<GameMode> KeyFire1Changed;
+		ReferenceField<EKeys> _keyFire1 = EKeys.None;
+
+		/// <summary>
+		/// The second key code to fire.
+		/// </summary>
+		[Category( "Control Keys" )]
+		[DefaultValue( EKeys.None )]
+		[DisplayName( "Key Fire 2" )]
+		public Reference<EKeys> KeyFire2
+		{
+			get { if( _keyFire2.BeginGet() ) KeyFire2 = _keyFire2.Get( this ); return _keyFire2.value; }
+			set { if( _keyFire2.BeginSet( this, ref value ) ) { try { KeyFire2Changed?.Invoke( this ); } finally { _keyFire2.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="KeyFire2"/> property value changes.</summary>
+		public event Action<GameMode> KeyFire2Changed;
+		ReferenceField<EKeys> _keyFire2 = EKeys.None;
 
 		/// <summary>
 		/// The first key code to brake.
@@ -913,6 +930,13 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		public static GameMode GetFromComponent( Component component )
+		{
+			return ( component.ParentRoot as Scene )?.GetGameMode();
+		}
+
+		/////////////////////////////////////////
+
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
@@ -922,31 +946,6 @@ namespace NeoAxis
 			{
 				switch( p.Name )
 				{
-				//case nameof( FirstPersonCameraShowControlledObject ):
-				//case nameof( FirstPersonCameraAttachToEyes ):
-				//case nameof( FirstPersonCameraCutVolumeRadius ):
-				//	if( UseBuiltInCamera.Value != BuiltInCameraEnum.FirstPerson )
-				//		skip = true;
-				//	break;
-
-				////case nameof( ThirdPersonCameraFollowDirection ):
-				//case nameof( ThirdPersonCameraVerticalAngle ):
-				//case nameof( ThirdPersonCameraDistance ):
-				//case nameof( ThirdPersonCameraHeight ):
-				//	if( UseBuiltInCamera.Value != BuiltInCameraEnum.ThirdPerson )
-				//		skip = true;
-				//	break;
-
-				//case nameof( ThirdPersonCameraHorizontalAngle ):
-				//	if( UseBuiltInCamera.Value != BuiltInCameraEnum.ThirdPerson )//|| ThirdPersonCameraFollowDirection.Value )
-				//		skip = true;
-				//	break;
-
-				//case nameof( ThirdPersonCameraFollowDirectionSpeed ):
-				//	if( UseBuiltInCamera.Value != BuiltInCameraEnum.ThirdPerson )//|| !ThirdPersonCameraFollowDirection.Value )
-				//		skip = true;
-				//	break;
-
 				case nameof( DisplayTargetSize ):
 				case nameof( DisplayTargetImage ):
 				case nameof( DisplayTargetColor ):
@@ -957,39 +956,18 @@ namespace NeoAxis
 			}
 		}
 
-		public delegate void GetCameraSettingsEventDelegate( GameMode sender, Viewport viewport, Camera cameraDefault, ref Viewport.CameraSettingsClass cameraSettings );
-		public event GetCameraSettingsEventDelegate GetCameraSettingsEvent;
-
-		public virtual Viewport.CameraSettingsClass GetCameraSettings( Viewport viewport, Camera cameraDefault )
+		public Viewport.CameraSettingsClass GetCameraSettingsDefaultFunction( Viewport viewport, Camera cameraDefault, BuiltInCameraEnum builtInCamera )
 		{
 			Viewport.CameraSettingsClass result = null;
 
-			//replace camera
-			if( result == null )
-			{
-				var replaceCamera = ReplaceCamera.Value;
-				if( replaceCamera != null )
-					result = new Viewport.CameraSettingsClass( viewport, replaceCamera );
-			}
-			//if( result == null && ReplaceCamera != null )
-			//	result = new Viewport.CameraSettingsClass( viewport, ReplaceCamera );
-
-			if( result == null )
-			{
-				if( FreeCamera )
-				{
-					//free camera
-
-					result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, freeCameraPosition, freeCameraDirection.GetVector(), Vector3.ZAxis, ProjectionType.Perspective, 1, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
-				}
-				else if( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson )
+			if( builtInCamera == BuiltInCameraEnum.FirstPerson )
 				{
 					//first person camera
 
 					var objectInSpace = ObjectControlledByPlayer.Value as ObjectInSpace;
 					if( objectInSpace != null )
 					{
-						var tr = objectInSpace.TransformV;
+					var tr = objectInSpace.GetTransformInterpolated();
 
 						var position = tr.Position;
 						var forward = tr.Rotation.GetForward();
@@ -1008,7 +986,7 @@ namespace NeoAxis
 						result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, position, forward, up, ProjectionType.Perspective, 1, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
 					}
 				}
-				else if( UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
+			else if( builtInCamera == BuiltInCameraEnum.ThirdPerson || builtInCamera == BuiltInCameraEnum.ThirdPersonAutoRotation )
 				{
 					//third person camera
 
@@ -1019,7 +997,7 @@ namespace NeoAxis
 						//var character = ObjectControlledByPlayer.Value as Character;
 						if( obj != null )
 						{
-							var lookAt = obj.TransformV.Position;
+						var lookAt = obj.GetTransformInterpolated().Position;
 							//Character specific
 							var character = ObjectControlledByPlayer.Value as Character;
 							if( character != null )
@@ -1066,13 +1044,45 @@ namespace NeoAxis
 						//var character = ObjectControlledByPlayer.Value as Character2D;
 						if( obj != null )
 						{
-							var lookAt = obj.TransformV.Position;
+						var lookAt = obj.GetTransformInterpolated().Position;
 							var from = lookAt + new Vector3( 0, 0, 10 );
 
 							result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, from, -Vector3.ZAxis, Vector3.YAxis, ProjectionType.Orthographic, cameraDefault.Height, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
 						}
 					}
+			}
 
+			return result;
+		}
+
+		public delegate void GetCameraSettingsEventDelegate( GameMode sender, Viewport viewport, Camera cameraDefault, ref Viewport.CameraSettingsClass cameraSettings );
+		public event GetCameraSettingsEventDelegate GetCameraSettingsEvent;
+
+		public virtual Viewport.CameraSettingsClass GetCameraSettings( Viewport viewport, Camera cameraDefault )
+		{
+			Viewport.CameraSettingsClass result = null;
+
+			//replace camera
+			if( result == null )
+			{
+				var replaceCamera = ReplaceCamera.Value;
+				if( replaceCamera != null )
+					result = new Viewport.CameraSettingsClass( viewport, replaceCamera );
+			}
+			//if( result == null && ReplaceCamera != null )
+			//	result = new Viewport.CameraSettingsClass( viewport, ReplaceCamera );
+
+			if( result == null )
+			{
+				if( FreeCamera )
+				{
+					//free camera
+					result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, freeCameraPosition, freeCameraDirection.GetVector(), Vector3.ZAxis, ProjectionType.Perspective, 1, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
+				}
+				else
+				{
+					//default camera function
+					result = GetCameraSettingsDefaultFunction( viewport, cameraDefault, UseBuiltInCamera.Value );
 				}
 			}
 
@@ -1111,9 +1121,15 @@ namespace NeoAxis
 			{
 				//with DemoMode
 
-				if( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.None )
+				var current = UseBuiltInCamera.Value;
+				if( current == BuiltInCameraEnum.None )
+					current = BuiltInCameraEnum.FirstPerson;
+
 				{
-					UseBuiltInCamera = BuiltInCameraEnum.ThirdPerson;
+					current++;
+					if( current > BuiltInCameraEnum.ThirdPersonAutoRotation )
+						current = BuiltInCameraEnum.FirstPerson;
+					UseBuiltInCamera = current;
 
 					var viewport = playScreen.ParentContainer.Viewport;
 					viewport.KeysAndMouseButtonUpAll();
@@ -1121,44 +1137,28 @@ namespace NeoAxis
 
 					demoMode.UpdateWalkMode();
 
-					return true;
-				}
-				else if( UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
-				{
-					UseBuiltInCamera = BuiltInCameraEnum.FirstPerson;
-
-					var viewport = playScreen.ParentContainer.Viewport;
-					viewport.KeysAndMouseButtonUpAll();
-					viewport.NotifyInstantCameraMovement();
-
-					demoMode.UpdateWalkMode();
+					ScreenMessages.Add( $"{StringUtility.AddSpacesBetweenWords( UseBuiltInCamera.Value.ToString() )} camera type is activated." );
 
 					return true;
 				}
-
-				return true;
 			}
 			else
 			{
 				//without DemoMode
 
-				if( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson )
+				var current = UseBuiltInCamera.Value;
+				if( current != BuiltInCameraEnum.None )
 				{
-					UseBuiltInCamera = BuiltInCameraEnum.ThirdPerson;
+					current++;
+					if( current > BuiltInCameraEnum.ThirdPersonAutoRotation )
+						current = BuiltInCameraEnum.FirstPerson;
+					UseBuiltInCamera = current;
 
 					var viewport = playScreen.ParentContainer.Viewport;
 					viewport.KeysAndMouseButtonUpAll();
 					viewport.NotifyInstantCameraMovement();
 
-					return true;
-				}
-				else if( UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
-				{
-					UseBuiltInCamera = BuiltInCameraEnum.FirstPerson;
-
-					var viewport = playScreen.ParentContainer.Viewport;
-					viewport.KeysAndMouseButtonUpAll();
-					viewport.NotifyInstantCameraMovement();
+					ScreenMessages.Add( $"{StringUtility.AddSpacesBetweenWords( UseBuiltInCamera.Value.ToString() )} camera type is activated." );
 
 					return true;
 				}
@@ -1285,8 +1285,6 @@ namespace NeoAxis
 				//third person camera update direction controlled by mouse
 				if( EngineApp.IsSimulation && UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
 				{
-					//if( !ThirdPersonCameraFollowDirection )
-					//{
 					var viewport = playScreen.ParentContainer.Viewport;
 					if( viewport.MouseRelativeMode )
 					{
@@ -1302,7 +1300,6 @@ namespace NeoAxis
 						ThirdPersonCameraHorizontalAngle = h;
 						ThirdPersonCameraVerticalAngle = v;
 					}
-					//}
 				}
 
 				//free camera rotating
@@ -1533,32 +1530,32 @@ namespace NeoAxis
 		{
 			base.OnUpdate( delta );
 
-			if( EngineApp.IsSimulation && UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
+			if( EngineApp.IsSimulation && ( UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPersonAutoRotation ) )
 			{
-				////third person camera update horizontal direction
-				//if( ThirdPersonCameraFollowDirection )
-				//{
-				//	var step = (double)ThirdPersonCameraFollowDirectionSpeed.Value.InRadians() * delta;
-				//	if( step != 0 )
-				//	{
-				//		var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
-				//		if( obj != null )
-				//		{
-				//			var direction = obj.TransformV.Rotation.GetForward().ToVector2();
-				//			if( direction != Vector2.Zero )
-				//			{
-				//				var demandedAngle = Math.Atan2( direction.Y, direction.X );
-				//				var currentAngle = ThirdPersonCameraHorizontalAngle.Value.InRadians();
+				//update camera horizontal angle in ThirdPersonAutoRotation mode
+				if( UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPersonAutoRotation )
+				{
+					var step = (double)ThirdPersonAutoRotationCameraSpeed.Value.InRadians() * delta;
+					if( step != 0 )
+					{
+						var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
+						if( obj != null )
+						{
+							var direction = obj.GetTransformInterpolated().Rotation.GetForward().ToVector2();
+							if( direction != Vector2.Zero )
+			{
+								var demandedAngle = Math.Atan2( -direction.Y, -direction.X );
+								var currentAngle = ThirdPersonCameraHorizontalAngle.Value.InRadians();
 
-				//				var angle = demandedAngle - currentAngle;
-				//				var d = new Vector2( Math.Cos( angle ), Math.Sin( angle ) );
-				//				double factor = -d.Y;
+								var angle = demandedAngle - currentAngle;
+								var d = new Vector2( Math.Cos( angle ), Math.Sin( angle ) );
+								double factor = -d.Y;
 
-				//				ThirdPersonCameraHorizontalAngle += new Radian( step * factor ).InDegrees();
-				//			}
-				//		}
-				//	}
-				//}
+								ThirdPersonCameraHorizontalAngle += new Radian( step * factor ).InDegrees();
+							}
+						}
+					}
+				}
 
 				//update third person camera distance
 				{
@@ -1687,7 +1684,7 @@ namespace NeoAxis
 				//built-in camera
 				if( ObjectControlledByPlayer.Value != null )
 				{
-					if( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
+					if( UseBuiltInCamera.Value != BuiltInCameraEnum.None )
 						result = true;
 				}
 			}
@@ -1919,7 +1916,7 @@ namespace NeoAxis
 						//}
 					}
 
-					if( UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
+					if( UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPersonAutoRotation )
 					{
 						var maxDistance = ThirdPersonCameraPickInteractiveObjectDistance.Value;
 						//scaling
@@ -2039,7 +2036,7 @@ namespace NeoAxis
 				//pick for 2D
 				if( Scene.Mode.Value == Scene.ModeEnum._2D )
 				{
-					if( UseBuiltInCamera.Value == BuiltInCameraEnum.None || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
+					if( UseBuiltInCamera.Value == BuiltInCameraEnum.None || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPersonAutoRotation )
 					{
 						var character = ObjectControlledByPlayer.Value as Character2D;
 						if( character != null )
@@ -2135,10 +2132,10 @@ namespace NeoAxis
 			{
 				bool render = false;
 				if( Scene.Mode.Value == Scene.ModeEnum._3D )
-					if( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
+					if( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPersonAutoRotation )
 						render = true;
 				if( Scene.Mode.Value == Scene.ModeEnum._2D )
-					if( UseBuiltInCamera.Value == BuiltInCameraEnum.None || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson )
+					if( UseBuiltInCamera.Value == BuiltInCameraEnum.None || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPersonAutoRotation )
 						render = true;
 				var m = GetCameraManagementOfCurrentObject();
 				if( m != null )
@@ -2278,22 +2275,18 @@ namespace NeoAxis
 					var character = obj as Character;
 					if( character != null && character.GetActiveWeapon() != null )
 					{
-						if( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson || GetCameraManagementOfCurrentObject() != null )
-						{
+						if( UseBuiltInCamera.Value != BuiltInCameraEnum.None || GetCameraManagementOfCurrentObject() != null )
 							display = AutoTrueFalse.True;
 						}
-					}
 
 					//Vehicle
 					var vehicle = obj as Vehicle;
 					if( vehicle != null && vehicle.DynamicData?.Turrets != null )
 					{
-						if( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson || GetCameraManagementOfCurrentObject() != null )
-						{
+						if( UseBuiltInCamera.Value != BuiltInCameraEnum.None || GetCameraManagementOfCurrentObject() != null )
 							display = AutoTrueFalse.True;
 						}
 					}
-				}
 
 				if( display == AutoTrueFalse.True )
 				{
@@ -2421,7 +2414,7 @@ namespace NeoAxis
 			UpdateControlledObjectVisibility( viewport );
 
 			//update character data for first or third person camera before frame rendering
-			if( ( UseBuiltInCamera.Value == BuiltInCameraEnum.FirstPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson ) && !FreeCamera )
+			if( UseBuiltInCamera.Value != BuiltInCameraEnum.None && !FreeCamera )
 			{
 				var character = ObjectControlledByPlayer.Value as Character;
 				if( character != null )
@@ -2486,30 +2479,30 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		public delegate void ItemCanTakeDelegate( GameMode sender, Component taker, Item3DInterface item, ref bool allowAction );
+		public delegate void ItemCanTakeDelegate( GameMode sender, Component taker, ItemInterface item, ref bool allowAction );
 		public event ItemCanTakeDelegate ItemCanTake;
-		internal void PerformItemCanTakeEvent( Component taker, Item3DInterface item, ref bool allowAction )
+		internal void PerformItemCanTakeEvent( Component taker, ItemInterface item, ref bool allowAction )
 		{
 			ItemCanTake?.Invoke( this, taker, item, ref allowAction );
 		}
 
-		public delegate void ItemCanDropDelegate( GameMode sender, Component taker, Item3DInterface item, ref bool allowAction, ref double amount );
+		public delegate void ItemCanDropDelegate( GameMode sender, Component taker, ItemInterface item, ref bool allowAction, ref double amount );
 		public event ItemCanDropDelegate ItemCanDrop;
-		internal void PerformItemCanDropEvent( Component taker, Item3DInterface item, ref bool allowAction, ref double amount )
+		internal void PerformItemCanDropEvent( Component taker, ItemInterface item, ref bool allowAction, ref double amount )
 		{
 			ItemCanDrop?.Invoke( this, taker, item, ref allowAction, ref amount );
 		}
 
-		public delegate void ItemCanActivateDelegate( GameMode sender, Component holder, Item3DInterface item, ref bool allowAction );
+		public delegate void ItemCanActivateDelegate( GameMode sender, Component holder, ItemInterface item, ref bool allowAction );
 		public event ItemCanActivateDelegate ItemCanActivate;
-		internal void PerformItemCanActivateEvent( Component holder, Item3DInterface item, ref bool allowAction )
+		internal void PerformItemCanActivateEvent( Component holder, ItemInterface item, ref bool allowAction )
 		{
 			ItemCanActivate?.Invoke( this, holder, item, ref allowAction );
 		}
 
-		public delegate void ItemCanDeactivateDelegate( GameMode sender, Component holder, Item3DInterface item, ref bool allowAction );
+		public delegate void ItemCanDeactivateDelegate( GameMode sender, Component holder, ItemInterface item, ref bool allowAction );
 		public event ItemCanDeactivateDelegate ItemCanDeactivate;
-		internal void PerformItemCanDeactivateEvent( Component holder, Item3DInterface item, ref bool allowAction )
+		internal void PerformItemCanDeactivateEvent( Component holder, ItemInterface item, ref bool allowAction )
 		{
 			ItemCanDeactivate?.Invoke( this, holder, item, ref allowAction );
 		}
@@ -2518,21 +2511,44 @@ namespace NeoAxis
 		{
 			var cameraSettings = viewport.CameraSettings;
 
-			//TPS camera specific. set probe to character position
-			if( UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson && !FreeCamera )
+			//TPS camera specific. set probe above of the controlled object
+			if( ( UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPerson || UseBuiltInCamera.Value == BuiltInCameraEnum.ThirdPersonAutoRotation ) && !FreeCamera )
 			{
 				var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
 				if( obj != null )
 				{
 					var sphere = obj.SpaceBounds.BoundingSphere;
-					return sphere.Center + new Vector3( 0, 0, sphere.Radius );
-
+					var interpolatedOffset = obj.GetTransformInterpolated().Position - obj.TransformV.Position;
+					return sphere.Center + interpolatedOffset + new Vector3( 0, 0, sphere.Radius );
 					//return obj.TransformV.Position;
 				}
 			}
 
 			//set probe to camera position
 			return cameraSettings.Position;
+		}
+
+		///////////////////////////////////////////////
+
+		public void SwitchActiveItem( int index )
+		{
+			var objectControlledByPlayer = ObjectControlledByPlayer.Value;
+			if( objectControlledByPlayer != null )
+			{
+				//Character
+				{
+					var character = objectControlledByPlayer as Character;
+					if( character != null )
+						character.SwitchActiveItem( this, index );
+				}
+
+				//Character2D
+				{
+					var character = objectControlledByPlayer as Character2D;
+					if( character != null )
+						character.SwitchActiveItem( this, index );
+				}
+			}
 		}
 	}
 }

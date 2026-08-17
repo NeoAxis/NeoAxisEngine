@@ -56,11 +56,20 @@ namespace Project
 
 		///////////////////////////////////////////
 
-		UIButton GetButtonScenes() { return GetComponent<UIButton>( "Button Scenes" ); }
-		UIButton GetButtonOptions() { return GetComponent<UIButton>( "Button Options" ); }
-		UIButton GetButtonExit() { return GetComponent<UIButton>( "Button Exit" ); }
-		UIButton GetButtonMultiplayerCreate() { return GetComponent<UIButton>( "Button Multiplayer Create" ); }
-		UIButton GetButtonMultiplayerJoin() { return GetComponent<UIButton>( "Button Multiplayer Join" ); }
+		[Browsable( false )]
+		public UIButton ButtonPlayInCloud { get { return GetComponent<UIButton>( "Button Play In Cloud" ); } }
+		[Browsable( false )]
+		public UIButton ButtonPlaySingle { get { return GetComponent<UIButton>( "Button Play Single" ); } }
+		[Browsable( false )]
+		public UIButton ButtonScenes { get { return GetComponent<UIButton>( "Button Scenes" ); } }
+		[Browsable( false )]
+		public UIButton ButtonOptions { get { return GetComponent<UIButton>( "Button Options" ); } }
+		[Browsable( false )]
+		public UIButton ButtonExit { get { return GetComponent<UIButton>( "Button Exit" ); } }
+		[Browsable( false )]
+		public UIButton ButtonMultiplayerCreate { get { return GetComponent<UIButton>( "Button Multiplayer Create" ); } }
+		[Browsable( false )]
+		public UIButton ButtonMultiplayerJoin { get { return GetComponent<UIButton>( "Button Multiplayer Join" ); } }
 
 		///////////////////////////////////////////
 
@@ -78,23 +87,22 @@ namespace Project
 			EnabledInSimulationStatic?.Invoke( this );
 
 			//Scenes button
-			if( GetButtonScenes() != null )
+			if( ButtonScenes != null )
 			{
-				var button = GetButtonScenes();
-				button.Click += ButtonScenes_Click;
-				button.ReadOnly = SimulationAppClient.Created;
+				ButtonScenes.Click += ButtonScenes_Click;
+				ButtonScenes.ReadOnly = SimulationAppClient.Created;
 			}
 
 			//Options button
-			if( GetButtonOptions() != null )
-				GetButtonOptions().Click += ButtonOptions_Click;
+			if( ButtonOptions != null )
+				ButtonOptions.Click += ButtonOptions_Click;
 
 			//Exit button
-			if( GetButtonExit() != null )
+			if( ButtonExit != null )
 			{
-				GetButtonExit().Click += ButtonExit_Click;
+				ButtonExit.Click += ButtonExit_Click;
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
-					GetButtonExit().Enabled = false;
+					ButtonExit.Enabled = false;
 			}
 
 			//play buttons
@@ -134,19 +142,19 @@ namespace Project
 				if( button.Visible )
 					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
 			}
-			if( Components[ "Button Play Simple Game" ] != null )
+			if( Components[ "Button Play Shooter Game" ] != null )
 			{
-				var button = (UIButton)Components[ "Button Play Simple Game" ];
-				var fileName = @"Samples\Simple Game\SimpleGameLevel1.scene";
+				var button = (UIButton)Components[ "Button Play Shooter Game" ];
+				var fileName = @"Samples\Shooter\Scenes\Shooter.scene";
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
 					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
 			}
-			if( Components[ "Button Play Character Scene" ] != null )
+			if( Components[ "Button Play Simple Game" ] != null )
 			{
-				var button = (UIButton)Components[ "Button Play Character Scene" ];
-				var fileName = @"Samples\Starter Content\Scenes\Character test.scene";
+				var button = (UIButton)Components[ "Button Play Simple Game" ];
+				var fileName = @"Samples\Simple Game\SimpleGameLevel1.scene";
 				button.AnyData = fileName;
 				button.Click += ButtonPlay_Click;
 				if( button.Visible )
@@ -170,10 +178,6 @@ namespace Project
 				if( button.Visible )
 					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
 			}
-
-			var textConsole = Components[ "Text Console" ] as UIControl;
-			if( textConsole != null && SystemSettings.MobileDevice )
-				textConsole.Visible = false;
 
 			// Update sound listener.
 			SoundWorld.SetListenerReset();
@@ -202,7 +206,7 @@ namespace Project
 				instance = null;
 		}
 
-		void ButtonScenes_Click( UIButton sender )
+		public void ToggleScenesWindow()
 		{
 			if( scenesWindow != null && scenesWindow.Disposed )
 				scenesWindow = null;
@@ -220,7 +224,12 @@ namespace Project
 			}
 		}
 
-		void ButtonOptions_Click( UIButton sender )
+		void ButtonScenes_Click( UIButton sender )
+		{
+			ToggleScenesWindow();
+		}
+
+		public void ToggleOptionsWindow()
 		{
 			if( optionsWindow != null && optionsWindow.Disposed )
 				optionsWindow = null;
@@ -236,6 +245,11 @@ namespace Project
 				optionsWindow.Dispose();
 				optionsWindow = null;
 			}
+		}
+
+		void ButtonOptions_Click( UIButton sender )
+		{
+			ToggleOptionsWindow();
 		}
 
 		void ButtonExit_Click( UIButton sender )
@@ -283,10 +297,10 @@ namespace Project
 				if( !firstRender )
 					fadeInTimer += delta;
 
-				if( GetButtonMultiplayerCreate() != null )
+				if( ButtonMultiplayerCreate != null )
 				{
-					GetButtonMultiplayerCreate().Highlighted = RunServer.Running;
-					GetButtonMultiplayerCreate().ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows;
+					ButtonMultiplayerCreate.Highlighted = RunServer.Running;
+					ButtonMultiplayerCreate.ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows;
 				}
 
 				//if( GetButtonMultiplayerJoin() != null )

@@ -3,7 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using NeoAxis;
+using NeoAxis.Cloud;
+using NeoAxis.Networking;
 
 namespace Project
 {
@@ -12,28 +16,34 @@ namespace Project
 	/// </summary>
 	public class BasicSceneScreen : NeoAxis.UIControl
 	{
+		//match info
+		public static Matches.Match MatchInfo { get; set; }
+
 		Scene scene;
 		GameMode gameMode;
-		NetworkLogic networkLogic;
+		GameLogic gameLogic;
 
-		EntranceScreen entranceScreen;
-		InGameContextScreen inGameContextScreen;
-
+		//continuous interaction
 		double continuousInteractionAlpha;
 		string continuousInteractionMessageID = "";
 		string continuousInteractionMessageText = "";
 		double continuousInteractionMessageTime;
 		double continuousInteractionButtonsAlpha;
 
+		//touching interaction
 		double disableInteractionRemainingTime1;
 		double disableInteractionRemainingTime2;
 		bool touchModeActivated;
-
 		object cameraRotationWithTouchDownObject;
 		Vector2 cameraRotationWithTouchLastPosition;
-
 		object moveWithTouchDownObject;
 		Vector2 moveWithTouchStartPosition;
+
+		//chat
+		volatile bool chatNewMessagesAvailable = true;
+		volatile bool chatGettingNewMessages;
+		const double chatMessagesOnScreenTime = 10;
+		Queue<(string Username, string Text, DateTime Time)> chatMessagesOnScreen = new Queue<(string Username, string Text, DateTime Time)>();
 
 		///////////////////////////////////////////////
 
@@ -89,6 +99,67 @@ namespace Project
 		public event Action<BasicSceneScreen> DisplayMessagesAboveObjectsVisibilityDistanceChanged;
 		ReferenceField<double> _displayMessagesAboveObjectsVisibilityDistance = 20.0;
 
+		/// <summary>
+		/// Whether to automatically hide the in-game menu when a chat message is sent.
+		/// </summary>
+		[DefaultValue( true )]
+		public Reference<bool> InGameMenuAutoHideWhenSentChatMessage
+		{
+			get { if( _inGameMenuAutoHideWhenSentChatMessage.BeginGet() ) InGameMenuAutoHideWhenSentChatMessage = _inGameMenuAutoHideWhenSentChatMessage.Get( this ); return _inGameMenuAutoHideWhenSentChatMessage.value; }
+			set { if( _inGameMenuAutoHideWhenSentChatMessage.BeginSet( this, ref value ) ) { try { InGameMenuAutoHideWhenSentChatMessageChanged?.Invoke( this ); } finally { _inGameMenuAutoHideWhenSentChatMessage.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="InGameMenuAutoHideWhenSentChatMessage"/> property value changes.</summary>
+		public event Action<BasicSceneScreen> InGameMenuAutoHideWhenSentChatMessageChanged;
+		ReferenceField<bool> _inGameMenuAutoHideWhenSentChatMessage = true;
+
+		/// <summary>
+		/// Whether to always hide the in-game menu. If true, the in-game menu will not be displayed even if the F1 key is pressed.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> InGameMenuAlwaysHide
+		{
+			get { if( _inGameMenuAlwaysHide.BeginGet() ) InGameMenuAlwaysHide = _inGameMenuAlwaysHide.Get( this ); return _inGameMenuAlwaysHide.value; }
+			set
+			{
+				if( _inGameMenuAlwaysHide.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						InGameMenuAlwaysHideChanged?.Invoke( this );
+
+						if( InGameMenuAlwaysHide && EngineApp.IsSimulation )
+							InGameMenuShow( false );
+					}
+					finally { _inGameMenuAlwaysHide.EndSet(); }
+				}
+			}
+		}
+		/// <summary>Occurs when the <see cref="InGameMenuAlwaysHide"/> property value changes.</summary>
+		public event Action<BasicSceneScreen> InGameMenuAlwaysHideChanged;
+		ReferenceField<bool> _inGameMenuAlwaysHide = false;
+
+		///////////////////////////////////////////////
+
+		//controls to open menus
+		[Browsable( false )]
+		public UIButton ButtonInGameMenu { get { return GetComponent<UIButton>( "Button In-Game Menu" ); } }
+		[Browsable( false )]
+		public UIButton ButtonSystemMenu { get { return GetComponent<UIButton>( "Button System Menu" ); } }
+		//[Browsable( false )]
+		//public UIText TextShowInGameMenu { get { return GetComponent<UIText>( "Text Show In-Game Menu" ); } }
+
+		//In-game menu controls
+		[Browsable( false )]
+		public UIList ListChat { get { return GetInGameMenu()?.GetComponent<UIList>( "List Chat" ); } }
+		[Browsable( false )]
+		public UIEdit EditChatMessage { get { return GetInGameMenu()?.GetComponent<UIEdit>( "Edit Chat Message" ); } }
+		[Browsable( false )]
+		public UIButton ButtonChatSend { get { return GetInGameMenu()?.GetComponent<UIButton>( "Button Chat Send" ); } }
+		[Browsable( false )]
+		public UIButton ButtonMatchReset { get { return GetInGameMenu()?.GetComponent<UIButton>( "Button Match Reset" ); } }
+		[Browsable( false )]
+		public UIButton ButtonMatchDelete { get { return GetInGameMenu()?.GetComponent<UIButton>( "Button Match Delete" ); } }
+
 		///////////////////////////////////////////////
 
 		static BasicSceneScreen()
@@ -132,40 +203,31 @@ namespace Project
 		}
 
 		[Browsable( false )]
-		public NetworkLogic NetworkLogic
+		public GameLogic GameLogic
 		{
-			get { return networkLogic; }
-		}
-
-		[Browsable( false )]
-		public EntranceScreen EntranceScreen
-		{
-			get { return entranceScreen; }
-		}
-
-		[Browsable( false )]
-		public InGameContextScreen InGameContextScreen
-		{
-			get { return inGameContextScreen; }
+			get { return gameLogic; }
 		}
 
 		protected override void OnEnabledInHierarchyChanged()
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EngineApp.IsSimulation && EnabledInHierarchyAndIsInstance )
-			{
-				scene = ClientUtility.GetScene();
-				gameMode = ClientUtility.GetGameMode();
-				networkLogic = ClientUtility.GetNetworkLogic();
-			}
-
 			if( EngineApp.IsSimulation )
 			{
+				if( EnabledInHierarchyAndIsInstance )
+				{
+					scene = PlayScreen.Instance?.Scene;
+					if( scene != null )
+					{
+						gameMode = scene.GetGameMode();
+						gameLogic = scene.GetGameLogic();
+					}
+				}
+
 				//scene, game mode
 				if( EnabledInHierarchyAndIsInstance )
 				{
-					if( scene != null ) //&& scene.NetworkIsClient )
+					if( scene != null )
 					{
 						if( PlayScreen.Instance != null )
 							PlayScreen.Instance.InputEnabledEvent += PlayScreen_InputEnabledEvent;
@@ -193,7 +255,7 @@ namespace Project
 					}
 				}
 
-				//chat
+				//multiplayer mode chat
 				if( SimulationAppClient.ConnectionNode?.Chat != null )
 				{
 					if( EnabledInHierarchyAndIsInstance )
@@ -201,14 +263,26 @@ namespace Project
 					else
 						SimulationAppClient.ConnectionNode.Chat.ReceivedRoomMessage -= Chat_ReceivedRoomMessage;
 				}
-			}
 
-			if( EngineApp.IsSimulation && EnabledInHierarchyAndIsInstance )
-				ConfigureContinuousInteractionWidget();
+				//cloud service messages
+				{
+					var client = CloudServiceClient.Client;
+					if( client != null )
+					{
+						if( EnabledInHierarchyAndIsInstance )
+						{
+							client.ConnectionNode.Messages.ReceiveMessageString += Messages_ReceiveMessageString;
+							client.ConnectionNode.Messages.ReceiveMessageBinary += Messages_ReceiveMessageBinary;
+						}
+						else
+						{
+							client.ConnectionNode.Messages.ReceiveMessageString -= Messages_ReceiveMessageString;
+							client.ConnectionNode.Messages.ReceiveMessageBinary -= Messages_ReceiveMessageBinary;
+						}
+					}
+				}
 
-			//subscribe/unsubscribe to scene render event
-			if( EngineApp.IsSimulation )
-			{
+				//subscribe/unsubscribe to scene render event
 				if( scene != null )
 				{
 					if( EnabledInHierarchyAndIsInstance )
@@ -222,39 +296,81 @@ namespace Project
 						scene.SimulationStep -= Scene_SimulationStep;
 					}
 				}
+
+				//initial configuration of the controls
+				if( EnabledInHierarchyAndIsInstance )
+				{
+					ConfigureContinuousInteractionWidget();
+
+					//disable in-game menu at the start
+					InGameMenuShow( false );
+
+					OnTouchControlsUpdate( 0 );
+
+					////disable free camera when debugger is not attached
+					//if( !System.Diagnostics.Debugger.IsAttached )
+					//{
+					//	GameMode.FreeCamera = false;
+					//	GameMode.FreeCameraKey = EKeys.None;
+					//}
+
+					//load chat messages from the default room
+					{
+						var defaultRoom = SimulationAppClient.ConnectionNode?.Chat?.GetRoom( "Default" );
+						if( defaultRoom != null )
+						{
+							foreach( var message in defaultRoom.Messages )
+								ChatAddMesageToList( message );
+						}
+					}
+
+					//disable chat controls when no network connection or no chat service
+					if( !IsChatEnabled() )
+					{
+						if( ListChat != null )
+							ListChat.ReadOnly = true;
+						if( EditChatMessage != null )
+							EditChatMessage.ReadOnly = true;
+						if( ButtonChatSend != null )
+							ButtonChatSend.ReadOnly = true;
+
+						if( EditChatMessage != null )
+							EditChatMessage.Text = "Chat is disabled when no network";
+
+						//if( ListChat != null )
+						//	ListChat.Enabled = false;
+						//if( EditChatMessage != null )
+						//	EditChatMessage.Enabled = false;
+						//if( ButtonChatSend != null )
+						//	ButtonChatSend.Enabled = false;
+					}
+
+					UpdateControlsToOpenMenus();
+
+					//disable the Cutscene control
+					{
+						var cutsceneControl = GetCutscene();
+						if( cutsceneControl != null )
+							cutsceneControl.Enabled = false;
+					}
+				}
 			}
 		}
 
-		public virtual void TouchControlsEnable( bool enable )
+		public bool IsAnyWindowOpened()
 		{
-			var controlNames = new string[] { "Forward", "Backward", "Left", "Right", "Jump", "Fire", "Fire 2", "Interact", "Camera" };
-
-			foreach( var controlName in controlNames )
-			{
-				var control = GetComponent( controlName ) as UIControl;
-				if( control != null )
-					control.Enabled = enable;
-			}
+			return ParentRoot.GetComponent<UIWindow>( true, true ) != null;
 		}
 
-		protected virtual void OnTouchControlsUpdate( float delta )
+		public bool IsOverlappedByOtherWindows()
 		{
-			//default implementation
-			var enable = SystemSettings.MobileDevice && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson );
-			TouchControlsEnable( enable );
-		}
-
-		protected override void OnEnabledInSimulation()
-		{
-			base.OnEnabledInSimulation();
-
-			OnTouchControlsUpdate( 0 );
-		}
-
-		void CheckRemovedInGameContextScreen()
-		{
-			if( inGameContextScreen != null && inGameContextScreen.Parent == null )
-				InGameContextScreenDestroy();
+			if( EngineConsole.Active )
+				return true;
+			if( MenuWindow.Instance != null )
+				return true;
+			if( GetComponent<MessageBoxWindow>( false, true ) != null )
+				return true;
+			return false;
 		}
 
 		protected override void OnUpdate( float delta )
@@ -263,14 +379,12 @@ namespace Project
 
 			if( scene != null )
 			{
-				//clear closed in-game screens
-				CheckRemovedInGameContextScreen();
-
-				if( scene.NetworkIsClient )
-					UpdateEntranceScreen();
-
 				UpdateInventoryWidget();
 				UpdateContinuousInteractionWidget( delta );
+				UpdateInGameMenu();
+				UpdateChat();
+				UpdateCutscene();
+				UpdateControlsToOpenMenus();
 			}
 
 			if( disableInteractionRemainingTime1 > 0 )
@@ -293,6 +407,9 @@ namespace Project
 		protected override void OnRenderUI( CanvasRenderer renderer )
 		{
 			base.OnRenderUI( renderer );
+
+			if( Scene != null )
+				ShowChatMessagesOnScreen( renderer );
 
 			//display network client connection status
 			if( SimulationAppClient.ConnectionNode != null )
@@ -339,273 +456,76 @@ namespace Project
 
 		protected virtual void PlayScreen_InputEnabledEvent( PlayScreen sender, ref bool enabled )
 		{
-			if( inGameContextScreen != null )
+			if( IsContinuousInteractionEnabled() )
+				enabled = false;
+
+			var menu = GetInGameMenu();
+			if( menu != null && menu.Enabled )
+				enabled = false;
+
+			//disable when cutscene
+			if( gameMode != null && gameMode.CutsceneStarted )
 				enabled = false;
 		}
 
 		protected virtual void GameMode_ShowControlledObject( GameMode sender, Viewport viewport, ref bool show )
 		{
-			//show = false;
 		}
 
 		protected virtual void GameMode_RenderTargetImageBefore( GameMode sender, CanvasRenderer renderer, ref bool show )
 		{
-			//show = false;
-		}
-
-		void UpdateEntranceScreen()
-		{
-			if( networkLogic != null )
-			{
-				if( networkLogic.EnteredToWorld )
-				{
-					if( entranceScreen != null )
-						EntranceScreenDestroy();
-				}
-				else
-				{
-					if( entranceScreen == null )
-						EntranceScreenCreate();
-				}
-			}
-		}
-
-		protected virtual void EntranceScreenCreate()
-		{
-			EntranceScreenDestroy();
-
-			var fileName = @"Base\UI\Screens\EntranceScreen.ui";
-			if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
-			{
-				var screen = ResourceManager.LoadSeparateInstance<EntranceScreen>( fileName, false, true );
-				if( screen != null )
-				{
-					entranceScreen = screen;
-					AddComponent( entranceScreen );
-				}
-			}
-		}
-
-		protected virtual void EntranceScreenDestroy()
-		{
-			entranceScreen?.Dispose();
-			entranceScreen = null;
-		}
-
-		protected virtual void InGameContextScreenCreate()// bool focusEditMessage )
-		{
-			InGameContextScreenDestroy();
-
-			//reset control keys
-			PlayScreen.Instance?.ParentContainer.Viewport.KeysAndMouseButtonUpAll();
-
-			{
-				var fileName = @"Base\UI\Screens\InGameContextScreen.ui";
-				if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
-				{
-					var screen = ResourceManager.LoadSeparateInstance<InGameContextScreen>( fileName, false, true );
-					if( screen != null )
-					{
-						inGameContextScreen = screen;
-						inGameContextScreen.ColorMultiplier = new ColorValue( 1, 1, 1, 0 );
-						AddComponent( inGameContextScreen );
-					}
-				}
-			}
-
-			//focus edit message
-			//if( focusEditMessage )
-			inGameContextScreen?.GetEditMessage()?.Focus();
-		}
-
-		protected virtual void InGameContextScreenDestroy()
-		{
-			inGameContextScreen?.Dispose();
-			inGameContextScreen = null;
-		}
-
-		void SwitchActiveItem( int index )
-		{
-			var objectControlledByPlayer = gameMode?.ObjectControlledByPlayer.Value;
-			if( objectControlledByPlayer != null )
-			{
-				//Character
-				{
-					var character = objectControlledByPlayer as Character;
-					if( character != null )
-					{
-						//don't do action when active weapon is firing
-						var activeWeapon = character.GetActiveWeapon();
-						if( activeWeapon == null || !activeWeapon.IsFiringAnyMode() )
-						{
-							var items = character.GetAllItems();
-							if( index < items.Length )
-							{
-								var item = items[ index ];
-								if( item.Enabled )
-								{
-									if( character.NetworkIsClient )
-										character.ItemDeactivateClient( item );
-									else
-										character.ItemDeactivate( gameMode, item );
-								}
-								else
-								{
-									if( character.NetworkIsClient )
-										character.ItemActivateClient( item );
-									else
-										character.ItemActivate( gameMode, item );
-								}
-							}
-						}
-					}
-				}
-
-				//Character2D
-				{
-					var character = objectControlledByPlayer as Character2D;
-					if( character != null )
-					{
-						var items = character.GetAllItems();
-						if( index < items.Length )
-						{
-							var item = items[ index ];
-							if( item.Enabled )
-							{
-								if( character.NetworkIsClient )
-									character.ItemDeactivateClient( item );
-								else
-									character.ItemDeactivate( gameMode, item );
-							}
-							else
-							{
-								if( character.NetworkIsClient )
-									character.ItemActivateClient( item );
-								else
-									character.ItemActivate( gameMode, item );
-							}
-						}
-					}
-				}
-			}
 		}
 
 		protected override bool OnKeyDown( KeyEvent e )
 		{
-			if( scene != null && scene.NetworkIsClient && entranceScreen == null )
+			//manage In-Game Menu
+			if( scene != null && !InGameMenuAlwaysHide && !IsOverlappedByOtherWindows() )
 			{
-				//clear closed in-game screens
-				CheckRemovedInGameContextScreen();
-
 				if( e.Key == EKeys.F1 )
 				{
-					if( inGameContextScreen == null )
-						InGameContextScreenCreate();
-					else
-						InGameContextScreenDestroy();
-					return true;
+					var menu = GetInGameMenu();
+					if( menu != null )
+					{
+						menu.Enabled = !menu.Enabled;
+						return true;
+					}
 				}
 
-				if( e.Key == EKeys.Return )
+				//open In-Game Menu and focus chat message edit
+				if( e.Key == EKeys.Return && IsChatEnabled() && EditChatMessage != null && !EditChatMessage.Focused )
 				{
-					if( inGameContextScreen == null )
-						InGameContextScreenCreate();
+					InGameMenuShow( true );
+					EditChatMessage.Focus();
 					return true;
 				}
 
 				if( e.Key == EKeys.Escape )
 				{
-					if( inGameContextScreen != null )
+					var menu = GetInGameMenu();
+					if( menu != null && menu.Enabled )
 					{
-						InGameContextScreenDestroy();
+						menu.Enabled = false;
 						return true;
 					}
 				}
 			}
 
-			//skip interaction fading in
-			if( e.Key == EKeys.Space )
+			//skip continuous interaction fading in
+			if( scene != null && e.Key == EKeys.Space && IsContinuousInteractionEnabled() )
 			{
-				if( scene != null && IsContinuousInteractionEnabled() )
+				if( continuousInteractionMessageTime < 10000 )
 				{
-					if( continuousInteractionMessageTime < 10000 )
-					{
-						continuousInteractionMessageTime = 10000;
-						continuousInteractionButtonsAlpha = 1;
-						return true;
-					}
+					continuousInteractionMessageTime = 10000;
+					continuousInteractionButtonsAlpha = 1;
+					return true;
 				}
 			}
 
 			//switch active item
-			if( scene != null && gameMode != null && e.Key >= EKeys.D1 && e.Key <= EKeys.D8 )
+			if( scene != null && gameMode != null && e.Key >= EKeys.D1 && e.Key <= EKeys.D8 && !IsOverlappedByOtherWindows() )
 			{
 				var index = e.Key - EKeys.D1;
-
-				SwitchActiveItem( index );
-
-				//var objectControlledByPlayer = gameMode?.ObjectControlledByPlayer.Value;
-				//if( objectControlledByPlayer != null )
-				//{
-				//	//Character
-				//	{
-				//		var character = objectControlledByPlayer as Character;
-				//		if( character != null )
-				//		{
-				//			//don't do action when active weapon is firing
-				//			var activeWeapon = character.GetActiveWeapon();
-				//			if( activeWeapon == null || !activeWeapon.IsFiringAnyMode() )
-				//			{
-				//				var items = character.GetAllItems();
-				//				if( index < items.Length )
-				//				{
-				//					var item = items[ index ];
-				//					if( item.Enabled )
-				//					{
-				//						if( character.NetworkIsClient )
-				//							character.ItemDeactivateClient( item );
-				//						else
-				//							character.ItemDeactivate( gameMode, item );
-				//					}
-				//					else
-				//					{
-				//						if( character.NetworkIsClient )
-				//							character.ItemActivateClient( item );
-				//						else
-				//							character.ItemActivate( gameMode, item );
-				//					}
-				//				}
-				//			}
-				//		}
-				//	}
-
-				//	//Character2D
-				//	{
-				//		var character = objectControlledByPlayer as Character2D;
-				//		if( character != null )
-				//		{
-				//			var items = character.GetAllItems();
-				//			if( index < items.Length )
-				//			{
-				//				var item = items[ index ];
-				//				if( item.Enabled )
-				//				{
-				//					if( character.NetworkIsClient )
-				//						character.ItemDeactivateClient( item );
-				//					else
-				//						character.ItemDeactivate( gameMode, item );
-				//				}
-				//				else
-				//				{
-				//					if( character.NetworkIsClient )
-				//						character.ItemActivateClient( item );
-				//					else
-				//						character.ItemActivate( gameMode, item );
-				//				}
-				//			}
-				//		}
-				//	}
-				//}
+				gameMode.SwitchActiveItem( index );
 			}
 
 			return base.OnKeyDown( e );
@@ -627,18 +547,637 @@ namespace Project
 			return base.OnMouseDown( button );
 		}
 
-		private void Chat_ReceivedRoomMessage( ClientNetworkService_Chat sender, ClientNetworkService_Chat.RoomMessage message )
+		public void TouchControlsEnable( bool enable )
 		{
-			var user = sender.UsersService.GetUser( message.UserID );
-			var userString = user != null ? user.Username : message.UserID.ToString();
+			var controlNames = new string[] { "Forward", "Backward", "Left", "Right", "Up", "Down", "Jump", "Fire", "Fire 2", "Interact", "Camera" };
 
-			var str = $"{userString}: {message.Text}";
-			ScreenMessages.Add( str, false );
+			foreach( var controlName in controlNames )
+			{
+				var control = GetComponent( controlName ) as UIControl;
+				if( control != null )
+					control.Enabled = enable;
+			}
+		}
+
+		protected virtual void OnTouchControlsUpdate( float delta )
+		{
+			//default implementation
+			var enable = SystemSettings.MobileDevice && !gameMode.FreeCamera && gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None;
+			TouchControlsEnable( enable );
+		}
+
+		class MessageToShow
+		{
+			public string Text;
+			public Vector3 Position;
+			public double Alpha;
+
+			public double DistanceSquared;
+		}
+
+		protected virtual void Scene_RenderEvent( Scene scene, Viewport viewport )
+		{
+			var renderer = viewport.CanvasRenderer;
+
+			if( DisplayMessagesAboveObjects )
+			{
+				var gameLogic = scene.GetGameLogic();
+				var userService = SimulationAppClient.ConnectionNode?.Users;
+				var chatService = SimulationAppClient.ConnectionNode?.Chat;
+				var chatServiceDefaultRoom = chatService?.GetRoom( "Default" );
+
+				var position = viewport.CameraSettings.Position;
+				var radius = DisplayMessagesAboveObjectsVisibilityDistance.Value;
+				var sphere = new Sphere( position, radius );
+
+				var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, sphere );
+				scene.GetObjectsInSpace( item );
+
+				var messagesToShow = new List<MessageToShow>();
+
+				for( int n = 0; n < item.Result.Length; n++ )
+				{
+					ref var itemResult = ref item.Result[ n ];
+					var obj = itemResult.Object;
+
+					if( obj is Character || obj is Character2D || obj is Vehicle )
+					{
+						var message = "";
+
+						//get chat message
+						if( gameLogic != null && chatServiceDefaultRoom != null )
+						{
+							var referenceToObject = "root:" + obj.GetPathFromRoot();
+							var user = userService.GetUserByObjectControlledByPlayer( referenceToObject );
+							if( user != null )
+							{
+								var lastMessage = chatService.GetLastRoomMessageFromUser( chatServiceDefaultRoom, user.UserID );
+								if( lastMessage != null && EngineApp.EngineTime - lastMessage.ReceivedEngineTime < DisplayMessagesAboveObjectsTime )
+									message = lastMessage.Text;
+							}
+						}
+
+						//get PermanentMessage from AI
+						if( string.IsNullOrEmpty( message ) )
+						{
+							var ai = obj.GetComponent<AI>();
+							if( ai != null )
+								message = ai.PermanentMessage.Value;
+						}
+
+						if( !string.IsNullOrEmpty( message ) )
+						{
+							if( message.Length > DisplayMessagesAboveObjectsMaxLength )
+								message = message.Substring( 0, DisplayMessagesAboveObjectsMaxLength ) + "...";
+
+							var tr = obj.TransformV;
+							var distance = ( position - tr.Position ).Length();
+							if( distance < radius ) //if( ( position - tr.Position ).LengthSquared() < radius * radius )
+							{
+								Vector3 pos = new Vector3( tr.Position.X, tr.Position.Y, obj.SpaceBounds.BoundingBox.Maximum.Z );
+								if( obj is Character || obj is Vehicle )
+								{
+									//!!!!offset
+									pos.Z += 0.5;
+								}
+								else if( obj is Character2D )
+								{
+									pos = new Vector3( tr.Position.X, obj.SpaceBounds.BoundingBox.Maximum.Y, 0 );
+									//!!!!offset
+									pos.Y += 0.5;
+								}
+
+								var messageToShow = new MessageToShow() { Text = message, Position = pos };
+								messageToShow.DistanceSquared = ( position - pos ).LengthSquared();
+
+								//fade by distance
+								var startFading = radius * 0.9;
+								var div = radius - startFading;
+								if( div == 0 )
+									div = 0.00001;
+								messageToShow.Alpha = 1.0 - MathEx.Saturate( ( distance - startFading ) / div );
+
+								messagesToShow.Add( messageToShow );
+							}
+						}
+					}
+				}
+
+				CollectionUtility.MergeSort( messagesToShow, delegate ( MessageToShow item1, MessageToShow item2 )
+				{
+					if( item1.DistanceSquared < item2.DistanceSquared )
+						return -1;
+					if( item1.DistanceSquared > item2.DistanceSquared )
+						return 1;
+					return 0;
+				} );
+
+				var text2D = new Text2DFunctionality();
+
+				foreach( var messageItem in messagesToShow )
+				{
+					if( viewport.CameraSettings.ProjectToScreenCoordinates( messageItem.Position, out var screenPosition ) )
+					{
+						text2D.BackColor = new ColorValue( 0, 0.65, 1, messageItem.Alpha );
+						text2D.Color = new ColorValue( 1, 1, 1, messageItem.Alpha );
+						text2D.Text = messageItem.Text;
+						text2D.Render( viewport.RenderingContext, screenPosition );
+					}
+				}
+			}
+		}
+
+		protected virtual void Scene_SimulationStep( NeoAxis.Component obj )
+		{
+		}
+
+		///////////////////////////////////////////////
+
+		InputProcessing GetCharacterInputProcessing()
+		{
+			var controlledObject = gameMode?.ObjectControlledByPlayer.Value;
+			if( controlledObject != null )
+				return controlledObject.GetComponent<InputProcessing>();
+			return null;
+		}
+
+		public bool IsPointInsideControl( string controlName, Vector2 screenPosition )
+		{
+			var control = Components.GetByPath( controlName ) as UIControl;//var control = GetComponent( controlName ) as UIControl;
+			if( control != null )
+				return control.GetScreenRectangle().Contains( screenPosition );
+			return false;
+		}
+
+		public bool IsControlTouched( InputProcessing inputProcessing, string controlName )
+		{
+			foreach( var pointer in inputProcessing.TouchPointers )
+			{
+				if( IsPointInsideControl( controlName, pointer.Position ) )
+					return true;
+			}
+			return false;
+		}
+
+		void TouchProcessLeftRight( GameMode gameMode, InputProcessing inputProcessing )
+		{
+			var leftPushed = IsControlTouched( inputProcessing, "Left" );
+			var rightPushed = IsControlTouched( inputProcessing, "Right" );
+
+			if( leftPushed )
+				gameMode.ProcessInputMessage( new InputMessageKeyDown( EKeys.Left ) );
+			else
+				gameMode.ProcessInputMessage( new InputMessageKeyUp( EKeys.Left ) );
+
+			if( rightPushed )
+				gameMode.ProcessInputMessage( new InputMessageKeyDown( EKeys.Right ) );
+			else
+				gameMode.ProcessInputMessage( new InputMessageKeyUp( EKeys.Right ) );
+		}
+
+		void ProcessJumpOnTouch( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
+		{
+			var keyJump = gameMode.KeyJump1.Value;
+			if( keyJump == EKeys.None )
+				keyJump = gameMode.KeyJump2.Value;
+			if( keyJump != EKeys.None )
+			{
+				if( e.Action == TouchData.ActionEnum.Down && IsPointInsideControl( "Jump", e.Position ) )
+					gameMode.ProcessInputMessage( new InputMessageKeyDown( keyJump ) );
+			}
+
+			//if( e.Action == TouchData.ActionEnum.Down && IsPointInsideControl( "Jump", e.Position ) )
+			//	gameMode.ProcessInputMessage( new InputMessageKeyDown( EKeys.Space ) );
+		}
+
+		void ProcessJumpSimulationStep( GameMode gameMode, InputProcessing inputProcessing )
+		{
+			var keyJump = gameMode.KeyJump1.Value;
+			if( keyJump == EKeys.None )
+				keyJump = gameMode.KeyJump2.Value;
+			if( keyJump != EKeys.None )
+			{
+				if( IsControlTouched( inputProcessing, "Jump" ) )
+					gameMode.ProcessInputMessage( new InputMessageKeyDown( keyJump ) );
+				else
+					gameMode.ProcessInputMessage( new InputMessageKeyUp( keyJump ) );
+			}
+
+			//if( IsControlTouched( inputProcessing, "Jump" ) )
+			//	gameMode.ProcessInputMessage( new InputMessageKeyDown( EKeys.Space ) );
+			//else
+			//	gameMode.ProcessInputMessage( new InputMessageKeyUp( EKeys.Space ) );
+		}
+
+		void TouchProcessFireAndInteract( GameMode gameMode, InputProcessing inputProcessing )
+		{
+			var objectControlledByPlayer = gameMode?.ObjectControlledByPlayer.Value;
+			var initiator = objectControlledByPlayer;
+
+			if( disableInteractionRemainingTime1 == 0 )
+			{
+				var pushed = IsControlTouched( inputProcessing, "Fire" );
+
+				//interact via interaction context
+				{
+					//get an object to interaction
+					var interactionContext = gameMode.ObjectInteractionContext;
+					if( interactionContext != null )
+					{
+						if( pushed )
+						{
+							var message = new InputMessageMouseButtonDown( EMouseButtons.Left );
+							if( interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message ) )
+							{
+								//temporary disable ProcessFireAndInteract execution to prevent fire of just taken weapon
+								disableInteractionRemainingTime1 = 0.25;
+							}
+						}
+						else
+						{
+							var message = new InputMessageMouseButtonUp( EMouseButtons.Left );
+							interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message );
+						}
+					}
+				}
+
+				//fire
+				if( disableInteractionRemainingTime1 == 0 )
+				{
+					if( pushed )
+						gameMode.ProcessInputMessage( new InputMessageMouseButtonDown( EMouseButtons.Left ) );
+					else
+						gameMode.ProcessInputMessage( new InputMessageMouseButtonUp( EMouseButtons.Left ) );
+				}
+			}
+
+			if( disableInteractionRemainingTime2 == 0 )
+			{
+				var pushed = IsControlTouched( inputProcessing, "Fire 2" );
+
+				//interact via interaction context
+				{
+					//get an object to interaction
+					var interactionContext = gameMode.ObjectInteractionContext;
+					if( interactionContext != null )
+					{
+						if( pushed )
+						{
+							var message = new InputMessageMouseButtonDown( EMouseButtons.Right );
+							if( interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message ) )
+							{
+								//temporary disable ProcessFireAndInteract execution to prevent fire of just taken weapon
+								disableInteractionRemainingTime2 = 0.25;
+							}
+						}
+						else
+						{
+							var message = new InputMessageMouseButtonUp( EMouseButtons.Right );
+							interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message );
+						}
+					}
+				}
+
+				//fire
+				if( disableInteractionRemainingTime2 == 0 )
+				{
+					if( pushed )
+						gameMode.ProcessInputMessage( new InputMessageMouseButtonDown( EMouseButtons.Right ) );
+					else
+						gameMode.ProcessInputMessage( new InputMessageMouseButtonUp( EMouseButtons.Right ) );
+				}
+			}
+		}
+
+		void ProcessInteractOnTouch( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
+		{
+			var keyInteract = gameMode.KeyInteract1.Value;
+			if( keyInteract == EKeys.None )
+				keyInteract = gameMode.KeyInteract2.Value;
+			if( keyInteract != EKeys.None )
+			{
+				if( e.Action == TouchData.ActionEnum.Down && IsPointInsideControl( "Interact", e.Position ) )
+					gameMode.ProcessInputMessage( new InputMessageKeyDown( keyInteract ) );
+				else
+					gameMode.ProcessInputMessage( new InputMessageKeyUp( keyInteract ) );
+			}
+
+			//if( e.Action == TouchData.ActionEnum.Down && IsPointInsideControl( "Interact", e.Position ) )
+			//	gameMode.ProcessInputMessage( new InputMessageKeyDown( EKeys.E ) );
+			//else
+			//	gameMode.ProcessInputMessage( new InputMessageKeyUp( EKeys.E ) );
+		}
+
+		//void ProcessAutoTake()
+		//{
+		//	var inputProcessing = GetInputProcessing();
+
+		//	if (gameMode != null && inputProcessing != null)
+		//	{
+		//		//get an object to interaction
+		//		var interactionContext = gameMode.ObjectInteractionContext;
+		//		if (interactionContext != null)
+		//		{
+		//			//call input message to the object in context
+		//			var message = new InputMessageMouseButtonDown(EMouseButtons.Left);
+		//			interactionContext.Obj.ObjectInteractionInputMessage(gameMode, message);
+		//		}
+		//	}
+		//}
+
+		void TouchProcessInventoryWidget( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
+		{
+			if( e.Action == TouchData.ActionEnum.Down && IsPointInsideControl( "Inventory Widget", e.Position ) )
+			{
+				for( int nItem = 1; ; nItem++ )
+				{
+					var namePath = $"Inventory Widget\\Item {nItem}";
+
+					var itemControl = Components.GetByPath( namePath ) as UIControl;
+					if( itemControl != null )
+					{
+						if( IsPointInsideControl( namePath, e.Position ) )
+						{
+							//sense to use touch down request in scene screen?
+							var item = new TouchData.TouchDownRequestToProcessTouch( itemControl, 0, 0, nItem,
+								delegate ( UIControl sender, TouchData touchData, object anyData )
+								{
+									var nItem2 = (int)anyData;
+									gameMode.SwitchActiveItem( nItem2 - 1 );
+								} );
+							e.TouchDownRequestToControlActions.Add( item );
+						}
+					}
+					else
+						break;
+				}
+			}
+		}
+
+		void TouchCameraType( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
+		{
+			if( e.Action == TouchData.ActionEnum.Down && IsPointInsideControl( "Camera", e.Position ) )
+				gameMode.ChangeCameraType();
+		}
+
+		void ProcessCameraRotationWithTouch( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
+		{
+			if( !gameMode.FreeCamera && gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None && gameMode.Scene.Mode.Value == Scene.ModeEnum._3D )
+			{
+				switch( e.Action )
+				{
+				case TouchData.ActionEnum.Down:
+					if( e.Position.X > 0.5 )
+					{
+						cameraRotationWithTouchDownObject = null;
+
+						var item = new TouchData.TouchDownRequestToProcessTouch( this, -10, 0, null,
+							delegate ( UIControl sender, TouchData touchData, object anyData )
+							{
+								//start touch
+								cameraRotationWithTouchDownObject = e.PointerIdentifier;
+								cameraRotationWithTouchLastPosition = e.Position;
+							} );
+						e.TouchDownRequestToControlActions.Add( item );
+					}
+					break;
+
+				case TouchData.ActionEnum.Up:
+					if( cameraRotationWithTouchDownObject != null && ReferenceEquals( e.PointerIdentifier, cameraRotationWithTouchDownObject ) )
+						cameraRotationWithTouchDownObject = null;
+					break;
+
+				case TouchData.ActionEnum.Move:
+					if( cameraRotationWithTouchDownObject != null && ReferenceEquals( e.PointerIdentifier, cameraRotationWithTouchDownObject ) )
+					{
+						var diff = e.Position - cameraRotationWithTouchLastPosition;
+						diff.X *= ParentContainer.AspectRatio;
+
+						cameraRotationWithTouchLastPosition = e.Position;
+
+						//update camera
+
+						if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson )
+						{
+							//!!!!refactor
+							//!!!!character specific
+
+							var characterInputProcessing = inputProcessing as CharacterInputProcessing;
+							if( characterInputProcessing != null )
+							{
+								var character = characterInputProcessing.Character;
+								if( character != null && !character.Sitting )
+								{
+									var sensitivity = GameMode.MouseSensitivity * 3;
+
+									var mouseOffset = new Vector2( diff.X, diff.Y ) * sensitivity;
+									characterInputProcessing.UpdateTurnToDirectionAndLookToToPosition( gameMode, mouseOffset.ToVector2F() );
+								}
+							}
+						}
+
+						if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+						{
+							var sensitivity = GameMode.MouseSensitivity * 5;
+
+							var h = gameMode.ThirdPersonCameraHorizontalAngle.Value - new Radian( diff.X ).InDegrees() * sensitivity;
+							if( h < 0 ) h += 360;
+							if( h > 360 ) h -= 360;
+
+							var v = gameMode.ThirdPersonCameraVerticalAngle.Value - new Radian( diff.Y ).InDegrees() * sensitivity;
+							v = MathEx.Clamp( (double)v, -80, 80 );
+
+							gameMode.ThirdPersonCameraHorizontalAngle = h;
+							gameMode.ThirdPersonCameraVerticalAngle = v;
+						}
+					}
+					break;
+				}
+			}
+		}
+
+		void ProcessMoveWithTouch( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
+		{
+			var allow = !gameMode.FreeCamera && gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None;
+
+			switch( e.Action )
+			{
+			case TouchData.ActionEnum.Down:
+				if( allow && e.Position.X < 0.5 )
+				{
+					moveWithTouchDownObject = null;
+
+					var item = new TouchData.TouchDownRequestToProcessTouch( this, -10, 0, null,
+						delegate ( UIControl sender, TouchData touchData, object anyData )
+						{
+							//start touch
+							moveWithTouchDownObject = e.PointerIdentifier;
+							moveWithTouchStartPosition = e.Position;
+						} );
+					e.TouchDownRequestToControlActions.Add( item );
+				}
+				break;
+
+			case TouchData.ActionEnum.Up:
+				if( moveWithTouchDownObject != null && ReferenceEquals( e.PointerIdentifier, moveWithTouchDownObject ) )
+				{
+					moveWithTouchDownObject = null;
+					gameMode.ProcessInputMessage( new InputMessageTouchSliderChanged( 0, Vector2.Zero ) );
+				}
+				break;
+
+			case TouchData.ActionEnum.Move:
+				if( moveWithTouchDownObject != null && ReferenceEquals( e.PointerIdentifier, moveWithTouchDownObject ) )
+				{
+					var diff = e.Position - moveWithTouchStartPosition;
+					diff.X *= ParentContainer.AspectRatio;
+
+					var sensitivity = GameMode.MouseSensitivity * 10;
+
+					var value = diff * sensitivity;
+					gameMode.ProcessInputMessage( new InputMessageTouchSliderChanged( 0, value ) );
+				}
+				break;
+			}
+		}
+
+		UIControl GetControlOverPosition( Vector2 position )
+		{
+			foreach( var child in GetComponents<UIControl>( onlyEnabledInHierarchy: true ) )
+			{
+				child.GetScreenRectangle( out var r );
+				if( r.Contains( ref position ) )
+					return child;
+			}
+			return null;
+		}
+
+		protected override bool OnTouch( TouchData e )
+		{
+			touchModeActivated = true;
+
+			if( !IsAnyWindowOpened() && touchModeActivated )
+			{
+				var inputProcessing = GetCharacterInputProcessing();
+				if( gameMode != null && inputProcessing != null )
+				{
+					TouchProcessLeftRight( gameMode, inputProcessing );
+					ProcessJumpOnTouch( gameMode, inputProcessing, e );
+					TouchProcessFireAndInteract( gameMode, inputProcessing );
+					ProcessInteractOnTouch( gameMode, inputProcessing, e );
+					TouchProcessInventoryWidget( gameMode, inputProcessing, e );
+					TouchCameraType( gameMode, inputProcessing, e );
+
+					//camera rotation with touch, move with touch
+					UIControl overControl = null;
+					if( e.Action == TouchData.ActionEnum.Down )
+						overControl = GetControlOverPosition( e.Position );
+					if( overControl == null || e.Action == TouchData.ActionEnum.Up || e.Action == TouchData.ActionEnum.Move )
+					{
+						ProcessCameraRotationWithTouch( gameMode, inputProcessing, e );
+						ProcessMoveWithTouch( gameMode, inputProcessing, e );
+					}
+				}
+			}
+
+			return base.OnTouch( e );
+		}
+
+		protected override void OnSimulationStep()
+		{
+			base.OnSimulationStep();
+
+			//this code is executed on client too, same as in single, server modes
+
+			if( !IsAnyWindowOpened() && touchModeActivated )
+			{
+				var inputProcessing = GetCharacterInputProcessing();
+				if( gameMode != null && inputProcessing != null )
+				{
+					TouchProcessLeftRight( gameMode, inputProcessing );
+					ProcessJumpSimulationStep( gameMode, inputProcessing );
+					TouchProcessFireAndInteract( gameMode, inputProcessing );
+
+					//if (SystemSettings.MobileDevice)
+					//	ProcessAutoTake();
+				}
+			}
+		}
+
+		//enable focus to allows unfocusing controls in the screen
+		[Browsable( false )]
+		public override bool CanFocus
+		{
+			get { return true; }
+		}
+
+		protected virtual void Messages_ReceiveMessageString( ClientNetworkService_Messages sender, string message, string data )
+		{
+			if( MatchInfo != null && message == "Chat.NewMessage" )
+			{
+				if( long.TryParse( data, out var chatID ) )
+				{
+					if( MatchInfo.ChatID == chatID )
+						chatNewMessagesAvailable = true;
+				}
+			}
+
+			if( MatchInfo != null && message == "Match.StatusChanged" )
+			{
+				var rootBlock = TextBlock.Parse( data, out var error );
+				if( !string.IsNullOrEmpty( error ) )
+				{
+					Log.Warning( "Messages_ReceiveMessageString: Match.StatusChanged error: " + error );
+					return;
+				}
+
+				long.TryParse( rootBlock.GetAttribute( "MatchID" ), out var matchID );
+				var status = rootBlock.GetAttribute( "Status" );
+
+				if( matchID == MatchInfo.Id )
+				{
+					//update status without receiving new match info
+					MatchInfo.Status = status;
+
+					switch( status )
+					{
+					case "Deleted":
+						EngineThreading.ExecuteFromMainThreadLater( delegate ()
+						{
+							MessageBoxWindow.Show( this, "The match was deleted.", "Match Deleted", EMessageBoxButtons.OK, EMessageBoxIcon.None, null, delegate ( MessageBoxWindow sender, EDialogResult result, object anyData )
+							{
+								//go to the matches window
+								SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", false );
+								//CloudClientInitialization.Instance?.PlayInCloud();
+							} );
+						} );
+						break;
+					}
+				}
+			}
+		}
+
+		protected virtual void Messages_ReceiveMessageBinary( ClientNetworkService_Messages sender, string message, byte[] data )
+		{
+		}
+
+		public void SoundPlay2D( string virtualFileName )
+		{
+			if( VirtualFile.Exists( virtualFileName ) )
+				Scene.SoundPlay2D( virtualFileName );
+		}
+
+		///////////////////////////////////////////////
+		// Inventory widget
+
+		public UIControl GetInventoryWidget()
+		{
+			return GetComponent<UIControl>( "Inventory Widget" );
 		}
 
 		void UpdateInventoryWidget()
 		{
-			var widget = GetComponent( "Inventory Widget" );
+			var widget = GetInventoryWidget();
 			if( widget != null )
 			{
 				//enable/disable the inventory widget
@@ -664,10 +1203,10 @@ namespace Project
 				if( widget.Enabled )
 				{
 					//get the list of items
-					var items = new List<Item3DInterface>( 8 );
+					var items = new List<ItemInterface>( 8 );
 					if( objectControlledByPlayer != null )
 					{
-						foreach( var c in objectControlledByPlayer.GetComponents<Item3DInterface>() )
+						foreach( var c in objectControlledByPlayer.GetComponents<ItemInterface>() )
 							items.Add( c );
 					}
 
@@ -702,6 +1241,9 @@ namespace Project
 				}
 			}
 		}
+
+		///////////////////////////////////////////////
+		// Continuous interaction
 
 		ContinuousInteraction FindContinuousInteraction()
 		{
@@ -763,11 +1305,6 @@ namespace Project
 					interaction.MessageFromParticipant( block.DumpToString() );
 				}
 			}
-		}
-
-		bool IsAnyWindowOpened()
-		{
-			return ParentRoot.GetComponent<UIWindow>( true, true ) != null;
 		}
 
 		protected virtual void UpdateContinuousInteractionWidget( float delta )
@@ -869,519 +1406,413 @@ namespace Project
 		}
 
 		///////////////////////////////////////////////
+		// In-game menu
 
-		class MessageToShow
+		public UIControl GetInGameMenu()
 		{
-			public string Text;
-			public Vector3 Position;
-			public double Alpha;
-
-			public double DistanceSquared;
+			return GetComponent<UIControl>( "In-Game Menu" );
 		}
 
-		protected virtual void Scene_RenderEvent( Scene scene, Viewport viewport )
+		public void InGameMenuShow( bool enable )
 		{
-			var renderer = viewport.CanvasRenderer;
+			var menu = GetInGameMenu();
+			if( menu != null )
+				menu.Enabled = enable && !InGameMenuAlwaysHide;
+		}
 
-			if( DisplayMessagesAboveObjects )
+		void UpdateInGameMenu()
+		{
+			if( CloudServiceClient.Client != null )
 			{
-				var networkLogic = NetworkLogicUtility.GetNetworkLogic( scene );
-				var userService = SimulationAppClient.ConnectionNode?.Users;
-				var chatService = SimulationAppClient.ConnectionNode?.Chat;
-				var chatServiceDefaultRoom = chatService?.GetRoom( "Default" );
-
-				var position = viewport.CameraSettings.Position;
-				var radius = DisplayMessagesAboveObjectsVisibilityDistance.Value;
-				var sphere = new Sphere( position, radius );
-
-				var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, sphere );
-				scene.GetObjectsInSpace( item );
-
-				var messagesToShow = new List<MessageToShow>();
-
-				for( int n = 0; n < item.Result.Length; n++ )
-				{
-					ref var itemResult = ref item.Result[ n ];
-					var obj = itemResult.Object;
-
-					if( obj is Character || obj is Character2D || obj is Vehicle )
-					{
-						var message = "";
-
-						//get chat message
-						if( networkLogic != null && chatServiceDefaultRoom != null )
-						{
-							var referenceToObject = "root:" + obj.GetPathFromRoot();
-							var user = userService.GetUserByObjectControlledByPlayer( referenceToObject );
-							if( user != null )
-							{
-								var lastMessage = chatService.GetLastRoomMessageFromUser( chatServiceDefaultRoom, user.UserID );
-								if( lastMessage != null && EngineApp.EngineTime - lastMessage.ReceivedEngineTime < DisplayMessagesAboveObjectsTime )
-									message = lastMessage.Text;
-							}
-						}
-
-						//get PermanentMessage from AI
-						if( string.IsNullOrEmpty( message ) )
-						{
-							var ai = obj.GetComponent<AI>();
-							if( ai != null )
-								message = ai.PermanentMessage.Value;
-						}
-
-						if( !string.IsNullOrEmpty( message ) )
-						{
-							if( message.Length > DisplayMessagesAboveObjectsMaxLength )
-								message = message.Substring( 0, DisplayMessagesAboveObjectsMaxLength ) + "...";
-
-							var tr = obj.TransformV;
-							var distance = ( position - tr.Position ).Length();
-							if( distance < radius ) //if( ( position - tr.Position ).LengthSquared() < radius * radius )
-							{
-								Vector3 pos = new Vector3( tr.Position.X, tr.Position.Y, obj.SpaceBounds.BoundingBox.Maximum.Z );
-								if( obj is Character || obj is Vehicle )
-								{
-									//!!!!offset
-									pos.Z += 0.5;
-								}
-								else if( obj is Character2D )
-								{
-									pos = new Vector3( tr.Position.X, obj.SpaceBounds.BoundingBox.Maximum.Y, 0 );
-									//!!!!offset
-									pos.Y += 0.5;
-								}
-
-								var messageToShow = new MessageToShow() { Text = message, Position = pos };
-								messageToShow.DistanceSquared = ( position - pos ).LengthSquared();
-
-								//fade by distance
-								var startFading = radius * 0.9;
-								var div = radius - startFading;
-								if( div == 0 )
-									div = 0.00001;
-								messageToShow.Alpha = 1.0 - MathEx.Saturate( ( distance - startFading ) / div );
-
-								messagesToShow.Add( messageToShow );
-							}
-						}
-					}
-				}
-
-				CollectionUtility.MergeSort( messagesToShow, delegate ( MessageToShow item1, MessageToShow item2 )
-				{
-					if( item1.DistanceSquared < item2.DistanceSquared )
-						return -1;
-					if( item1.DistanceSquared > item2.DistanceSquared )
-						return 1;
-					return 0;
-				} );
-
-				var text2D = new Text2DFunctionality();
-
-				foreach( var messageItem in messagesToShow )
-				{
-					if( viewport.CameraSettings.ProjectToScreenCoordinates( messageItem.Position, out var screenPosition ) )
-					{
-						text2D.BackColor = new ColorValue( 0, 0.65, 1, messageItem.Alpha );
-						text2D.Color = new ColorValue( 1, 1, 1, messageItem.Alpha );
-						text2D.Text = messageItem.Text;
-						text2D.Render( viewport.RenderingContext, screenPosition );
-					}
-				}
+				//cloud mode
+				if( ButtonMatchReset != null )
+					ButtonMatchReset.ReadOnly = MatchInfo == null || CloudServiceClient.ThisUserID != MatchInfo.UserID;
+				if( ButtonMatchDelete != null )
+					ButtonMatchDelete.ReadOnly = MatchInfo == null || CloudServiceClient.ThisUserID != MatchInfo.UserID;
+			}
+			else
+			{
+				//multiplayer, single modes
+				if( ButtonMatchReset != null )
+					ButtonMatchReset.ReadOnly = true;
+				if( ButtonMatchDelete != null )
+					ButtonMatchDelete.ReadOnly = true;
 			}
 		}
 
-		protected virtual void Scene_SimulationStep( NeoAxis.Component obj )
+		public virtual void MatchDelete()
 		{
+			MessageBoxWindow.Show( this, "Delete the match?", "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender, EDialogResult result, object anyData )
+			{
+				if( result == EDialogResult.Yes )
+				{
+					Task.Run( async delegate ()
+					{
+						var client = CloudServiceClient.Client;
+						if( client == null )
+							return;
+
+						//delete match
+						{
+							using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+							var result = await client.CallMethodAsync( "Matches", "UpdateMatch", cts.Token, MatchInfo.Id, "Deleted", null, null );
+							if( !string.IsNullOrEmpty( result.Error ) )
+							{
+								Log.Warning( "Error: " + result.Error );
+								return;
+							}
+						}
+					} );
+				}
+			} );
+		}
+
+		public virtual void MatchReset()
+		{
+			MessageBoxWindow.Show( this, "Reset the match?", "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender, EDialogResult result, object anyData )
+			{
+				if( result == EDialogResult.Yes )
+				{
+					//reset match
+					Task.Run( async delegate ()
+					{
+						var client = CloudServiceClient.Client;
+						if( client == null )
+							return;
+
+						using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+						var result = await client.CallMethodAsync( "CloudServerImplementation", "ResetMatch", cts.Token, MatchInfo.Id );
+						if( !string.IsNullOrEmpty( result.Error ) )
+						{
+							Log.Warning( "Error: " + result.Error );
+							return;
+						}
+					} );
+				}
+			} );
+		}
+
+		public void ButtonMatchDelete_Click( NeoAxis.UIButton sender )
+		{
+			//cloud service mode
+			var client = CloudServiceClient.Client;
+			if( client != null && MatchInfo != null )
+			{
+				MatchDelete();
+				return;
+			}
+
+			//go to entrance screen
+			if( GameLogic != null )
+			{
+				var m = GameLogic.BeginNetworkMessageToServer( "TryLeaveWorld" );
+				if( m != null )
+					m.End();
+				return;
+			}
+		}
+
+		public void ButtonMatchReset_Click( NeoAxis.UIButton sender )
+		{
+			MatchReset();
+		}
+
+		public void ButtonInGameMenu_Click( NeoAxis.UIButton sender )
+		{
+			var menu = GetInGameMenu();
+			if( menu != null )
+				InGameMenuShow( !menu.Enabled );
+		}
+
+		public void ButtonSystemMenu_Click( NeoAxis.UIButton sender )
+		{
+			PlayScreen.Instance?.OpenOrCloseMenu();
 		}
 
 		///////////////////////////////////////////////
+		// Chat
 
-		InputProcessing GetCharacterInputProcessing()
+		public bool IsChatEnabled()
 		{
-			var controlledObject = gameMode?.ObjectControlledByPlayer.Value;
-			if( controlledObject != null )
-				return controlledObject.GetComponent<InputProcessing>();
-			return null;
-		}
-
-		bool IsPointInsideControl( string controlName, Vector2 screenPosition )
-		{
-			var control = Components.GetByPath( controlName ) as UIControl;//var control = GetComponent( controlName ) as UIControl;
-			if( control != null )
-				return control.GetScreenRectangle().Contains( screenPosition );
+			var defaultRoom = SimulationAppClient.ConnectionNode?.Chat?.GetRoom( "Default" );
+			var client = CloudServiceClient.Client;
+			if( defaultRoom != null || client != null && MatchInfo != null && MatchInfo.ChatID != 0 )
+				return true;
 			return false;
 		}
 
-		bool IsControlTouched( InputProcessing inputProcessing, string controlName )
+		protected async Task ChatGetNewMessagesAsync( object obj )
 		{
-			foreach( var pointer in inputProcessing.TouchPointers )
+			try
 			{
-				if( IsPointInsideControl( controlName, pointer.Position ) )
-					return true;
-			}
-			return false;
-		}
+				var client = CloudServiceClient.Client;
+				if( client == null )
+					return;
 
-		void TouchProcessLeftRight( GameMode gameMode, InputProcessing inputProcessing )
-		{
-			var leftPushed = IsControlTouched( inputProcessing, "Left" );
-			var rightPushed = IsControlTouched( inputProcessing, "Right" );
+				var lastMessage = (Chats.Message)obj;
+				var timeFrom = lastMessage != null ? lastMessage.CreationTime : DateTime.MinValue;
+				var getFromEnd = lastMessage == null;
 
-			if( leftPushed )
-				gameMode.ProcessInputMessage( new InputMessageKeyDown( EKeys.Left ) );
-			else
-				gameMode.ProcessInputMessage( new InputMessageKeyUp( EKeys.Left ) );
-
-			if( rightPushed )
-				gameMode.ProcessInputMessage( new InputMessageKeyDown( EKeys.Right ) );
-			else
-				gameMode.ProcessInputMessage( new InputMessageKeyUp( EKeys.Right ) );
-		}
-
-		void ProcessJumpOnTouch( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
-		{
-			if( e.Action == TouchData.ActionEnum.Down && IsPointInsideControl( "Jump", e.Position ) )
-				gameMode.ProcessInputMessage( new InputMessageKeyDown( EKeys.Space ) );
-		}
-
-		void ProcessJumpSimulationStep( GameMode gameMode, InputProcessing inputProcessing )
-		{
-			if( IsControlTouched( inputProcessing, "Jump" ) )
-				gameMode.ProcessInputMessage( new InputMessageKeyDown( EKeys.Space ) );
-			else
-				gameMode.ProcessInputMessage( new InputMessageKeyUp( EKeys.Space ) );
-		}
-
-		void TouchProcessFireAndInteract( GameMode gameMode, InputProcessing inputProcessing )
-		{
-			var objectControlledByPlayer = gameMode?.ObjectControlledByPlayer.Value;
-			var initiator = objectControlledByPlayer;
-
-			if( disableInteractionRemainingTime1 == 0 )
-			{
-				var pushed = IsControlTouched( inputProcessing, "Fire" );
-
-				//interact via interaction context
+				using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				var getMessagesResult = await client.CallMethodAsync<Chats.Message[]>( "Chats", "GetMessages", cts.Token, MatchInfo.ChatID, new[] { "Enabled" }, timeFrom, DateTime.MaxValue, 200, getFromEnd );
+				if( !string.IsNullOrEmpty( getMessagesResult.Error ) )
 				{
-					//get an object to interaction
-					var interactionContext = gameMode.ObjectInteractionContext;
-					if( interactionContext != null )
+					Log.Warning( "ChatGetNewMessagesAsync: Chats.GetMessages error: " + getMessagesResult.Error );
+					chatGettingNewMessages = false;
+					return;
+				}
+				var messages = getMessagesResult.Value;
+
+				//update controls
+				EngineThreading.ExecuteFromMainThreadLater( delegate ()
+				{
+					if( ListChat != null )
 					{
-						if( pushed )
+						foreach( var message in messages )
 						{
-							var message = new InputMessageMouseButtonDown( EMouseButtons.Left );
-							if( interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message ) )
+							//find item with same message ID
+							var found = false;
+							foreach( var item in ListChat.Items )
 							{
-								//temporary disable ProcessFireAndInteract execution to prevent fire of just taken weapon
-								disableInteractionRemainingTime1 = 0.25;
-							}
-						}
-						else
-						{
-							var message = new InputMessageMouseButtonUp( EMouseButtons.Left );
-							interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message );
-						}
-					}
-				}
-
-				//fire
-				if( disableInteractionRemainingTime1 == 0 )
-				{
-					if( pushed )
-						gameMode.ProcessInputMessage( new InputMessageMouseButtonDown( EMouseButtons.Left ) );
-					else
-						gameMode.ProcessInputMessage( new InputMessageMouseButtonUp( EMouseButtons.Left ) );
-				}
-			}
-
-			if( disableInteractionRemainingTime2 == 0 )
-			{
-				var pushed = IsControlTouched( inputProcessing, "Fire 2" );
-
-				//interact via interaction context
-				{
-					//get an object to interaction
-					var interactionContext = gameMode.ObjectInteractionContext;
-					if( interactionContext != null )
-					{
-						if( pushed )
-						{
-							var message = new InputMessageMouseButtonDown( EMouseButtons.Right );
-							if( interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message ) )
-							{
-								//temporary disable ProcessFireAndInteract execution to prevent fire of just taken weapon
-								disableInteractionRemainingTime2 = 0.25;
-							}
-						}
-						else
-						{
-							var message = new InputMessageMouseButtonUp( EMouseButtons.Right );
-							interactionContext.Obj.InteractionInputMessage( gameMode, initiator, message );
-						}
-					}
-				}
-
-				//fire
-				if( disableInteractionRemainingTime2 == 0 )
-				{
-					if( pushed )
-						gameMode.ProcessInputMessage( new InputMessageMouseButtonDown( EMouseButtons.Right ) );
-					else
-						gameMode.ProcessInputMessage( new InputMessageMouseButtonUp( EMouseButtons.Right ) );
-				}
-			}
-		}
-
-		void ProcessInteractOnTouch( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
-		{
-			if( e.Action == TouchData.ActionEnum.Down && IsPointInsideControl( "Interact", e.Position ) )
-				gameMode.ProcessInputMessage( new InputMessageKeyDown( EKeys.E ) );
-			else
-				gameMode.ProcessInputMessage( new InputMessageKeyUp( EKeys.E ) );
-		}
-
-		//void ProcessAutoTake()
-		//{
-		//	var inputProcessing = GetInputProcessing();
-
-		//	if (gameMode != null && inputProcessing != null)
-		//	{
-		//		//get an object to interaction
-		//		var interactionContext = gameMode.ObjectInteractionContext;
-		//		if (interactionContext != null)
-		//		{
-		//			//call input message to the object in context
-		//			var message = new InputMessageMouseButtonDown(EMouseButtons.Left);
-		//			interactionContext.Obj.ObjectInteractionInputMessage(gameMode, message);
-		//		}
-		//	}
-		//}
-
-		void TouchProcessInventoryWidget( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
-		{
-			if( e.Action == TouchData.ActionEnum.Down && IsPointInsideControl( "Inventory Widget", e.Position ) )
-			{
-				for( int nItem = 1; ; nItem++ )
-				{
-					var namePath = $"Inventory Widget\\Item {nItem}";
-
-					var itemControl = Components.GetByPath( namePath ) as UIControl;
-					if( itemControl != null )
-					{
-						if( IsPointInsideControl( namePath, e.Position ) )
-						{
-							//sense to use touch down request in scene screen?
-							var item = new TouchData.TouchDownRequestToProcessTouch( itemControl, 0, 0, nItem,
-								delegate ( UIControl sender, TouchData touchData, object anyData )
+								var itemMessage = (Chats.Message)item.Tag;
+								if( itemMessage.Id == message.Id )
 								{
-									var nItem2 = (int)anyData;
-									SwitchActiveItem( nItem2 - 1 );
-								} );
-							e.TouchDownRequestToControlActions.Add( item );
+									found = true;
+									break;
+								}
+							}
 
-							//SwitchActiveItem( nItem - 1 );
+							if( !found )
+							{
+								ListChat.AddItem( message.Username + ": " + message.Text, message );
+								ListChat.SelectedIndex = ListChat.Items.Count - 1;
+								ListChat.EnsureVisible( ListChat.SelectedIndex );
+
+								if( chatMessagesOnScreen.Count > 1000 )
+									chatMessagesOnScreen.Dequeue();
+								chatMessagesOnScreen.Enqueue( (message.Username, message.Text, DateTime.UtcNow) );
+							}
 						}
 					}
+
+					chatGettingNewMessages = false;
+				} );
+			}
+			catch( Exception e )
+			{
+				Log.Warning( "ChatGetNewMessagesAsync error: " + e.ToString() );
+				chatGettingNewMessages = false;
+			}
+		}
+
+		public void ShowChatMessagesOnScreen( CanvasRenderer renderer )
+		{
+			if( ListChat != null )
+			{
+				var lines = new List<string>();
+				foreach( var message in chatMessagesOnScreen )
+					lines.Add( message.Username + ": " + message.Text );
+
+				var listRectangle = ListChat.GetScreenRectangle();
+				var rectangle = new Rectangle( listRectangle.Left, 0, 1, listRectangle.Bottom );
+
+				CanvasRendererUtility.AddTextLinesWithShadow( renderer.ViewportForScreenCanvasRenderer, lines, rectangle, EHorizontalAlignment.Left, EVerticalAlignment.Bottom, new ColorValue( 0.95, 0.95, 0.95 ) );
+			}
+		}
+
+		private void Chat_ReceivedRoomMessage( ClientNetworkService_Chat sender, ClientNetworkService_Chat.RoomMessage message )
+		{
+			//receive chat message from the server in multiplayer mode
+
+			var user = sender.UsersService.GetUser( message.UserID );
+			var userString = user != null ? user.Username : message.UserID.ToString();
+
+			//show on the screen
+			if( chatMessagesOnScreen.Count > 1000 )
+				chatMessagesOnScreen.Dequeue();
+			chatMessagesOnScreen.Enqueue( (userString, message.Text, DateTime.UtcNow) );
+
+			//add to the list in the in-game menu
+			ChatAddMesageToList( message );
+		}
+
+		void ChatSendMessage()
+		{
+			//get message text
+			var message = EditChatMessage.Text.Value.Trim();
+			if( string.IsNullOrEmpty( message ) )
+				return;
+
+			//multiplayer mode
+			var defaultRoom = SimulationAppClient.ConnectionNode?.Chat?.GetRoom( "Default" );
+			if( defaultRoom != null )
+			{
+				SimulationAppClient.ConnectionNode.Chat.SayInRoom( defaultRoom, message );
+				EditChatMessage.Text = "";
+				if( InGameMenuAutoHideWhenSentChatMessage )
+					InGameMenuShow( false );
+			}
+
+			//cloud service mode
+			var client = CloudServiceClient.Client;
+			if( client != null && MatchInfo != null && MatchInfo.ChatID != 0 )
+			{
+				Task.Run( async delegate ()
+				{
+					try
+					{
+						using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+						var result = await client.CallMethodAsync<long>( "Chats", "NewMessage", cts.Token, MatchInfo.ChatID, message, null, null );
+						if( !string.IsNullOrEmpty( result.Error ) )
+						{
+							Log.Warning( "Error: " + result.Error );
+							return;
+						}
+
+						EngineThreading.ExecuteFromMainThreadLater( delegate ()
+						{
+							EditChatMessage.Text = "";
+							if( InGameMenuAutoHideWhenSentChatMessage )
+								InGameMenuShow( false );
+						} );
+					}
+					catch( Exception e )
+					{
+						Log.Warning( "ChatSendMessage error: " + e.ToString() );
+					}
+				} );
+			}
+		}
+
+		void UpdateChat()
+		{
+			//get new chat messages in cloud service mode
+			if( MatchInfo != null && chatNewMessagesAvailable && !chatGettingNewMessages )
+			{
+				chatNewMessagesAvailable = false;
+				chatGettingNewMessages = true;
+
+				Chats.Message lastMessage = null;
+				if( ListChat.Items.Count > 0 )
+				{
+					var lastItem = ListChat.Items[ ListChat.Items.Count - 1 ];
+					lastMessage = lastItem.Tag as Chats.Message;
+				}
+				Task.Run( () => ChatGetNewMessagesAsync( lastMessage ) );
+			}
+
+			//delete old chat messages from the screen
+			{
+				var utcNow = DateTime.UtcNow;
+				while( chatMessagesOnScreen.TryPeek( out var item ) )
+				{
+					if( ( utcNow - item.Time ).TotalSeconds > chatMessagesOnScreenTime )
+						chatMessagesOnScreen.Dequeue();
 					else
 						break;
 				}
 			}
-		}
 
-		void TouchCameraType( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
-		{
-			if( e.Action == TouchData.ActionEnum.Down && IsPointInsideControl( "Camera", e.Position ) )
-				gameMode.ChangeCameraType();
-		}
-
-		void ProcessCameraRotationWithTouch( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
-		{
-			if( !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson ) && gameMode.Scene.Mode.Value == Scene.ModeEnum._3D )
+			//update ButtonChatSend
+			if( ButtonChatSend != null )
 			{
-				switch( e.Action )
-				{
-				case TouchData.ActionEnum.Down:
-					if( e.Position.X > 0.5 )
-					{
-						cameraRotationWithTouchDownObject = null;
-
-						var item = new TouchData.TouchDownRequestToProcessTouch( this, -10, 0, null,
-							delegate ( UIControl sender, TouchData touchData, object anyData )
-							{
-								//start touch
-								cameraRotationWithTouchDownObject = e.PointerIdentifier;
-								cameraRotationWithTouchLastPosition = e.Position;
-							} );
-						e.TouchDownRequestToControlActions.Add( item );
-					}
-					break;
-
-				case TouchData.ActionEnum.Up:
-					if( cameraRotationWithTouchDownObject != null && ReferenceEquals( e.PointerIdentifier, cameraRotationWithTouchDownObject ) )
-						cameraRotationWithTouchDownObject = null;
-					break;
-
-				case TouchData.ActionEnum.Move:
-					if( cameraRotationWithTouchDownObject != null && ReferenceEquals( e.PointerIdentifier, cameraRotationWithTouchDownObject ) )
-					{
-						var diff = e.Position - cameraRotationWithTouchLastPosition;
-						diff.X *= ParentContainer.AspectRatio;
-
-						cameraRotationWithTouchLastPosition = e.Position;
-
-						//update camera
-
-						if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson )
-						{
-							//!!!!refactor
-							//!!!!character specific
-
-							var characterInputProcessing = inputProcessing as CharacterInputProcessing;
-							if( characterInputProcessing != null )
-							{
-								var character = characterInputProcessing.Character;
-								if( character != null && !character.Sitting )
-								{
-									var sensitivity = GameMode.MouseSensitivity * 3;
-
-									var mouseOffset = new Vector2( diff.X, diff.Y ) * sensitivity;
-									characterInputProcessing.UpdateTurnToDirectionAndLookToToPosition( gameMode, mouseOffset.ToVector2F() );
-								}
-							}
-						}
-
-						if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
-						{
-							var sensitivity = GameMode.MouseSensitivity * 5;
-
-							var h = gameMode.ThirdPersonCameraHorizontalAngle.Value - new Radian( diff.X ).InDegrees() * sensitivity;
-							if( h < 0 ) h += 360;
-							if( h > 360 ) h -= 360;
-
-							var v = gameMode.ThirdPersonCameraVerticalAngle.Value - new Radian( diff.Y ).InDegrees() * sensitivity;
-							v = MathEx.Clamp( (double)v, -80, 80 );
-
-							gameMode.ThirdPersonCameraHorizontalAngle = h;
-							gameMode.ThirdPersonCameraVerticalAngle = v;
-						}
-					}
-					break;
-				}
+				if( IsChatEnabled() )
+					ButtonChatSend.ReadOnly = EditChatMessage == null || string.IsNullOrEmpty( EditChatMessage.Text.Value.Trim() );
+				else
+					ButtonChatSend.ReadOnly = true;
 			}
 		}
 
-		void ProcessMoveWithTouch( GameMode gameMode, InputProcessing inputProcessing, TouchData e )
+		public void EditChatMessage_KeyDownBefore( NeoAxis.UIControl sender, NeoAxis.KeyEvent e, ref bool handled )
 		{
-			var allow = !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson );
-
-			switch( e.Action )
+			if( e.Key == EKeys.Enter && EditChatMessage != null && EditChatMessage.Focused )
 			{
-			case TouchData.ActionEnum.Down:
-				if( allow && e.Position.X < 0.5 )
-				{
-					moveWithTouchDownObject = null;
-
-					var item = new TouchData.TouchDownRequestToProcessTouch( this, -10, 0, null,
-						delegate ( UIControl sender, TouchData touchData, object anyData )
-						{
-							//start touch
-							moveWithTouchDownObject = e.PointerIdentifier;
-							moveWithTouchStartPosition = e.Position;
-						} );
-					e.TouchDownRequestToControlActions.Add( item );
-				}
-				break;
-
-			case TouchData.ActionEnum.Up:
-				if( moveWithTouchDownObject != null && ReferenceEquals( e.PointerIdentifier, moveWithTouchDownObject ) )
-				{
-					moveWithTouchDownObject = null;
-					gameMode.ProcessInputMessage( new InputMessageTouchSliderChanged( 0, Vector2.Zero ) );
-				}
-				break;
-
-			case TouchData.ActionEnum.Move:
-				if( moveWithTouchDownObject != null && ReferenceEquals( e.PointerIdentifier, moveWithTouchDownObject ) )
-				{
-					var diff = e.Position - moveWithTouchStartPosition;
-					diff.X *= ParentContainer.AspectRatio;
-
-					var sensitivity = GameMode.MouseSensitivity * 10;
-
-					var value = diff * sensitivity;
-					gameMode.ProcessInputMessage( new InputMessageTouchSliderChanged( 0, value ) );
-				}
-				break;
+				ChatSendMessage();
+				handled = true;
 			}
 		}
 
-		UIControl GetControlOverPosition( Vector2 position )
+		public void ButtonChatSend_Click( NeoAxis.UIButton sender )
 		{
-			foreach( var child in GetComponents<UIControl>( onlyEnabledInHierarchy: true ) )
-			{
-				child.GetScreenRectangle( out var r );
-				if( r.Contains( ref position ) )
-					return child;
-			}
-			return null;
+			ChatSendMessage();
 		}
 
-		protected override bool OnTouch( TouchData e )
+		public virtual void ChatAddListMessage( string text )
 		{
-			touchModeActivated = true;
+			var list = ListChat;
 
-			if( !IsAnyWindowOpened() && touchModeActivated )
+			list.AddItem( text );
+
+			//multiplayer mode
+			if( SimulationAppClient.ConnectionNode?.Chat != null )
 			{
-				var inputProcessing = GetCharacterInputProcessing();
-				if( gameMode != null && inputProcessing != null )
-				{
-					TouchProcessLeftRight( gameMode, inputProcessing );
-					ProcessJumpOnTouch( gameMode, inputProcessing, e );
-					TouchProcessFireAndInteract( gameMode, inputProcessing );
-					ProcessInteractOnTouch( gameMode, inputProcessing, e );
-					TouchProcessInventoryWidget( gameMode, inputProcessing, e );
-					TouchCameraType( gameMode, inputProcessing, e );
-
-					//camera rotation with touch, move with touch
-					UIControl overControl = null;
-					if( e.Action == TouchData.ActionEnum.Down )
-						overControl = GetControlOverPosition( e.Position );
-					if( overControl == null || e.Action == TouchData.ActionEnum.Up || e.Action == TouchData.ActionEnum.Move )
-					{
-						ProcessCameraRotationWithTouch( gameMode, inputProcessing, e );
-						ProcessMoveWithTouch( gameMode, inputProcessing, e );
-					}
-				}
+				while( list.Items.Count > SimulationAppClient.ConnectionNode.Chat.MaxMessagesInRoom )
+					list.RemoveItem( 0 );
 			}
 
-			return base.OnTouch( e );
+			//cloud service mode
+			var client = CloudServiceClient.Client;
+			if( client != null && MatchInfo != null && MatchInfo.ChatID != 0 )
+			{
+				while( list.Items.Count > 200 )
+					list.RemoveItem( 0 );
+			}
+
+			list.SelectedIndex = list.Items.Count - 1;
+			list.EnsureVisible( list.Items.Count - 1 );
 		}
 
-		protected override void OnSimulationStep()
+		void ChatAddMesageToList( ClientNetworkService_Chat.RoomMessage message )
 		{
-			base.OnSimulationStep();
+			//multiplayer mode
 
-			if( !IsAnyWindowOpened() && touchModeActivated )
+			var chatService = SimulationAppClient.ConnectionNode?.Chat;
+			var user = chatService.UsersService.GetUser( message.UserID );
+			var userString = user != null ? user.Username : message.UserID.ToString();
+
+			ChatAddListMessage( $"{userString}: {message.Text}" );
+		}
+
+		///////////////////////////////////////////////
+		// Cutscene
+
+		public UIControl GetCutscene()
+		{
+			return GetComponent<UIControl>( "Cutscene" );
+		}
+
+		void UpdateCutscene()
+		{
+			var cutsceneControl = GetCutscene();
+			if( cutsceneControl != null && gameMode != null )
 			{
-				var inputProcessing = GetCharacterInputProcessing();
-				if( gameMode != null && inputProcessing != null )
-				{
-					TouchProcessLeftRight( gameMode, inputProcessing );
-					ProcessJumpSimulationStep( gameMode, inputProcessing );
-					TouchProcessFireAndInteract( gameMode, inputProcessing );
+				cutsceneControl.ColorMultiplier = new ColorValue( 1, 1, 1, gameMode.CutsceneGuiFadingFactor );
+				cutsceneControl.Enabled = gameMode.CutsceneGuiFadingFactor > 0;
 
-					//if (SystemSettings.MobileDevice)
-					//	ProcessAutoTake();
-				}
+				var textControl = cutsceneControl.Components[ "Bottom\\Text" ] as UIText;
+				if( textControl != null )
+					textControl.Text = gameMode.CutsceneText;
 			}
 		}
 
-		//enable focus to allows unfocusing controls in the screen
-		[Browsable( false )]
-		public override bool CanFocus
+		///////////////////////////////////////////////
+
+		protected virtual void UpdateControlsToOpenMenus()
 		{
-			get { return true; }
+
+			//!!!!change to machines with keyboard
+
+			var keyboardAvailable = !SystemSettings.MobileDevice; //var keyboardAvailable = SystemSettings.KeyboardAvailable;
+
+			var inGameMenu = GetInGameMenu();
+
+			//disable menu buttons on PC by default
+			if( ButtonInGameMenu != null )
+				ButtonInGameMenu.Enabled = !keyboardAvailable && !InGameMenuAlwaysHide && inGameMenu != null;
+			if( ButtonSystemMenu != null )
+				ButtonSystemMenu.Enabled = !keyboardAvailable && !InGameMenuAlwaysHide;
+			//if( TextShowInGameMenu != null )
+			//	TextShowInGameMenu.Enabled = keyboardAvailable && !InGameMenuAlwaysHide && inGameMenu != null;
 		}
 	}
 }

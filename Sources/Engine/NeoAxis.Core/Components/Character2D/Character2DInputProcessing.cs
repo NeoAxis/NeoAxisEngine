@@ -82,19 +82,19 @@ namespace NeoAxis
 						}
 					}
 
-					////drop item
-					//if( keyDown.Key == gameMode.KeyDrop1 || keyDown.Key == gameMode.KeyDrop2 )
-					//{
-					//	var item = Character.GetActiveItem();//var item = Character.ItemGetFirst();
-					//	if( item != null )
-					//	{
-					//		var amount = 1;
-					//		if( NetworkIsClient )
-					//			character.ItemDropClient( item, amount );
-					//		else
-					//			character.ItemDrop( gameMode, item, amount );
-					//	}
-					//}
+					//fire
+					if( keyDown.Key == gameMode.KeyFire1 || keyDown.Key == gameMode.KeyFire2 )
+					{
+						var weapon = Character.GetActiveWeapon();
+						if( weapon != null )
+						{
+							firing = true;
+							if( NetworkIsClient )
+								weapon.FiringBeginClient();
+							else
+								weapon.FiringBegin();
+						}
+					}
 				}
 
 				//mouse down
@@ -151,24 +151,22 @@ namespace NeoAxis
 			var character = Character;
 			if( character != null && InputEnabled )
 			{
+				var scene = ParentRoot as Scene;
+				var gameMode = scene?.GetGameMode();
+
 				double vector = 0;
 				bool run = false;
 
 				//move
-				var scene = ParentRoot as Scene;
-				if( scene != null )
+				if( gameMode != null )
 				{
-					var gameMode = (GameMode)scene.GetGameMode();
-					if( gameMode != null )
-					{
-						if( IsKeyPressed( gameMode.KeyLeft1 ) || IsKeyPressed( gameMode.KeyLeft2 ) /*|| IsKeyPressed( EKeys.NumPad4 )*/ )
-							vector -= 1.0;
-						if( IsKeyPressed( gameMode.KeyRight1 ) || IsKeyPressed( gameMode.KeyRight2 ) /*|| IsKeyPressed( EKeys.NumPad6 )*/ )
-							vector += 1.0;
+					if( IsKeyPressed( gameMode.KeyLeft1 ) || IsKeyPressed( gameMode.KeyLeft2 ) /*|| IsKeyPressed( EKeys.NumPad4 )*/ )
+						vector -= 1.0;
+					if( IsKeyPressed( gameMode.KeyRight1 ) || IsKeyPressed( gameMode.KeyRight2 ) /*|| IsKeyPressed( EKeys.NumPad6 )*/ )
+						vector += 1.0;
 
-						if( character.TypeCached.RunSupport )
-							run = IsKeyPressed( gameMode.KeyRun1 ) || IsKeyPressed( gameMode.KeyRun2 );
-					}
+					if( character.TypeCached.RunSupport )
+						run = IsKeyPressed( gameMode.KeyRun1 ) || IsKeyPressed( gameMode.KeyRun2 );
 				}
 
 				//update lookDirection
@@ -203,7 +201,24 @@ namespace NeoAxis
 
 				//!!!!don't send same for weapon
 
-				//update firing
+				//update firing by key
+				if( gameMode != null )
+				{
+					if( IsKeyPressed( gameMode.KeyFire1 ) || IsKeyPressed( gameMode.KeyFire2 ) )
+					{
+						var weapon = Character.GetActiveWeapon();
+						if( weapon != null )
+						{
+							firing = true;
+							if( NetworkIsClient )
+								weapon.FiringBeginClient();
+							else
+								weapon.FiringBegin();
+						}
+					}
+				}
+
+				//update firing by mouse
 				if( IsMouseButtonPressed( EMouseButtons.Left ) && firing )
 				{
 					var weapon = Character.GetActiveWeapon();
@@ -242,8 +257,8 @@ namespace NeoAxis
 			if( character != null )
 			{
 				//security check the object is controlled by the player
-				var networkLogic = NetworkLogicUtility.GetNetworkLogic( character );
-				if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == character )
+				var gameLogic = character.ParentScene?.GetGameLogic();
+				if( gameLogic != null && gameLogic.Server_GetObjectControlledByUser( client.User ) == character )
 				{
 					if( message == "UpdateObjectControlCharacter2D" )
 					{

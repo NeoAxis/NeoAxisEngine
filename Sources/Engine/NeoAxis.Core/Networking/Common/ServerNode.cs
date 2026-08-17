@@ -52,6 +52,8 @@ namespace NeoAxis.Networking
 		/// </summary>
 		public double UpdateTimeUdp { get; set; } = 0.015;
 
+		public bool Interpolation { get; set; }
+
 		//profiler
 		ProfilerDataClass profilerData;
 
@@ -63,6 +65,7 @@ namespace NeoAxis.Networking
 		//server data
 		internal HttpListener webSocketListener;
 		internal UdpServerListener udpListener;
+		DateTime udpListenerSettingsLastTimeUpdate;
 
 		ConcurrentDictionary<Client, int> connectingClients = new ConcurrentDictionary<Client, int>();
 		DateTime connectingClientsDeleteFreezedLastTime;
@@ -2308,7 +2311,11 @@ namespace NeoAxis.Networking
 			//update udp server
 			if( udpListener != null )
 			{
+				if( utcNow - udpListenerSettingsLastTimeUpdate > TimeSpan.FromSeconds( 0.1 ) )
+				{
+					udpListenerSettingsLastTimeUpdate = utcNow;
 				UpdateUdpMaxFragmentsCount_DisconnectTimeout_UpdateTime();
+				}
 				udpListener?.Server.PollEvents();
 			}
 

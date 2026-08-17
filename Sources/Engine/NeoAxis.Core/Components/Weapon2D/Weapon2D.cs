@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Weapon 2D\Weapon 2D", 23110 )]
 	[NewObjectDefaultName( "Weapon 2D" )]
-	public class Weapon2D : Sprite, Item3DInterface, InteractiveObjectInterface
+	public class Weapon2D : Sprite, ItemInterface, InteractiveObjectInterface
 	{
 		Weapon2DType typeCached = new Weapon2DType();
 
@@ -163,7 +163,16 @@ namespace NeoAxis
 							var collisionBody = bullet2.GetComponent( "Collision Body" ) as RigidBody2D;
 							if( collisionBody != null )
 							{
-								collisionBody.Transform = initialTransform;
+								//!!!!good?
+								//fix physics rotation to avoid invalid rotation rendering at the moment of bullet creation
+								var transformWithFixedPhysicsRotation = initialTransform;
+								if( Math.Abs( TransformV.Rotation.GetUp().Z ) > 0.1 )
+								{
+									var newRotation = Quaternion.LookAt( initialTransform.Rotation.GetForward(), Vector3.ZAxis );
+									transformWithFixedPhysicsRotation = transformWithFixedPhysicsRotation.UpdateRotation( newRotation );
+								}
+
+								collisionBody.Transform = transformWithFixedPhysicsRotation;// initialTransform;
 								collisionBody.LinearVelocity = ( initialTransform.Rotation.GetForward() * TypeCached.BulletSpeed ).ToVector2();
 							}
 							else
@@ -319,6 +328,27 @@ namespace NeoAxis
 
 		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
+			var keyDown = message as InputMessageKeyDown;
+			if( keyDown != null )
+			{
+				if( keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2 )
+				{
+					//process an interaction context to take the object by a character
+					var character = gameMode.ObjectControlledByPlayer.Value as Character2D;
+					if( character != null && character.ItemCanTake( gameMode, this ) )
+					{
+						if( NetworkIsClient )
+							character.ItemTakeAndActivateClient( this );
+						else
+						{
+							if( character.ItemTake( gameMode, this ) )
+								character.ItemActivate( gameMode, this );
+						}
+						return true;
+					}
+				}
+			}
+
 			var mouseDown = message as InputMessageMouseButtonDown;
 			if( mouseDown != null )
 			{
@@ -497,8 +527,8 @@ namespace NeoAxis
 			if( Parent != null )
 			{
 				//security check the object is controlled by the player
-				var networkLogic = NetworkLogicUtility.GetNetworkLogic( this );
-				if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == Parent )
+				var gameLogic = ParentScene?.GetGameLogic();
+				if( gameLogic != null && gameLogic.Server_GetObjectControlledByUser( client.User ) == Parent )
 				{
 					if( message == "FiringBeginFromClient" )
 					{

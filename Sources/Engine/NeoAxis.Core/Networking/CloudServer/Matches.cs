@@ -11,7 +11,7 @@ using NeoAxis.Networking;
 using NeoAxis.LiteDB;
 #endif
 
-namespace NeoAxis.CloudServer
+namespace NeoAxis.Cloud
 {
 	public static class Matches
 	{

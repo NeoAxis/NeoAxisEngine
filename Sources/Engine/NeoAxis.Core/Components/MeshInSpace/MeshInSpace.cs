@@ -20,6 +20,7 @@ namespace NeoAxis
 		List<ThreadSafeDisposable> modifiableMeshBuffersToDispose;
 		Component modifiableMeshCreatedByObject;
 
+		//for motion blur, not for interpolation between simulation steps
 		double transformPositionByTime1_Time;
 		Vector3 transformPositionByTime1_Position;
 		double transformPositionByTime2_Time;
@@ -63,7 +64,8 @@ namespace NeoAxis
 		List<GroupOfObjects.SubGroup> staticModeGroupOfObjectSubGroups;
 
 		AdditionalItem[] additionalItems;
-		AdditionalItemPreviousTransform[] additionalItemsPreviousTransform;
+		AdditionalItemPreviousTransform[] additionalItemsPreviousTransform; //for motion blur, not for interpolation between simulation steps
+		AdditionalItemTransformPreviousSimulationStep[] additionalItemsTransformPreviousSimulationStep; //interpolation between simulation steps
 
 		[Browsable( false )]
 		public Transform TransformVisualOverride { get; set; }
@@ -486,12 +488,22 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public struct AdditionalItemPreviousTransform
+		//for motion blur, not for interpolation between simulation steps
+		struct AdditionalItemPreviousTransform
 		{
 			public double transformPositionByTime1_Time;
 			public Vector3 transformPositionByTime1_Position;
 			public double transformPositionByTime2_Time;
 			public Vector3 transformPositionByTime2_Position;
+		}
+
+		/////////////////////////////////////////
+
+		struct AdditionalItemTransformPreviousSimulationStep
+		{
+			public Vector3 Position;
+			public Quaternion Rotation;
+			public Vector3 Scale;
 		}
 
 		///////////////////////////////////////////////
@@ -574,7 +586,7 @@ namespace NeoAxis
 		void GetTransformWithOptimizedCases( ref Transform cached )
 		{
 			if( cached == null )
-				cached = TransformVisualOverride ?? TransformV;
+				cached = TransformVisualOverride ?? GetTransformInterpolated();
 		}
 
 		protected override void OnUpdate( float delta )
@@ -739,8 +751,6 @@ namespace NeoAxis
 								{
 									GetTransformWithOptimizedCases( ref tr );
 									previousPosition = tr.Position;
-									//context.ConvertToRelative( tr.Position, out previousPosition );
-									////previousPosition = tr.Position;
 								}
 
 								//MeshDataLastVoxelLOD
@@ -957,6 +967,7 @@ namespace NeoAxis
 					if( additionalItemsPreviousTransform == null || additionalItems.Length != additionalItemsPreviousTransform.Length )
 						additionalItemsPreviousTransform = new AdditionalItemPreviousTransform[ additionalItems.Length ];
 
+					var currentSimulationTime = 0.0;
 
 					//!!!!parallel?
 
@@ -980,9 +991,29 @@ namespace NeoAxis
 							Quaternion rot = tr.Rotation;
 							Vector3 scl = tr.Scale;
 							{
+								var previousItems = additionalItemsTransformPreviousSimulationStep;
+								if( RenderingSystem.Interpolation && TransformInterpolation && previousItems != null && previousItems.Length == additionalItems.Length )
+								{
+									var previous = previousItems[ nItem ];
+
+									if( currentSimulationTime == 0 )
+										currentSimulationTime = ParentRoot.HierarchyController?.SimulationTime ?? 0;
+
+									var t = MathEx.Saturate( ( EngineApp.EngineTime - currentSimulationTime ) * Time.SimulationStepsPerSecond );
+									var p = Vector3.Lerp( previous.Position, additionalItem.Position, t );
+									var r = Quaternion.Slerp( previous.Rotation, additionalItem.Rotation, t );
+									var s = Vector3.Lerp( previous.Scale, additionalItem.Scale, t );
+
+									pos += rot * ( p * scl );
+									rot *= r;
+									scl *= s;
+								}
+								else
+								{
 								pos += rot * ( additionalItem.Position * scl );
 								rot *= additionalItem.Rotation;
 								scl *= additionalItem.Scale;
+							}
 							}
 							//var tr2 = Transform.Value;
 							//tr2 = tr2.ApplyOffset( additionalItem.Position, additionalItem.Rotation, additionalItem.Scale );
@@ -2696,6 +2727,8 @@ namespace NeoAxis
 					previousTransform.transformPositionByTime1_Time = 0;
 				}
 			}
+
+			TransformInterpolatedReset();
 		}
 
 		public delegate void CollisionSoundPlayBeforeDelegate( MeshInSpace sender, ref Sound sound, ref double volume, ref bool handled );
@@ -2757,6 +2790,33 @@ namespace NeoAxis
 					light?.ResetStaticShadowsCache();
 				}
 			}
+		}
+
+		internal override void SaveTransformPreviousSimulationStep()
+		{
+			base.SaveTransformPreviousSimulationStep();
+
+			if( additionalItems != null )
+			{
+				if( additionalItemsTransformPreviousSimulationStep == null || additionalItems.Length != additionalItemsTransformPreviousSimulationStep.Length )
+					additionalItemsTransformPreviousSimulationStep = new AdditionalItemTransformPreviousSimulationStep[ additionalItems.Length ];
+				for( int n = 0; n < additionalItems.Length; n++ )
+				{
+					ref var from = ref additionalItems[ n ];
+					ref var to = ref additionalItemsTransformPreviousSimulationStep[ n ];
+					to.Position = from.Position;
+					to.Rotation = from.Rotation;
+					to.Scale = from.Scale;
+				}
+			}
+			else
+				additionalItemsTransformPreviousSimulationStep = null;
+		}
+
+		public override void TransformInterpolatedReset()
+		{
+			base.TransformInterpolatedReset();
+			additionalItemsTransformPreviousSimulationStep = null;
 		}
 	}
 }

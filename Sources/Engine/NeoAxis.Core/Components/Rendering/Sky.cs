@@ -882,6 +882,18 @@ namespace NeoAxis
 				//	scene.ViewportUpdateBefore -= Scene_ViewportUpdateBefore;
 			}
 
+			if( EnabledInHierarchy )
+			{
+				if( mesh == null )
+				{
+					mesh = ComponentUtility.CreateComponent<Mesh>( null, true, false );
+					mesh.CreateComponent<MeshGeometry_Box>();
+					mesh.Enabled = true;
+				}
+
+				processedCubemapNeedUpdate = true;
+			}
+
 			if( !EnabledInHierarchy )
 				ProceduralTextureDispose();
 		}
@@ -897,29 +909,29 @@ namespace NeoAxis
 			get { return mesh; }
 		}
 
-		protected override void OnEnabled()
-		{
-			base.OnEnabled();
+		//protected override void OnEnabled()
+		//{
+		//	base.OnEnabled();
 
-			if( mesh == null )
-			{
-				mesh = ComponentUtility.CreateComponent<Mesh>( null, true, false );
-				mesh.CreateComponent<MeshGeometry_Box>();
-				mesh.Enabled = true;
-			}
+		//	if( mesh == null )
+		//	{
+		//		mesh = ComponentUtility.CreateComponent<Mesh>( null, true, false );
+		//		mesh.CreateComponent<MeshGeometry_Box>();
+		//		mesh.Enabled = true;
+		//	}
 
-			processedCubemapNeedUpdate = true;
-		}
+		//	processedCubemapNeedUpdate = true;
+		//}
 
-		protected override void OnDisabled()
-		{
-			//mesh?.Dispose();
-			//mesh = null;
+		//protected override void OnDisabled()
+		//{
+		//	//mesh?.Dispose();
+		//	//mesh = null;
 
-			//CreatedCubemapDispose();
+		//	//CreatedCubemapDispose();
 
-			base.OnDisabled();
-		}
+		//	base.OnDisabled();
+		//}
 
 		//void CreatedCubemapUpdate()
 		//{

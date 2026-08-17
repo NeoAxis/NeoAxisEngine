@@ -1479,7 +1479,34 @@ namespace NeoAxis
 				////var axisX = rotation.GetForward();
 				////var axisY = rotation.GetUp();
 
-				item.constraint = PhysicsNative.JCreateConstraintSixDOF( physicsSystem, bodyA.body, bodyB.body, transformInWorldSpace, ref positionA, ref axisXA, ref axisYA, ref positionB, ref axisXB, ref axisYB, linearAxisX, ref linearLimitX, linearAxisY, ref linearLimitY, linearAxisZ, ref linearLimitZ, angularAxisX, ref angularLimitX, angularAxisY, ref angularLimitY, angularAxisZ, ref angularLimitZ, linearXFriction, linearYFriction, linearZFriction, angularXFriction, angularYFriction, angularZFriction );
+				var settings = new PhysicsNative.SixDOFConstraintSettingsNative();
+				settings.transformInWorldSpace = transformInWorldSpace ? 1 : 0;
+				settings.positionA = positionA;
+				settings.axisXA = axisXA;
+				settings.axisYA = axisYA;
+				settings.positionB = positionB;
+				settings.axisXB = axisXB;
+				settings.axisYB = axisYB;
+				settings.linearAxisX = linearAxisX;
+				settings.linearLimitX = linearLimitX;
+				settings.linearAxisY = linearAxisY;
+				settings.linearLimitY = linearLimitY;
+				settings.linearAxisZ = linearAxisZ;
+				settings.linearLimitZ = linearLimitZ;
+				settings.angularAxisX = angularAxisX;
+				settings.angularLimitX = angularLimitX;
+				settings.angularAxisY = angularAxisY;
+				settings.angularLimitY = angularLimitY;
+				settings.angularAxisZ = angularAxisZ;
+				settings.angularLimitZ = angularLimitZ;
+				settings.linearXFriction = linearXFriction;
+				settings.linearYFriction = linearYFriction;
+				settings.linearZFriction = linearZFriction;
+				settings.angularXFriction = angularXFriction;
+				settings.angularYFriction = angularYFriction;
+				settings.angularZFriction = angularZFriction;
+
+				item.constraint = PhysicsNative.JCreateConstraintSixDOF( physicsSystem, bodyA.body, bodyB.body, ref settings );
 
 				//!!!!может такое быть? везде так
 				//if( item.constraint == IntPtr.Zero )
@@ -1585,7 +1612,44 @@ namespace NeoAxis
 				constraint.body = body;
 				constraint.visualScale = visualScale;
 
-				constraint.constraint = PhysicsNative.JCreateConstraintVehicle( physicsSystem, body.body, wheelCount, wheelsSettings, frontWheelAntiRollBarStiffness, rearWheelAntiRollBarStiffness, maxPitchRollAngle, engineMaxTorque, engineMinRPM, engineMaxRPM, transmissionAuto, transmissionGearRatiosCount, transmissionGearRatios, transmissionReverseGearRatiosCount, transmissionReverseGearRatios, transmissionSwitchTime, transmissionClutchReleaseTime, transmissionSwitchLatency, transmissionShiftUpRPM, transmissionShiftDownRPM, transmissionClutchStrength, /*frontWheelDrive, rearWheelDrive, frontWheelDifferentialRatio, frontWheelDifferentialLeftRightSplit, frontWheelDifferentialLimitedSlipRatio, frontWheelDifferentialEngineTorqueRatio, rearWheelDifferentialRatio, rearWheelDifferentialLeftRightSplit, rearWheelDifferentialLimitedSlipRatio, rearWheelDifferentialEngineTorqueRatio, */maxSlopeAngle, tracks, antiRollbarsCount, antiRollbars, differentialLimitedSlipRatio, engineNormalizedTorqueCount, engineNormalizedTorque, engineInertia, engineAngularDamping, differentialsCount, differentials, trackDrivenWheel, trackInertia, trackAngularDamping, trackMaxBrakeTorque, trackDifferentialRatio );
+				var settings = new PhysicsNative.VehicleConstraintSettingsNative();
+				settings.wheelCount = wheelCount;
+				settings.wheelsSettings = wheelsSettings;
+				settings.frontWheelAntiRollBarStiffness = frontWheelAntiRollBarStiffness;
+				settings.rearWheelAntiRollBarStiffness = rearWheelAntiRollBarStiffness;
+				settings.maxPitchRollAngle = maxPitchRollAngle;
+				settings.engineMaxTorque = engineMaxTorque;
+				settings.engineMinRPM = engineMinRPM;
+				settings.engineMaxRPM = engineMaxRPM;
+				settings.transmissionAuto = transmissionAuto ? 1 : 0;
+				settings.transmissionGearRatiosCount = transmissionGearRatiosCount;
+				settings.transmissionGearRatios = transmissionGearRatios;
+				settings.transmissionReverseGearRatiosCount = transmissionReverseGearRatiosCount;
+				settings.transmissionReverseGearRatios = transmissionReverseGearRatios;
+				settings.transmissionSwitchTime = transmissionSwitchTime;
+				settings.transmissionClutchReleaseTime = transmissionClutchReleaseTime;
+				settings.transmissionSwitchLatency = transmissionSwitchLatency;
+				settings.transmissionShiftUpRPM = transmissionShiftUpRPM;
+				settings.transmissionShiftDownRPM = transmissionShiftDownRPM;
+				settings.transmissionClutchStrength = transmissionClutchStrength;
+				settings.maxSlopeAngleInRadians = maxSlopeAngle;
+				settings.tracks = tracks ? 1 : 0;
+				settings.antiRollbarsCount = antiRollbarsCount;
+				settings.antiRollbars = antiRollbars;
+				settings.differentialLimitedSlipRatio = differentialLimitedSlipRatio;
+				settings.engineNormalizedTorqueCount = engineNormalizedTorqueCount;
+				settings.engineNormalizedTorque = engineNormalizedTorque;
+				settings.engineInertia = engineInertia;
+				settings.engineAngularDamping = engineAngularDamping;
+				settings.differentialsCount = differentialsCount;
+				settings.differentials = differentials;
+				settings.trackDrivenWheel = trackDrivenWheel;
+				settings.trackInertia = trackInertia;
+				settings.trackAngularDamping = trackAngularDamping;
+				settings.trackMaxBrakeTorque = trackMaxBrakeTorque;
+				settings.trackDifferentialRatio = trackDifferentialRatio;
+
+				constraint.constraint = PhysicsNative.JCreateConstraintVehicle( physicsSystem, body.body, ref settings );
 
 				if( constraint.body != null )
 				{

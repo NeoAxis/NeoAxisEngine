@@ -1660,16 +1660,16 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public Item3DInterface[] GetAllItems()
+		public ItemInterface[] GetAllItems()
 		{
-			return GetComponents<Item3DInterface>();
+			return GetComponents<ItemInterface>();
 		}
 
-		public Item3DInterface GetItemByType( Item3DTypeInterface type )
+		public ItemInterface GetItemByType( ItemTypeInterface type )
 		{
 			if( type != null )
 			{
-				foreach( var c in GetComponents<Item3DInterface>() )
+				foreach( var c in GetComponents<ItemInterface>() )
 				{
 					var item = c as Item2D;
 					if( item != null )
@@ -1689,9 +1689,9 @@ namespace NeoAxis
 			return null;
 		}
 
-		public Item3DInterface GetItemByResourceName( string resourceName )
+		public ItemInterface GetItemByResourceName( string resourceName )
 		{
-			foreach( var c in GetComponents<Item3DInterface>() )
+			foreach( var c in GetComponents<ItemInterface>() )
 			{
 				var item = c as Item2D;
 				if( item != null )
@@ -1721,7 +1721,7 @@ namespace NeoAxis
 			return null;
 		}
 
-		public Item3DInterface GetActiveItem()
+		public ItemInterface GetActiveItem()
 		{
 			foreach( var item in GetAllItems() )
 			{
@@ -1736,7 +1736,7 @@ namespace NeoAxis
 			return GetActiveItem() as Weapon2D;
 		}
 
-		public bool ItemCanTake( GameMode gameMode, Item3DInterface item )
+		public bool ItemCanTake( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -1772,7 +1772,7 @@ namespace NeoAxis
 		/// Takes the item. The item will moved to the character and will disabled.
 		/// </summary>
 		/// <param name="item"></param>
-		public bool ItemTake( GameMode gameMode, Item3DInterface item )
+		public bool ItemTake( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -1821,7 +1821,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="item"></param>
 		/// <param name="newTransform"></param>
-		public bool ItemDrop( GameMode gameMode, Item3DInterface item, /*bool calculateTransform, Transform setTransform, */double amount )
+		public bool ItemDrop( GameMode gameMode, ItemInterface item, /*bool calculateTransform, Transform setTransform, */double amount )
 		{
 			var item2 = (ObjectInSpace)item;
 			var amount2 = amount;
@@ -1880,7 +1880,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		public void ItemDropClient( Item3DInterface item, int amount )
+		public void ItemDropClient( ItemInterface item, int amount )
 		{
 			var component = item as Component;
 			if( component != null )
@@ -1899,7 +1899,7 @@ namespace NeoAxis
 		/// Activates the item. The item will enabled.
 		/// </summary>
 		/// <param name="item"></param>
-		public bool ItemActivate( GameMode gameMode, Item3DInterface item )
+		public bool ItemActivate( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -1935,7 +1935,7 @@ namespace NeoAxis
 		/// Deactivates the item. The item will disabled.
 		/// </summary>
 		/// <param name="item"></param>
-		public bool ItemDeactivate( GameMode gameMode, Item3DInterface item )
+		public bool ItemDeactivate( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -1949,7 +1949,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		public void ItemTakeAndActivateClient( Item3DInterface item, bool activate = true )
+		public void ItemTakeAndActivateClient( ItemInterface item, bool activate = true )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -1962,7 +1962,7 @@ namespace NeoAxis
 			}
 		}
 
-		public void ItemActivateClient( Item3DInterface item )
+		public void ItemActivateClient( ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -1974,7 +1974,7 @@ namespace NeoAxis
 			}
 		}
 
-		public void ItemDeactivateClient( Item3DInterface item )
+		public void ItemDeactivateClient( ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -1990,10 +1990,10 @@ namespace NeoAxis
 		/// Returns first item of the character.
 		/// </summary>
 		/// <returns></returns>
-		public Item3DInterface ItemGetFirst()
+		public ItemInterface ItemGetFirst()
 		{
 			foreach( var c in Components )
-				if( c is Item3DInterface item )
+				if( c is ItemInterface item )
 					return item;
 			return null;
 		}
@@ -2002,10 +2002,10 @@ namespace NeoAxis
 		/// Returns first activated item of the character.
 		/// </summary>
 		/// <returns></returns>
-		public Item3DInterface ItemGetEnabledFirst()
+		public ItemInterface ItemGetEnabledFirst()
 		{
 			foreach( var c in Components )
-				if( c.Enabled && c is Item3DInterface item )
+				if( c.Enabled && c is ItemInterface item )
 					return item;
 			return null;
 		}
@@ -2029,6 +2029,29 @@ namespace NeoAxis
 
 						//offset.RotationOffset = Quaternion.FromRotateByY( LookToDirection.Vertical );
 					}
+				}
+			}
+		}
+
+		public void SwitchActiveItem( GameMode gameMode, int index )
+		{
+			var items = GetAllItems();
+			if( index < items.Length )
+			{
+				var item = items[ index ];
+				if( item.Enabled )
+				{
+					if( NetworkIsClient )
+						ItemDeactivateClient( item );
+					else
+						ItemDeactivate( gameMode, item );
+				}
+				else
+				{
+					if( NetworkIsClient )
+						ItemActivateClient( item );
+					else
+						ItemActivate( gameMode, item );
 				}
 			}
 		}
@@ -2082,8 +2105,8 @@ namespace NeoAxis
 				return false;
 
 			//security check the object is controlled by the player
-			var networkLogic = NetworkLogicUtility.GetNetworkLogic( this );
-			if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == this )
+			var gameLogic = ParentScene?.GetGameLogic();
+			if( gameLogic != null && gameLogic.Server_GetObjectControlledByUser( client.User ) == this )
 			{
 				if( message == "Jump" )
 					Jump();
@@ -2097,10 +2120,10 @@ namespace NeoAxis
 					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
 					if( item != null )
 					{
-						var item2 = item as Item3DInterface;
+						var item2 = item as ItemInterface;
 						if( item2 != null )
 						{
-							var gameMode = (GameMode)ParentScene?.GetGameMode();
+							var gameMode = ParentScene?.GetGameMode();
 							if( gameMode != null )
 							{
 								if( ItemTake( gameMode, item2 ) )
@@ -2122,10 +2145,10 @@ namespace NeoAxis
 					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
 					if( item != null )
 					{
-						var gameMode = (GameMode)ParentScene?.GetGameMode();
+						var gameMode = ParentScene?.GetGameMode();
 						if( gameMode != null )
 						{
-							var item2 = item as Item3DInterface;
+							var item2 = item as ItemInterface;
 							if( item2 != null )
 								ItemDrop( gameMode, item2, amount );
 						}
@@ -2140,10 +2163,10 @@ namespace NeoAxis
 					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
 					if( item != null && item.Parent == this )
 					{
-						var gameMode = (GameMode)ParentScene?.GetGameMode();
+						var gameMode = ParentScene?.GetGameMode();
 						if( gameMode != null )
 						{
-							var item2 = item as Item3DInterface;
+							var item2 = item as ItemInterface;
 							if( item2 != null )
 								ItemActivate( gameMode, item2 );
 						}
@@ -2158,10 +2181,10 @@ namespace NeoAxis
 					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
 					if( item != null && item.Parent == this )
 					{
-						var gameMode = (GameMode)ParentScene?.GetGameMode();
+						var gameMode = ParentScene?.GetGameMode();
 						if( gameMode != null )
 						{
-							var item2 = item as Item3DInterface;
+							var item2 = item as ItemInterface;
 							if( item2 != null )
 								ItemDeactivate( gameMode, item2 );
 						}

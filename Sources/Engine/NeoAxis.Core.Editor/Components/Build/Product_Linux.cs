@@ -24,6 +24,28 @@ namespace NeoAxis
 		//CompilingScripts
 
 
+		//!!!!merge with all
+		public enum ConfigurationEnum
+		{
+			Debug,
+			Release,
+		}
+
+		//!!!!merge with all
+		/// <summary>
+		/// The build configuration.
+		/// </summary>
+		[Category( "Linux" )]
+		[DefaultValue( ConfigurationEnum.Release )]
+		public Reference<ConfigurationEnum> Configuration
+		{
+			get { if( _configuration.BeginGet() ) Configuration = _configuration.Get( this ); return _configuration.value; }
+			set { if( _configuration.BeginSet( this, ref value ) ) { try { ConfigurationChanged?.Invoke( this ); } finally { _configuration.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Configuration"/> property value changes.</summary>
+		public event Action<Product_Linux> ConfigurationChanged;
+		ReferenceField<ConfigurationEnum> _configuration = ConfigurationEnum.Release;
+
 		/// <summary>
 		/// The target platform architecture.
 		/// </summary>
@@ -314,7 +336,7 @@ namespace NeoAxis
 			//build Project assembly
 			{
 				var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
-				var arguments = $"build \"{projectFullPath}\" --configuration Release --output \"{destinationFolder}\" --verbosity minimal";
+				var arguments = $"build \"{projectFullPath}\" --configuration {Configuration.Value} --output \"{destinationFolder}\" --verbosity minimal";
 
 				var defineConstants = DefineConstants.Value.Trim();
 				if( !string.IsNullOrEmpty( defineConstants ) )
@@ -335,7 +357,7 @@ namespace NeoAxis
 			//build Player assembly
 			{
 				var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player\NeoAxis.Player.csproj" );
-				var arguments = $"build \"{projectFullPath}\" --configuration Release-Linux-{Profile.Value} --output \"{destinationFolder}\" --verbosity minimal";
+				var arguments = $"build \"{projectFullPath}\" --configuration {Configuration.Value}-Linux-{Profile.Value} --output \"{destinationFolder}\" --verbosity minimal";
 
 				var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
 				if( !success )

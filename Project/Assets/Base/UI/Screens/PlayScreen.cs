@@ -7,6 +7,9 @@ using NeoAxis;
 
 namespace Project
 {
+	/// <summary>
+	/// Represents a screen that is used as a basic gameplay screen. A scene GUI screen is loaded into this screen.
+	/// </summary>
 	public class PlayScreen : UIControl
 	{
 		static PlayScreen instance;
@@ -18,7 +21,7 @@ namespace Project
 		Viewport sceneViewport;
 		GameMode gameMode;
 
-		//load UI control
+		//load UI screen
 		UIControl uiControl;
 
 		UIWindow menuWindow;
@@ -67,19 +70,6 @@ namespace Project
 			{
 				instance = this;
 				GameMode.UpdatePlayScreen( instance );
-
-				//disable the Menu button on PC
-				if( !SystemSettings.MobileDevice )
-				{
-					var button = GetComponent( "Button Menu" );
-					if( button != null )
-						button.Enabled = false;
-				}
-
-				//disable the Cutscene control
-				var cutscene = GetComponent( "Cutscene" );
-				if( cutscene != null )
-					cutscene.Enabled = false;
 			}
 
 			base.OnAddedToParent();
@@ -240,28 +230,15 @@ namespace Project
 			else
 				SoundWorld.SetListenerReset();
 
-			//scene simulation
-			if( !SimulationAppClient.Created )
+			//call scene simulation
+			if( SimulationApp.SceneSimulate )
 			{
-				if( SimulationApp.SceneSimulate )
-					scene?.HierarchyController?.PerformSimulationSteps();
-				ParentRoot.HierarchyController?.PerformSimulationSteps();
+				var controller = scene?.HierarchyController;
+				if( controller != null && !controller.NetworkIsClient )
+					controller.PerformSimulationSteps();
 			}
-
-			//Cutscene update
-			if( EngineApp.IsSimulation && gameMode != null )
-			{
-				var cutscene = GetComponent( "Cutscene" ) as UIControl;
-				if( cutscene != null )
-				{
-					cutscene.ColorMultiplier = new ColorValue( 1, 1, 1, gameMode.CutsceneGuiFadingFactor );
-					cutscene.Enabled = gameMode.CutsceneGuiFadingFactor > 0;
-
-					var textControl = cutscene.Components[ "Bottom\\Text" ] as UIText;
-					if( textControl != null )
-						textControl.Text = gameMode.CutsceneText;
-				}
-			}
+			//simulation steps for GUI controls
+			ParentRoot.HierarchyController?.PerformSimulationSteps();
 
 			//screen fading
 			if( EngineApp.IsSimulation && gameMode != null )
@@ -353,9 +330,7 @@ namespace Project
 			//post scene initialization
 
 			sceneViewport = ParentContainer.Viewport;
-			//scene.ViewportUpdateBegin += Scene_ViewportUpdateBegin;
 			scene.ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
-			//scene.RenderEvent += Scene_RenderEvent;
 			sceneViewport.AttachedScene = scene;
 			sceneViewport.NotifyInstantCameraMovement();
 
@@ -365,27 +340,18 @@ namespace Project
 			// Load UI screen of the scene.
 			if( canChangeUIControl )
 			{
+				string fileName;
 				var uiScreen = scene.UIScreen.Value;
 				if( uiScreen != null )
-				{
-					var fileName = uiScreen.HierarchyController?.CreatedByResource?.Owner.Name;
-					if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
-					{
-						uiControl = ResourceManager.LoadSeparateInstance<UIControl>( fileName, false, null );
-						if( uiControl != null )
-							AddComponent( uiControl );
-					}
-				}
+					fileName = uiScreen.HierarchyController?.CreatedByResource?.Owner.Name;
 				else
+					fileName = @"Base\UI\Screens\BasicSceneScreen.ui";
+
+				if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
 				{
-					var fileName = @"Base\UI\Screens\BasicSceneScreen.ui";
-					if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
-					{
-						uiControl = ResourceManager.LoadSeparateInstance<UIControl>( fileName, false, null );
-						if( uiControl != null )
-							AddComponent( uiControl );
-					}
-					//uiControl = CreateComponent<BasicSceneScreen>();
+					this.uiControl = ResourceManager.LoadSeparateInstance<UIControl>( fileName, false, null );
+					if( this.uiControl != null )
+						AddComponent( this.uiControl );
 				}
 			}
 		}
@@ -399,14 +365,13 @@ namespace Project
 			scene = ResourceManager.LoadSeparateInstance<Scene>( PlayFileName, true, false );//, out var error );
 			if( scene == null )
 				return false;
-
-			scene.HierarchyController.FatalWhenHierarchyChangeFromNotControllerThread = true;
-
 			//if( !string.IsNullOrEmpty( error ) )
 			//{
 			//	Log.Error( error );
 			//	return;
 			//}
+
+			scene.HierarchyController.FatalWhenHierarchyChangeFromNotControllerThread = true;
 
 			Log.InvisibleInfo( "Scene loaded successfully." );
 
@@ -416,12 +381,6 @@ namespace Project
 
 			return true;
 		}
-
-		//private void Scene_ViewportUpdateBegin( Scene scene, Viewport viewport, Viewport.CameraSettingsClass overrideCameraSettings )
-		//{
-		//	SimulationApp.UpdateSceneAntialiasingByAppSettings( scene );
-		//	SimulationApp.UpdateSceneResolutionUpscaleByAppSettings( scene );
-		//}
 
 		private void Scene_ViewportUpdateGetCameraSettings( Scene scene, Viewport viewport, ref bool processed )
 		{
@@ -442,24 +401,12 @@ namespace Project
 				}
 			}
 
-			// Create new camera:
-			//camera = (Camera)camera.Clone();
-			////camera = new Camera();
-			//camera.Transform = new Transform( cameraPosition, Quaternion.LookAt( ( lookTo - cameraPosition ).GetNormalize(), up ) );
-			//camera.FixedUp = up;
-
 			if( camera != null )
 			{
 				viewport.CameraSettings = new Viewport.CameraSettingsClass( viewport, camera );
 				processed = true;
 			}
 		}
-
-		//private void Scene_RenderEvent( Scene sender, Viewport viewport )
-		//{
-		//	// Game mode.
-		//	gameMode?.PerformRender( viewport );
-		//}
 
 		public void DestroyScene()
 		{
@@ -468,11 +415,10 @@ namespace Project
 				if( sceneViewport.AttachedScene == scene )
 					sceneViewport.AttachedScene = null;
 
-				//scene.ViewportUpdateBegin -= Scene_ViewportUpdateBegin;
 				scene.ViewportUpdateGetCameraSettings -= Scene_ViewportUpdateGetCameraSettings;
-				//scene.RenderEvent -= Scene_RenderEvent;
 				sceneViewport = null;
 			}
+
 			if( scene != null )
 			{
 #if !CLIENT
@@ -537,11 +483,8 @@ namespace Project
 		public bool NetworkClientSetScene( Scene scene, bool canChangeUIControl )
 		{
 			DestroyLoadedObject( canChangeUIControl );
-
 			playFileName = "";
-
 			SoundWorld.SetListenerReset();
-
 			DestroyScene();
 
 			GC.Collect( 2, GCCollectionMode.Forced, true );
@@ -596,21 +539,6 @@ namespace Project
 				//disable when window on top
 				if( GetComponent<UIWindow>( checkChildren: true, onlyEnabledInHierarchy: true ) != null )
 					return false;
-
-				//disable when cutscene
-				if( gameMode != null && gameMode.CutsceneStarted )
-					return false;
-
-				//disable when continuous interaction (dialogue)
-				var basicSceneScreen = GetComponent<BasicSceneScreen>( checkChildren: true, onlyEnabledInHierarchy: true );
-				if( basicSceneScreen != null )
-				{
-					if( basicSceneScreen.IsContinuousInteractionEnabled() )
-						return false;
-					//var widget = basicSceneScreen.GetContinuousInteractionWidget();
-					//if( widget != null && widget.Enabled )
-					//	return false;
-				}
 
 				//custom
 				var enabled = true;

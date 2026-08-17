@@ -32,7 +32,8 @@ namespace NeoAxis
 		SoundVirtualChannel backgroundSoundChannel;
 
 		//optimization
-		IGameMode gameModeCached;
+		GameMode gameModeCached;
+		GameLogic gameLogicCached;
 
 		//sound
 		internal CurveCubicSpline1 soundDefaultRolloffGraph;
@@ -2897,15 +2898,12 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Gets first enabled scene.
+		/// Gets the first enabled scene.
 		/// </summary>
-		public static Scene First
+		public static Scene GetFirst()
 		{
-			get
-			{
-				lock( allInstancesEnabled )
-					return allInstancesEnabled.Count != 0 ? allInstancesEnabled[ 0 ] : null;
-			}
+			lock( allInstancesEnabled )
+				return allInstancesEnabled.Count != 0 ? allInstancesEnabled[ 0 ] : null;
 		}
 
 		internal override void OnDisposeAfter()
@@ -3333,9 +3331,13 @@ namespace NeoAxis
 		{
 			base.OnComponentAdded( component );
 
-			var gameMode = component as IGameMode;
+			var gameMode = component as GameMode;
 			if( gameMode != null )
 				gameModeCached = gameMode;
+
+			var gameLogic = component as GameLogic;
+			if( gameLogic != null )
+				gameLogicCached = gameLogic;
 		}
 
 		protected override void OnComponentRemoved( Component component )
@@ -3344,11 +3346,18 @@ namespace NeoAxis
 
 			if( component == gameModeCached )
 				gameModeCached = null;
+			else if( component == gameLogicCached )
+				gameLogicCached = null;
 		}
 
-		public IGameMode GetGameMode()
+		public GameMode GetGameMode()
 		{
 			return gameModeCached;
+		}
+
+		public GameLogic GetGameLogic()
+		{
+			return gameLogicCached;
 		}
 
 		//!!!!new

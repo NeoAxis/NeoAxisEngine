@@ -153,9 +153,9 @@
 			}
 		}
 	}
-	.component NeoAxis.NetworkLogic
+	.component NeoAxis.GameLogic
 	{
-		Name = Network Logic
+		Name = Game Logic
 	}
 	.component NeoAxis.Camera
 	{

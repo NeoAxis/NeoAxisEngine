@@ -13,6 +13,7 @@ namespace NeoAxis
 	public static class SystemSettings
 	{
 		static Platform platform;
+		static bool webMobileDevice;
 		static bool limitedDevice;
 		static bool mobileDevice;
 		static bool desktopDevice;
@@ -183,46 +184,42 @@ namespace NeoAxis
 
 		static SystemSettings()
 		{
-			//!!!!ios, web not here
-#if IOS
-			platform = Platform.iOS;
-#elif WEB
-			platform = Platform.Web;
-#else
 			if( RuntimeInformation.IsOSPlatform( OSPlatform.OSX ) )
 				platform = Platform.macOS;
 			else if( RuntimeInformation.IsOSPlatform( OSPlatform.Linux ) )
 				platform = Platform.Linux;
 			else
 				platform = Platform.Windows;
-#endif
 
-			limitedDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
-			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS;
-			desktopDevice = CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux;
+			UpdateDeviceProperties();
 
 			netRuntime = Type.GetType( "Mono.Runtime", false ) != null ? NetRuntimeType.Mono : NetRuntimeType.Net;
 		}
 
-		internal static void _SetPlatform( Platform platform )
+		static void UpdateDeviceProperties()
+		{
+			limitedDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
+			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || ( CurrentPlatform == Platform.Web && webMobileDevice );
+			desktopDevice = CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux || ( CurrentPlatform == Platform.Web && !webMobileDevice );
+
+			//!!!!temp
+			//consider Vulkan as limited device
+			if( EngineApp.InitSettings.RendererBackend == Internal.SharpBgfx.RendererBackend.Vulkan )
+				limitedDevice = true;
+		}
+
+		public static void _SetPlatform( Platform platform, bool? webMobileDevice = null )
 		{
 			SystemSettings.platform = platform;
-
-			limitedDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
-			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS;
-			desktopDevice = CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux;
+			if( platform == Platform.Web && webMobileDevice != null )
+				SystemSettings.webMobileDevice = webMobileDevice.Value;
+			UpdateDeviceProperties();
 		}
 
 		//!!!!temp consider Vulkan as limited device
 		internal static void _UpdateDeviceProperties()
 		{
-			limitedDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
-			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS;
-			desktopDevice = CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux;
-
-			//consider Vulkan as limited device
-			if( EngineApp.InitSettings.RendererBackend == Internal.SharpBgfx.RendererBackend.Vulkan )
-				limitedDevice = true;
+			UpdateDeviceProperties();
 		}
 
 		public static Platform CurrentPlatform
@@ -450,17 +447,6 @@ namespace NeoAxis
 		{
 			get { return mobileDevice; }
 		}
-
-		//!!!!
-		//public static bool TouchInputDevice
-		//{
-		//	get
-		//	{
-		//		//!!!!web
-
-		//		return MobileDevice;
-		//	}
-		//} 
 
 		public static bool DesktopDevice
 		{

@@ -1,0 +1,138 @@
+// Made with NeoAxis Engine 2026.2.
+
+.component Project.SpaceshipGameScreen
+{
+	Size = Parent 1 1
+	EditorScrollPosition = 0 0
+	.component NeoAxis.UIControl
+	{
+		Name = Control Render Example
+		Size = Units 150 150
+		Margin = Units 20 20 0 0
+		BackgroundColor = 1 1 1 0.5
+		EditorScrollPosition = 0 0
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Left
+		Size = Units 250 250
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinatesRotation = 180
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Right
+		Size = Units 250 250
+		VerticalAlignment = Bottom
+		Margin = Units 250 0 0 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Up
+		Size = Units 250 250
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 250 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinatesRotation = 270
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIImage
+	{
+		Name = Down
+		Size = Units 250 250
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 0
+		ColorMultiplier = 1 0.7348627 0
+		EditorScrollPosition = 0 0
+		TextureCoordinatesRotation = 90
+		SourceImage
+		{
+			GetByReference = "Base\\UI\\Images\\Arrow.png"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button In-Game Menu
+		Text = In-Game Menu
+		Size = Units 160 40
+		HorizontalAlignment = Right
+		Margin = Units 650 10 180 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonInGameMenu_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Open the in-game menu.
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button System Menu
+		Text = System Menu
+		Size = Units 160 40
+		HorizontalAlignment = Right
+		Margin = Units 650 10 10 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonSystemMenu_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Open the system menu.
+		}
+	}
+}

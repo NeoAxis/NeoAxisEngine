@@ -15,7 +15,7 @@ namespace NeoAxis
 	[EditorControl( typeof( WeaponTypeEditor ) )]
 	[Preview( typeof( WeaponTypePreview ) )]
 	[PreviewImage( typeof( WeaponTypePreviewImage ) )]
-	public class WeaponType : Component, Item3DTypeInterface
+	public class WeaponType : Component, ItemTypeInterface
 	{
 		int version;
 
@@ -310,7 +310,7 @@ namespace NeoAxis
 		public event Action<WeaponType> Mode1RecoilForceChanged;
 		ReferenceField<double> _mode1RecoilForce = 0.0;
 
-		[DefaultValue( "1 50" )]
+		[DefaultValue( "0 50" )]
 		[DisplayName( "Mode 1 Firing Distance" )]
 		[Category( "Mode 1" )]
 		public Reference<Range> Mode1FiringDistance
@@ -320,7 +320,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Mode1FiringDistance"/> property value changes.</summary>
 		public event Action<WeaponType> Mode1FiringDistanceChanged;
-		ReferenceField<Range> _mode1FiringDistance = new Range( 1, 50 );
+		ReferenceField<Range> _mode1FiringDistance = new Range( 0, 50 );
 
 		public enum MeleeCollisionDetectionMethodEnum
 		{
@@ -653,7 +653,7 @@ namespace NeoAxis
 		public event Action<WeaponType> Mode2RecoilForceChanged;
 		ReferenceField<double> _mode2RecoilForce = 0.0;
 
-		[DefaultValue( "1 50" )]
+		[DefaultValue( "0 50" )]
 		[DisplayName( "Mode 2 Firing Distance" )]
 		[Category( "Mode 2" )]
 		public Reference<Range> Mode2FiringDistance
@@ -663,7 +663,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Mode2FiringDistance"/> property value changes.</summary>
 		public event Action<WeaponType> Mode2FiringDistanceChanged;
-		ReferenceField<Range> _mode2FiringDistance = new Range( 1, 50 );
+		ReferenceField<Range> _mode2FiringDistance = new Range( 0, 50 );
 
 		[DisplayName( "Mode 2 Melee Collision Detection Method" )]
 		[Category( "Mode 2" )]

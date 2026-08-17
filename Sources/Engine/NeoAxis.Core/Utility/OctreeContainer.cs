@@ -311,9 +311,15 @@ namespace NeoAxis
 		public void UpdateObjectBounds( int objectIndex, ref Bounds bounds )
 		{
 			if( bounds.IsCleared() )
-				Log.Fatal( "OctreeContainer: UpdateObjectBounds: Invalid bounds." );
+			{
+				return;
+				//Log.Fatal( "OctreeContainer: UpdateObjectBounds: Invalid bounds." );
+			}
 			if( double.IsNaN( bounds.Minimum.X ) || double.IsNaN( bounds.Maximum.X ) )
-				Log.Fatal( "OctreeContainer: UpdateObjectBounds: double.IsNaN( bounds.Minimum.X ) || double.IsNaN( bounds.Maximum.X )." );
+			{
+				return;
+				//Log.Fatal( "OctreeContainer: UpdateObjectBounds: double.IsNaN( bounds.Minimum.X ) || double.IsNaN( bounds.Maximum.X )." );
+			}
 
 			OctreeContainer_UpdateObjectBounds( nativeObject, objectIndex, ref bounds.Minimum, ref bounds.Maximum );
 		}

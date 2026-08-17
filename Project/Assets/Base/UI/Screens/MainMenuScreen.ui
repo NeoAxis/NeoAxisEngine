@@ -3,14 +3,10 @@
 .component Project.MainMenuScreen
 {
 	Size = Parent 1 1
-	EditorScrollPosition = 0.183006537679148 -0.339869277582882
+	EditorScrollPosition = -0.099493129620349 0.152772227523546
 	BackgroundScene
 	{
 		GetByReference = "Samples\\Starter Content\\Scenes\\Character test.scene"
-	}
-	BackgroundSceneLimitedDevice
-	{
-		GetByReference = "Samples\\Spaceship Game\\Spaceship Game.scene"
 	}
 	.component NeoAxis.UIControl
 	{
@@ -23,8 +19,9 @@
 	}
 	.component NeoAxis.UIButton
 	{
-		Name = Button Scenes
-		Text = Scenes
+		Name = Button Play In Cloud
+		Text = Play In Cloud
+		ReadOnly = True
 		Size = Units 180 40
 		VerticalAlignment = Bottom
 		Margin = Units 10 10 10 10
@@ -34,26 +31,42 @@
 			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
 		}
 	}
-	.component NeoAxis.UIText
+	.component NeoAxis.UIButton
 	{
-		Name = Text Console
-		Text = Press F2 to show the developer console
-		Size = Units 430 30
+		Name = Button Play Single
+		Text = Play Single
+		ReadOnly = True
+		Size = Units 180 40
 		VerticalAlignment = Bottom
-		Margin = Units 390 960 0 10
+		Margin = Units 200 10 10 10
 		EditorScrollPosition = 0 0
-		FontSize = Screen 0.015
-		TextHorizontalAlignment = Left
-		TextVerticalAlignment = Bottom
-		ShadowColor = 0 0 0 0.5
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Scenes
+		Text = Scenes
+		Size = Units 180 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 390 10 390 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
 	}
 	.component NeoAxis.UIButton
 	{
 		Name = Button Options
 		Text = Options
 		Size = Units 180 40
+		HorizontalAlignment = Right
 		VerticalAlignment = Bottom
-		Margin = Units 200 10 10 10
+		Margin = Units 580 10 200 10
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -76,7 +89,6 @@
 	}
 	.component NeoAxis.UIButton
 	{
-		Enabled = False
 		Name = Button Play City Demo
 		Text = City Demo
 		Size = Units 180 40
@@ -89,12 +101,11 @@
 		.component NeoAxis.UITooltip
 		{
 			Name = Tooltip
-			Text = Still slow because DirectX 11.
+			Text = Download the demo from the Stores window in the editor.
 		}
 	}
 	.component NeoAxis.UIButton
 	{
-		Enabled = False
 		Name = Button Play Nature Demo
 		Text = Nature Demo
 		Size = Units 180 40
@@ -107,7 +118,7 @@
 		.component NeoAxis.UITooltip
 		{
 			Name = Tooltip
-			Text = Still slow because DirectX 11.
+			Text = Download the demo from the Stores window in the editor.
 		}
 	}
 	.component NeoAxis.UIButton
@@ -124,7 +135,7 @@
 		.component NeoAxis.UITooltip
 		{
 			Name = Tooltip
-			Text = Download the Sci-Fi Demo from the Stores window in the editor.
+			Text = Download the demo from the Stores window in the editor.
 		}
 	}
 	.component NeoAxis.UIButton
@@ -141,10 +152,10 @@
 	}
 	.component NeoAxis.UIButton
 	{
-		Name = Button Play Character Scene
-		Text = Character scene
+		Name = Button Play Simple Game
+		Text = Simple Game
 		Size = Units 180 40
-		Margin = Units 10 730 130 318.058171164124
+		Margin = Units 10 780 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -153,10 +164,10 @@
 	}
 	.component NeoAxis.UIButton
 	{
-		Name = Button Play Simple Game
-		Text = Simple Game
+		Name = Button Play Shooter Game
+		Text = Shooter Game
 		Size = Units 180 40
-		Margin = Units 10 780 130 318.058171164124
+		Margin = Units 10 730 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -181,20 +192,6 @@
 		Text = Platform Game
 		Size = Units 180 40
 		Margin = Units 10 880 130 318.058171164124
-		EditorScrollPosition = 0 0
-		Style
-		{
-			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
-		}
-	}
-	.component NeoAxis.UIButton
-	{
-		Name = Button Play In Cloud
-		Text = Play In Cloud
-		ReadOnly = True
-		Size = Units 180 40
-		VerticalAlignment = Bottom
-		Margin = Units 200 10 10 180
 		EditorScrollPosition = 0 0
 		Style
 		{

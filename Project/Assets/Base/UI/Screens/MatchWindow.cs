@@ -5,7 +5,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using NeoAxis;
-using NeoAxis.CloudServer;
+using NeoAxis.Cloud;
+using NeoAxis.Networking;
 
 namespace Project
 {
@@ -318,7 +319,7 @@ namespace Project
 					return;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodAsync<string>( "Implementation", "GetMatchSettings", cts.Token, MatchID );
+				var result = await client.CallMethodAsync<string>( "CloudServerImplementation", "GetMatchSettings", cts.Token, MatchID );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
 					if( !result.Error.Contains( "You are not a user of this match." ) )
@@ -440,7 +441,7 @@ namespace Project
 				try
 				{
 					var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-					var result = await client.CallMethodAsync( "Implementation", "SetMatchSetting", cts.Token, MatchID, settingName, newValue );
+					var result = await client.CallMethodAsync( "CloudServerImplementation", "SetMatchSetting", cts.Token, MatchID, settingName, newValue );
 					if( !string.IsNullOrEmpty( result.Error ) )
 						Log.Warning( "Error: " + result.Error );
 				}
@@ -460,7 +461,7 @@ namespace Project
 					return;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodAsync<string>( "Implementation", "GetMatchDetails", cts.Token, MatchID );
+				var result = await client.CallMethodAsync<string>( "CloudServerImplementation", "GetMatchDetails", cts.Token, MatchID );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
 					if( !result.Error.Contains( "You are not a user of this match." ) )

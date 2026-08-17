@@ -52,9 +52,6 @@ namespace Project
 						list.SelectedIndex = list.Items.Count - 1;
 				}
 
-				list.ItemMouseDoubleClick += List_ItemMouseDoubleClick;
-				list.KeyDown += List_KeyDown;
-
 				if( list.SelectedIndex != 0 )
 					list.EnsureVisible( list.SelectedIndex );
 
@@ -89,12 +86,12 @@ namespace Project
 			}
 		}
 
-		private void List_ItemMouseDoubleClick( UIControl sender, EMouseButtons button, ref bool handled )
+		public void List_ItemMouseDoubleClick( NeoAxis.UIControl sender, NeoAxis.EMouseButtons button, ref bool handled )
 		{
 			ButtonLoad_Click( null );
 		}
 
-		private void List_KeyDown( UIControl sender, KeyEvent e, ref bool handled )
+		public void List_KeyDown( NeoAxis.UIControl sender, NeoAxis.KeyEvent e, ref bool handled )
 		{
 			if( e.Key == EKeys.Return )
 				ButtonLoad_Click( null );

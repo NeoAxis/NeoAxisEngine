@@ -69,7 +69,8 @@ namespace NeoAxis
 			var viewport = context.Owner;
 			var context2 = context.ObjectInSpaceRenderingContext;
 
-			if( ( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects ) )//|| context2.selectedObjects.Count != 0 || context2.canSelectObjects.Count != 0 || context2.objectToCreate != null )
+			if( scene.GetDisplayDevelopmentDataInThisApplication() && scene.DisplayPhysicalObjects )
+			//|| context2.selectedObjects.Count != 0 || context2.canSelectObjects.Count != 0 || context2.objectToCreate != null )
 			{
 				//3D physics
 				if( scene.PhysicsWorld != null )

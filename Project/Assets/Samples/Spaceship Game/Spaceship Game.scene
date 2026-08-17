@@ -2,7 +2,7 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1199, 963\"><KW V=\"1\" A=\"07F44F47046D4794D4B38F4CF7DD7A07\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"0DF6541441E84D2550B3D01B893DAB72\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"07F44F47046D4794D4B38F4CF7DD7A07\"><KP UN=\"07F44F47046D4794D4B38F4CF7DD7A07\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"57893F0D0E144F678884B085CAAB9D1C\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Background Effects\\$Script\\$Shader graph\" /></KP><KP UN=\"CB060FDDB1A7430C59BA755C3DB17584\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Background Effects\\$Script\\$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 963\"><KW V=\"1\" A=\"07F44F47046D4794D4B38F4CF7DD7A07\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"0DF6541441E84D2550B3D01B893DAB72\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"07F44F47046D4794D4B38F4CF7DD7A07\"><KP UN=\"07F44F47046D4794D4B38F4CF7DD7A07\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"57893F0D0E144F678884B085CAAB9D1C\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Background Effects\\$Script\\$Shader graph\" /></KP><KP UN=\"CB060FDDB1A7430C59BA755C3DB17584\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Background Effects\\$Script\\$Shader graph\\$Node Shader 1\\$Shader\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.2392157 0.2392157 0.2392157
 	Mode = _2D
 	ScreenOrientation = Landscape
@@ -13,7 +13,7 @@
 	}
 	UIScreen
 	{
-		GetByReference = "Samples\\Spaceship Game\\SpaceshipGameGUI.ui"
+		GetByReference = "Samples\\Spaceship Game\\SpaceshipGameScreen.ui"
 	}
 	CameraEditor
 	{
@@ -35,7 +35,7 @@
 		Name = Camera Editor 2D
 		Visible = False
 		CanBeSelected = False
-		Transform = "1.97405084745763 1.13144877726394 10; 0.5 -0.5 -0.5 -0.5; 1 1 1"
+		Transform = "0 1.13144877726394 10; 0.5 -0.5 -0.5 -0.5; 1 1 1"
 		Projection = Orthographic
 		Height = 14.1456899419427
 		FixedUp = 0 1 0
@@ -106,7 +106,7 @@
 						.component NeoAxis.ShaderScript
 						{
 							Name = Shader
-							Code = "//Starfield shader from https://www.shadertoy.com/view/tst3WS\r\n\r\n// Goals:\r\n//  - Star sizes should not change when switching to fullscreen\r\n//  - Perceived brightness should not change with resolution (somewhat exclusive with goal one!)\r\n//  - Reduce flickering when scrolling\r\n\r\n\r\n// Dave Hoskins hash functions\r\nvec4 hash42(vec2 p)\r\n{\r\n\tvec4 p4 = fract(vec4(p.xyxy) * vec4(.1031, .1030, .0973, .1099));\r\n    p4 += dot(p4, p4.wzxy+19.19);\r\n    return fract((p4.xxyz+p4.yzzw)*p4.zywx) - 0.5;\r\n}\r\n\r\nvec2 hash22(vec2 p)\r\n{\r\n\tvec3 p3 = fract(vec3(p.xyx) * vec3(443.897, 441.423, 437.195));\r\n    p3 += dot(p3, p3.yzx+19.19);\r\n    return -1.0+2.0*fract((p3.xx+p3.yz)*p3.zy);\r\n}\r\n\r\n// IQ\'s Gradient Noise\r\nfloat Gradient2D( in vec2 p )\r\n{\r\n    vec2 i = floor( p );\r\n    vec2 f = fract( p );\r\n\tvec2 u = f*f*(3.0-2.0*f);\r\n\r\n    return mix( mix( dot( hash22( i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ), \r\n                     dot( hash22( i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),\r\n                mix( dot( hash22( i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ), \r\n                     dot( hash22( i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);\r\n}\r\n\r\nconst vec3 cold = vec3(255.0, 244.0, 189.0)/255.0;\r\nconst vec3 hot  = vec3(181.0, 236.0, 255.0)/255.0;\r\n\r\nvec3 StarFieldLayer(vec2 p, float du, float count, float brightness, float size)\r\n{\r\n    // Tiling:\r\n    vec2 pi;\r\n    du *= count;    p *= count;\r\n    pi  = floor(p); p  = fract(p)-0.5;\r\n  \r\n    // Randomize position, brightness and spectrum:\r\n    vec4 h = hash42(pi);\r\n\r\n    // Resolution independent radius:\r\n    float s = brightness*(0.7+0.6*h.z)*smoothstep(0.8*du, -0.2*du, length(p+0.9*h.xy) - size*du);\r\n\r\n\treturn s*mix(mix(vec3_splat(1.), cold, min(1.,-2.*h.w)), hot, max(0.,2.*h.w));   \r\n}\r\n\r\nvec3 StarField(vec2 p, float du)\r\n{\r\n    vec3 c;\r\n    c  = StarFieldLayer(p, du, 25.0, 0.18, 0.5); \r\n    c += StarFieldLayer(p, du, 15.0, 0.25, 0.5); \r\n    c += StarFieldLayer(p, du, 12.0, 0.50, 0.5); \r\n    c += StarFieldLayer(p, du,  5.0, 1.00, 0.5); \r\n    c += StarFieldLayer(p, du,  3.0, 1.00, 0.9); \r\n\r\n    // Cluster:\r\n    float s = 3.5*(max(0.2, Gradient2D(2.0*p*vec2(1.2,1.9)))-0.2)/(1.0-0.2);\r\n    c += s*StarFieldLayer(p, du, 160.0, 0.10, 0.5); \r\n    c += s*StarFieldLayer(p, du,  80.0, 0.15, 0.5); \r\n    c += s*StarFieldLayer(p, du,  40.0, 0.25, 0.5); \r\n    c += s*StarFieldLayer(p, du,  30.0, 0.50, 0.5); \r\n    c += s*StarFieldLayer(p, du,  20.0, 1.00, 0.5); \r\n    c += s*StarFieldLayer(p, du,  10.0, 1.00, 0.9); \r\n\r\n    c *= 1.3;\r\n    \r\n    // Resolution independent brightness:\r\n    float f = 1.0 / sqrt(60.0*du);\r\n    //float f = 1.0 / sqrt(660.0*du);\r\n\r\n    return f*min(c, 1.0);\r\n}\r\n\r\npublic vec4 Method( vec2 texCoord )\r\n{\r\n\r\n\t//!!!!too slow on mobile\r\n\r\n#ifdef LIMITED_DEVICE\r\n\r\n\treturn vec4( 0, 0, saturate( 0.2 + texCoord.x / 4.0 ), 0 );\r\n\r\n#else\r\n\r\n\tvec2 iResolution = u_viewportSize;\r\n\tfloat iTime = u_engineTime;\r\n\r\n    float du = 1.0 / iResolution.y;\r\n    vec2 uv = du * ( texCoord * iResolution - 0.5 * iResolution.xy) + vec2( 1.33 + iTime / 30.0, 0.0 ); \r\n    return vec4( StarField( uv, du ), 1.0 );\r\n    \r\n#endif\r\n    \r\n\t//return vec4(1,0,0,1);\r\n}\r\n"
+							Code = "vec2 hash22(vec2 p)\r\n{\r\n    vec3 p3 = fract(vec3(p.xyx) * vec3(443.897, 441.423, 437.195));\r\n    p3 += dot(p3, p3.yzx + 19.19);\r\n    return fract((p3.xx + p3.yz) * p3.zy);\r\n}\r\n\r\nvec4 hash42(vec2 p)\r\n{\r\n    vec4 p4 = fract(vec4(p.xyxy) * vec4(.1031, .1030, .0973, .1099));\r\n    p4 += dot(p4, p4.wzxy + 19.19);\r\n    return fract((p4.xxyz + p4.yzzw) * p4.zywx) - 0.5;\r\n}\r\n\r\nvec3 StarFieldLayer(vec2 p, float du, float count, float brightness, float size)\r\n{\r\n    vec3 cold = vec3(255.0, 244.0, 189.0) / 255.0;\r\n    vec3 hot = vec3(181.0, 236.0, 255.0) / 255.0;\r\n\r\n    vec2 pi;\r\n    du *= count;\r\n    p *= count;\r\n    pi = floor(p);\r\n    p = fract(p) - 0.5;\r\n  \r\n    vec4 h = hash42(pi);\r\n\r\n    float dist = length(p + 0.9 * h.xy) - size * du;\r\n    float s = brightness * (0.7 + 0.6 * h.z) * smoothstep(0.8 * du, -0.2 * du, dist);\r\n\r\n    return s * mix(mix(vec3_splat(1.0), cold, min(1.0, -2.0 * h.w)), hot, max(0.0, 2.0 * h.w));\r\n}\r\n\r\nvec3 StarField(vec2 p, float du)\r\n{\r\n    vec3 c = vec3_splat(0.0);\r\n    \r\n    c += StarFieldLayer(p, du, 25.0, 0.15, 0.5);\r\n//    c += StarFieldLayer(p, du, 15.0, 0.22, 0.5);\r\n//    c += StarFieldLayer(p, du, 10.0, 0.40, 0.5);\r\n    c += StarFieldLayer(p, du, 5.0, 0.85, 0.5);\r\n    c += StarFieldLayer(p, du, 3.0, 0.90, 0.9);\r\n\r\n    c *= 1.2;\r\n    \r\n    float f = 1.0 / sqrt(60.0 * du);\r\n    return f * min(c, 1.0);\r\n}\r\n\r\npublic vec4 Method(vec2 texCoord)\r\n{\r\n    vec2 iResolution = u_viewportSize;\r\n    float iTime = u_engineTime;\r\n\r\n    float du = 1.0 / iResolution.y;\r\n    vec2 uv = du * (texCoord * iResolution - 0.5 * iResolution.xy) + vec2(0.0, - iTime / 30.0);\r\n    \r\n    return vec4(StarField(uv, du), 1.0);\r\n}"
 							__parameter_TexCoord
 							{
 								GetByReference = "this:..\\..\\$Node Invoke Member 1\\$Invoke Member\\__value_Value"
@@ -174,6 +174,7 @@
 			}
 			.component NeoAxis.RenderingEffect_Noise
 			{
+				Enabled = False
 				Name = Noise
 				ShaderFile = "Base\\Shaders\\Effects\\Noise_fs.sc"
 			}
@@ -238,7 +239,7 @@
 	.component NeoAxis.GameMode
 	{
 		Name = Game Mode
-		ThirdPersonCameraHorizontalAngle = 0
+		ThirdPersonCameraHorizontalAngle = 90.00000000000007
 		CutsceneStarted = False
 		CutsceneGuiFadingFactor = 0
 		CutsceneGuiFadingSpeed = 0
@@ -294,10 +295,11 @@
 		.component NeoAxis.RigidBody2D
 		{
 			Name = Collision Body
-			Transform = "2.27723759820109 1.77330378085272 0; 0 0 0 1; 0.3 0.3 0.3"
+			Transform = "0.0357364910416771 -4.29995291746527 0; 0 0 0.707106781186548 0.707106781186548; 0.2 0.2 0.2"
 			MotionType = Dynamic
 			LinearDamping = 0.6
 			AngularDamping = 0.6
+			FixedRotation = True
 			.component NeoAxis.CollisionShape2D_Mesh
 			{
 				Name = Shape
@@ -342,56 +344,6 @@
 			Name = Input Processing
 		}
 	}
-	.component NeoAxis.MeshInSpace
-	{
-		Enabled = False
-		Name = Ground
-		CanBeSelected = False
-		Transform = "0 0 -2; 0 0 0 1; 1 1 1"
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Plane
-			{
-				Name = Mesh Geometry
-				Dimensions = 100 100
-				UVTilesPerUnit = 0.25 0.25
-			}
-		}
-		.component NeoAxis.RigidBody
-		{
-			Enabled = False
-			Name = Collision Body
-			Transform
-			{
-				GetByReference = "this:..\\Transform"
-			}
-			.component NeoAxis.CollisionShape_Mesh
-			{
-				Mesh
-				{
-					GetByReference = "this:..\\..\\Mesh"
-				}
-				Vertices
-				{
-				}
-				Indices
-				{
-				}
-			}
-		}
-	}
 	.component NeoAxis.GroupOfObjects
 	{
 		Name = Group Of Objects
@@ -406,129 +358,7 @@
 	}
 	.component NeoAxis.Sprite
 	{
-		Name = Sprite 4
-		Color = 0.4313726 0.4313726 0.4313726
-		Transform
-		{
-			GetByReference = "this:$Rigid Body 2D\\Transform"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "root:$Material White"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.RigidBody2D
-		{
-			Name = Rigid Body 2D
-			Transform = "2 -5 0; 0 0 0 1; 16 1 1"
-			.component NeoAxis.CollisionShape2D_Box
-			{
-				Name = CollisionShape2D Box
-				CollidesWith = All
-			}
-		}
-	}
-	.component NeoAxis.Sprite
-	{
-		Name = Sprite 17
-		Color = 0.4313726 0.4313726 0.4313726
-		Transform
-		{
-			GetByReference = "this:$Rigid Body 2D\\Transform"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "root:$Material White"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.RigidBody2D
-		{
-			Name = Rigid Body 2D
-			Transform = "2 7.21435958086566 0; 0 0 0 1; 16 1 1"
-			.component NeoAxis.CollisionShape2D_Box
-			{
-				Name = CollisionShape2D Box
-				CollidesWith = All
-			}
-		}
-	}
-	.component NeoAxis.Sprite
-	{
-		Name = Sprite
-		Color = 0 0.3970588 0.7607843
-		Transform
-		{
-			GetByReference = "this:$Rigid Body 2D\\Transform"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "root:$Material White"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.RigidBody2D
-		{
-			Name = Rigid Body 2D
-			Transform = "7.13033472297093 0.242158990088935 0; 0 0 0 1; 2.90999995730817 2.90999995730817 2.90999995730817"
-			MotionType = Dynamic
-			.component NeoAxis.CollisionShape2D_Box
-			{
-				Name = Box Shape
-				CollidesWith = All
-			}
-		}
-	}
-	.component NeoAxis.Sprite
-	{
-		Name = Sprite 14
-		Color = 0 0.3970588 0.7607843
-		Transform
-		{
-			GetByReference = "this:$Rigid Body 2D\\Transform"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "root:$Material White"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.RigidBody2D
-		{
-			Name = Rigid Body 2D
-			Transform = "-3.13580842707532 -1.16719019231864 0; 0 0 0 1; 2.90999995730817 2.90999995730817 2.90999995730817"
-			MotionType = Dynamic
-			.component NeoAxis.CollisionShape2D_Box
-			{
-				Name = Box Shape
-				CollidesWith = All
-			}
-		}
-	}
-	.component NeoAxis.Sprite
-	{
-		Name = Sprite 2
+		Name = Planet 1
 		Transform
 		{
 			GetByReference = "this:$Collision Body\\Transform"
@@ -547,8 +377,11 @@
 		.component NeoAxis.RigidBody2D
 		{
 			Name = Collision Body
-			Transform = "-4.00605898673705 4.11544118199109 0; 0 0 0 1; 1 1 1"
+			Transform = "-7.3497784419927 6.77894611182928 0; 0 0 0 1; 1 1 1"
 			MotionType = Dynamic
+			LinearDamping = 0
+			AngularDamping = 0
+			LinearVelocity = 0 -1.5
 			.component NeoAxis.CollisionShape2D_Ellipse
 			{
 				CollidesWith = All
@@ -557,7 +390,7 @@
 	}
 	.component NeoAxis.Sprite
 	{
-		Name = Sprite 3
+		Name = Planet 2
 		Transform
 		{
 			GetByReference = "this:$Collision Body\\Transform"
@@ -576,153 +409,11 @@
 		.component NeoAxis.RigidBody2D
 		{
 			Name = Collision Body
-			Transform = "-1.25682065163992 5.08980604884077 0; 0 0 0 1; 1 1 1"
+			Transform = "-5.49749893550767 6.7709320247697 0; 0 0 0 1; 1 1 1"
 			MotionType = Dynamic
-			.component NeoAxis.CollisionShape2D_Ellipse
-			{
-				CollidesWith = All
-			}
-		}
-	}
-	.component NeoAxis.Sprite
-	{
-		Name = Sprite 5
-		Transform
-		{
-			GetByReference = "this:$Collision Body\\Transform"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.RigidBody2D
-		{
-			Name = Collision Body
-			Transform = "2.46683127058024 3.97624620101257 0; 0 0 0 1; 1 1 1"
-			MotionType = Dynamic
-			.component NeoAxis.CollisionShape2D_Ellipse
-			{
-				CollidesWith = All
-			}
-		}
-	}
-	.component NeoAxis.Sprite
-	{
-		Name = Sprite 6
-		Transform
-		{
-			GetByReference = "this:$Collision Body\\Transform"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.RigidBody2D
-		{
-			Name = Collision Body
-			Transform = "5.89467906813806 5.21160165719699 0; 0.00618460249210226 -0.00000000000000014 -0.618439633731056 0.785807972804178; 1 1 1"
-			MotionType = Dynamic
-			.component NeoAxis.CollisionShape2D_Ellipse
-			{
-				CollidesWith = All
-			}
-		}
-	}
-	.component NeoAxis.Sprite
-	{
-		Name = Sprite 9
-		Transform
-		{
-			GetByReference = "this:$Collision Body\\Transform"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.RigidBody2D
-		{
-			Name = Collision Body
-			Transform = "1.77082156549236 -2.14833296204257 0; 0.00618460249210226 -0.00000000000000014 -0.618439633731056 0.785807972804178; 1 1 1"
-			MotionType = Dynamic
-			.component NeoAxis.CollisionShape2D_Ellipse
-			{
-				CollidesWith = All
-			}
-		}
-	}
-	.component NeoAxis.Sprite
-	{
-		Name = Sprite 7
-		Transform
-		{
-			GetByReference = "this:$Collision Body\\Transform"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet2.material"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.RigidBody2D
-		{
-			Name = Collision Body
-			Transform = "8.88752080001595 2.74089074482816 0; 0 0 0 1; 1 1 1"
-			MotionType = Dynamic
-			.component NeoAxis.CollisionShape2D_Ellipse
-			{
-				CollidesWith = All
-			}
-		}
-	}
-	.component NeoAxis.Sprite
-	{
-		Name = Sprite 8
-		Transform
-		{
-			GetByReference = "this:$Collision Body\\Transform"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "Samples\\Starter Content\\Materials\\Planets\\Planet1.material"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.RigidBody2D
-		{
-			Name = Collision Body
-			Transform = "6.06868149441004 -2.98350284791372 0; 0 0 0 1; 1 1 1"
-			MotionType = Dynamic
+			LinearDamping = 0
+			AngularDamping = 0
+			LinearVelocity = 0 -1
 			.component NeoAxis.CollisionShape2D_Ellipse
 			{
 				CollidesWith = All

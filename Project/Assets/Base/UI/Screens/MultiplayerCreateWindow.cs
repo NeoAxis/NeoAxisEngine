@@ -197,5 +197,16 @@ namespace Project
 		{
 			//!!!!
 		}
+
+		public void ListScenes_ItemMouseDoubleClick( NeoAxis.UIControl sender, NeoAxis.EMouseButtons button, ref bool handled )
+		{
+			ButtonStart_Click( null );
+		}
+
+		public void ListScenes_KeyDown( NeoAxis.UIControl sender, NeoAxis.KeyEvent e, ref bool handled )
+		{
+			if( e.Key == EKeys.Return )
+				ButtonStart_Click( null );
+		}
 	}
 }

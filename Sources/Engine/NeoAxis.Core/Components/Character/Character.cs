@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Reflection;
 
 namespace NeoAxis
 {
@@ -835,6 +836,30 @@ namespace NeoAxis
 
 		//network: no sense to update via network, it is calculated from Transform
 		SphericalDirectionF currentTurnToDirection;//use SphericalDirectionF instead float because vertical direction is used for first person camera
+		SphericalDirectionF? currentTurnToDirectionPreviousSimulationStep;
+
+		[MethodImpl( MethodImplOptions.AggressiveOptimization )]
+		public SphericalDirectionF GetCurrentTurnToDirectionInterpolated()
+		{
+			var current = currentTurnToDirection;
+
+			if( RenderingSystem.Interpolation && TransformInterpolation && currentTurnToDirectionPreviousSimulationStep != null )
+			{
+				var previous = currentTurnToDirectionPreviousSimulationStep.Value;
+				if( previous != current )
+				{
+					var currentSimulationTime = ParentRoot.HierarchyController?.SimulationTime ?? 0;
+					var t = MathEx.Saturate( ( EngineApp.EngineTime - currentSimulationTime ) * Time.SimulationStepsPerSecond );
+
+					var currentQ = QuaternionF.FromDirectionZAxisUp( current.GetVector() );
+					var previousQ = QuaternionF.FromDirectionZAxisUp( previous.GetVector() );
+					var interpolated = QuaternionF.Slerp( previousQ, currentQ, (float)t );
+					return SphericalDirectionF.FromVector( interpolated.GetForward() );
+				}
+			}
+
+			return current;
+		}
 
 		//network: no sense to send to clients
 		[Browsable( false )]
@@ -1759,7 +1784,7 @@ namespace NeoAxis
 
 			if( rotateMeshDependingGroundEnabled || smoothCameraOffsetZ != 0 )
 			{
-				var tr = TransformV;
+				var tr = GetTransformInterpolated();// TransformV;
 
 				var rotateMeshDependingGround = Quaternion.Identity;
 				var rotateMeshDependingGroundSpecified = false;
@@ -2206,7 +2231,7 @@ namespace NeoAxis
 			position = Vector3.Zero;
 
 			UpdateTransformVisualOverride();
-			var tr = TransformVisualOverride ?? TransformV;
+			var tr = TransformVisualOverride ?? GetTransformInterpolated();
 
 			var positionCalculated = false;
 
@@ -2251,7 +2276,7 @@ namespace NeoAxis
 			}
 
 			//calculate forward vector
-			forward = CurrentTurnToDirection.GetVector();
+			forward = GetCurrentTurnToDirectionInterpolated().GetVector();
 		}
 
 		//public Vector3 GetSmoothPosition()
@@ -2274,9 +2299,15 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		public Vector3 GetCenteredPositionInterpolated()
+		{
+			return GetTransformInterpolated().Position + new Vector3( 0, 0, TypeCached.Height * 0.5 );
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public Vector3 GetCenteredSmoothPosition()
 		{
-			var result = GetCenteredPosition();
+			var result = GetCenteredPositionInterpolated();// GetCenteredPosition();
 			result.Z += smoothCameraOffsetZ;
 			return result;
 			//return TransformV.Position + new Vector3( 0, 0, TypeCached.Height * 0.5 ) + GetSmoothCameraOffset();
@@ -3165,6 +3196,10 @@ namespace NeoAxis
 						factor = 1;
 						localLookAt = new Vector3F( 1000, 0, 0 );
 					}
+
+					//no head control when dead
+					if( LifeStatus.Value == LifeStatusEnum.Dead )
+						factor = 0;
 				}
 
 				if( factor > 0 )
@@ -3462,16 +3497,16 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		public Item3DInterface[] GetAllItems()
+		public ItemInterface[] GetAllItems()
 		{
-			return GetComponents<Item3DInterface>();
+			return GetComponents<ItemInterface>();
 		}
 
-		public Item3DInterface GetItemByType( Item3DTypeInterface type )
+		public ItemInterface GetItemByType( ItemTypeInterface type )
 		{
 			if( type != null )
 			{
-				foreach( var c in GetComponents<Item3DInterface>() )
+				foreach( var c in GetComponents<ItemInterface>() )
 				{
 					var item = c as Item3D;
 					if( item != null )
@@ -3491,9 +3526,9 @@ namespace NeoAxis
 			return null;
 		}
 
-		public Item3DInterface GetItemByResourceName( string resourceName )
+		public ItemInterface GetItemByResourceName( string resourceName )
 		{
-			foreach( var c in GetComponents<Item3DInterface>() )
+			foreach( var c in GetComponents<ItemInterface>() )
 			{
 				var item = c as Item3D;
 				if( item != null )
@@ -3523,7 +3558,7 @@ namespace NeoAxis
 			return null;
 		}
 
-		public Item3DInterface GetActiveItem()
+		public ItemInterface GetActiveItem()
 		{
 			//optimized to remove memory allocations
 
@@ -3533,7 +3568,7 @@ namespace NeoAxis
 				var component = node.Value;
 				if( component.Enabled )
 				{
-					var item = component as Item3DInterface;
+					var item = component as ItemInterface;
 					if( item != null )
 						return item;
 				}
@@ -3554,7 +3589,7 @@ namespace NeoAxis
 			return GetActiveItem() as Weapon;
 		}
 
-		public bool ItemCanTake( GameMode gameMode, Item3DInterface item )
+		public bool ItemCanTake( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -3594,7 +3629,7 @@ namespace NeoAxis
 		/// Takes the item. The item will moved to the character and will disabled.
 		/// </summary>
 		/// <param name="item"></param>
-		public bool ItemTake( GameMode gameMode, Item3DInterface item )
+		public bool ItemTake( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -3643,7 +3678,7 @@ namespace NeoAxis
 		/// </summary>
 		/// <param name="item"></param>
 		/// <param name="newTransform"></param>
-		public bool ItemDrop( GameMode gameMode, Item3DInterface item/*, bool calculateTransform, Transform setTransform*/, double amount )
+		public bool ItemDrop( GameMode gameMode, ItemInterface item/*, bool calculateTransform, Transform setTransform*/, double amount )
 		{
 			var item2 = (ObjectInSpace)item;
 			var amount2 = amount;
@@ -3730,7 +3765,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		public void ItemDropClient( Item3DInterface item, double amount )
+		public void ItemDropClient( ItemInterface item, double amount )
 		{
 			var component = item as Component;
 			if( component != null )
@@ -3749,7 +3784,7 @@ namespace NeoAxis
 		/// Activates the item. The item will enabled.
 		/// </summary>
 		/// <param name="item"></param>
-		public bool ItemActivate( GameMode gameMode, Item3DInterface item )
+		public bool ItemActivate( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -3788,7 +3823,7 @@ namespace NeoAxis
 		/// Deactivates the item. The item will disabled.
 		/// </summary>
 		/// <param name="item"></param>
-		public bool ItemDeactivate( GameMode gameMode, Item3DInterface item )
+		public bool ItemDeactivate( GameMode gameMode, ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -3817,7 +3852,7 @@ namespace NeoAxis
 				ItemDeactivate( gameMode, item );
 		}
 
-		public void ItemTakeAndActivateClient( Item3DInterface item, bool activate )
+		public void ItemTakeAndActivateClient( ItemInterface item, bool activate )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -3830,7 +3865,7 @@ namespace NeoAxis
 			}
 		}
 
-		public void ItemActivateClient( Item3DInterface item )
+		public void ItemActivateClient( ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -3842,7 +3877,7 @@ namespace NeoAxis
 			}
 		}
 
-		public void ItemDeactivateClient( Item3DInterface item )
+		public void ItemDeactivateClient( ItemInterface item )
 		{
 			var item2 = (ObjectInSpace)item;
 
@@ -3858,12 +3893,40 @@ namespace NeoAxis
 		/// Returns first item of the character.
 		/// </summary>
 		/// <returns></returns>
-		public Item3DInterface ItemGetFirst()
+		public ItemInterface ItemGetFirst()
 		{
 			foreach( var c in Components )
-				if( c is Item3DInterface item )
+				if( c is ItemInterface item )
 					return item;
 			return null;
+		}
+
+		public void SwitchActiveItem( GameMode gameMode, int index )
+		{
+			//don't do action when active weapon is firing
+			var activeWeapon = GetActiveWeapon();
+			if( activeWeapon == null || !activeWeapon.IsFiringAnyMode() )
+			{
+				var items = GetAllItems();
+				if( index < items.Length )
+				{
+					var item = items[ index ];
+					if( item.Enabled )
+					{
+						if( NetworkIsClient )
+							ItemDeactivateClient( item );
+						else
+							ItemDeactivate( gameMode, item );
+					}
+					else
+					{
+						if( NetworkIsClient )
+							ItemActivateClient( item );
+						else
+							ItemActivate( gameMode, item );
+					}
+				}
+			}
 		}
 
 		void RotateWeaponIfCollided( Weapon weapon, TransformOffset offset, Degree rotationOffsetVertical )
@@ -4846,8 +4909,8 @@ namespace NeoAxis
 				return false;
 
 			//security check the object is controlled by the player
-			var networkLogic = NetworkLogicUtility.GetNetworkLogic( this );
-			if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == this )
+			var gameLogic = ParentScene?.GetGameLogic();
+			if( gameLogic != null && gameLogic.Server_GetObjectControlledByUser( client.User ) == this )
 			{
 				if( message == "Jump" )
 					Jump();
@@ -4861,10 +4924,10 @@ namespace NeoAxis
 					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
 					if( item != null )
 					{
-						var item2 = item as Item3DInterface;
+						var item2 = item as ItemInterface;
 						if( item2 != null )
 						{
-							var gameMode = (GameMode)ParentScene?.GetGameMode();
+							var gameMode = ParentScene?.GetGameMode();
 							if( gameMode != null )
 							{
 								if( ItemTake( gameMode, item2 ) )
@@ -4886,10 +4949,10 @@ namespace NeoAxis
 					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
 					if( item != null )
 					{
-						var gameMode = (GameMode)ParentScene?.GetGameMode();
+						var gameMode = ParentScene?.GetGameMode();
 						if( gameMode != null )
 						{
-							var item2 = item as Item3DInterface;
+							var item2 = item as ItemInterface;
 							if( item2 != null )
 								ItemDrop( gameMode, item2, amount );
 						}
@@ -4904,10 +4967,10 @@ namespace NeoAxis
 					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
 					if( item != null && item.Parent == this )
 					{
-						var gameMode = (GameMode)ParentScene?.GetGameMode();
+						var gameMode = ParentScene?.GetGameMode();
 						if( gameMode != null )
 						{
-							var item2 = item as Item3DInterface;
+							var item2 = item as ItemInterface;
 							if( item2 != null )
 								ItemActivate( gameMode, item2 );
 						}
@@ -4922,10 +4985,10 @@ namespace NeoAxis
 					var item = ParentRoot.HierarchyController.GetComponentByNetworkID( itemNetworkID );
 					if( item != null && item.Parent == this )
 					{
-						var gameMode = (GameMode)ParentScene?.GetGameMode();
+						var gameMode = ParentScene?.GetGameMode();
 						if( gameMode != null )
 						{
-							var item2 = item as Item3DInterface;
+							var item2 = item as ItemInterface;
 							if( item2 != null )
 								ItemDeactivate( gameMode, item2 );
 						}
@@ -5067,7 +5130,7 @@ namespace NeoAxis
 
 		public bool IsControlledByPlayerAndFirstPersonCameraEnabled()
 		{
-			var gameMode = (GameMode)ParentScene?.GetGameMode();
+			var gameMode = ParentScene?.GetGameMode();
 			if( gameMode != null )
 			{
 				if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson && !gameMode.FreeCamera )
@@ -5078,6 +5141,18 @@ namespace NeoAxis
 				}
 			}
 			return false;
+		}
+
+		public override void TransformInterpolatedReset()
+		{
+			base.TransformInterpolatedReset();
+			currentTurnToDirectionPreviousSimulationStep = null;
+		}
+
+		internal override void SaveTransformPreviousSimulationStep()
+		{
+			base.SaveTransformPreviousSimulationStep();
+			currentTurnToDirectionPreviousSimulationStep = currentTurnToDirection;
 		}
 	}
 }

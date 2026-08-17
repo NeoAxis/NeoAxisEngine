@@ -29,6 +29,8 @@ namespace NeoAxis
 
 		IVisibleInHierarchy parentIVisibleInHierarchy;
 
+		Transform transformPreviousSimulationStep;
+
 		/////////////////////////////////////////
 
 		//!!!!
@@ -231,6 +233,47 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="Transform"/> property value changes.</summary>
 		public event Action<ObjectInSpace> TransformChanged;
 		ReferenceField<Transform> _transform = new Transform( Vector3.Zero, Quaternion.Identity, Vector3.One );
+
+		/// <summary>
+		/// Whether to interpolate the transform between simulation steps.
+		/// </summary>
+		[DefaultValue( true )]
+		public Reference<bool> TransformInterpolation
+		{
+			get { if( _transformInterpolation.BeginGet() ) TransformInterpolation = _transformInterpolation.Get( this ); return _transformInterpolation.value; }
+			set { if( _transformInterpolation.BeginSet( this, ref value ) ) { try { TransformInterpolationChanged?.Invoke( this ); } finally { _transformInterpolation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="TransformInterpolation"/> property value changes.</summary>
+		public event Action<ObjectInSpace> TransformInterpolationChanged;
+		ReferenceField<bool> _transformInterpolation = true;
+
+		[MethodImpl( MethodImplOptions.AggressiveOptimization )]
+		public Transform GetTransformInterpolated()
+		{
+			var currentTransform = TransformV;
+
+			if( RenderingSystem.Interpolation && TransformInterpolation )
+			{
+				var previous = transformPreviousSimulationStep;
+				if( previous != null && previous != currentTransform )
+				{
+					var currentSimulationTime = ParentRoot.HierarchyController?.SimulationTime ?? 0;
+					var t = MathEx.Saturate( ( EngineApp.EngineTime - currentSimulationTime ) * Time.SimulationStepsPerSecond );
+
+					var position = Vector3.Lerp( previous.Position, currentTransform.Position, t );
+					var rotation = Quaternion.Slerp( previous.Rotation, currentTransform.Rotation, t );
+					var scale = Vector3.Lerp( previous.Scale, currentTransform.Scale, t );
+					return new Transform( position, rotation, scale );
+				}
+			}
+
+			return currentTransform;
+		}
+
+		public virtual void TransformInterpolatedReset()
+		{
+			transformPreviousSimulationStep = null;
+		}
 
 		protected virtual void OnTransformChanged()
 		{
@@ -472,6 +515,8 @@ namespace NeoAxis
 				sceneOctreeVisualDynamicIndex = -1;
 				sceneOctreeOccluderIndex = -1;
 				//sceneOctreeIndex = -1;
+
+				TransformInterpolatedReset();
 			}
 		}
 
@@ -699,7 +744,7 @@ namespace NeoAxis
 			{
 				if( parentSceneCached != null )
 					return parentSceneCached;
-				return FindParent<Scene>();
+				return ParentRoot as Scene; //return FindParent<Scene>();
 			}
 		}
 
@@ -912,6 +957,11 @@ namespace NeoAxis
 			}
 		}
 
+		internal virtual void SaveTransformPreviousSimulationStep()
+		{
+			transformPreviousSimulationStep = Transform.Value;
+		}
+
 		protected override void OnSimulationStep()
 		{
 			base.OnSimulationStep();
@@ -984,6 +1034,5 @@ namespace NeoAxis
 
 			base.OnRemovedFromParent( oldParent );
 		}
-
 	}
 }

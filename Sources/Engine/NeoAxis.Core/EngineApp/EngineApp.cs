@@ -77,8 +77,6 @@ namespace NeoAxis
 		static double addToResultTime;
 		static double engineTimeScale = 1;
 		static double engineTime;
-		//static bool engineTimeManualValueAndDisableAutoUpdate;
-		//static object timeLocker = new object();
 
 		//auto unload textures
 		static double lastEngineTimeToAutoUnloadGpuResources;
@@ -1447,7 +1445,7 @@ namespace NeoAxis
 
 		static void Log_WarningHandler( string text, ref bool handled, ref bool dumpToLogFile )
 		{
-			if( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			if( ( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
 			{
 				if( !created )
 				{
@@ -1459,7 +1457,7 @@ namespace NeoAxis
 
 		static void Log_ErrorHandler( string text, ref bool handled, ref bool dumpToLogFile )
 		{
-			if( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			if( ( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
 			{
 				if( !created )
 				{
@@ -1471,7 +1469,7 @@ namespace NeoAxis
 
 		static void Log_FatalHandler( string text, string createdLogFilePath, ref bool handled )
 		{
-			if( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			if( ( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
 			{
 				if( createdInsideEngineWindow != null && WindowedMode == WindowedModeEnum.Fullscreen )
 					RestoreVideoModeAndMinimize();
@@ -1582,7 +1580,7 @@ namespace NeoAxis
 
 		public static void Destroy()
 		{
-			if( instance == null )
+			if( instance == null || Log.FatalActivated )
 				return;
 
 			//if( FullScreen )
@@ -2202,28 +2200,12 @@ namespace NeoAxis
 
 		public static void UpdateEngineTime( double? setManualValueAndDisableAutoUpdate = null )
 		{
-			//lock( timeLocker )
-			//{
-
 			if( renderVideoToFileData != null )
-			{
-				Interlocked.Exchange( ref engineTime, EngineTime + 1.0 / (double)renderVideoToFileData.FramesPerSecond );
-				//engineTime += 1.0 / (double)renderVideoToFileData.FramesPerSecond;
-			}
+				Volatile.Write( ref engineTime, EngineTime + 1.0 / (double)renderVideoToFileData.FramesPerSecond );
 			else if( setManualValueAndDisableAutoUpdate != null )
-			{
-				Interlocked.Exchange( ref engineTime, setManualValueAndDisableAutoUpdate.Value );
-				//engineTime = setManualValueAndDisableAutoUpdate.Value;
-				//engineTimeManualValueAndDisableAutoUpdate = true;
-			}
+				Volatile.Write( ref engineTime, setManualValueAndDisableAutoUpdate.Value );
 			else
-			{
-				Interlocked.Exchange( ref engineTime, addToResultTime + ( GetSystemTime() - startTime ) * engineTimeScale );
-				//engineTime = addToResultTime + ( GetSystemTime() - startTime ) * engineTimeScale;
-				//engineTimeManualValueAndDisableAutoUpdate = false;
-			}
-
-			//}
+				Volatile.Write( ref engineTime, addToResultTime + ( GetSystemTime() - startTime ) * engineTimeScale );
 		}
 
 		/// <summary>
@@ -2231,10 +2213,7 @@ namespace NeoAxis
 		/// </summary>
 		public static double EngineTime
 		{
-			get
-			{
-				return Interlocked.CompareExchange( ref engineTime, -1.0, -1.0 );
-			}
+			get { return Volatile.Read( ref engineTime ); }
 		}
 
 		public static double GetSystemTime()

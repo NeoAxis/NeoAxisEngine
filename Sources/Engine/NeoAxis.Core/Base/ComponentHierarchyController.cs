@@ -14,8 +14,6 @@ namespace NeoAxis
 	/// </summary>
 	public class ComponentHierarchyController
 	{
-		//!!!!threading?
-
 		internal Component rootComponent;
 		internal Resource.Instance createdByResource;
 
@@ -25,7 +23,7 @@ namespace NeoAxis
 		object lockObjectHierarchy = new object();
 
 		//Simulation
-		double simulationTime = -1;
+		internal double simulationTime = -1;
 		//bool simulationEnabled;
 		//bool systemPauseOfSimulationEnabled;
 		//internal SimulationTypes simulationType;
@@ -36,6 +34,8 @@ namespace NeoAxis
 
 		internal NetworkServerInterface networkServerInterface;
 		internal NetworkClientInterface networkClientInterface;
+		internal ServerNode networkServerNode;
+		internal ClientNode networkClientNode;
 
 		//!!!!если динамическое свойство чтобы не копилось
 		Dictionary<Metadata.Property, PropertyChangedHandler> networkComponentPropertyChangedEventHandlers = new Dictionary<Metadata.Property, PropertyChangedHandler>();
@@ -312,21 +312,48 @@ namespace NeoAxis
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
+		void CallSaveTransformPreviousSimulationStep()
+		{
+			rootComponent.GetComponents( false, true, true, false, delegate ( Component component )
+			{
+				var obj = component as ObjectInSpace;
+				obj?.SaveTransformPreviousSimulationStep();
+			} );
+
+			//rootComponent.GetComponents( false, true, true, false, delegate ( ObjectInSpace component )
+			//{
+			//	component.SaveTransformPreviousSimulationStep();
+			//} );
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
 		public void SimulateOneStep()
 		{
+			//!!!!new
+			networkServerInterface?.PerformSimulationStep();
+
 			if( rootComponent != null && rootComponent.EnabledInHierarchy )
+			{
+				if( RenderingSystem.Interpolation )
+					CallSaveTransformPreviousSimulationStep();
 				rootComponent.PerformSimulationStep();
+			}
 			SimulationStep?.Invoke( this );
 			ProcessDelayedOperations();
 			ProcessSleepingFlows();
-			networkServerInterface?.PerformSimulationStep();
+			//now before
+			//networkServerInterface?.PerformSimulationStep();
 		}
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		public void SimulateOneStepClient()
 		{
 			if( rootComponent != null && rootComponent.EnabledInHierarchy )
+			{
+				if( RenderingSystem.Interpolation )
+					CallSaveTransformPreviousSimulationStep();
 				rootComponent.PerformSimulationStepClient();
+			}
 			SimulationStepClient?.Invoke( this );
 			ProcessDelayedOperations();
 			ProcessSleepingFlows();
@@ -337,22 +364,12 @@ namespace NeoAxis
 		{
 			ProcessDelayedOperations();
 
-			//if( SimulationType == SimulationTypes.ClientOnly )
-			//	return;
-
 			double time = EngineApp.EngineTime;
-
-			//if( !simulationEnabled || systemPauseOfSimulationEnabled )
-			//{
-			//	simulationTickTime = time;
-			//	return;
-			//}
 
 			//reset time
 			if( simulationTime < 0 )
 				simulationTime = time;
 
-			//!!!!new
 			//too big pause
 			if( time > simulationTime + 0.25 )
 				simulationTime = time;
@@ -369,10 +386,8 @@ namespace NeoAxis
 		[MethodImpl( (MethodImplOptions)512 )]
 		public void PerformSimulationStepClient()
 		{
-			double time = EngineApp.EngineTime;
-
-			//!!!!сглаживать или может иначе, например, по шагам
-			simulationTime = time;
+			if( networkClientNode == null || !networkClientNode.interpolation )
+				simulationTime = EngineApp.EngineTime;
 
 			SimulateOneStepClient();
 		}
@@ -510,6 +525,16 @@ namespace NeoAxis
 		{
 			get { return fatalWhenHierarchyChangeFromNotControllerThread; }
 			set { fatalWhenHierarchyChangeFromNotControllerThread = value; }
+		}
+
+		public ServerNode NetworkServerNode
+		{
+			get { return networkServerNode; }
+		}
+
+		public ClientNode NetworkClientNode
+		{
+			get { return networkClientNode; }
 		}
 	}
 }

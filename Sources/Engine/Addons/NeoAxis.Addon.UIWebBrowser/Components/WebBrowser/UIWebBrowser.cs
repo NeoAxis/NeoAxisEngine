@@ -233,14 +233,17 @@ namespace NeoAxis
 			}
 		}
 
-		protected override void OnEnabled()
+		protected override void OnEnabledInHierarchyChanged()
 		{
-			RenderingSystem.RenderSystemEvent += RenderSystem_RenderSystemEvent;
-		}
+			base.OnEnabledInHierarchyChanged();
 
-		protected override void OnDisabled()
+			if( EnabledInHierarchy )
+			RenderingSystem.RenderSystemEvent += RenderSystem_RenderSystemEvent;
+			else
+				RenderingSystem.RenderSystemEvent -= RenderSystem_RenderSystemEvent;
+
+			if( !EnabledInHierarchy )
 		{
-			RenderingSystem.RenderSystemEvent -= RenderSystem_RenderSystemEvent;
 
 #if !NO_UI_WEB_BROWSER
 			DestroyBrowser();
@@ -255,6 +258,30 @@ namespace NeoAxis
 				texture = null;
 			}
 		}
+		}
+
+		//		protected override void OnEnabled()
+		//		{
+		//			RenderingSystem.RenderSystemEvent += RenderSystem_RenderSystemEvent;
+		//		}
+
+		//		protected override void OnDisabled()
+		//		{
+		//			RenderingSystem.RenderSystemEvent -= RenderSystem_RenderSystemEvent;
+
+		//#if !NO_UI_WEB_BROWSER
+		//			DestroyBrowser();
+		//#endif
+
+		//			//never called
+		//			//WebCore.Shutdown();
+
+		//			if( texture != null )
+		//			{
+		//				texture.Dispose();
+		//				texture = null;
+		//			}
+		//		}
 
 		void RenderSystem_RenderSystemEvent( RenderSystemEvent name )
 		{

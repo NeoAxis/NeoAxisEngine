@@ -18,6 +18,7 @@ namespace Project
 	public static class SimulationAppServer
 	{
 		public static double UpdateFrequency { get; set; } = 1.0 / 60.0;
+		public const bool SceneInterpolation = true;
 
 		static int serverPort;
 		static string directModePassword = "";
@@ -198,6 +199,7 @@ namespace Project
 			serverNode.ClientBeforeStatusChangeToConnected += ServerNode_ClientBeforeStatusChangeToConnected;
 			serverNode.ClientStatusChanged += Server_ClientStatusChanged;
 			serverNode.Messages.ReceiveMessageString += Messages_ReceiveMessageString;
+			serverNode.Interpolation = SceneInterpolation;
 
 			//configure Chat service
 			//if( ChatDefaultRoom )
@@ -368,7 +370,7 @@ namespace Project
 					{
 						var clientItem = serverNode.Components.GetClientItem( client );
 						if( clientData != null )
-							serverNode.Components.SendSceneCreate( clientItem );
+							serverNode.Components.SendSceneCreate( clientItem, ProjectSettings.Get.General.SimulationStepsPerSecond );
 					}
 
 					ClientConnected?.Invoke( client );
@@ -416,13 +418,13 @@ namespace Project
 			ResetScene();
 
 			if( serverNode != null )
-				serverNode.Components.SetScene( scene, sceneInfo );
+				serverNode.Components.SetScene( scene, sceneInfo, ProjectSettings.Get.General.SimulationStepsPerSecond );
 		}
 
 		public static void ResetScene()
 		{
 			if( serverNode != null && serverNode.Components.Scene != null )
-				serverNode.Components.ResetScene();
+				serverNode.Components.ResetScene( false );
 		}
 	}
 

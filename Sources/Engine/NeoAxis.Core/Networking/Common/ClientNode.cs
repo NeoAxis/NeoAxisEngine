@@ -74,6 +74,7 @@ namespace NeoAxis.Networking
 		volatile ClientWebSocket webSocketClient;
 		int clientConnectPortUdp;
 		volatile UdpClientListener udpListener;
+		DateTime udpListenerSettingsLastTimeUpdate;
 		volatile NetPeer udpPeer;
 		volatile bool connectionIsOld;
 
@@ -113,6 +114,14 @@ namespace NeoAxis.Networking
 		DateTime sentPingLastTime;
 
 		ClientNetworkService_Internal networkServiceInternal;
+
+		//interpolation
+		internal bool interpolation;
+		float interpolationStepsPerSecond;
+		Scene interpolationScene;
+		Queue<double> interpolationFrameTimes = new Queue<double>();
+		Queue<InterpolationFrame> interpolationFrames = new Queue<InterpolationFrame>();
+		InterpolationFrame interpolationCurrentFrame;
 
 		///////////////////////////////////////////////
 
@@ -361,6 +370,14 @@ namespace NeoAxis.Networking
 			None,
 			WebSocket,
 			UDP,
+		}
+
+		///////////////////////////////////////////////
+
+		//!!!!struct
+		class InterpolationFrame
+		{
+			public List<ArraySegment<byte>> Messages = new List<ArraySegment<byte>>( 64 );
 		}
 
 		///////////////////////////////////////////////
@@ -1237,6 +1254,7 @@ namespace NeoAxis.Networking
 				//!!!!need copy data because buffer will be reused. can make pool of buffers. limit the total size of buffers.
 				//GC. if manage arrays by self, maybe need to worry about memory limitations
 				//use array pool?
+				//also it used without copy when interpolated mode is enabled
 				var data = new byte[ length ];
 				reader.ReadBuffer( data, 0, length );
 
@@ -1459,7 +1477,11 @@ namespace NeoAxis.Networking
 			//update udp client
 			if( udpListener != null )
 			{
+				if( utcNow - udpListenerSettingsLastTimeUpdate > TimeSpan.FromSeconds( 0.1 ) )
+				{
+					udpListenerSettingsLastTimeUpdate = utcNow;
 				UpdateUdpMaxFragmentsCount_DisconnectTimeout_UpdateTime();
+				}
 				udpListener?.Client.PollEvents();
 			}
 
@@ -1600,6 +1622,10 @@ namespace NeoAxis.Networking
 
 			//send accumulated messages
 			ProcessAccumulatedMessagesToSend();
+
+			//process interpolation frames
+			if( interpolation && interpolationScene != null )
+				InterpolationUpdate();
 		}
 
 		protected virtual void OnConnectionStatusChanged()
@@ -1686,7 +1712,7 @@ namespace NeoAxis.Networking
 			get { return disconnectionReason; }
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		void ProcessReceivedMessage( byte[] data, int position, int length )
 		{
 			var reader = new ArrayDataReader( data, position, length );
@@ -1700,7 +1726,7 @@ namespace NeoAxis.Networking
 				return;
 			}
 
-			//service message
+			//get service of the message
 			var service = GetService( serviceIdentifier );
 			if( service == null )
 			{
@@ -1708,6 +1734,67 @@ namespace NeoAxis.Networking
 				return;
 			}
 
+			if( interpolation )
+			{
+				//create new frame if no frames yet
+				if( interpolationFrames.Count == 0 )
+				{
+					interpolationCurrentFrame = new InterpolationFrame();
+					interpolationFrames.Enqueue( interpolationCurrentFrame );
+				}
+
+				//check for new frame
+				var isNewFrameMessage = service.Identifier == 4 && messageIdentifier == ClientNetworkService_Components.SimulationStepToClient;
+				if( isNewFrameMessage )
+				{
+					//new frame
+
+					//update statistics of updates to calculate delay and interpolation. 5 seconds of updates
+					if( interpolationFrameTimes.Count > interpolationStepsPerSecond * 5 )
+						interpolationFrameTimes.Dequeue();
+					interpolationFrameTimes.Enqueue( EngineApp.EngineTime );
+
+					//when too much frames in queue, process it immediately
+					{
+						var maxGapSeconds = 0.0;
+						{
+							var previousTime = 0.0;
+							foreach( var time2 in interpolationFrameTimes )
+							{
+								if( previousTime != 0.0 )
+								{
+									var gap = time2 - previousTime;
+									if( gap > maxGapSeconds )
+										maxGapSeconds = gap;
+								}
+								previousTime = time2;
+							}
+						}
+						var maxGapCount = (int)( maxGapSeconds * interpolationStepsPerSecond ) + 1;
+
+						//ScreenMessages.Add( "MaxGap: " + maxGap.ToString( "0.00" ) + " count: " + ( maxGap / simulationStepDelta ).ToString( "F2" ) );
+
+						while( interpolationFrames.Count > maxGapCount )
+						{
+							//reset time
+							var controller = interpolationScene.HierarchyController;
+							if( controller.simulationTime < 0 )
+								controller.simulationTime = EngineApp.EngineTime;
+
+							var frame = interpolationFrames.Dequeue();
+							InterpolationProcessFrame( frame );
+						}
+					}
+
+					//create a new frame
+					interpolationCurrentFrame = new InterpolationFrame();
+					interpolationFrames.Enqueue( interpolationCurrentFrame );
+				}
+
+				//add message to current frame
+				interpolationCurrentFrame.Messages.Add( new ArraySegment<byte>( data, position, length ) );
+			}
+			else
 			service.ProcessReceivedMessage( reader, length, messageIdentifier );
 		}
 
@@ -1989,18 +2076,88 @@ namespace NeoAxis.Networking
 			var udpListener2 = udpListener;
 			if( udpListener2 != null )
 			{
-				var server = udpListener2.Client;
+				var client = udpListener2.Client;
 
-				int mtu = server.MtuOverride;
+				int mtu = client.MtuOverride;
 				int headerSize = 16;
 				int payloadPerFragment = mtu - headerSize;
 
 				var maxMessageSize = Math.Max( SendMessageMaxSize, ReceiveMessageMaxSize );
-				server.MaxFragmentsCount = (ushort)( ( maxMessageSize + payloadPerFragment - 1 ) / payloadPerFragment );
+				client.MaxFragmentsCount = (ushort)( ( maxMessageSize + payloadPerFragment - 1 ) / payloadPerFragment );
 
-				server.DisconnectTimeout = (int)( KeepAliveTime * 1000 );
+				client.DisconnectTimeout = (int)( KeepAliveTime * 1000 );
 
-				server.UpdateTime = (int)( UpdateTimeUdp * 1000 );
+				client.UpdateTime = (int)( UpdateTimeUdp * 1000 );
+			}
+		}
+
+		internal void SetInterpolation( bool value, float stepsPerSecond, Scene scene )
+		{
+			interpolation = value;
+			interpolationStepsPerSecond = stepsPerSecond;
+			interpolationScene = scene;
+
+			//process all frames if interpolation is disabled
+			if( !interpolation )
+			{
+				foreach( var frame in interpolationFrames )
+					InterpolationProcessFrame( frame );
+				interpolationFrames.Clear();
+				interpolationFrameTimes.Clear();
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		void InterpolationProcessFrame( InterpolationFrame frame )
+		{
+			var reader = new ArrayDataReader();
+
+			foreach( var message in frame.Messages )
+			{
+				reader.Init( message.Array, message.Offset, message.Count );
+
+				var serviceIdentifier = reader.ReadByte();
+				var messageIdentifier = reader.ReadByte();
+
+				//get service of the message
+				var service = GetService( serviceIdentifier );
+
+				service.ProcessReceivedMessage( reader, message.Count, messageIdentifier );
+			}
+		}
+
+		[MethodImpl( MethodImplOptions.AggressiveOptimization )]
+		void InterpolationUpdate()
+		{
+			var controller = interpolationScene.HierarchyController;
+			var time = EngineApp.EngineTime;
+			var simulationStepDelta = 1.0 / interpolationStepsPerSecond;
+
+			//reset time
+			if( controller.simulationTime < 0 )
+				controller.simulationTime = time;
+
+			//!!!!good?
+			//reset too big pause
+			//when FPS is small, then small maxInterval is bad (simulationStepDelta * 2)
+			var fpsFactor = interpolationStepsPerSecond / Math.Max( EngineApp.FPS, 10 );
+			var maxInterval = simulationStepDelta * ( fpsFactor + 2 );
+			if( time > controller.simulationTime + maxInterval )
+				controller.simulationTime = time;
+
+			//process steps. even when no frames
+			while( time > controller.simulationTime + simulationStepDelta )
+			{
+				controller.simulationTime += simulationStepDelta;
+
+				//ScreenMessages.Add( "Update. Frame count " + interpolationFrames.Count.ToString() );
+
+				//process frame
+				if( interpolationFrames.Count > 0 )
+				{
+					var frame = interpolationFrames.Dequeue();
+					InterpolationProcessFrame( frame );
+				}
 			}
 		}
 	}

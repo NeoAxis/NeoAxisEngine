@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using NeoAxis;
 using NeoAxis.Networking;
 
-namespace NeoAxis.CloudServer
+namespace NeoAxis.Cloud
 {
 	/// <summary>
 	/// A basic server for the process in the cloud.
@@ -172,7 +172,7 @@ namespace NeoAxis.CloudServer
 			if( AccessCodes )
 				AccessCodesClass.Initialize();
 			if( Transactions )
-				CloudServer.Transactions.Initialize();
+				Cloud.Transactions.Initialize();
 			HorizontalServers.Initialize();
 			if( ChatsEnabled )
 				Chats.Initialize();
@@ -249,7 +249,7 @@ namespace NeoAxis.CloudServer
 					serverNode?.Update( utcNow );
 					WriteMessageToServerManagerTxt( utcNow );
 					Actions.Update( utcNow );
-					CloudServer.Transactions.Update( utcNow );
+					Cloud.Transactions.Update( utcNow );
 					HorizontalServers.Update( utcNow );
 					Chats.Update( utcNow );
 					Matches.Update( utcNow );

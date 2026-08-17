@@ -6,7 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NeoAxis;
-using NeoAxis.CloudServer;
+using NeoAxis.Cloud;
+using NeoAxis.Networking;
 
 namespace Project
 {
@@ -392,7 +393,7 @@ namespace Project
 				TextBlock rootBlock = null;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodAsync<string>( "Implementation", "GetProjectDetails", cts.Token );
+				var result = await client.CallMethodAsync<string>( "CloudServerImplementation", "GetProjectDetails", cts.Token );
 				if( !string.IsNullOrEmpty( result.Error ) )
 					Log.Warning( "Error: " + result.Error );
 				else
@@ -440,7 +441,7 @@ namespace Project
 					return;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodAsync<Matches.Match>( "Implementation", "GetMatchPlayingByCaller", cts.Token );
+				var result = await client.CallMethodAsync<Matches.Match>( "CloudServerImplementation", "GetMatchPlayingByCaller", cts.Token );
 
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{

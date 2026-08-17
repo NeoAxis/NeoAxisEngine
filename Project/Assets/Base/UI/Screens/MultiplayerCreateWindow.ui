@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2022.1.
+// Made with NeoAxis Engine 2026.2.
 
 .component Project.MultiplayerCreateWindow
 {
@@ -125,7 +125,7 @@
 		VerticalAlignment = Stretch
 		Margin = Units 20 160 20 80
 		EditorScrollPosition = 0 0
-		Items
+		ItemsAsText
 		{
 			Count = 0
 		}
@@ -139,6 +139,36 @@
 			Margin = Units 0 2 2 2
 			EditorScrollPosition = 0 0
 			Vertical = True
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler ItemMouseDoubleClick
+			Event
+			{
+				GetByReference = "this:..\\event:ItemMouseDoubleClick"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ListScenes_ItemMouseDoubleClick(NeoAxis.UIControl,NeoAxis.EMouseButtons,ref System.Boolean)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler KeyDown
+			Event
+			{
+				GetByReference = "this:..\\event:KeyDown"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ListScenes_KeyDown(NeoAxis.UIControl,NeoAxis.KeyEvent,ref System.Boolean)"
+			}
+			HandlerFlow
+			{
+			}
 		}
 	}
 	.component NeoAxis.UIText

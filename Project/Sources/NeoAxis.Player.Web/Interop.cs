@@ -12,6 +12,12 @@ namespace NeoAxis.Player.Web
 		public static partial void Initialize();
 
 		[JSExport]
+		public static void SetSystemSettings( bool mobileDevice )
+		{
+			SystemSettings._SetPlatform( SystemSettings.Platform.Web, mobileDevice );
+		}
+
+		[JSExport]
 		public static void OnKeyDown( int code, string character, int modifiers, bool keyLocked )
 		{
 			var item = new Engine.KeyEventItem();

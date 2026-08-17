@@ -595,6 +595,8 @@ namespace NeoAxis
 					result[ "NeoAxis.Skybox" ] = "NeoAxis.Sky";
 					result[ "NeoAxis.Component_Skybox" ] = "NeoAxis.Sky";
 
+					result[ "NeoAxis.NetworkLogic" ] = "NeoAxis.GameLogic";
+
 					renamedTypeNames = result;
 				}
 

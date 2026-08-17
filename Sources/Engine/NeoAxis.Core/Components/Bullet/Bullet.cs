@@ -647,7 +647,7 @@ namespace NeoAxis
 				{
 					var obj = Parent.CreateComponent<ParticleSystemInSpace>( enabled: false );
 					obj.ParticleSystem = particleSystem;
-					obj.RemainingLifetime = TypeCached.HitParticleLifetime;
+					obj.RemainingLifetime = Math.Max( TypeCached.HitParticleLifetime, Time.SimulationDelta * 1.5 );
 
 					Quaternion rot;
 					if( TypeCached.HitParticleApplyHitNormal )
@@ -673,7 +673,7 @@ namespace NeoAxis
 					var obj = Parent.CreateComponent<Decal>( enabled: false );
 
 					//var bulletTransform = TransformV;
-					obj.RemainingLifetime = TypeCached.HitDecalLifetime;
+					obj.RemainingLifetime = Math.Max( TypeCached.HitDecalLifetime, Time.SimulationDelta * 1.5 );
 					obj.VisibilityDistanceFactor = TypeCached.HitDecalVisibilityDistanceFactor;
 					obj.Material = TypeCached.HitDecalMaterial;
 
@@ -987,7 +987,7 @@ namespace NeoAxis
 			if( !base.OnReceiveNetworkMessageFromServer( message, reader ) )
 				return false;
 
-			if( message == "Hit" )
+			if( message == "Hit" && ParentRoot?.HierarchyController != null )
 			{
 				var fixedHitPosition = reader.ReadVector3();
 				var hitNormal = reader.ReadVector3F();

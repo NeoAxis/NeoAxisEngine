@@ -1,69 +1,7 @@
+// Made with NeoAxis Engine 2026.2.
+
 .component Project.PlayScreen
 {
 	Size = Parent 1 1
 	EditorScrollPosition = 0 0
-	Style
-	{
-		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
-	}
-	.component NeoAxis.UIControl
-	{
-		Name = Cutscene
-		Size = Parent 1 1
-		EditorScrollPosition = 0 0
-		.component NeoAxis.UIControl
-		{
-			Name = Top
-			Size = Units 10000 60
-			HorizontalAlignment = Center
-			Margin = Units 0 0 0 0
-			BackgroundColor = 0 0 0 0.5030196
-			EditorScrollPosition = 0 0
-		}
-		.component NeoAxis.UIControl
-		{
-			Name = Bottom
-			Size = Units 10000 250
-			HorizontalAlignment = Center
-			VerticalAlignment = Bottom
-			Margin = Units 0 0 0 0
-			BackgroundColor = 0 0 0 0.5030196
-			EditorScrollPosition = 0 0
-			.component NeoAxis.UIText
-			{
-				Name = Text
-				Text = Cutscene text
-				Size = Units 400 30
-				HorizontalAlignment = Center
-				VerticalAlignment = Center
-				EditorScrollPosition = 0 0
-				FontSize = Screen 0.04
-				Shadow = True
-			}
-		}
-	}
-	.component NeoAxis.UIButton
-	{
-		Name = Button Menu
-		Text = Menu
-		Size = Units 100 40
-		HorizontalAlignment = Right
-		Margin = Units 0 0 0 0
-		EditorScrollPosition = 0 0
-		.component NeoAxis.EventHandlerComponent
-		{
-			Name = Event Handler Click
-			Event
-			{
-				GetByReference = "this:..\\event:Click"
-			}
-			HandlerMethod
-			{
-				GetByReference = "this:..\\..\\method:ButtonMenu_Click(NeoAxis.UIButton)"
-			}
-			HandlerFlow
-			{
-			}
-		}
-	}
 }

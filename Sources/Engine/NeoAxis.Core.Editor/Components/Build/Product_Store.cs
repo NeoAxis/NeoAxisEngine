@@ -15,6 +15,7 @@ using System.Threading;
 using NeoAxis.Editor;
 using System.Drawing;
 using System.Drawing.Imaging;
+using NeoAxis.Cloud;
 
 namespace NeoAxis
 {

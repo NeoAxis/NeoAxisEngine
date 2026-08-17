@@ -530,10 +530,10 @@ namespace NeoAxis
 				var obj = ParentRoot.HierarchyController.GetComponentByNetworkID( characterNetworkID ) as ObjectInSpace;
 				if( obj != null )
 				{
-					var networkLogic = NetworkLogicUtility.GetNetworkLogic( obj );
-					if( networkLogic != null )
+					var gameLogic = ParentScene?.GetGameLogic();
+					if( gameLogic != null )
 					{
-						var gameMode = (GameMode)ParentScene?.GetGameMode();//var gameMode = ParentScene?.GetComponent<GameMode>();
+						var gameMode = ParentScene?.GetGameMode();
 						if( gameMode != null )
 						{
 							PutObjectToSeat( gameMode, seatIndex, obj );
@@ -558,6 +558,11 @@ namespace NeoAxis
 
 			if( NetworkIsSingle || NetworkIsClient )
 				UpdateObjectOnSeat( seatIndex );
+
+			if( obj is MeshInSpace meshInSpace )
+				meshInSpace.NotifyInstantMovement();
+			else
+				obj.TransformInterpolatedReset();
 
 			//remainingTimeToUpdateObjectsOnSeat = 0;
 		}
@@ -597,6 +602,11 @@ namespace NeoAxis
 							tr = tr.UpdatePosition( freePlacePosition );
 							character.SetTransformAndTurnToDirectionInstantly( tr );
 						}
+
+						if( objectOnSeat is MeshInSpace meshInSpace )
+							meshInSpace.NotifyInstantMovement();
+						else
+							objectOnSeat.TransformInterpolatedReset();
 					}
 
 					ObjectsOnSeats[ seatIndex ] = null;

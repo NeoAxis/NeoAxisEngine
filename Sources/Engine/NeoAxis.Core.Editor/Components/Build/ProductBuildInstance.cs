@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
+using System.Threading;
 
 namespace NeoAxis.Editor
 {
@@ -18,7 +19,8 @@ namespace NeoAxis.Editor
 		volatile string progressText = "Building...";
 		volatile string error = "";
 
-		Task buildTask;
+		Thread buildThread;
+		//Task buildTask;
 		volatile bool requestCancel;
 
 		bool buildFunctionFinished;
@@ -177,8 +179,11 @@ namespace NeoAxis.Editor
 
 			if( configuration.CanBuildFromThread )
 			{
-				instance.buildTask = new Task( BuildFunction, instance );
-				instance.buildTask.Start();
+				instance.buildThread = new Thread( BuildFunction );
+				instance.buildThread.Start( instance );
+
+				//instance.buildTask = new Task( BuildFunction, instance );
+				//instance.buildTask.Start();
 			}
 			else
 				BuildFunction( instance );

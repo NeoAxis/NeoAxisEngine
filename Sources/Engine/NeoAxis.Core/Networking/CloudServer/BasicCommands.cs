@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using NeoAxis;
 
-namespace NeoAxis.CloudServer
+namespace NeoAxis.Cloud
 {
 	/// <summary>
 	/// The basic methods of the server.

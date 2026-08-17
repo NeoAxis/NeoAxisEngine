@@ -158,6 +158,82 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public struct SixDOFConstraintSettingsNative
+		{
+			public int/*bool*/ transformInWorldSpace;
+
+			public Vector3 positionA;
+			public Vector3F axisXA;
+			public Vector3F axisYA;
+			public Vector3 positionB;
+			public Vector3F axisXB;
+			public Vector3F axisYB;
+
+			public PhysicsAxisMode linearAxisX;
+			public RangeF linearLimitX;
+			public PhysicsAxisMode linearAxisY;
+			public RangeF linearLimitY;
+			public PhysicsAxisMode linearAxisZ;
+			public RangeF linearLimitZ;
+
+			public PhysicsAxisMode angularAxisX;
+			public RangeF angularLimitX;
+			public PhysicsAxisMode angularAxisY;
+			public RangeF angularLimitY;
+			public PhysicsAxisMode angularAxisZ;
+			public RangeF angularLimitZ;
+
+			public float linearXFriction;
+			public float linearYFriction;
+			public float linearZFriction;
+			public float angularXFriction;
+			public float angularYFriction;
+			public float angularZFriction;
+		}
+
+		///////////////////////////////////////////////
+
+		[StructLayout( LayoutKind.Sequential, Pack = 1 )]
+		public unsafe struct VehicleConstraintSettingsNative
+		{
+			public int wheelCount;
+			public Scene.PhysicsWorldClass.VehicleWheelSettings* wheelsSettings;
+			public float frontWheelAntiRollBarStiffness;
+			public float rearWheelAntiRollBarStiffness;
+			public float maxPitchRollAngle;
+			public float engineMaxTorque;
+			public float engineMinRPM;
+			public float engineMaxRPM;
+			public int/*bool*/ transmissionAuto;
+			public int transmissionGearRatiosCount;
+			public double* transmissionGearRatios;
+			public int transmissionReverseGearRatiosCount;
+			public double* transmissionReverseGearRatios;
+			public float transmissionSwitchTime;
+			public float transmissionClutchReleaseTime;
+			public float transmissionSwitchLatency;
+			public float transmissionShiftUpRPM;
+			public float transmissionShiftDownRPM;
+			public float transmissionClutchStrength;
+			public float maxSlopeAngleInRadians;
+			public int/*bool*/ tracks;
+			public int antiRollbarsCount;
+			public float* antiRollbars;
+			public float differentialLimitedSlipRatio;
+			public int engineNormalizedTorqueCount;
+			public float* engineNormalizedTorque;
+			public float engineInertia;
+			public float engineAngularDamping;
+			public int differentialsCount;
+			public float* differentials;
+			public int trackDrivenWheel;
+			public float trackInertia;
+			public float trackAngularDamping;
+			public float trackMaxBrakeTorque;
+			public float trackDifferentialRatio;
+		}
+
 		[DllImport( library, CallingConvention = convention )]
 		public static extern IntPtr JCreateSystem( int maxBodies, int maxBodyPairs, int maxContactConstraints );
 
@@ -459,7 +535,7 @@ namespace NeoAxis
 		//, [MarshalAs( UnmanagedType.U1 )] bool transformInWorldSpace, Vector3D& positionA, Vector3& axisXA, Vector3& axisYA, Vector3D& positionB, Vector3& axisXB, Vector3& axisYB
 
 		[DllImport( library, CallingConvention = convention )]
-		public static extern IntPtr JCreateConstraintSixDOF( IntPtr system, IntPtr bodyA, IntPtr bodyB, [MarshalAs( UnmanagedType.U1 )] bool transformInWorldSpace, ref Vector3 positionA, ref Vector3F axisXA, ref Vector3F axisYA, ref Vector3 positionB, ref Vector3F axisXB, ref Vector3F axisYB, PhysicsAxisMode linearAxisX, ref RangeF linearLimitX, PhysicsAxisMode linearAxisY, ref RangeF linearLimitY, PhysicsAxisMode linearAxisZ, ref RangeF linearLimitZ, PhysicsAxisMode angularAxisX, ref RangeF angularLimitX, PhysicsAxisMode angularAxisY, ref RangeF angularLimitY, PhysicsAxisMode angularAxisZ, ref RangeF angularLimitZ, float linearXFriction, float linearYFriction, float linearZFriction, float angularXFriction, float angularYFriction, float angularZFriction );
+		public static extern IntPtr JCreateConstraintSixDOF( IntPtr system, IntPtr bodyA, IntPtr bodyB, ref SixDOFConstraintSettingsNative settings );
 
 		//[DllImport( library, CallingConvention = convention )]
 		//public static extern IntPtr JCreateConstraintSixDOF( IntPtr system, IntPtr bodyA, IntPtr bodyB, [MarshalAs( UnmanagedType.U1 )] bool transformInWorldSpace, ref Vector3 positionA, ref Vector3F axisXA, ref Vector3F axisYA, ref Vector3 positionB, ref Vector3F axisXB, ref Vector3F axisYB, ref RangeF linearLimitX, ref RangeF linearLimitY, ref RangeF linearLimitZ, ref RangeF angularLimitX, ref RangeF angularLimitY, ref RangeF angularLimitZ );
@@ -474,7 +550,7 @@ namespace NeoAxis
 		//public static extern IntPtr JCreateConstraintFixed( IntPtr system, IntPtr bodyA, IntPtr bodyB, ref Vector3 position, ref Vector3F axisX, ref Vector3F axisY );
 
 		[DllImport( library, CallingConvention = convention )]
-		public unsafe static extern IntPtr JCreateConstraintVehicle( IntPtr system, IntPtr body, int wheelCount, Scene.PhysicsWorldClass.VehicleWheelSettings* wheelsSettings, float frontWheelAntiRollBarStiffness, float rearWheelAntiRollBarStiffness, float maxPitchRollAngle, float engineMaxTorque, float engineMinRPM, float engineMaxRPM, [MarshalAs( UnmanagedType.U1 )] bool transmissionAuto, int transmissionGearRatiosCount, double* transmissionGearRatios, int transmissionReverseGearRatiosCount, double* transmissionReverseGearRatios, float transmissionSwitchTime, float transmissionClutchReleaseTime, float transmissionSwitchLatency, float transmissionShiftUpRPM, float transmissionShiftDownRPM, float transmissionClutchStrength, /*[MarshalAs( UnmanagedType.U1 )] bool frontWheelDrive, [MarshalAs( UnmanagedType.U1 )] bool rearWheelDrive, float frontWheelDifferentialRatio, float frontWheelDifferentialLeftRightSplit, float frontWheelDifferentialLimitedSlipRatio, float frontWheelDifferentialEngineTorqueRatio, float rearWheelDifferentialRatio, float rearWheelDifferentialLeftRightSplit, float rearWheelDifferentialLimitedSlipRatio, float rearWheelDifferentialEngineTorqueRatio, */float maxSlopeAngleInRadians, [MarshalAs( UnmanagedType.U1 )] bool tracks, int antiRollbarsCount, float* antiRollbars, float differentialLimitedSlipRatio, int engineNormalizedTorqueCount, float* engineNormalizedTorque, float engineInertia, float engineAngularDamping, int differentialsCount, float* differentials, int trackDrivenWheel, float trackInertia, float trackAngularDamping, float trackMaxBrakeTorque, float trackDifferentialRatio );
+		public unsafe static extern IntPtr JCreateConstraintVehicle( IntPtr system, IntPtr body, ref VehicleConstraintSettingsNative settings );
 
 		[DllImport( library, CallingConvention = convention )]
 		public static extern void JDestroyConstraint( IntPtr system, IntPtr constraint );

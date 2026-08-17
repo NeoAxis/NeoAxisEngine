@@ -49,7 +49,7 @@ namespace NeoAxis
 				var scene = FindParent<Scene>();
 				if( scene != null )
 				{
-					var gameMode = scene.GetComponent<GameMode>();
+					var gameMode = scene.GetGameMode();
 					if( gameMode != null )
 					{
 						gameMode.InputMessageEvent += GameMode_InputMessageEvent;
@@ -115,7 +115,7 @@ namespace NeoAxis
 			{
 				var lines = new List<string>();
 
-				lines.Add( "F6 - first or third person camera" );
+				lines.Add( "F6 - camera type" );
 				lines.Add( "F7 - free camera" );
 				lines.Add( "W A S D Q E Shift - camera control" );
 				lines.Add( "K - show keys" );
@@ -143,7 +143,7 @@ namespace NeoAxis
 			var scene = FindParent<Scene>();
 			if( scene != null )
 			{
-				var gameMode = scene.GetComponent<GameMode>();
+				var gameMode = scene.GetGameMode();
 				if( gameMode != null )
 				{
 					//create or destroy a character

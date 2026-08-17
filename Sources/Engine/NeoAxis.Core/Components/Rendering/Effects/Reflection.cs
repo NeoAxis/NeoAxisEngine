@@ -496,31 +496,45 @@ namespace NeoAxis
 			}
 		}
 
-		protected override void OnEnabled()
+		protected override void OnEnabledInHierarchyChanged()
 		{
-			base.OnEnabled();
+			base.OnEnabledInHierarchyChanged();
 
 			var pipeline = FindParent<RenderingPipeline_Basic>();
 			if( pipeline != null )
 			{
+				if( EnabledInHierarchyAndIsInstance )
 				pipeline.RenderDeferredShadingGBufferReady += Pipeline_RenderDeferredShadingGBufferReady;
-				//pipeline.RenderDeferredShadingEnd += Pipeline_RenderDeferredShadingEnd;
-				////pipeline.RenderBegin += Pipeline_RenderBegin;
+				else
+					pipeline.RenderDeferredShadingGBufferReady -= Pipeline_RenderDeferredShadingGBufferReady;
 			}
 		}
 
-		protected override void OnDisabled()
-		{
-			var pipeline = FindParent<RenderingPipeline_Basic>();
-			if( pipeline != null )
-			{
-				pipeline.RenderDeferredShadingGBufferReady -= Pipeline_RenderDeferredShadingGBufferReady;
-				//pipeline.RenderDeferredShadingEnd -= Pipeline_RenderDeferredShadingEnd;
-				////pipeline.RenderBegin -= Pipeline_RenderBegin;
-			}
+		//protected override void OnEnabled()
+		//{
+		//	base.OnEnabled();
 
-			base.OnDisabled();
-		}
+		//	var pipeline = FindParent<RenderingPipeline_Basic>();
+		//	if( pipeline != null )
+		//	{
+		//		pipeline.RenderDeferredShadingGBufferReady += Pipeline_RenderDeferredShadingGBufferReady;
+		//		//pipeline.RenderDeferredShadingEnd += Pipeline_RenderDeferredShadingEnd;
+		//		////pipeline.RenderBegin += Pipeline_RenderBegin;
+		//	}
+		//}
+
+		//protected override void OnDisabled()
+		//{
+		//	var pipeline = FindParent<RenderingPipeline_Basic>();
+		//	if( pipeline != null )
+		//	{
+		//		pipeline.RenderDeferredShadingGBufferReady -= Pipeline_RenderDeferredShadingGBufferReady;
+		//		//pipeline.RenderDeferredShadingEnd -= Pipeline_RenderDeferredShadingEnd;
+		//		////pipeline.RenderBegin -= Pipeline_RenderBegin;
+		//	}
+
+		//	base.OnDisabled();
+		//}
 
 		private void Pipeline_RenderDeferredShadingGBufferReady( RenderingPipeline_Basic sender, ViewportRenderingContext context, RenderingPipeline_Basic.FrameData frameData, ref ImageComponent sceneTexture )//, ref bool skipLighting )
 		{

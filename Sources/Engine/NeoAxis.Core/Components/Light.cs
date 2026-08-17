@@ -745,7 +745,7 @@ namespace NeoAxis
 					item.BoundingBox = SpaceBounds.boundingBox;
 					item.BoundingSphere = SpaceBounds.boundingSphere;
 
-					var tr = Transform.Value;
+					var tr = GetTransformInterpolated();// Transform.Value;
 					item.Position = tr.Position;
 					item.Rotation = tr.Rotation.ToQuaternionF();
 					item.Scale = tr.Scale.ToVector3F();

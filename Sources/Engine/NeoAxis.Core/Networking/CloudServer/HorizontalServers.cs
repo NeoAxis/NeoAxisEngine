@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 using NeoAxis.LiteDB;
 using NeoAxis;
 using NeoAxis.Networking;
+using NeoAxis.Cloud;
 
-namespace NeoAxis.CloudServer
+namespace NeoAxis.Cloud
 {
 	/// <summary>
 	/// Provides horizontal server functionality.

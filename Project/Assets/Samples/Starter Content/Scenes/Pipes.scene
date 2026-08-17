@@ -1314,8 +1314,8 @@
 		Name = Spawn Point
 		Transform = "-7.02134412220499 10.0920838477564 0.0511326987678462; 0 0 -1 0.00000000000000006; 1 1 1"
 	}
-	.component NeoAxis.NetworkLogic
+	.component NeoAxis.GameLogic
 	{
-		Name = Network Logic
+		Name = Game Logic
 	}
 }

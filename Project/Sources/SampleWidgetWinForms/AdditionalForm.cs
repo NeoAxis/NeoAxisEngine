@@ -15,7 +15,7 @@ namespace SampleWidgetWinForms
 		{
 			InitializeComponent();
 
-			base.Font = new System.Drawing.Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
+			base.Font = new Font( new FontFamily( "Microsoft Sans Serif" ), 8f );
 
 			widgetControl1.ViewportCreated += WidgetControl1_ViewportCreated;
 		}
@@ -27,10 +27,10 @@ namespace SampleWidgetWinForms
 
 		private void WidgetControl1_ViewportCreated( NeoAxis.Editor.EngineViewportControl sender )
 		{
-			Scene.First.ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
+			Scene.GetFirst().ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
 
 			//bind scene to viewport
-			widgetControl1.Viewport.AttachedScene = Scene.First;
+			widgetControl1.Viewport.AttachedScene = Scene.GetFirst();
 		}
 
 		protected virtual void Scene_ViewportUpdateGetCameraSettings( Scene scene, Viewport viewport, ref bool processed )
@@ -41,9 +41,9 @@ namespace SampleWidgetWinForms
 				if( defaultCamera == null )
 					defaultCamera = scene.Mode.Value == Scene.ModeEnum._3D ? scene.CameraEditor : scene.CameraEditor2D;
 
-				var position = new Vector3( 27, 4, -9 );
-				var lookTo = new Vector3( 25, -0.6, -10 );
-				var up = Vector3.ZAxis;
+				//var position = new Vector3( 27, 4, -9 );
+				//var lookTo = new Vector3( 25, -0.6, -10 );
+				//var up = Vector3.ZAxis;
 
 				//var obj = scene.GetComponent<ObjectInSpace>( "Mesh in Space 68" );
 				//if( obj != null )
@@ -56,8 +56,8 @@ namespace SampleWidgetWinForms
 
 				var camera = (Camera)defaultCamera.Clone();
 				//camera = new Camera();
-				camera.Transform = new Transform( position, Quaternion.LookAt( ( lookTo - position ).GetNormalize(), up ) );
-				camera.FixedUp = up;
+				//camera.Transform = new Transform( position, Quaternion.LookAt( ( lookTo - position ).GetNormalize(), up ) );
+				//camera.FixedUp = up;
 				viewport.CameraSettings = new Viewport.CameraSettingsClass( viewport, camera );
 
 				processed = true;

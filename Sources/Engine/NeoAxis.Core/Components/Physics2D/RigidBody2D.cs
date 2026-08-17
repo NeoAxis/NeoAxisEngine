@@ -1005,6 +1005,5 @@ namespace NeoAxis
 		{
 			rigidBody?.ApplyAngularImpulse( (float)impulse );
 		}
-
 	}
 }

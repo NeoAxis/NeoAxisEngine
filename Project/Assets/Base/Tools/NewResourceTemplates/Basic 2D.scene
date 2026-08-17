@@ -119,9 +119,9 @@
 			GetByReference = "this:..\\$Character 2D"
 		}
 	}
-	.component NeoAxis.NetworkLogic
+	.component NeoAxis.GameLogic
 	{
-		Name = Network Logic
+		Name = Game Logic
 		AvatarWindow = False
 		ObjectTypeControlledByPlayer
 		{

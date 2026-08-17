@@ -194,14 +194,14 @@ namespace NeoAxis
 			get { return enabledInHierarchy; }
 		}
 
-		/// <summary>
-		/// Called when the object is attached to a hierarchy of the components and is enabled. See also <see cref="EnabledInHierarchy"/> property.
-		/// </summary>
-		protected virtual void OnEnabled() { }
-		/// <summary>
-		/// Occurs when the object is attached to a hierarchy of the components and is enabled. See also <see cref="EnabledInHierarchy"/> property.
-		/// </summary>
-		public event Action<Component> EnabledEvent;
+		///// <summary>
+		///// Called when the object is attached to a hierarchy of the components and is enabled. See also <see cref="EnabledInHierarchy"/> property.
+		///// </summary>
+		//protected virtual void OnEnabled() { }
+		///// <summary>
+		///// Occurs when the object is attached to a hierarchy of the components and is enabled. See also <see cref="EnabledInHierarchy"/> property.
+		///// </summary>
+		//public event Action<Component> EnabledEvent;
 
 		/// <summary>
 		/// Called when the object is attached to a hierarchy of the components and is enabled. The method is called only in simulation application. See also <see cref="EnabledInHierarchy"/> property.
@@ -213,13 +213,22 @@ namespace NeoAxis
 		public event Action<Component> EnabledInSimulation;
 
 		/// <summary>
-		/// Called when the object is detached from a hierarchy of the components or is disabled. See also <see cref="EnabledInHierarchy"/> property.
+		/// Called when the object is attached to a hierarchy of the components, it is enabled, which was created as an instance (is not resource). The method is called only in simulation application. See also <see cref="EnabledInHierarchy"/> property.
 		/// </summary>
-		protected virtual void OnDisabled() { }
+		protected virtual void OnEnabledInSimulationAndIsInstance() { }
 		/// <summary>
-		/// Occurs when the object is disabled from a hierarchy of the components or is disabled. See also <see cref="EnabledInHierarchy"/> property.
+		/// Occurs when the object is attached to a hierarchy of the components, it is enabled, which was created as an instance (is not resource). The method is called only in simulation application. See also <see cref="EnabledInHierarchy"/> property.
 		/// </summary>
-		public event Action<Component> DisabledEvent;
+		public event Action<Component> EnabledInSimulationAndIsInstance;
+
+		///// <summary>
+		///// Called when the object is detached from a hierarchy of the components or is disabled. See also <see cref="EnabledInHierarchy"/> property.
+		///// </summary>
+		//protected virtual void OnDisabled() { }
+		///// <summary>
+		///// Occurs when the object is disabled from a hierarchy of the components or is disabled. See also <see cref="EnabledInHierarchy"/> property.
+		///// </summary>
+		//public event Action<Component> DisabledEvent;
 
 		/// <summary>
 		/// Called when the object is detached from a hierarchy of the components or is disabled. The method is called only in simulation application. See also <see cref="EnabledInHierarchy"/> property.
@@ -229,6 +238,16 @@ namespace NeoAxis
 		/// Occurs when the object is detached from a hierarchy of the components or is disabled. The method is called only in simulation application. See also <see cref="EnabledInHierarchy"/> property.
 		/// </summary>
 		public event Action<Component> DisabledInSimulation;
+
+		/// <summary>
+		/// Called when the object is detached from a hierarchy of the components or is disabled, which was created as an instance (is not resource). The method is called only in simulation application. See also <see cref="EnabledInHierarchy"/> property.
+		/// </summary>
+		protected virtual void OnDisabledInSimulationAndIsInstance() { }
+		/// <summary>
+		/// Occurs when the object is detached from a hierarchy of the components or is disabled, which was created as an instance (is not resource). The method is called only in simulation application. See also <see cref="EnabledInHierarchy"/> property.
+		/// </summary>
+		public event Action<Component> DisabledInSimulationAndIsInstance;
+
 		[MethodImpl( 512 )]
 		internal void _UpdateEnabledInHierarchy( bool forceDisableBeforeRemove )
 		{
@@ -259,12 +278,18 @@ namespace NeoAxis
 
 					if( EngineApp.IsSimulation )
 					{
+						if( !IsResource )
+						{
+							OnDisabledInSimulationAndIsInstance();
+							DisabledInSimulationAndIsInstance?.Invoke( this );
+						}
+
 						OnDisabledInSimulation();
 						DisabledInSimulation?.Invoke( this );
 					}
 
-					DisabledEvent?.Invoke( this );
-					OnDisabled();
+					//DisabledEvent?.Invoke( this );
+					//OnDisabled();
 				}
 
 				OnEnabledInHierarchyChangedBefore();
@@ -286,13 +311,19 @@ namespace NeoAxis
 
 				if( EnabledInHierarchy )
 				{
-					OnEnabled();
-					EnabledEvent?.Invoke( this );
+					//OnEnabled();
+					//EnabledEvent?.Invoke( this );
 
 					if( EngineApp.IsSimulation )
 					{
 						OnEnabledInSimulation();
 						EnabledInSimulation?.Invoke( this );
+
+						if( !IsResource )
+						{
+							OnEnabledInSimulationAndIsInstance();
+							EnabledInSimulationAndIsInstance?.Invoke( this );
+						}
 					}
 				}
 			}
@@ -4676,7 +4707,6 @@ namespace NeoAxis
 			}
 		}
 
-		//!!!!new
 		[Browsable( false )]
 		public bool IsResource
 		{

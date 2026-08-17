@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using NeoAxis.Networking;
 
-namespace NeoAxis.CloudServer
+namespace NeoAxis.Cloud
 {
 	public static class ServerLogs
 	{

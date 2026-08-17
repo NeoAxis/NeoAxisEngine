@@ -9,7 +9,7 @@
 	}
 	UIScreen
 	{
-		GetByReference = "Samples\\Simple Game\\SimpleGameGUI.ui"
+		GetByReference = "Samples\\Simple Game\\SimpleGameScreen.ui"
 	}
 	CameraEditor
 	{

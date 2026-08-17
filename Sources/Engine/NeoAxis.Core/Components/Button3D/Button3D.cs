@@ -364,6 +364,16 @@ namespace NeoAxis
 
 		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
+			var keyDown = message as InputMessageKeyDown;
+			if( keyDown != null )
+			{
+				if( keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2 )
+				{
+					TryClick( initiator );
+					return true;
+				}
+			}
+
 			var mouseDown = message as InputMessageMouseButtonDown;
 			if( mouseDown != null )
 			{

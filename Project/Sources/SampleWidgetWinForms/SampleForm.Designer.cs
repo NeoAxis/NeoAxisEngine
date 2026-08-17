@@ -28,60 +28,67 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.buttonClose = new System.Windows.Forms.Button();
-			this.widgetControl1 = new NeoAxis.Widget.WidgetControlWinForms();
-			this.buttonNewForm = new System.Windows.Forms.Button();
-			this.SuspendLayout();
+			buttonClose = new System.Windows.Forms.Button();
+			widgetControl1 = new NeoAxis.Widget.WidgetControlWinForms();
+			buttonNewForm = new System.Windows.Forms.Button();
+			SuspendLayout();
 			// 
 			// buttonClose
 			// 
-			this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonClose.Location = new System.Drawing.Point(1021, 14);
-			this.buttonClose.Name = "buttonClose";
-			this.buttonClose.Size = new System.Drawing.Size(117, 32);
-			this.buttonClose.TabIndex = 0;
-			this.buttonClose.Text = "Close";
-			this.buttonClose.UseVisualStyleBackColor = true;
-			this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+			buttonClose.Anchor =  System.Windows.Forms.AnchorStyles.Top  |  System.Windows.Forms.AnchorStyles.Right ;
+			buttonClose.Location = new System.Drawing.Point( 1021, 18 );
+			buttonClose.Margin = new System.Windows.Forms.Padding( 3, 4, 3, 4 );
+			buttonClose.Name = "buttonClose";
+			buttonClose.Size = new System.Drawing.Size( 117, 40 );
+			buttonClose.TabIndex = 0;
+			buttonClose.Text = "Close";
+			buttonClose.UseVisualStyleBackColor = true;
+			buttonClose.Click +=  buttonClose_Click ;
 			// 
 			// widgetControl1
 			// 
-			this.widgetControl1.AllowCreateRenderWindow = true;
-			//this.widgetControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-   //         | System.Windows.Forms.AnchorStyles.Left) 
-   //         | System.Windows.Forms.AnchorStyles.Right)));
-			this.widgetControl1.AutomaticUpdateFPS = 60F;
-			this.widgetControl1.BackColor = System.Drawing.Color.Black;
-			this.widgetControl1.Location = new System.Drawing.Point(14, 14);
-			this.widgetControl1.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
-			this.widgetControl1.Name = "widgetControl1";
-			this.widgetControl1.OneFrameChangeCursor = null;
-			this.widgetControl1.Size = new System.Drawing.Size(995, 718);
-			this.widgetControl1.TabIndex = 1;
+			widgetControl1.AllowCreateRenderWindow = true;
+			widgetControl1.Anchor =    System.Windows.Forms.AnchorStyles.Top  |  System.Windows.Forms.AnchorStyles.Bottom   |  System.Windows.Forms.AnchorStyles.Left   |  System.Windows.Forms.AnchorStyles.Right ;
+			widgetControl1.AutomaticUpdateFPS = 60F;
+			widgetControl1.BackColor = System.Drawing.Color.Black;
+			widgetControl1.DisableRecreationRenderWindow = true;
+			widgetControl1.Font = new System.Drawing.Font( "Microsoft Sans Serif", 8F );
+			widgetControl1.Location = new System.Drawing.Point( 14, 18 );
+			widgetControl1.Margin = new System.Windows.Forms.Padding( 5, 6, 5, 6 );
+			widgetControl1.Name = "widgetControl1";
+			widgetControl1.OneFrameChangeCursor = null;
+			widgetControl1.OverrideCameraSettings = null;
+			widgetControl1.RenderWindow = null;
+			widgetControl1.Size = new System.Drawing.Size( 995, 898 );
+			widgetControl1.TabIndex = 1;
+			widgetControl1.TransformTool = null;
+			widgetControl1.Viewport = null;
 			// 
 			// buttonNewForm
 			// 
-			this.buttonNewForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonNewForm.Location = new System.Drawing.Point(1021, 60);
-			this.buttonNewForm.Name = "buttonNewForm";
-			this.buttonNewForm.Size = new System.Drawing.Size(117, 32);
-			this.buttonNewForm.TabIndex = 2;
-			this.buttonNewForm.Text = "Additional Form";
-			this.buttonNewForm.UseVisualStyleBackColor = true;
-			this.buttonNewForm.Click += new System.EventHandler(this.buttonNewForm_Click);
+			buttonNewForm.Anchor =  System.Windows.Forms.AnchorStyles.Top  |  System.Windows.Forms.AnchorStyles.Right ;
+			buttonNewForm.Location = new System.Drawing.Point( 1021, 75 );
+			buttonNewForm.Margin = new System.Windows.Forms.Padding( 3, 4, 3, 4 );
+			buttonNewForm.Name = "buttonNewForm";
+			buttonNewForm.Size = new System.Drawing.Size( 117, 40 );
+			buttonNewForm.TabIndex = 2;
+			buttonNewForm.Text = "Additional Form";
+			buttonNewForm.UseVisualStyleBackColor = true;
+			buttonNewForm.Click +=  buttonNewForm_Click ;
 			// 
 			// SampleForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1150, 746);
-			this.Controls.Add(this.buttonNewForm);
-			this.Controls.Add(this.widgetControl1);
-			this.Controls.Add(this.buttonClose);
-			this.Name = "SampleForm";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Sample Widget WinForms";
-			this.ResumeLayout(false);
+			AutoScaleDimensions = new System.Drawing.SizeF( 8F, 20F );
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			ClientSize = new System.Drawing.Size( 1150, 932 );
+			Controls.Add( buttonNewForm );
+			Controls.Add( widgetControl1 );
+			Controls.Add( buttonClose );
+			Margin = new System.Windows.Forms.Padding( 3, 4, 3, 4 );
+			Name = "SampleForm";
+			StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			Text = "Sample Widget WinForms";
+			ResumeLayout( false );
 
 		}
 

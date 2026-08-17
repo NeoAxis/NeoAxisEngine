@@ -8,7 +8,7 @@ using NeoAxis.LiteDB;
 using NeoAxis;
 using NeoAxis.Networking;
 
-namespace NeoAxis.CloudServer
+namespace NeoAxis.Cloud
 {
 	/// <summary>
 	/// Access codes for the cloud functions.

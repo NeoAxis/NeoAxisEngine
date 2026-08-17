@@ -1,9 +1,12 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.2.
 
 .component Project.BasicSceneScreen
 {
 	Size = Parent 1 1
 	EditorScrollPosition = -0.542813748779101 0.709552227469941
+	EntranceScreenAllowed = True
+	InGameMenuAutoHideWhenSentChatMessage = True
+	InGameMenuAlwaysHide = False
 	.component NeoAxis.UIControl
 	{
 		Name = Continuous Interaction Widget
@@ -471,6 +474,274 @@
 		SourceImage
 		{
 			GetByReference = "Base\\UI\\Images\\Square.png"
+		}
+	}
+	.component NeoAxis.UIControl
+	{
+		Enabled = False
+		Name = Cutscene
+		Size = Parent 1 1
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIControl
+		{
+			Name = Top
+			Size = Units 10000 60
+			HorizontalAlignment = Center
+			Margin = Units 0 0 0 0
+			BackgroundColor = 0 0 0 0.5030196
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Bottom
+			Size = Units 10000 250
+			HorizontalAlignment = Center
+			VerticalAlignment = Bottom
+			Margin = Units 0 0 0 0
+			BackgroundColor = 0 0 0 0.5030196
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text
+				Text = Cutscene text
+				Size = Units 400 30
+				HorizontalAlignment = Center
+				VerticalAlignment = Center
+				EditorScrollPosition = 0 0
+				FontSize = Screen 0.04
+				Shadow = True
+			}
+		}
+	}
+	.component NeoAxis.UIControl
+	{
+		Enabled = False
+		Name = In-Game Menu
+		CanBeSelected = False
+		Size = Parent 1 1
+		BackgroundColor = 0 0 0 0.75
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.UIList
+		{
+			Name = List Chat
+			Visible = False
+			Size = Units 470 190
+			VerticalAlignment = Bottom
+			Margin = Units 10 600 210 60
+			EditorScrollPosition = 0 0
+			ItemsAsText
+			{
+				Count = 0
+			}
+			.component NeoAxis.UIScroll
+			{
+				Name = Scroll
+				CanBeSelected = False
+				Size = Units 30 400
+				HorizontalAlignment = Right
+				VerticalAlignment = Stretch
+				Margin = Units 0 2 2 2
+				EditorScrollPosition = 0 0
+				Vertical = True
+			}
+		}
+		.component NeoAxis.UIEdit
+		{
+			Name = Edit Chat Message
+			Size = Units 360 40
+			VerticalAlignment = Bottom
+			Margin = Units 10 730 360 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text
+				CanBeSelected = False
+				Size = Parent 1 1
+				HorizontalAlignment = Stretch
+				VerticalAlignment = Stretch
+				Margin = Units 4 2 4 2
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				ClipRectangle = True
+				Text
+				{
+					GetByReference = "this:..\\DisplayText"
+				}
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler KeyDownBefore
+				Event
+				{
+					GetByReference = "this:..\\event:KeyDownBefore"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:EditChatMessage_KeyDownBefore(NeoAxis.UIControl,NeoAxis.KeyEvent,ref System.Boolean)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Chat Send
+			Text = Send
+			Size = Units 100 40
+			VerticalAlignment = Bottom
+			Margin = Units 380 740 200 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UITooltip
+			{
+				Name = Tooltip
+				Text = Send a message in the chat.
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonChatSend_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Match Reset
+			Text = Reset
+			Size = Units 100 40
+			HorizontalAlignment = Right
+			VerticalAlignment = Bottom
+			Margin = Units 650 740 120 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonMatchReset_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+			.component NeoAxis.UITooltip
+			{
+				Name = Tooltip
+				Text = Reset the match.
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Match Delete
+			Text = Delete
+			Size = Units 100 40
+			HorizontalAlignment = Right
+			VerticalAlignment = Bottom
+			Margin = Units 650 740 10 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonMatchDelete_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+			.component NeoAxis.UITooltip
+			{
+				Name = Tooltip
+				Text = Delete the match.
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button In-Game Menu
+		Text = In-Game Menu
+		Size = Units 160 40
+		HorizontalAlignment = Right
+		Margin = Units 650 10 180 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonInGameMenu_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Open the in-game menu.
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button System Menu
+		Text = System Menu
+		Size = Units 160 40
+		HorizontalAlignment = Right
+		Margin = Units 650 10 10 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonSystemMenu_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Open the system menu.
 		}
 	}
 }

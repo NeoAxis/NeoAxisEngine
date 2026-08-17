@@ -23,7 +23,7 @@ namespace Project
 
 		static bool subscribedToEvents;
 
-		static DateTime updateLastTime;
+		//static DateTime updateLastTime;
 
 		static string helloFromServerMessage;
 
@@ -307,11 +307,14 @@ namespace Project
 		private static void EngineApp_Tick( float delta )
 		{
 			var utcNow = DateTime.UtcNow;
-			if( utcNow - updateLastTime > TimeSpan.FromSeconds( UpdateFrequency ) )
-			{
-				updateLastTime = utcNow;
 				connectionNode?.Update( utcNow );
-			}
+
+			//var utcNow = DateTime.UtcNow;
+			//if( utcNow - updateLastTime > TimeSpan.FromSeconds( UpdateFrequency ) )
+			//{
+			//	updateLastTime = utcNow;
+			//	connectionNode?.Update( utcNow );
+			//}
 		}
 
 		private static void SimulationApp_MainViewportRenderUI()
@@ -385,11 +388,11 @@ namespace Project
 				SimulationApp.NetworkClientSceneCreated( scene );
 		}
 
-		private static void Components_SceneDestroy( ClientNetworkService_Components sender )
+		private static void Components_SceneDestroy( ClientNetworkService_Components sender, bool anotherSceneWillLoaded )
 		{
 			//ScreenMessages.Add( string.Format( "Message from server: {0}", "SceneDestroy" ) );
 
-			SimulationApp.NetworkClientSceneDestroyed();
+			SimulationApp.NetworkClientSceneDestroyed( anotherSceneWillLoaded );
 		}
 
 		internal static void RegisterEngineConsoleCommands()

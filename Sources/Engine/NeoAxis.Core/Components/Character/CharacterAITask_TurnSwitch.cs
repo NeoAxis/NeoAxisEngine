@@ -91,9 +91,9 @@ namespace NeoAxis
 
 				double time;
 				{
-					var contoller = ParentRoot.HierarchyController;
-					if( contoller != null )
-						time = contoller.SimulationTime;
+					var controller = ParentRoot.HierarchyController;
+					if( controller != null )
+						time = controller.SimulationTime;
 					else
 						time = EngineApp.EngineTime;
 				}

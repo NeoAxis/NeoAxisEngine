@@ -199,8 +199,8 @@ namespace NeoAxis
 				//if( NetworkIsServer && NetworkSceneManagerUtility.IsObjectControlledByPlayer( vehicle ) )
 				if( NetworkIsServer )//&& NetworkSceneManagerUtility.GetUserByObjectControlled( vehicle, true ) != null )
 				{
-					var networkLogic = NetworkLogicUtility.GetNetworkLogic( vehicle );
-					if( networkLogic != null && networkLogic.ServerGetUserByObjectControlled( vehicle, true ) != null )
+					var gameLogic = vehicle.ParentScene?.GetGameLogic();
+					if( gameLogic != null && gameLogic.Server_GetUserByObjectControlled( vehicle ) != null )
 						underControl = true;
 				}
 
@@ -626,14 +626,20 @@ namespace NeoAxis
 							{
 								var range = weaponType.Mode1FiringDistance.Value;
 								if( distance > range.Minimum && distance < range.Maximum )
-									weapon.FiringBegin( 1, 0 );
+								{
+									var gameLogic = Vehicle?.ParentScene?.GetGameLogic();
+									weapon.FiringBegin( 1, gameLogic?.Single_GetUserByObjectControlled( Vehicle )?.UserID ?? -1 );
+								}
 							}
 
 							if( weaponType.Mode2Enabled )
 							{
 								var range = weaponType.Mode2FiringDistance.Value;
 								if( distance > range.Minimum && distance < range.Maximum )
-									weapon.FiringBegin( 2, 0 );
+								{
+									var gameLogic = Vehicle?.ParentScene?.GetGameLogic();
+									weapon.FiringBegin( 2, gameLogic?.Single_GetUserByObjectControlled( Vehicle )?.UserID ?? -1 );
+								}
 							}
 						}
 					}

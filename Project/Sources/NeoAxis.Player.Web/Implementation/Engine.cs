@@ -16,6 +16,8 @@ namespace NeoAxis.Player.Web
 
 		public static Dictionary<EKeys, bool> keyLockedStates = new Dictionary<EKeys, bool>();
 
+		static Dictionary<int, object> pointerIdentifiers = new Dictionary<int, object>();
+
 		/////////////////////////////////////////
 
 		public abstract class InputEventItem
@@ -300,15 +302,20 @@ namespace NeoAxis.Player.Web
 		{
 			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 
+			var id = item.Id;
+
 			switch( item.Action )
 			{
 			case ActionEnum.Down:
 				{
+					var identifier = new object();
+					pointerIdentifiers[ id ] = identifier;
+
 					var data = new TouchData();
-					data.PointerIdentifier = item.Id;
 					data.Action = TouchData.ActionEnum.Down;
 					data.PositionInPixels = item.Position.ToVector2I();
 					data.Position = data.PositionInPixels.ToVector2F() / viewport.SizeInPixels.ToVector2F();
+					data.PointerIdentifier = identifier;
 
 					ProcessTouch( viewport, data );
 				}
@@ -316,23 +323,31 @@ namespace NeoAxis.Player.Web
 
 			case ActionEnum.Up:
 				{
+					if( !pointerIdentifiers.TryGetValue( id, out var identifier ) )
+						break;
+
 					var data = new TouchData();
-					data.PointerIdentifier = item.Id;
 					data.Action = TouchData.ActionEnum.Up;
 					data.PositionInPixels = item.Position.ToVector2I();
 					data.Position = data.PositionInPixels.ToVector2F() / viewport.SizeInPixels.ToVector2F();
+					data.PointerIdentifier = identifier;
 
 					ProcessTouch( viewport, data );
+
+					pointerIdentifiers.Remove( id );
 				}
 				break;
 
 			case ActionEnum.Move:
 				{
+					if( !pointerIdentifiers.TryGetValue( id, out var identifier ) )
+						break;
+
 					var data = new TouchData();
-					data.PointerIdentifier = item.Id;
 					data.Action = TouchData.ActionEnum.Move;
 					data.PositionInPixels = item.Position.ToVector2I();
 					data.Position = data.PositionInPixels.ToVector2F() / viewport.SizeInPixels.ToVector2F();
+					data.PointerIdentifier = identifier;
 
 					ProcessTouch( viewport, data );
 				}

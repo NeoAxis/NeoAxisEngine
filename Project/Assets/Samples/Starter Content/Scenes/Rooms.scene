@@ -127,9 +127,9 @@
 			GetByReference = "this:..\\$Character"
 		}
 	}
-	.component NeoAxis.NetworkLogic
+	.component NeoAxis.GameLogic
 	{
-		Name = Network Logic
+		Name = Game Logic
 	}
 	.component NeoAxis.SpawnPoint
 	{

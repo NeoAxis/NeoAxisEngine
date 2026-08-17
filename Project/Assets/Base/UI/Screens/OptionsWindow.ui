@@ -182,8 +182,8 @@
 				.component NeoAxis.UIText
 				{
 					Name = Text Keys
-					Text = "Ctrl+Number \x2013 Drop item\r\nF6 \x2013 First or third person camera\r\nF7 \x2013 Free camera\r\nHome, End, PgUp, PgDown, Plus, Minus \x2013 third person camera settings"
-					Size = Units 330 100
+					Text = "Ctrl+Number \x2013 Drop item\r\nF1 \x2013 In-game menu\r\nF2 \x2013 Developer console\r\nF6 \x2013 Camera type\r\nF7 \x2013 Free camera\r\nHome, End, PgUp, PgDown, Plus, Minus \x2013 third person camera settings"
+					Size = Units 330 160
 					Margin = Units 20 310 0 0
 					EditorScrollPosition = 0 0
 					TextHorizontalAlignment = Left

@@ -1629,12 +1629,12 @@ namespace Internal//NeoAxis
 		{
 			//!!!!
 
-			//while( true )
-			//{
-			//	MSG msg = new MSG();
+			while( true )
+			{
+				//MSG msg = new MSG();
 
-			//	if( PeekMessage( ref msg, IntPtr.Zero, 0, 0, PM_REMOVE ) )
-			//	{
+				//if( PeekMessage( ref msg, IntPtr.Zero, 0, 0, PM_REMOVE ) )
+			//{
 			//		if( msg.message == WM_QUIT )
 			//			break;
 
@@ -1642,57 +1642,152 @@ namespace Internal//NeoAxis
 			//		DispatchMessage( ref msg );
 
 			//		continue;
-			//	}
-			//	else
-			//	{
-			//		if( EngineApp.NeedExit )
-			//			break;
+				//}
+				//else
+				{
+					if( EngineApp.NeedExit )
+						break;
 
-			//		if( IsAllowApplicationIdle() )
+					if( IsAllowApplicationIdle() )
+					{
+						if( EngineApp.RenderVideoToFileData == null )
+							EngineApp.UpdateEngineTime();
+						double time = EngineApp.EngineTime;
+						//!!!!
+						//bool needSleep = EngineApp.MaxFPS != 0 && time < maxFPSLastRenderTime + 1.0f / EngineApp.MaxFPS;
+
+						//if( needSleep )
+						//{
+						//	Thread.Sleep( 1 );
+						//}
+						//else
+						{
+							//maxFPSLastRenderTime = time;
+
+							////finish switching to another windowed mode
+							//var goingToAnotherWindowedMode2 = goingToAnotherWindowedMode;
+							//if( goingToAnotherWindowedMode2 != null )
+							//{
+							//	//windowed
+							//	if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Windowed )
 			//		{
-			//			if( EngineApp.RenderVideoToFileData == null )
-			//				EngineApp.UpdateEngineTime();
-			//			double time = EngineApp.EngineTime;
-			//			bool needSleep = EngineApp.MaxFPS != 0 && time < maxFPSLastRenderTime + 1.0f / EngineApp.MaxFPS;
+							//		SetWindowBorderStyle( WindowBorderStyle.Sizeable );
 
-			//			if( needSleep )
-			//			{
-			//				Thread.Sleep( 1 );
+							//		var pos = ( GetScreenSize() - EngineApp.WindowedModeSize ) / 2;
+							//		var size = EngineApp.WindowedModeSize - new Vector2I( 1, 1 );
+							//		SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, pos.X, pos.Y, size.X, size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
 			//			}
-			//			else
-			//			{
-			//				maxFPSLastRenderTime = time;
 
-			//				//finish switching to windowed mode
-			//				if( goingToWindowedMode )
-			//				{
-			//					SetWindowBorderStyle( PlatformFunctionality.WindowBorderStyle.Sizeable );
-			//					//!!!!было .VideoMode
-			//					Vector2I pos = ( GetScreenSize() - EngineApp.FullscreenSize ) / 2;
-			//					//!!!!было .VideoMode
-			//					Vector2I size = EngineApp.FullscreenSize - new Vector2I( 1, 1 );
-			//					SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, pos.X, pos.Y, size.X, size.Y, 0 );
-			//					goingToWindowedMode = false;
-			//					EngineApp.CreatedWindowProcessResize();
+							//	//borderless
+							//	if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Borderless )
+			//			{
+							//		SetWindowBorderStyle( WindowBorderStyle.None );
+
+							//		var monitorRect = GetWindowMonitorRectangle();
+
+							//		SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, monitorRect.Left, monitorRect.Top, monitorRect.Size.X, monitorRect.Size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
 			//				}
 
-			//				//finish switching to fullscreen mode
-			//				if( goingToFullScreenMode )
+							//	//fullscreen
+							//	if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Fullscreen )
 			//				{
-			//					bool topMost = !Debugger.IsAttached;
-			//					SetWindowPos( EngineApp.ApplicationWindowHandle, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0,
-			//						EngineApp.FullscreenSize.X, EngineApp.FullscreenSize.Y, 0 );
-			//					goingToFullScreenMode = false;
-			//					EngineApp.CreatedWindowProcessResize();
+							//		SetWindowBorderStyle( WindowBorderStyle.None );
+
+							//		var monitorRect = GetWindowMonitorRectangle();
+
+							//		SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_TOPMOST, monitorRect.Left, monitorRect.Top, monitorRect.Size.X, monitorRect.Size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
 			//				}
 
-			//				EngineApp.CreatedWindowApplicationIdle( false );
-			//			}
-			//		}
-			//		else
-			//			WaitMessage();
-			//	}
+							//	//SetWindowState( WindowState.Normal );
+							//	SetForegroundWindow( EngineApp.ApplicationWindowHandle );
+							//	SetFocus( EngineApp.ApplicationWindowHandle );
+
+							//	goingToAnotherWindowedMode = null;
+							//	EngineApp.CreatedWindowProcessResize();
 			//}
+
+							EngineApp.CreatedWindowApplicationIdle( false );
+						}
+
+						//!!!!
+						Thread.Sleep( 1 );
+						//if( IsIconic( EngineApp.ApplicationWindowHandle ) )
+						//Thread.Sleep( 1 );
+					}
+					else
+					{
+						//!!!!
+						Thread.Sleep( 1 );
+						//WaitMessage();
+					}
+				}
+			}
+
+
+			////while( true )
+			////{
+			////	MSG msg = new MSG();
+
+			////	if( PeekMessage( ref msg, IntPtr.Zero, 0, 0, PM_REMOVE ) )
+			////	{
+			////		if( msg.message == WM_QUIT )
+			////			break;
+
+			////		TranslateMessage( ref msg );
+			////		DispatchMessage( ref msg );
+
+			////		continue;
+			////	}
+			////	else
+			////	{
+			////		if( EngineApp.NeedExit )
+			////			break;
+
+			////		if( IsAllowApplicationIdle() )
+			////		{
+			////			if( EngineApp.RenderVideoToFileData == null )
+			////				EngineApp.UpdateEngineTime();
+			////			double time = EngineApp.EngineTime;
+			////			bool needSleep = EngineApp.MaxFPS != 0 && time < maxFPSLastRenderTime + 1.0f / EngineApp.MaxFPS;
+
+			////			if( needSleep )
+			////			{
+			////				Thread.Sleep( 1 );
+			////			}
+			////			else
+			////			{
+			////				maxFPSLastRenderTime = time;
+
+			////				//finish switching to windowed mode
+			////				if( goingToWindowedMode )
+			////				{
+			////					SetWindowBorderStyle( PlatformFunctionality.WindowBorderStyle.Sizeable );
+			////					//!!!!было .VideoMode
+			////					Vector2I pos = ( GetScreenSize() - EngineApp.FullscreenSize ) / 2;
+			////					//!!!!было .VideoMode
+			////					Vector2I size = EngineApp.FullscreenSize - new Vector2I( 1, 1 );
+			////					SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, pos.X, pos.Y, size.X, size.Y, 0 );
+			////					goingToWindowedMode = false;
+			////					EngineApp.CreatedWindowProcessResize();
+			////				}
+
+			////				//finish switching to fullscreen mode
+			////				if( goingToFullScreenMode )
+			////				{
+			////					bool topMost = !Debugger.IsAttached;
+			////					SetWindowPos( EngineApp.ApplicationWindowHandle, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0,
+			////						EngineApp.FullscreenSize.X, EngineApp.FullscreenSize.Y, 0 );
+			////					goingToFullScreenMode = false;
+			////					EngineApp.CreatedWindowProcessResize();
+			////				}
+
+			////				EngineApp.CreatedWindowApplicationIdle( false );
+			////			}
+			////		}
+			////		else
+			////			WaitMessage();
+			////	}
+			////}
 		}
 
 		static bool IsAllowApplicationIdle()

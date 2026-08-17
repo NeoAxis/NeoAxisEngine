@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Threading;
 
-namespace NeoAxis.CloudServer
+namespace NeoAxis.Cloud
 {
 	/// <summary>
 	/// Utility class for the server app.

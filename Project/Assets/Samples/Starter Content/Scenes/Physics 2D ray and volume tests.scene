@@ -1,4 +1,4 @@
-// Made with NeoAxis Engine 2026.1.
+// Made with NeoAxis Engine 2026.2.
 
 .component NeoAxis.Scene
 {
@@ -373,7 +373,7 @@
 					Value
 					{
 						Length = 6144
-						.elements = "UEsDBBQAAAAIADu3vFxGs7No3AMAAAAYAAAEAAAAZmlsZa2YTUgVURTHLyi8cmNiRkb0+cYgDaIEJZ533sJFUVAGZR9EYAq1kFq0a9GIKD6hFsGTzKTQGVIC92VNtUgrUSizUkFzoy40eAjSpoxzz3ycCaF7Hg3M0zfv/e7/N2fuPTO6XDHrPp+acIUQtsDNEsIycfeOCOtVeIx+ZpmT12WWvCVhzIaVjJtKXcgyPxnhb84dcRq3Njuh67/8kxF/Ho/+Qlgu7kLw+Wj+h5NN9pOWWk1/zO9//z1R17Oq6sfjhXeNQ38eD/lJGCM4f6j2/LY8hn/SpP483vcHChxw088HPprfOTO2dyUvpumP+YXvHstUakrVn8er2plojf48Hv0pD79/WS1n+CdN6s/jfX81D4P66+cDH83v6drfWz5eqemP+Q0rGXmuclbVn8f7fSz05/HoL0TIQ/1aNpUx/FX/Cvx5vO+v5mFQf/184KP981J7zCluOxrn9E+6/nk89o+O0WF3erIoAfcfHg/VEiblfx2od9RR7fuXXztcfzwe/Wnv4fPRfHSH1+DaeofWu//6+er7wfVHQIf3+0fYO70wRr7vH5L6+eAPPGx/O3D8cYToqy7/P/LhPLLx9/tH1Bzfcf2ROpEb3wf72tptnec3qD18L/Dn8ehf1pUvH+3IUf2Xz0fzYSLcO9Rs6M3/oH7eM4iqAYOHGidN6s/PFxH+TE1bfNfgAsNfzb/An8ej/+LP+7Io3fdSCMvm89H+Od9+1RkYabE15w8UPHCHNzwe139/etF9W90IvcDm8ZBoScpf69vO7P/h3IfReDz6e/c/8M+Cj+bDGLjprH8/32foTx2ezj01FhlAh1fuXu9Afsu3YwbseuvX58NYHh/4l3yt3aPmD5+PnveDxJjy15z/qn/S/sHjoX+p9RP483jFQv0DPqykzvVDnvrzePQfmb8iW2MLVeT/B7AuoS9493YYdb3nF+AtSfMvLl82+go6bX1emLT/8XjlZ1J/Ho/+lP/xNGbU58ww/C1J/Xk8+i9VzMrPEwNV0P/5fLR/NnXvdKqLcxnP/2oNw9//qv/xeFz/B6cm3KXSj2r98nicrZQ/axy3N+zerNl//NkOz27oz+PR/3RpjVvXs6r8+bxaG0H+Q6vEGLr1SbP+mE/XP4/H9U/9eTzWjPLjmTvG+RuHNeuPPPXn8eg/NJ1ObOzvhj5o83lV/6B/3h0sjb/InNL0x3y6/nk89g/qz+MhXwjK855fkKf+PD7sf3Nvnqn5z+eFoPkdmSIDbhb6/d+StP/xeHWPkpDv+/N4OH/09/newoKS/FZHc/4gT/15PPqnR4flb9kqhXht83kh/gBQSwECFAAUAAAACAA7t7xcRrOzaNwDAAAAGAAABAAAAAAAAAAAAAAAAAAAAAAAZmlsZVBLBQYAAAAAAQABADIAAAD+AwAAAAA="
+						.elements = "UEsDBBQAAAAIAFxRBl1Gs7No3AMAAAAYAAAEAAAAZmlsZa2YTUgVURTHLyi8cmNiRkb0+cYgDaIEJZ533sJFUVAGZR9EYAq1kFq0a9GIKD6hFsGTzKTQGVIC92VNtUgrUSizUkFzoy40eAjSpoxzz3ycCaF7Hg3M0zfv/e7/N2fuPTO6XDHrPp+acIUQtsDNEsIycfeOCOtVeIx+ZpmT12WWvCVhzIaVjJtKXcgyPxnhb84dcRq3Njuh67/8kxF/Ho/+Qlgu7kLw+Wj+h5NN9pOWWk1/zO9//z1R17Oq6sfjhXeNQ38eD/lJGCM4f6j2/LY8hn/SpP483vcHChxw088HPprfOTO2dyUvpumP+YXvHstUakrVn8er2plojf48Hv0pD79/WS1n+CdN6s/jfX81D4P66+cDH83v6drfWz5eqemP+Q0rGXmuclbVn8f7fSz05/HoL0TIQ/1aNpUx/FX/Cvx5vO+v5mFQf/184KP981J7zCluOxrn9E+6/nk89o+O0WF3erIoAfcfHg/VEiblfx2od9RR7fuXXztcfzwe/Wnv4fPRfHSH1+DaeofWu//6+er7wfVHQIf3+0fYO70wRr7vH5L6+eAPPGx/O3D8cYToqy7/P/LhPLLx9/tH1Bzfcf2ROpEb3wf72tptnec3qD18L/Dn8ehf1pUvH+3IUf2Xz0fzYSLcO9Rs6M3/oH7eM4iqAYOHGidN6s/PFxH+TE1bfNfgAsNfzb/An8ej/+LP+7Io3fdSCMvm89H+Od9+1RkYabE15w8UPHCHNzwe139/etF9W90IvcDm8ZBoScpf69vO7P/h3IfReDz6e/c/8M+Cj+bDGLjprH8/32foTx2ezj01FhlAh1fuXu9Afsu3YwbseuvX58NYHh/4l3yt3aPmD5+PnveDxJjy15z/qn/S/sHjoX+p9RP483jFQv0DPqykzvVDnvrzePQfmb8iW2MLVeT/B7AuoS9493YYdb3nF+AtSfMvLl82+go6bX1emLT/8XjlZ1J/Ho/+lP/xNGbU58ww/C1J/Xk8+i9VzMrPEwNV0P/5fLR/NnXvdKqLcxnP/2oNw9//qv/xeFz/B6cm3KXSj2r98nicrZQ/axy3N+zerNl//NkOz27oz+PR/3RpjVvXs6r8+bxaG0H+Q6vEGLr1SbP+mE/XP4/H9U/9eTzWjPLjmTvG+RuHNeuPPPXn8eg/NJ1ObOzvhj5o83lV/6B/3h0sjb/InNL0x3y6/nk89g/qz+MhXwjK855fkKf+PD7sf3Nvnqn5z+eFoPkdmSIDbhb6/d+StP/xeHWPkpDv+/N4OH/09/newoKS/FZHc/4gT/15PPqnR4flb9kqhXht83kh/gBQSwECFAAUAAAACABcUQZdRrOzaNwDAAAAGAAABAAAAAAAAAAAAAAAAAAAAAAAZmlsZVBLBQYAAAAAAQABADIAAAD+AwAAAAA="
 						.elementsZip = True
 					}
 				}
@@ -449,24 +449,32 @@
 	.component NeoAxis.Sensor2D
 	{
 		Name = Sensor 2D
-		Transform = "3.82162212988348 4.1305252321184 -0.499062771598304; -0.00211910071885122 -0.00000000000000003 0.211903008168941 0.977288403973513; 11.4069997890294 11.4069997890294 11.4069997890294"
+		Transform = "4.81550374600127 3.45543583371137 -0.499062771598304; -0.00211910071885122 -0.00000000000000003 0.211903008168941 0.977288403973513; 11.4069997890294 11.4069997890294 11.4069997890294"
 		SourceData = PhysicsObjects
 		Shape = Ray
 		DisplayObjects = True
 		Objects
 		{
-			Count = 3
+			Count = 1
 			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
 			{
-				GetByReference = "root:$Plane\\$Collision Body"
-			}
-			1 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
-			{
 				GetByReference = "root:$Rigid Body 2D 3"
 			}
-			2 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
+		}
+	}
+	.component NeoAxis.Sensor2D
+	{
+		Name = Sensor 2D 3
+		Transform = "2.94025547177087 11.4814985251653 -0.499062771598304; -0.00145634187340315 0.00153936876816713 -0.564297870334584 0.825568545275312; 6.95548773690759 6.95548773690759 6.95548773690759"
+		SourceData = PhysicsObjects
+		Shape = Ray
+		DisplayObjects = True
+		Objects
+		{
+			Count = 1
+			0 "NeoAxis.Reference<NeoAxis.ObjectInSpace>"
 			{
-				GetByReference = "root:$Rigid Body 2D 3"
+				GetByReference = "root:$Sprite 16\\$Collision Body"
 			}
 		}
 	}

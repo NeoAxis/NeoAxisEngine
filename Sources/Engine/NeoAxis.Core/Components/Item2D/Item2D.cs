@@ -10,7 +10,7 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Item 2D\Item 2D", 23010 )]
 	[NewObjectDefaultName( "Item 2D" )]
-	public class Item2D : Sprite, Item3DInterface, InteractiveObjectInterface
+	public class Item2D : Sprite, ItemInterface, InteractiveObjectInterface
 	{
 		Item2DType typeCached = new Item2DType();
 
@@ -149,6 +149,27 @@ namespace NeoAxis
 
 		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
+			var keyDown = message as InputMessageKeyDown;
+			if( keyDown != null )
+			{
+				if( keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2 )
+				{
+					//process an interaction context to take the object by a character
+					var character = gameMode.ObjectControlledByPlayer.Value as Character2D;
+					if( character != null && character.ItemCanTake( gameMode, this ) )
+					{
+						if( NetworkIsClient )
+							character.ItemTakeAndActivateClient( this );
+						else
+						{
+							if( character.ItemTake( gameMode, this ) )
+								character.ItemActivate( gameMode, this );
+						}
+						return true;
+					}
+				}
+			}
+
 			var mouseDown = message as InputMessageMouseButtonDown;
 			if( mouseDown != null )
 			{

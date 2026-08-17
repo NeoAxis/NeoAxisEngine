@@ -24,6 +24,8 @@ namespace NeoAxis
 			Release,
 		}
 
+		//!!!!? Release by default
+
 		/// <summary>
 		/// The build configuration. Release enables AOT compilation.
 		/// </summary>
@@ -363,6 +365,16 @@ namespace NeoAxis
 				if( File.Exists( p1 ) )
 				{
 					if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, false, out var error, out _ ) )
+						throw new Exception( error );
+				}
+			}
+
+			{
+				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player.Web\NeoAxis.Player.Web.csproj" );
+				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
+				if( File.Exists( p1 ) )
+				{
+					if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, true, out var error, out _ ) )
 						throw new Exception( error );
 				}
 			}

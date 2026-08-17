@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using NeoAxis;
 
-namespace NeoAxis.CloudServer
+namespace NeoAxis.Cloud
 {
 	public class RepositoryIndexServer_ReadOnly
 	{

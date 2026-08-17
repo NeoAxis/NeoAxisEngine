@@ -15,7 +15,7 @@ namespace NeoAxis
 	[EditorControl( typeof( Item3DTypeEditor ) )]
 	[Preview( typeof( Item3DTypePreview ) )]
 	[PreviewImage( typeof( Item3DTypePreviewImage ) )]
-	public class Item3DType : Component, Item3DTypeInterface
+	public class Item3DType : Component, ItemTypeInterface
 	{
 		int version;
 

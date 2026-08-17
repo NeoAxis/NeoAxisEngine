@@ -883,6 +883,27 @@ namespace NeoAxis
 		public override bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
 			//entry to dialogue flow
+			var keyDown = message as InputMessageKeyDown;
+			if( keyDown != null && AllowInteract )
+			{
+				if( keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2 )
+				{
+					if( NetworkIsClient )
+					{
+						var m = BeginNetworkMessageToServer( "ObjectInteractionInputMessage_InteractByClick" );
+						if( m != null )
+							m.End();
+						return true;
+					}
+					else
+					{
+						if( StartDialogueFlow( gameMode, gameMode.ObjectControlledByPlayer, null ) )
+							return true;
+					}
+				}
+			}
+
+			//entry to dialogue flow
 			var buttonDown = message as InputMessageMouseButtonDown;
 			if( buttonDown != null && AllowInteract )
 			{
@@ -891,10 +912,8 @@ namespace NeoAxis
 					//var writer = 
 					var m = BeginNetworkMessageToServer( "ObjectInteractionInputMessage_InteractByClick" );
 					if( m != null )
-					{
-						//writer.Write( (byte)buttonDown.Button );
 						m.End();
-					}
+					return true;
 				}
 				else
 				{
@@ -932,20 +951,19 @@ namespace NeoAxis
 				//!!!!server security verifications. characters must be close. what else
 
 
-				//var button = (EMouseButtons)reader.ReadByte();
 				if( !reader.Complete() )
 					return false;
 
 				var scene = ParentRoot as Scene;
 				if( scene != null )
 				{
-					var gameMode = (GameMode)scene.GetGameMode();
+					var gameMode = scene.GetGameMode();
 					if( gameMode != null )
 					{
-						var networkLogic = NetworkLogicUtility.GetNetworkLogic( this );
-						if( networkLogic != null )
+						var gameLogic = scene.GetGameLogic();
+						if( gameLogic != null )
 						{
-							var secondParticipant = networkLogic.ServerGetObjectControlledByUser( client.User, true );
+							var secondParticipant = gameLogic.Server_GetObjectControlledByUser( client.User );
 							if( secondParticipant != null )
 								StartDialogueFlow( gameMode, secondParticipant, client );
 						}
@@ -1239,14 +1257,20 @@ namespace NeoAxis
 							{
 								var range = weaponType.Mode1FiringDistance.Value;
 								if( distance > range.Minimum && distance < range.Maximum )
-									weapon.FiringBegin( 1, 0 );
+								{
+									var gameLogic = Character?.ParentScene?.GetGameLogic();
+									weapon.FiringBegin( 1, gameLogic?.Single_GetUserByObjectControlled( Character )?.UserID ?? -1 );
+								}
 							}
 
 							if( weaponType.Mode2Enabled )
 							{
 								var range = weaponType.Mode2FiringDistance.Value;
 								if( distance > range.Minimum && distance < range.Maximum )
-									weapon.FiringBegin( 2, 0 );
+								{
+									var gameLogic = Character?.ParentScene?.GetGameLogic();
+									weapon.FiringBegin( 2, gameLogic?.Single_GetUserByObjectControlled( Character )?.UserID ?? -1 );
+								}
 							}
 						}
 					}

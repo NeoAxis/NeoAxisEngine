@@ -103,7 +103,7 @@ namespace NeoAxis
 			//}
 
 			//third person camera
-			if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+			if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPersonAutoRotation )
 			{
 				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 				var cameraSettings = viewport.CameraSettings;
@@ -203,7 +203,7 @@ namespace NeoAxis
 					}
 				}
 
-				if( InputEnabled && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
+				if( InputEnabled && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None || gameMode.GetCameraManagementOfCurrentObject() != null ) )
 				{
 					//key down
 					var keyDown = message as InputMessageKeyDown;
@@ -351,7 +351,10 @@ namespace NeoAxis
 								if( NetworkIsClient )
 									weapon.FiringBeginClient( mode );
 								else
-									weapon.FiringBegin( mode, 0 );
+								{
+									var gameLogic = vehicle.ParentScene?.GetGameLogic();
+									weapon.FiringBegin( mode, gameLogic?.Single_GetUserByObjectControlled( vehicle )?.UserID ?? -1 );
+								}
 							}
 						}
 
@@ -416,7 +419,7 @@ namespace NeoAxis
 				var scene = ParentRoot as Scene;
 				var gameMode = (GameMode)scene?.GetGameMode();
 
-				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
+				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None || gameMode.GetCameraManagementOfCurrentObject() != null ) )
 				{
 					if( IsKeyPressed( gameMode.KeyForward1 ) || IsKeyPressed( gameMode.KeyForward2 ) )
 						throttle += 1;
@@ -470,7 +473,7 @@ namespace NeoAxis
 					vehicle.SetMotorOn();
 				}
 
-				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
+				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None || gameMode.GetCameraManagementOfCurrentObject() != null ) )
 				{
 					//update turn to direction and weapon target
 					UpdateTurnToDirectionAndLookToToPosition( gameMode );//, null );
@@ -490,7 +493,10 @@ namespace NeoAxis
 								if( NetworkIsClient )
 									weapon.FiringBeginClient( 1 );
 								else
-									weapon.FiringBegin( 1, 0 );
+								{
+									var gameLogic = vehicle.ParentScene?.GetGameLogic();
+									weapon.FiringBegin( 1, gameLogic?.Single_GetUserByObjectControlled( vehicle )?.UserID ?? -1 );
+								}
 							}
 						}
 
@@ -520,7 +526,10 @@ namespace NeoAxis
 								if( NetworkIsClient )
 									weapon.FiringBeginClient( 2 );
 								else
-									weapon.FiringBegin( 2, 0 );
+								{
+									var gameLogic = vehicle.ParentScene?.GetGameLogic();
+									weapon.FiringBegin( 2, gameLogic?.Single_GetUserByObjectControlled( vehicle )?.UserID ?? -1 );
+								}
 							}
 						}
 
@@ -568,8 +577,8 @@ namespace NeoAxis
 			if( vehicle != null )
 			{
 				//security check the object is controlled by the player
-				var networkLogic = NetworkLogicUtility.GetNetworkLogic( vehicle );
-				if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == vehicle )
+				var gameLogic = vehicle.ParentScene?.GetGameLogic();
+				if( gameLogic != null && gameLogic.Server_GetObjectControlledByUser( client.User ) == vehicle )
 				{
 					if( message == "UpdateObjectControlVehicle" )
 					{
@@ -607,7 +616,7 @@ namespace NeoAxis
 						{
 							vehicle.RemoveObjectFromSeat( seatIndex, true );
 
-							networkLogic.ServerChangeObjectControlled( client.User, obj );
+							gameLogic.Server_ChangeObjectControlled( client.User, obj );
 
 							//!!!!
 							//if( !string.IsNullOrEmpty( reason ) )

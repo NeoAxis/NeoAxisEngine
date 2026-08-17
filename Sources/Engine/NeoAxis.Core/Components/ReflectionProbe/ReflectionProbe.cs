@@ -560,16 +560,21 @@ namespace NeoAxis
 
 			if( !EnabledInHierarchy )
 				RealTime_DestroyRenderTarget();
-		}
 
-		protected override void OnEnabled()
+			if( EnabledInHierarchy )
 		{
-			base.OnEnabled();
-
 			processedCubemapNeedUpdate = true;
-
 			ServerSendOwnedFileNameOfComponent( null );
 		}
+		}
+
+		//protected override void OnEnabled()
+		//{
+		//	base.OnEnabled();
+
+		//	processedCubemapNeedUpdate = true;
+		//	ServerSendOwnedFileNameOfComponent( null );
+		//}
 
 		protected override void OnSpaceBoundsUpdate( ref SpaceBounds newBounds )
 		{
@@ -594,7 +599,7 @@ namespace NeoAxis
 		{
 			get
 			{
-				var tr = TransformV;
+				var tr = GetTransformInterpolated();// TransformV;
 				if( Global )
 					return new Sphere( tr.Position, 100000 );
 				else
@@ -877,7 +882,7 @@ namespace NeoAxis
 				////var image2D = new ImageUtility.Image2D( hdr ? PixelFormat.Float32RGB : PixelFormat.R8G8B8, new Vector2I( size * 4, size * 3 ) );
 				////var image2D = new ImageUtility.Image2D( PixelFormat.Float32RGB, new Vector2I( size * 4, size * 3 ) );
 
-				var position = Transform.Value.Position;
+				var position = GetTransformInterpolated().Position;// Transform.Value.Position;
 
 				for( int face = 0; face < 6; face++ )
 				{
@@ -1256,12 +1261,12 @@ namespace NeoAxis
 						result = cameraSettings.Position;
 				}
 				else
-					result = Transform.Value.Position;
+					result = GetTransformInterpolated().Position;// Transform.Value.Position;
 
 				result += PositionDependingCameraOffset;
 			}
 			else
-				result = Transform.Value.Position;
+				result = GetTransformInterpolated().Position;// Transform.Value.Position;
 
 			return result;
 		}

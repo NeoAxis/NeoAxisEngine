@@ -199,7 +199,7 @@ namespace NeoAxis.Networking
 		{
 			public ServerService Owner;
 			public int MessageID;
-			public List<ServerNode.Client> Recepients = new List<ServerNode.Client>();
+			public List<ServerNode.Client> Recipients = new List<ServerNode.Client>();
 			public ArrayDataWriter Writer = new ArrayDataWriter( 128 );
 
 			/////////////////////
@@ -211,11 +211,11 @@ namespace NeoAxis.Networking
 				var serverUdp = Owner.Owner?.udpListener;
 				if( serverWebSocket != null || serverUdp != null )
 				{
-					for( int n = 0; n < Recepients.Count; n++ )
+					for( int n = 0; n < Recipients.Count; n++ )
 					{
-						var client = Recepients[ n ];
+						var client = Recipients[ n ];
 
-						if( client.Status != NetworkStatus.Disconnected ) //can send when Connecting status, to send before Connected status
+						if( client != null && client.Status != NetworkStatus.Disconnected ) //can send when Connecting status, to send before Connected status
 						{
 							var writer = Writer;
 
@@ -259,7 +259,7 @@ namespace NeoAxis.Networking
 
 			m.Owner = this;
 			m.MessageID = messageID;
-			m.Recepients.Clear();
+			m.Recipients.Clear();
 			m.Writer.Reset();
 			m.Writer.Write( (byte)Identifier );
 			m.Writer.Write( (byte)messageID );
@@ -281,7 +281,7 @@ namespace NeoAxis.Networking
 
 			var m = BeginMessage( messageID );
 			for( int n = 0; n < recipients.Count; n++ )
-				m.Recepients.Add( recipients[ n ] );
+				m.Recipients.Add( recipients[ n ] );
 			return m;
 		}
 
@@ -298,7 +298,7 @@ namespace NeoAxis.Networking
 				Log.Fatal( "ServerService: BeginMessage: recipient = null." );
 
 			var m = BeginMessage( messageID );
-			m.Recepients.Add( recipient );
+			m.Recipients.Add( recipient );
 			return m;
 		}
 

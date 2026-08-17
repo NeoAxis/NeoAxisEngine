@@ -67,7 +67,19 @@ setModuleImports("main.js", {
 			Meta: 8
 		};
 
-
+		//set system settings
+		let mobileDevice = false;
+		if (navigator.userAgentData)
+			mobileDevice = navigator.userAgentData.mobile;
+		if (!mobileDevice)
+		{
+			const ua = navigator.userAgent;
+			const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+			const isAndroidTabletDesktopMode = /Linux/i.test(navigator.platform) && navigator.maxTouchPoints > 1;
+			const isIPadDesktopMode = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+			mobileDevice = isMobileUA || isAndroidTabletDesktopMode || isIPadDesktopMode;
+		}
+		interop.SetSystemSettings(mobileDevice);
 
 		let currentWidth = 0;
 		let currentHeight = 0;
@@ -324,7 +336,6 @@ setModuleImports("main.js", {
 			console.warn("The player runs inside an iframe. Pointer lock needs allow=\"pointer-lock\" on the iframe tag.");
 		const toCanvasPixels = (value) => value * (window.devicePixelRatio || 1.0);
 
-		//CHANGED end
 
 		const mouseMove = (e) =>
 		{
@@ -377,57 +388,65 @@ setModuleImports("main.js", {
 			return false;
 		}
 
-		const shouldIgnore = (e) =>
+		let activeTouchId = null;
+
+		const findActiveTouch = (e) =>
 		{
-			return e.touches.length > 1 || e.type == "touchend" && e.touches.length > 0;
+			if (activeTouchId === null)
+				return null;
+
+			const touches = e.changedTouches;
+			for (let i = 0; i < touches.length; i++)
+		{
+				if (touches[i].identifier === activeTouchId)
+					return touches[i];
+			}
+			return null;
 		}
 
 		const touchStart = (e) =>
 		{
-			if (shouldIgnore(e))
+			e.preventDefault();
+
+			if (activeTouchId !== null)
 				return;
 
-			const touches = e.changedTouches;
-			for (let i = 0; i < touches.length; i++)
-			{
-				const touch = touches[i];
+			const touch = e.changedTouches[0];
+			if (!touch)
+				return;
+
+			activeTouchId = touch.identifier;
+			canvas.focus();
+			invalidateCanvasRect();
+
 				const position = getCanvasPosition(touch.clientX, touch.clientY);
 				interop.OnTouchStart(touch.identifier, position.x, position.y, getEventModifiers(e));
 			}
-		}
 
 		const touchMove = (e) =>
 		{
-			if (shouldIgnore(e))
+			e.preventDefault();
+
+			const touch = findActiveTouch(e);
+			if (touch === null)
 				return;
 
-			var bcr = e.target.getBoundingClientRect();
-			var devicePixelRatio = window.devicePixelRatio || 1.0;
-			var touches = e.changedTouches;
-			for (var i in touches.length)
-			{
-				var touch = e.changedTouches[i];
-				var x = (touch.clientX - bcr.x) * devicePixelRatio;
-				var y = (touch.clientY - bcr.y) * devicePixelRatio;
-				interop.OnTouchMove(touch.identifier, x, y);
-			}
+			const position = getCanvasPosition(touch.clientX, touch.clientY);
+			interop.OnTouchMove(touch.identifier, position.x, position.y);
 		}
 
 		const touchEnd = (e) =>
 		{
-			if (shouldIgnore(e))
+			e.preventDefault();
+
+			const touch = findActiveTouch(e);
+			if (touch === null)
 				return;
 
-			var bcr = e.target.getBoundingClientRect();
-			var devicePixelRatio = window.devicePixelRatio || 1.0;
-			var touches = e.changedTouches;
-			for (var i in touches.length)
-			{
-				var touch = e.changedTouches[i];
-				var x = (touch.clientX - bcr.x) * devicePixelRatio;
-				var y = (touch.clientY - bcr.y) * devicePixelRatio;
-				interop.OnTouchEnd(touch.identifier, x, y, getEventModifiers(e));
-			}
+			activeTouchId = null;
+
+			const position = getCanvasPosition(touch.clientX, touch.clientY);
+			interop.OnTouchEnd(touch.identifier, position.x, position.y, getEventModifiers(e));
 		}
 
 		canvas.addEventListener("contextmenu", (e) => e.preventDefault(), false);
@@ -438,10 +457,16 @@ setModuleImports("main.js", {
 		canvas.addEventListener("mouseup", mouseUp, false);
 		canvas.addEventListener("dblclick", mouseDoubleClick, false);
 		canvas.addEventListener("wheel", mouseWheel, { capture: false, passive: false }); //passive: true
-		//!!!!passive
-		canvas.addEventListener("touchstart", touchStart, { capture: false, passive: true });
-		canvas.addEventListener("touchmove", touchMove, { capture: false, passive: true });
-		canvas.addEventListener("touchend", touchEnd, { capture: false, passive: true });
+
+		canvas.addEventListener("touchstart", touchStart, { capture: false, passive: false });
+		canvas.addEventListener("touchmove", touchMove, { capture: false, passive: false });
+		canvas.addEventListener("touchend", touchEnd, { capture: false, passive: false });
+		canvas.addEventListener("touchcancel", touchEnd, { capture: false, passive: false });
+
+		canvas.style.touchAction = "none";
+		canvas.style.userSelect = "none";
+		canvas.style.webkitUserSelect = "none";
+		canvas.style.webkitTouchCallout = "none";
 		checkCanvasResize();
 
 		canvas.tabIndex = 1000;

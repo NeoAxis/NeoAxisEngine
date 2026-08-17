@@ -11,7 +11,7 @@ namespace NeoAxis
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Weapon\Weapon", 22101 )]
 	[NewObjectDefaultName( "Weapon" )]
-	public class Weapon : MeshInSpace, Item3DInterface, InteractiveObjectInterface
+	public class Weapon : MeshInSpace, ItemInterface, InteractiveObjectInterface
 	{
 		WeaponType typeCached = new WeaponType();
 
@@ -303,7 +303,7 @@ namespace NeoAxis
 				obj.MergeSimulationSteps = 1;
 
 				var totalFiringTime = mode == 1 ? TypeCached.Mode1FiringTotalTime.Value : TypeCached.Mode2FiringTotalTime.Value;
-				obj.RemainingLifetime = totalFiringTime * 2;
+				obj.RemainingLifetime = Math.Max( totalFiringTime * 2, Time.SimulationDelta * 1.5 );
 
 				obj.Transform = new Transform( transform.Position, transform.Rotation, obj.TransformV.Scale );
 
@@ -825,8 +825,8 @@ namespace NeoAxis
 			if( Parent != null )
 			{
 				//security check the object is controlled by the player
-				var networkLogic = NetworkLogicUtility.GetNetworkLogic( this );
-				if( networkLogic != null && GetAllParents().Contains( networkLogic.ServerGetObjectControlledByUser( client.User, true ) ) )
+				var gameLogic = ParentScene?.GetGameLogic();//  GameLogicUtility.GetGameLogic( this );
+				if( gameLogic != null && GetAllParents().Contains( gameLogic.Server_GetObjectControlledByUser( client.User ) ) )
 				{
 					if( message == "FiringBeginFromClient" )
 					{

@@ -1,11 +1,13 @@
-// Made with NeoAxis Engine 2024.1.
+// Made with NeoAxis Engine 2026.2.
 
 .component NeoAxis.WeaponType
 {
 	EditorCameraTransform = "0.374120197068082 -0.856431777306879 0.115118709460947; -0.069926174798065 0.0496493829110798 0.812369125003964 0.576802976409583; 1 1 1"
 	Mode1BulletTransform = "0.39 0 0.095; 0 0 0 1; 1 1 1"
+	Mode1FiringDistance = 0 50
 	Mode1MeleeCollisionVolume = 0 0 0 0
 	Mode2BulletTransform = "0.38 0 0.03; 0 0 0 1; 1 1 1"
+	Mode2FiringDistance = 5 50
 	Mode2MeleeCollisionVolume = 0 0 0 0
 	PistolGripBottom = -0.16 0 -0.07
 	PistolGripTop = -0.12 0 -0.02

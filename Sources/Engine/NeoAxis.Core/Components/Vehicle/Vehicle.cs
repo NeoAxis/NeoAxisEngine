@@ -1511,7 +1511,7 @@ namespace NeoAxis
 
 		public virtual void GetFirstPersonCameraPosition( bool useEyesPositionOfModel, out Vector3 position, out Vector3 forward, out Vector3 up )
 		{
-			var vehicleTransform = TransformV;
+			var vehicleTransform = GetTransformInterpolated();
 
 			position = vehicleTransform.Position;
 			forward = vehicleTransform.Rotation.GetForward();
@@ -2896,14 +2896,14 @@ namespace NeoAxis
 				var obj = ParentRoot.HierarchyController.GetComponentByNetworkID( characterNetworkID ) as ObjectInSpace;
 				if( obj != null )
 				{
-					var networkLogic = NetworkLogicUtility.GetNetworkLogic( obj );
-					if( networkLogic != null )
+					var gameLogic = ParentScene?.GetGameLogic();
+					if( gameLogic != null )
 					{
-						var gameMode = ParentScene?.GetComponent<GameMode>();
+						var gameMode = ParentScene?.GetGameMode();
 						if( gameMode != null )
 						{
 							PutObjectToSeat( gameMode, seatIndex, obj );
-							networkLogic.ServerChangeObjectControlled( client.User, this );
+							gameLogic.Server_ChangeObjectControlled( client.User, this );
 						}
 					}
 				}
@@ -2936,6 +2936,11 @@ namespace NeoAxis
 				var updated = false;
 				UpdateObjectOnSeat( seatIndex, ref updated );
 			}
+
+			if( obj is MeshInSpace meshInSpace )
+				meshInSpace.NotifyInstantMovement();
+			else
+				obj.TransformInterpolatedReset();
 
 			//remainingTimeToUpdateObjectsOnSeat = 0;
 			fullyDisabledRemainingTime = 0;
@@ -2977,6 +2982,11 @@ namespace NeoAxis
 							character.SetTransformAndTurnToDirectionInstantly( tr );
 							character.NotifyInstantMovement();
 						}
+
+						if( objectOnSeat is MeshInSpace meshInSpace )
+							meshInSpace.NotifyInstantMovement();
+						else
+							objectOnSeat.TransformInterpolatedReset();
 					}
 
 					ObjectsOnSeats[ seatIndex ] = null;
@@ -4052,8 +4062,8 @@ namespace NeoAxis
 			if( randomTimeAddForTurnSignals == 0 )
 				randomTimeAddForTurnSignals = Scene.GetRandomGuaranteed( ParentScene ).Next( 100.0 );
 
-			var contoller = ParentRoot.HierarchyController;
-			var time = contoller != null ? contoller.SimulationTime : EngineApp.EngineTime;
+			var controller = ParentRoot.HierarchyController;
+			var time = controller != null ? controller.SimulationTime : EngineApp.EngineTime;
 			time += randomTimeAddForTurnSignals;
 
 			//!!!!configure settings

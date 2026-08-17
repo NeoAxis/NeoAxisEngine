@@ -149,7 +149,7 @@ namespace NeoAxis
 			if( EnabledInHierarchy && VisibleInHierarchy && mode == GetRenderSceneDataMode.InsideFrustum )
 			{
 				var cameraSettings = context.Owner.CameraSettings;
-				var tr = Transform.Value;
+				var tr = GetTransformInterpolated();// Transform.Value;
 
 				var boundingSize = (float)SpaceBounds.BoundingSphere.Radius * 2;
 				var visibilityDistance = context.GetVisibilityDistanceByObjectSize( boundingSize ) * VisibilityDistanceFactor;

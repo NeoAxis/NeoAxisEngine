@@ -11,6 +11,7 @@ namespace NeoAxis
 	public static class Time
 	{
 		static float simulationDeltaCached;
+		static float simulationStepsPerSecondCached;
 
 		/// <summary>
 		/// Gets the time step of the simulation.
@@ -22,6 +23,19 @@ namespace NeoAxis
 				if( simulationDeltaCached == 0 )
 					simulationDeltaCached = ProjectSettings.Get.General.SimulationStepsPerSecondInv;
 				return simulationDeltaCached;
+			}
+		}
+
+		/// <summary>
+		/// Gets the time step of the simulation.
+		/// </summary>
+		public static float SimulationStepsPerSecond
+		{
+			get
+			{
+				if( simulationStepsPerSecondCached == 0 )
+					simulationStepsPerSecondCached = (float)ProjectSettings.Get.General.SimulationStepsPerSecond;
+				return simulationStepsPerSecondCached;
 			}
 		}
 

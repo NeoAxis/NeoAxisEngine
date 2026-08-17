@@ -596,6 +596,86 @@ enum class PhysicsAxisMode
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#pragma pack(push, 1)
+struct SixDOFConstraintSettingsNative
+{
+	int/*bool*/ transformInWorldSpace;
+
+	Vector3D positionA;
+	Vector3 axisXA;
+	Vector3 axisYA;
+	Vector3D positionB;
+	Vector3 axisXB;
+	Vector3 axisYB;
+
+	PhysicsAxisMode linearAxisX;
+	Vector2 linearLimitX;
+	PhysicsAxisMode linearAxisY;
+	Vector2 linearLimitY;
+	PhysicsAxisMode linearAxisZ;
+	Vector2 linearLimitZ;
+
+	PhysicsAxisMode angularAxisX;
+	Vector2 angularLimitX;
+	PhysicsAxisMode angularAxisY;
+	Vector2 angularLimitY;
+	PhysicsAxisMode angularAxisZ;
+	Vector2 angularLimitZ;
+
+	float linearXFriction;
+	float linearYFriction;
+	float linearZFriction;
+	float angularXFriction;
+	float angularYFriction;
+	float angularZFriction;
+};
+#pragma pack(pop)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#pragma pack(push, 1)
+struct VehicleConstraintSettingsNative
+{
+	int wheelCount;
+	VehicleWheelSettings* wheelsSettings;
+	float frontWheelAntiRollBarStiffness;
+	float rearWheelAntiRollBarStiffness;
+	float maxPitchRollAngle;
+	float engineMaxTorque;
+	float engineMinRPM;
+	float engineMaxRPM;
+	int/*bool*/ transmissionAuto;
+	int transmissionGearRatiosCount;
+	double* transmissionGearRatios;
+	int transmissionReverseGearRatiosCount;
+	double* transmissionReverseGearRatios;
+	float transmissionSwitchTime;
+	float transmissionClutchReleaseTime;
+	float transmissionSwitchLatency;
+	float transmissionShiftUpRPM;
+	float transmissionShiftDownRPM;
+	float transmissionClutchStrength;
+	float maxSlopeAngleInRadians;
+	int/*bool*/ tracks;
+	int antiRollbarsCount;
+	float* antiRollbars;
+	float differentialLimitedSlipRatio;
+	int engineNormalizedTorqueCount;
+	float* engineNormalizedTorque;
+	float engineInertia;
+	float engineAngularDamping;
+	int differentialsCount;
+	float* differentials;
+	int trackDrivenWheel;
+	float trackInertia;
+	float trackAngularDamping;
+	float trackMaxBrakeTorque;
+	float trackDifferentialRatio;
+};
+#pragma pack(pop)
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 struct DebugDrawLineItem
 {
 	Vector3D From;
@@ -855,6 +935,18 @@ TempAllocatorMalloc tempAllocator;
 
 EXPORT PhysicsSystemItem* JCreateSystem(int maxBodies, int maxBodyPairs, int maxContactConstraints)
 {
+	if (sizeof(SixDOFConstraintSettingsNative) != 196)
+		Fatal("JCreateSystem: sizeof(SixDOFConstraintSettingsNative) != 196.");
+	if (sizeof(void*) == 8)
+	{
+		if (sizeof(VehicleConstraintSettingsNative) != 164)
+			Fatal("JCreateSystem: sizeof(VehicleConstraintSettingsNative) != 164.");
+	}
+	else
+	{
+		if (sizeof(VehicleConstraintSettingsNative) != 140)
+			Fatal("JCreateSystem: sizeof(VehicleConstraintSettingsNative) != 140.");
+	}
 	if (sizeof(RayTestResultNative) != 56)
 		Fatal("JCreateSystem: sizeof(RayTestResultNative) != 56.");
 	if (sizeof(VolumeTestResultNative) != 12)
@@ -883,6 +975,8 @@ EXPORT PhysicsSystemItem* JCreateSystem(int maxBodies, int maxBodyPairs, int max
 		Fatal("JCreateSystem: sizeof(VehicleWheelSettings) != 5 * 4.");
 	if (sizeof(ContactItem) != 224)
 		Fatal("JCreateSystem: sizeof(ContactItem) != 224.");
+	if (sizeof(SixDOFConstraintSettingsNative) != 196)
+		Fatal("JCreateSystem: sizeof(SixDOFConstraintSettingsNative) != 196.");
 
 	if (maxBodies < 4)
 		maxBodies = 4;
@@ -2991,107 +3085,67 @@ void MyContactListener::OnContactRemoved(const SubShapeIDPair& inSubShapePair)
 {
 }
 
-EXPORT ConstraintItem* JCreateConstraintSixDOF(PhysicsSystemItem* system, BodyItem* bodyA, BodyItem* bodyB, bool transformInWorldSpace, Vector3D& positionA, Vector3& axisXA, Vector3& axisYA, Vector3D& positionB, Vector3& axisXB, Vector3& axisYB, PhysicsAxisMode linearAxisX, Vector2& linearLimitX, PhysicsAxisMode linearAxisY, Vector2& linearLimitY, PhysicsAxisMode linearAxisZ, Vector2& linearLimitZ, PhysicsAxisMode angularAxisX, Vector2& angularLimitX, PhysicsAxisMode angularAxisY, Vector2& angularLimitY, PhysicsAxisMode angularAxisZ, Vector2& angularLimitZ, float linearXFriction, float linearYFriction, float linearZFriction, float angularXFriction, float angularYFriction, float angularZFriction)
+EXPORT ConstraintItem* JCreateConstraintSixDOF(PhysicsSystemItem* system, BodyItem* bodyA, BodyItem* bodyB, SixDOFConstraintSettingsNative& n)
 {
 	SixDOFConstraintSettings settings;
 	settings.SetEmbedded();
 
-	settings.mSpace = transformInWorldSpace ? EConstraintSpace::WorldSpace : EConstraintSpace::LocalToBodyCOM;
-	settings.mPosition1 = ConvertToRVec3(positionA);
-	settings.mAxisX1 = ConvertToVec3(axisXA);
-	settings.mAxisY1 = ConvertToVec3(axisYA);
-	settings.mPosition2 = ConvertToRVec3(positionB);
-	settings.mAxisX2 = ConvertToVec3(axisXB);
-	settings.mAxisY2 = ConvertToVec3(axisYB);
+	settings.mSpace = n.transformInWorldSpace ? EConstraintSpace::WorldSpace : EConstraintSpace::LocalToBodyCOM;
+	settings.mPosition1 = ConvertToRVec3(n.positionA);
+	settings.mAxisX1 = ConvertToVec3(n.axisXA);
+	settings.mAxisY1 = ConvertToVec3(n.axisYA);
+	settings.mPosition2 = ConvertToRVec3(n.positionB);
+	settings.mAxisX2 = ConvertToVec3(n.axisXB);
+	settings.mAxisY2 = ConvertToVec3(n.axisYB);
 
-	//settings.mPosition1 = settings.mPosition2 = ConvertToRVec3(position);
-	//settings.mAxisX1 = settings.mAxisX2 = ConvertToVec3(axisX);
-	//settings.mAxisY1 = settings.mAxisY2 = ConvertToVec3(axisY);
-
-
-	if (linearAxisX == PhysicsAxisMode::Locked)
+	if (n.linearAxisX == PhysicsAxisMode::Locked)
 		settings.MakeFixedAxis(SixDOFConstraintSettings::TranslationX);
-	else if (linearAxisX == PhysicsAxisMode::Limited)
-		settings.SetLimitedAxis(SixDOFConstraintSettings::TranslationX, linearLimitX.x, linearLimitX.y);
+	else if (n.linearAxisX == PhysicsAxisMode::Limited)
+		settings.SetLimitedAxis(SixDOFConstraintSettings::TranslationX, n.linearLimitX.x, n.linearLimitX.y);
 	else
 		settings.MakeFreeAxis(SixDOFConstraintSettings::TranslationX);
 
-	if (linearAxisY == PhysicsAxisMode::Locked)
+	if (n.linearAxisY == PhysicsAxisMode::Locked)
 		settings.MakeFixedAxis(SixDOFConstraintSettings::TranslationY);
-	else if (linearAxisY == PhysicsAxisMode::Limited)
-		settings.SetLimitedAxis(SixDOFConstraintSettings::TranslationY, linearLimitY.x, linearLimitY.y);
+	else if (n.linearAxisY == PhysicsAxisMode::Limited)
+		settings.SetLimitedAxis(SixDOFConstraintSettings::TranslationY, n.linearLimitY.x, n.linearLimitY.y);
 	else
 		settings.MakeFreeAxis(SixDOFConstraintSettings::TranslationY);
 
-	if (linearAxisZ == PhysicsAxisMode::Locked)
+	if (n.linearAxisZ == PhysicsAxisMode::Locked)
 		settings.MakeFixedAxis(SixDOFConstraintSettings::TranslationZ);
-	else if (linearAxisZ == PhysicsAxisMode::Limited)
-		settings.SetLimitedAxis(SixDOFConstraintSettings::TranslationZ, linearLimitZ.x, linearLimitZ.y);
+	else if (n.linearAxisZ == PhysicsAxisMode::Limited)
+		settings.SetLimitedAxis(SixDOFConstraintSettings::TranslationZ, n.linearLimitZ.x, n.linearLimitZ.y);
 	else
 		settings.MakeFreeAxis(SixDOFConstraintSettings::TranslationZ);
 
-	if (angularAxisX == PhysicsAxisMode::Locked)
+	if (n.angularAxisX == PhysicsAxisMode::Locked)
 		settings.MakeFixedAxis(SixDOFConstraintSettings::RotationX);
-	else if (angularAxisX == PhysicsAxisMode::Limited)
-		settings.SetLimitedAxis(SixDOFConstraintSettings::RotationX, angularLimitX.x, angularLimitX.y);
+	else if (n.angularAxisX == PhysicsAxisMode::Limited)
+		settings.SetLimitedAxis(SixDOFConstraintSettings::RotationX, n.angularLimitX.x, n.angularLimitX.y);
 	else
 		settings.MakeFreeAxis(SixDOFConstraintSettings::RotationX);
 
-	if (angularAxisY == PhysicsAxisMode::Locked)
+	if (n.angularAxisY == PhysicsAxisMode::Locked)
 		settings.MakeFixedAxis(SixDOFConstraintSettings::RotationY);
-	else if (angularAxisY == PhysicsAxisMode::Limited)
-		settings.SetLimitedAxis(SixDOFConstraintSettings::RotationY, angularLimitY.x, angularLimitY.y);
+	else if (n.angularAxisY == PhysicsAxisMode::Limited)
+		settings.SetLimitedAxis(SixDOFConstraintSettings::RotationY, n.angularLimitY.x, n.angularLimitY.y);
 	else
 		settings.MakeFreeAxis(SixDOFConstraintSettings::RotationY);
 
-	if (angularAxisZ == PhysicsAxisMode::Locked)
+	if (n.angularAxisZ == PhysicsAxisMode::Locked)
 		settings.MakeFixedAxis(SixDOFConstraintSettings::RotationZ);
-	else if (angularAxisZ == PhysicsAxisMode::Limited)
-		settings.SetLimitedAxis(SixDOFConstraintSettings::RotationZ, angularLimitZ.x, angularLimitZ.y);
+	else if (n.angularAxisZ == PhysicsAxisMode::Limited)
+		settings.SetLimitedAxis(SixDOFConstraintSettings::RotationZ, n.angularLimitZ.x, n.angularLimitZ.y);
 	else
 		settings.MakeFreeAxis(SixDOFConstraintSettings::RotationZ);
 
-	settings.mMaxFriction[0] = linearXFriction;
-	settings.mMaxFriction[1] = linearYFriction;
-	settings.mMaxFriction[2] = linearZFriction;
-	settings.mMaxFriction[3] = angularXFriction;
-	settings.mMaxFriction[4] = angularYFriction;
-	settings.mMaxFriction[5] = angularZFriction;
-
-
-	//float floatMax = 10000000000.0f;
-
-	//if (linearLimitX.x < -floatMax && linearLimitX.y > floatMax)
-	//	settings.MakeFreeAxis(SixDOFConstraintSettings::TranslationX);
-	//else
-	//	settings.SetLimitedAxis(SixDOFConstraintSettings::TranslationX, linearLimitX.x, linearLimitX.y);
-
-	//if (linearLimitY.x < -floatMax && linearLimitY.y > floatMax)
-	//	settings.MakeFreeAxis(SixDOFConstraintSettings::TranslationY);
-	//else
-	//	settings.SetLimitedAxis(SixDOFConstraintSettings::TranslationY, linearLimitY.x, linearLimitY.y);
-
-	//if (linearLimitZ.x < -floatMax && linearLimitZ.y > floatMax)
-	//	settings.MakeFreeAxis(SixDOFConstraintSettings::TranslationZ);
-	//else
-	//	settings.SetLimitedAxis(SixDOFConstraintSettings::TranslationZ, linearLimitZ.x, linearLimitZ.y);
-
-
-	//if (angularLimitX.x < -floatMax && angularLimitX.y > floatMax)
-	//	settings.MakeFreeAxis(SixDOFConstraintSettings::RotationX);
-	//else
-	//	settings.SetLimitedAxis(SixDOFConstraintSettings::RotationX, angularLimitX.x, angularLimitX.y);
-
-	//if (angularLimitY.x < -floatMax && angularLimitY.y > floatMax)
-	//	settings.MakeFreeAxis(SixDOFConstraintSettings::RotationY);
-	//else
-	//	settings.SetLimitedAxis(SixDOFConstraintSettings::RotationY, angularLimitY.x, angularLimitY.y);
-
-	//if (angularLimitZ.x < -floatMax && angularLimitZ.y > floatMax)
-	//	settings.MakeFreeAxis(SixDOFConstraintSettings::RotationZ);
-	//else
-	//	settings.SetLimitedAxis(SixDOFConstraintSettings::RotationZ, angularLimitZ.x, angularLimitZ.y);
-
+	settings.mMaxFriction[0] = n.linearXFriction;
+	settings.mMaxFriction[1] = n.linearYFriction;
+	settings.mMaxFriction[2] = n.linearZFriction;
+	settings.mMaxFriction[3] = n.angularXFriction;
+	settings.mMaxFriction[4] = n.angularYFriction;
+	settings.mMaxFriction[5] = n.angularZFriction;
 
 	auto constraint = new SixDOFConstraintItem();
 	//constraint->type = ConstraintTypeEnum::Fixed;
@@ -3140,9 +3194,9 @@ EXPORT ConstraintItem* JCreateConstraintFixed(PhysicsSystemItem* system, BodyIte
 	return constraint;
 }
 
-EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system, BodyItem* body, int wheelCount, VehicleWheelSettings* wheelsSettings, float frontWheelAntiRollBarStiffness, float rearWheelAntiRollBarStiffness, float maxPitchRollAngle, float engineMaxTorque, float engineMinRPM, float engineMaxRPM, bool transmissionAuto, int transmissionGearRatiosCount, double* transmissionGearRatios, int transmissionReverseGearRatiosCount, double* transmissionReverseGearRatios, float transmissionSwitchTime, float transmissionClutchReleaseTime, float transmissionSwitchLatency, float transmissionShiftUpRPM, float transmissionShiftDownRPM, float transmissionClutchStrength, /*bool frontWheelDrive, bool rearWheelDrive, float frontWheelDifferentialRatio, float frontWheelDifferentialLeftRightSplit, float frontWheelDifferentialLimitedSlipRatio, float frontWheelDifferentialEngineTorqueRatio, float rearWheelDifferentialRatio, float rearWheelDifferentialLeftRightSplit, float rearWheelDifferentialLimitedSlipRatio, float rearWheelDifferentialEngineTorqueRatio,*/ float maxSlopeAngleInRadians, bool tracks, int antiRollbarsCount, float* antiRollbars, float differentialLimitedSlipRatio, int engineNormalizedTorqueCount, float* engineNormalizedTorque, float engineInertia, float engineAngularDamping, int differentialsCount, float* differentials, int trackDrivenWheel, float trackInertia, float trackAngularDamping, float trackMaxBrakeTorque, float trackDifferentialRatio)
+EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system, BodyItem* body, VehicleConstraintSettingsNative& n)
 {
-	bool wheels = !tracks;
+	bool wheels = !n.tracks;
 
 	VehicleConstraintSettings settings;
 	settings.SetEmbedded();
@@ -3150,14 +3204,14 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 	//common settings
 	settings.mUp = Vec3(0, 0, 1);
 	settings.mForward = Vec3(1, 0, 0);
-	settings.mMaxPitchRollAngle = maxPitchRollAngle;
+	settings.mMaxPitchRollAngle = n.maxPitchRollAngle;
 	if (abs(settings.mMaxPitchRollAngle - JPH_PI) < 0.001f)
 		settings.mMaxPitchRollAngle = JPH_PI;
 
 	//create wheels
-	for (int nWheel = 0; nWheel < wheelCount; nWheel++)
+	for (int nWheel = 0; nWheel < n.wheelCount; nWheel++)
 	{
-		VehicleWheelSettings* wheelSettings = wheelsSettings + nWheel;
+		VehicleWheelSettings* wheelSettings = n.wheelsSettings + nWheel;
 
 		//Wheels mode
 		if (wheels)
@@ -3187,19 +3241,19 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 			s->mAngularDamping = wheelSettings->angularDamping;
 			s->mMaxSteerAngle = wheelSettings->maxSteerAngle;
 			s->mLongitudinalFriction.Clear();
-			for (int n = 0; n < wheelSettings->LongitudinalFrictionCount; n++)
-				s->mLongitudinalFriction.AddPoint(wheelSettings->LongitudinalFrictionData[n * 2 + 0], wheelSettings->LongitudinalFrictionData[n * 2 + 1]);
+			for (int i = 0; i < wheelSettings->LongitudinalFrictionCount; i++)
+				s->mLongitudinalFriction.AddPoint(wheelSettings->LongitudinalFrictionData[i * 2 + 0], wheelSettings->LongitudinalFrictionData[i * 2 + 1]);
 			s->mLateralFriction.Clear();
-			for (int n = 0; n < wheelSettings->LateralFrictionCount; n++)
-				s->mLateralFriction.AddPoint(wheelSettings->LateralFrictionData[n * 2 + 0], wheelSettings->LateralFrictionData[n * 2 + 1]);
+			for (int i = 0; i < wheelSettings->LateralFrictionCount; i++)
+				s->mLateralFriction.AddPoint(wheelSettings->LateralFrictionData[i * 2 + 0], wheelSettings->LateralFrictionData[i * 2 + 1]);
 			s->mMaxBrakeTorque = wheelSettings->maxBrakeTorque;
 			s->mMaxHandBrakeTorque = wheelSettings->maxHandBrakeTorque;
 
 			settings.mWheels.push_back(s);
 		}
-		
+
 		//Tracks mode
-		if (tracks)
+		if (n.tracks)
 		{
 			WheelSettingsTV* s = new WheelSettingsTV;
 
@@ -3230,12 +3284,12 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 	}
 
 	//anti rollbars
-	for (int n = 0; n < antiRollbarsCount; n++)
+	for (int i = 0; i < n.antiRollbarsCount; i++)
 	{
 		VehicleAntiRollBar bar;
-		bar.mLeftWheel = (int)antiRollbars[n * 3 + 0];
-		bar.mRightWheel = (int)antiRollbars[n * 3 + 1];
-		bar.mStiffness = antiRollbars[n * 3 + 2];
+		bar.mLeftWheel = (int)n.antiRollbars[i * 3 + 0];
+		bar.mRightWheel = (int)n.antiRollbars[i * 3 + 1];
+		bar.mStiffness = n.antiRollbars[i * 3 + 2];
 		settings.mAntiRollBars.push_back(bar);
 	}
 
@@ -3248,15 +3302,15 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 		WheeledVehicleControllerSettings* controllerSettings2 = (WheeledVehicleControllerSettings*)controllerSettings;
 
 		//differential
-		for (int n = 0; n < differentialsCount; n++)
+		for (int i = 0; i < n.differentialsCount; i++)
 		{
 			VehicleDifferentialSettings d;
-			d.mLeftWheel = differentials[n * 6 + 0];
-			d.mRightWheel = differentials[n * 6 + 1];
-			d.mDifferentialRatio = differentials[n * 6 + 2];
-			d.mLeftRightSplit = differentials[n * 6 + 3];
-			d.mLimitedSlipRatio = differentials[n * 6 + 4];
-			d.mEngineTorqueRatio = differentials[n * 6 + 5];
+			d.mLeftWheel = n.differentials[i * 6 + 0];
+			d.mRightWheel = n.differentials[i * 6 + 1];
+			d.mDifferentialRatio = n.differentials[i * 6 + 2];
+			d.mLeftRightSplit = n.differentials[i * 6 + 3];
+			d.mLimitedSlipRatio = n.differentials[i * 6 + 4];
+			d.mEngineTorqueRatio = n.differentials[i * 6 + 5];
 			controllerSettings2->mDifferentials.push_back(d);
 		}
 
@@ -3264,19 +3318,19 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 		if (controllerSettings2->mDifferentials.size() != 0)
 		{
 			float sum = 0.0f;
-			for (int n = 0; n < controllerSettings2->mDifferentials.size(); n++)
-				sum += controllerSettings2->mDifferentials[n].mEngineTorqueRatio;
+			for (int i = 0; i < controllerSettings2->mDifferentials.size(); i++)
+				sum += controllerSettings2->mDifferentials[i].mEngineTorqueRatio;
 			if (sum <= 0)
 				sum = 1;
-			for (int n = 0; n < controllerSettings2->mDifferentials.size(); n++)
-				controllerSettings2->mDifferentials[n].mEngineTorqueRatio = controllerSettings2->mDifferentials[n].mEngineTorqueRatio / sum;
+			for (int i = 0; i < controllerSettings2->mDifferentials.size(); i++)
+				controllerSettings2->mDifferentials[i].mEngineTorqueRatio = controllerSettings2->mDifferentials[i].mEngineTorqueRatio / sum;
 		}
 
-		controllerSettings2->mDifferentialLimitedSlipRatio = differentialLimitedSlipRatio;
+		controllerSettings2->mDifferentialLimitedSlipRatio = n.differentialLimitedSlipRatio;
 	}
 
 	//tracks for Tracks mode
-	if(tracks)
+	if (n.tracks)
 	{
 		VehicleControllerSettings* controllerSettings = new TrackedVehicleControllerSettings();
 		settings.mController = controllerSettings;
@@ -3289,22 +3343,22 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 
 			if (t == 0)
 			{
-				track.mDrivenWheel = trackDrivenWheel;
-				for (int n = 0; n < wheelCount / 2; n++)
-					track.mWheels.push_back(n);
+				track.mDrivenWheel = n.trackDrivenWheel;
+				for (int i = 0; i < n.wheelCount / 2; i++)
+					track.mWheels.push_back(i);
 			}
 			else
 			{
-				int rightStartIndex = wheelCount / 2;
-				track.mDrivenWheel = rightStartIndex + trackDrivenWheel;
-				for (int n = 0; n < wheelCount / 2; n++)
-					track.mWheels.push_back(rightStartIndex + n);
+				int rightStartIndex = n.wheelCount / 2;
+				track.mDrivenWheel = rightStartIndex + n.trackDrivenWheel;
+				for (int i = 0; i < n.wheelCount / 2; i++)
+					track.mWheels.push_back(rightStartIndex + i);
 			}
 
-			track.mInertia = trackInertia;
-			track.mAngularDamping = trackAngularDamping;
-			track.mMaxBrakeTorque = trackMaxBrakeTorque;
-			track.mDifferentialRatio = trackDifferentialRatio;
+			track.mInertia = n.trackInertia;
+			track.mAngularDamping = n.trackAngularDamping;
+			track.mMaxBrakeTorque = n.trackMaxBrakeTorque;
+			track.mDifferentialRatio = n.trackDifferentialRatio;
 		}
 	}
 
@@ -3312,7 +3366,7 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 	auto constraint = new VehicleConstraintItem();
 	constraint->system = &system->system;
 	constraint->Wheels = wheels;
-	constraint->Tracks = tracks;
+	constraint->Tracks = n.tracks;
 	VehicleConstraint* vehicleConstraint = new VehicleConstraint(*body->body, settings);
 	constraint->constraint = vehicleConstraint;
 	constraint->body = body;
@@ -3327,34 +3381,6 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 	constraint->collisionTester = collisionTester;
 	vehicleConstraint->SetVehicleCollisionTester(constraint->collisionTester);
 
-
-	////double maxWidth = 0;
-	////for (int n = 0; n < wheelCount; n++)
-	////{
-	////	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
-	////	if (wheelSettings->width > maxWidth)
-	////		maxWidth = wheelSettings->width;
-	////}
-	////VehicleCollisionTesterCastSphere* collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, maxWidth * 0.5f, Vec3::sAxisZ(), maxSlopeAngleInRadians);
-	////double maxRadius = 0;
-	////for (int n = 0; n < wheelCount; n++)
-	////{
-	////	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
-	////	if (wheelSettings->radius > maxRadius)
-	////		maxRadius = wheelSettings->radius;
-	////}
-	////VehicleCollisionTesterCastSphere* collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, maxRadius, Vec3::sAxisZ(), maxSlopeAngleInRadians);
-	////VehicleCollisionTesterCastSphereMultiRadius* collisionTester = new VehicleCollisionTesterCastSphereMultiRadius(Layers::MOVING, Vec3::sAxisZ(), maxSlopeAngleInRadians);
-	////for (int n = 0; n < wheelCount; n++)
-	////{
-	////	VehicleWheelSettings* wheelSettings = wheelsSettings + n;
-	////	collisionTester->mRadiuses.push_back(wheelSettings->radius);
-	////}
-	////constraint->collisionTester = new VehicleCollisionTesterRay(Layers::MOVING, Vec3::sAxisZ(), inMaxSlopeAngle);
-	////VehicleWheelSettings* wheelSettings = wheelsSettings + 0;
-	////constraint->collisionTester = new VehicleCollisionTesterCastSphere(Layers::MOVING, wheelSettings->radius, Vec3::sAxisZ(), inMaxSlopeAngle);
-
-
 	//engine, transmission
 
 	//Wheels specific
@@ -3364,63 +3390,63 @@ EXPORT VehicleConstraintItem* JCreateConstraintVehicle(PhysicsSystemItem* system
 
 		//engine
 		auto& engine = controller2->GetEngine();
-		engine.mMaxTorque = engineMaxTorque;
-		engine.mMinRPM = engineMinRPM;
-		engine.mMaxRPM = engineMaxRPM;
+		engine.mMaxTorque = n.engineMaxTorque;
+		engine.mMinRPM = n.engineMinRPM;
+		engine.mMaxRPM = n.engineMaxRPM;
 		engine.mNormalizedTorque.Clear();
-		for (int n = 0; n < engineNormalizedTorqueCount; n++)
-			engine.mNormalizedTorque.AddPoint(engineNormalizedTorque[n * 2 + 0], engineNormalizedTorque[n * 2 + 1]);
-		engine.mInertia = engineInertia;
-		engine.mAngularDamping = engineAngularDamping;
+		for (int i = 0; i < n.engineNormalizedTorqueCount; i++)
+			engine.mNormalizedTorque.AddPoint(n.engineNormalizedTorque[i * 2 + 0], n.engineNormalizedTorque[i * 2 + 1]);
+		engine.mInertia = n.engineInertia;
+		engine.mAngularDamping = n.engineAngularDamping;
 
 		//transmission
 		auto& tr = controller2->GetTransmission();
-		tr.mMode = transmissionAuto ? ETransmissionMode::Auto : ETransmissionMode::Manual;
+		tr.mMode = n.transmissionAuto ? ETransmissionMode::Auto : ETransmissionMode::Manual;
 		tr.mGearRatios.clear();
-		for (int n = 0; n < transmissionGearRatiosCount; n++)
-			tr.mGearRatios.push_back((float)transmissionGearRatios[n]);
+		for (int i = 0; i < n.transmissionGearRatiosCount; i++)
+			tr.mGearRatios.push_back((float)n.transmissionGearRatios[i]);
 		tr.mReverseGearRatios.clear();
-		for (int n = 0; n < transmissionReverseGearRatiosCount; n++)
-			tr.mReverseGearRatios.push_back((float)transmissionReverseGearRatios[n]);
-		tr.mSwitchTime = transmissionSwitchTime;
-		tr.mClutchReleaseTime = transmissionClutchReleaseTime;
-		tr.mSwitchLatency = transmissionSwitchLatency;
-		tr.mShiftUpRPM = transmissionShiftUpRPM;
-		tr.mShiftDownRPM = transmissionShiftDownRPM;
-		tr.mClutchStrength = transmissionClutchStrength;
+		for (int i = 0; i < n.transmissionReverseGearRatiosCount; i++)
+			tr.mReverseGearRatios.push_back((float)n.transmissionReverseGearRatios[i]);
+		tr.mSwitchTime = n.transmissionSwitchTime;
+		tr.mClutchReleaseTime = n.transmissionClutchReleaseTime;
+		tr.mSwitchLatency = n.transmissionSwitchLatency;
+		tr.mShiftUpRPM = n.transmissionShiftUpRPM;
+		tr.mShiftDownRPM = n.transmissionShiftDownRPM;
+		tr.mClutchStrength = n.transmissionClutchStrength;
 	}
 
 	//Tracks specific
-	if(tracks)
+	if (n.tracks)
 	{
 		TrackedVehicleController* controller2 = static_cast<TrackedVehicleController*>(vehicleConstraint->GetController());
 
 		//engine
 		auto& engine = controller2->GetEngine();
-		engine.mMaxTorque = engineMaxTorque;
-		engine.mMinRPM = engineMinRPM;
-		engine.mMaxRPM = engineMaxRPM;
+		engine.mMaxTorque = n.engineMaxTorque;
+		engine.mMinRPM = n.engineMinRPM;
+		engine.mMaxRPM = n.engineMaxRPM;
 		engine.mNormalizedTorque.Clear();
-		for (int n = 0; n < engineNormalizedTorqueCount; n++)
-			engine.mNormalizedTorque.AddPoint(engineNormalizedTorque[n * 2 + 0], engineNormalizedTorque[n * 2 + 1]);
-		engine.mInertia = engineInertia;
-		engine.mAngularDamping = engineAngularDamping;
+		for (int i = 0; i < n.engineNormalizedTorqueCount; i++)
+			engine.mNormalizedTorque.AddPoint(n.engineNormalizedTorque[i * 2 + 0], n.engineNormalizedTorque[i * 2 + 1]);
+		engine.mInertia = n.engineInertia;
+		engine.mAngularDamping = n.engineAngularDamping;
 
 		//transmission
 		auto& tr = controller2->GetTransmission();
-		tr.mMode = transmissionAuto ? ETransmissionMode::Auto : ETransmissionMode::Manual;
+		tr.mMode = n.transmissionAuto ? ETransmissionMode::Auto : ETransmissionMode::Manual;
 		tr.mGearRatios.clear();
-		for (int n = 0; n < transmissionGearRatiosCount; n++)
-			tr.mGearRatios.push_back((float)transmissionGearRatios[n]);
+		for (int i = 0; i < n.transmissionGearRatiosCount; i++)
+			tr.mGearRatios.push_back((float)n.transmissionGearRatios[i]);
 		tr.mReverseGearRatios.clear();
-		for (int n = 0; n < transmissionReverseGearRatiosCount; n++)
-			tr.mReverseGearRatios.push_back((float)transmissionReverseGearRatios[n]);
-		tr.mSwitchTime = transmissionSwitchTime;
-		tr.mClutchReleaseTime = transmissionClutchReleaseTime;
-		tr.mSwitchLatency = transmissionSwitchLatency;
-		tr.mShiftUpRPM = transmissionShiftUpRPM;
-		tr.mShiftDownRPM = transmissionShiftDownRPM;
-		tr.mClutchStrength = transmissionClutchStrength;
+		for (int i = 0; i < n.transmissionReverseGearRatiosCount; i++)
+			tr.mReverseGearRatios.push_back((float)n.transmissionReverseGearRatios[i]);
+		tr.mSwitchTime = n.transmissionSwitchTime;
+		tr.mClutchReleaseTime = n.transmissionClutchReleaseTime;
+		tr.mSwitchLatency = n.transmissionSwitchLatency;
+		tr.mShiftUpRPM = n.transmissionShiftUpRPM;
+		tr.mShiftDownRPM = n.transmissionShiftDownRPM;
+		tr.mClutchStrength = n.transmissionClutchStrength;
 	}
 
 	////system->system.AddStepListener(vehicleConstraint);

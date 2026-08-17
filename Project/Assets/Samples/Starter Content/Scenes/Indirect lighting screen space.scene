@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2026.1.
+// Made with NeoAxis Engine 2026.2.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"2C240F26F2654EFEDFB5EC1A9243C6A6\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"45C28AC0AA1E4CB4D18A3D229EC0E452\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2C240F26F2654EFEDFB5EC1A9243C6A6\"><KP UN=\"2C240F26F2654EFEDFB5EC1A9243C6A6\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"CEDEB39BEA424621AD9D1A56B0BA2AF9\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"12750E2CBB88463FF2A85A61AD60CD75\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Scene Effects\\$Indirect Lighting\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 963\"><KW V=\"1\" A=\"2C240F26F2654EFEDFB5EC1A9243C6A6\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"45C28AC0AA1E4CB4D18A3D229EC0E452\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2C240F26F2654EFEDFB5EC1A9243C6A6\"><KP UN=\"2C240F26F2654EFEDFB5EC1A9243C6A6\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"CEDEB39BEA424621AD9D1A56B0BA2AF9\" S=\"False\"><CPD ObjPath=\"$C# Script\" /></KP><KP UN=\"12750E2CBB88463FF2A85A61AD60CD75\" S=\"False\"><CPD ObjPath=\"$Rendering Pipeline\\$Scene Effects\\$Indirect Lighting\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	BackgroundColor = 0.6666667 0.6666667 0.6666667
 	RenderingPipeline
 	{
@@ -44,7 +44,6 @@
 			.component NeoAxis.RenderingEffect_IndirectLighting
 			{
 				Name = Indirect Lighting
-				Intensity = 0
 				Multiplier = 0.3
 				Normals = False
 				.component NeoAxis.CSharpScript
@@ -334,6 +333,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Mesh in Space
+		TransformInterpolation = False
 		Transform
 		{
 			GetByReference = "root:$C# Script\\Method"

@@ -51,7 +51,7 @@ namespace NeoAxis
 		ReferenceField<MaterialShadingEnum> _materialShading = MaterialShadingEnum.Quality;
 
 		/// <summary>
-		/// The quality of lit shading of materials on limited devices (mobile, web).
+		/// The quality of lit shading of materials on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Material Shading" )]
@@ -114,7 +114,7 @@ namespace NeoAxis
 		ReferenceField<ShadowTechniqueEnum> _shadowTechnique = ShadowTechniqueEnum.PercentageCloserFiltering22;//12;
 
 		/// <summary>
-		/// The shadow technique of the project on limited devices (mobile, web).
+		/// The shadow technique of the project on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Shadow Technique" )]
@@ -218,7 +218,7 @@ namespace NeoAxis
 		ReferenceField<bool> _staticShadows = true;
 
 		/// <summary>
-		/// Enables static shadows optimization on limited devices (mobile, web).
+		/// Enables static shadows optimization on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Static Shadows" )]
@@ -334,7 +334,7 @@ namespace NeoAxis
 		//ReferenceField<CompressVerticesEnum> _compressVertices = CompressVerticesEnum.Quality;
 
 		///// <summary>
-		///// The vertex data compression mode on limited devices (mobile, web).
+		///// The vertex data compression mode on limited devices (mobile).
 		///// </summary>
 		//[Category( "Rendering: Limited Device" )]
 		//[DisplayName( "Compress Vertices" )]
@@ -365,7 +365,7 @@ namespace NeoAxis
 		ReferenceField<bool> _deferredShading = true;
 
 		///// <summary>
-		///// Whether to allow using the deferred shading on limited devices (mobile, web).
+		///// Whether to allow using the deferred shading on limited devices (mobile).
 		///// </summary>
 		//[Category( "Rendering: Limited Device" )]
 		//[DisplayName( "Deferred Shading" )]
@@ -404,7 +404,7 @@ namespace NeoAxis
 		ReferenceField<SkeletalAnimationEnum> _skeletalAnimation = SkeletalAnimationEnum.Precision32Bit;
 
 		/// <summary>
-		/// Whether to allow using skeletal animation and the precision of the bone matrices on limited devices (mobile, web).
+		/// Whether to allow using skeletal animation and the precision of the bone matrices on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Skeletal Animation" )]
@@ -434,7 +434,7 @@ namespace NeoAxis
 		ReferenceField<bool> _lightMask = true;
 
 		/// <summary>
-		/// Whether to allow using light mask for lights on limited devices (mobile, web).
+		/// Whether to allow using light mask for lights on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Light Mask" )]
@@ -465,7 +465,7 @@ namespace NeoAxis
 
 		//!!!!disabled because samplers limit
 		///// <summary>
-		///// Whether to use an acceleration grid for lights rendering optimization on limited devices (mobile, web).
+		///// Whether to use an acceleration grid for lights rendering optimization on limited devices (mobile).
 		///// </summary>
 		//[Category( "Rendering: Limited Device" )]
 		//[DisplayName( "Light Grid" )]
@@ -495,7 +495,7 @@ namespace NeoAxis
 		ReferenceField<bool> _normalMapping = true;
 
 		/// <summary>
-		/// Whether to allow using normal mapping on limited devices (mobile, web).
+		/// Whether to allow using normal mapping on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Normal Mapping" )]
@@ -525,7 +525,7 @@ namespace NeoAxis
 		ReferenceField<bool> _anisotropicFiltering = true;
 
 		/// <summary>
-		/// Whether to enable anisotropic filtering for textures on limited devices (mobile, web).
+		/// Whether to enable anisotropic filtering for textures on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Anisotropic Filtering" )]
@@ -556,7 +556,7 @@ namespace NeoAxis
 		ReferenceField<int> _displacementMaxSteps = 32;
 
 		/// <summary>
-		/// The maximal amount of steps for the displacement mapping of materials on limited devices (mobile, web).
+		/// The maximal amount of steps for the displacement mapping of materials on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Displacement Max Steps" )]
@@ -587,7 +587,7 @@ namespace NeoAxis
 		ReferenceField<bool> _tessellation = true;
 
 		/// <summary>
-		/// Whether to allow using normal mapping on limited devices (mobile, web).
+		/// Whether to allow using normal mapping on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Tessellation" )]
@@ -617,7 +617,7 @@ namespace NeoAxis
 		ReferenceField<bool> _removeTextureTiling = true;
 
 		/// <summary>
-		/// Whether to allow using the technique to remove texture tiling on limited devices (mobile, web).
+		/// Whether to allow using the technique to remove texture tiling on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Remove Texture Tiling" )]
@@ -647,7 +647,7 @@ namespace NeoAxis
 		ReferenceField<bool> _opacityDithering = true;
 
 		/// <summary>
-		/// Whether to allow opacity dithering for masked materials on limited devices (mobile, web).
+		/// Whether to allow opacity dithering for masked materials on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Opacity Dithering" )]
@@ -677,7 +677,7 @@ namespace NeoAxis
 		ReferenceField<bool> _motionVector = true;
 
 		///// <summary>
-		///// Whether to allow using the motion vectors to enable a motion blur or a temporal antialiasing on limited devices (mobile, web).
+		///// Whether to allow using the motion vectors to enable a motion blur or a temporal antialiasing on limited devices (mobile).
 		///// </summary>
 		//[Category( "Rendering: Limited Device" )]
 		//[DisplayName( "Motion Vector" )]
@@ -707,7 +707,7 @@ namespace NeoAxis
 		//ReferenceField<bool> _indirectLightingFullMode = true;
 
 		///// <summary>
-		///// Whether to allow using the indirect lighting in a full mode on limited devices (mobile, web).
+		///// Whether to allow using the indirect lighting in a full mode on limited devices (mobile).
 		///// </summary>
 		//[Category( "Rendering: Limited Device" )]
 		//[DisplayName( "Indirect Lighting Full Mode" )]
@@ -738,7 +738,7 @@ namespace NeoAxis
 		ReferenceField<int> _cutVolumeMaxAmount = 4;
 
 		/// <summary>
-		/// The amount of maximal amount of cut volumes on limited devices (mobile, web).
+		/// The amount of maximal amount of cut volumes on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Cut Volume Max Amount" )]
@@ -769,7 +769,7 @@ namespace NeoAxis
 		ReferenceField<bool> _fog = true;
 
 		/// <summary>
-		/// Whether to allow using the fog effect on limited devices (mobile, web).
+		/// Whether to allow using the fog effect on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Fog" )]
@@ -799,7 +799,7 @@ namespace NeoAxis
 		ReferenceField<bool> _smoothLOD = true;
 
 		/// <summary>
-		/// Whether to enable the smooth transition between levels of detail on limited devices (mobile, web).
+		/// Whether to enable the smooth transition between levels of detail on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Smooth LOD" )]
@@ -829,7 +829,7 @@ namespace NeoAxis
 		ReferenceField<bool> _voxelLOD = true;
 
 		///// <summary>
-		///// Whether to allow using voxel-based LOD technique on limited devices (mobile, web).
+		///// Whether to allow using voxel-based LOD technique on limited devices (mobile).
 		///// </summary>
 		//[Category( "Rendering: Limited Device" )]
 		//[DisplayName( "Voxel LOD" )]
@@ -860,7 +860,7 @@ namespace NeoAxis
 		ReferenceField<int> _voxelLODMaxSteps = 32; //14
 
 		///// <summary>
-		///// The maximal abount of ray matching steps in the fragment shader on limited devices (mobile, web).
+		///// The maximal abount of ray matching steps in the fragment shader on limited devices (mobile).
 		///// </summary>
 		//[Category( "Rendering: Limited Device" )]
 		//[DisplayName( "Voxel LOD Max Steps" )]
@@ -892,7 +892,7 @@ namespace NeoAxis
 
 		////!!!!default. what else
 		///// <summary>
-		///// Whether to allow using virtualized geometry on limited devices (mobile, web).
+		///// Whether to allow using virtualized geometry on limited devices (mobile).
 		///// </summary>
 		//[Category( "Rendering: Limited Device" )]
 		//[DisplayName( "Virtualized Geometry" )]
@@ -922,7 +922,7 @@ namespace NeoAxis
 		ReferenceField<bool> _fadeByVisibilityDistance = true;
 
 		/// <summary>
-		/// Whether to use smooth fading of objects by visibility distance on limited devices (mobile, web).
+		/// Whether to use smooth fading of objects by visibility distance on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Fade By Visibility Distance" )]
@@ -952,7 +952,7 @@ namespace NeoAxis
 		ReferenceField<bool> _environmentMapMixing = true;
 
 		/// <summary>
-		/// Whether to allow mixing two environment maps in forward rendering pass on limited devices (mobile, web).
+		/// Whether to allow mixing two environment maps in forward rendering pass on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Environment Map Mixing" )]
@@ -982,7 +982,7 @@ namespace NeoAxis
 		ReferenceField<bool> _debugMode = true;
 
 		/// <summary>
-		/// Whether to allow using Debug Mode of the scene on limited devices (mobile, web).
+		/// Whether to allow using Debug Mode of the scene on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Debug Mode" )]
@@ -1012,7 +1012,7 @@ namespace NeoAxis
 		ReferenceField<bool> _accurateSrgbCorrection = false;
 
 		/// <summary>
-		/// Whether to enable accurate sRGB correction between linear and sRGB color spaces in the shader on limited devices (mobile, web).
+		/// Whether to enable accurate sRGB correction between linear and sRGB color spaces in the shader on limited devices (mobile).
 		/// </summary>
 		[Category( "Rendering: Limited Device" )]
 		[DisplayName( "Accurate sRGB Correction" )]
@@ -1026,6 +1026,35 @@ namespace NeoAxis
 		public event Action<ProjectSettingsPage_Rendering> AccurateSrgbCorrectionLimitedDeviceChanged;
 		ReferenceField<bool> _accurateSrgbCorrectionLimitedDevice = false;
 
+		/// <summary>
+		/// Whether to enable rendering interpolation between simulation steps.
+		/// </summary>
+		[Category( "Rendering: Basic Device" )]
+		[DisplayName( "Interpolation (Restart to apply changes)" )]
+		[DefaultValue( true )]
+		public Reference<bool> Interpolation
+		{
+			get { if( _interpolation.BeginGet() ) Interpolation = _interpolation.Get( this ); return _interpolation.value; }
+			set { if( _interpolation.BeginSet( this, ref value ) ) { try { InterpolationChanged?.Invoke( this ); } finally { _interpolation.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Interpolation"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> InterpolationChanged;
+		ReferenceField<bool> _interpolation = true;
+
+		/// <summary>
+		/// Whether to enable rendering interpolation between simulation steps on limited devices (mobile).
+		/// </summary>
+		[Category( "Rendering: Limited Device" )]
+		[DisplayName( "Interpolation" )]
+		[DefaultValue( true )]
+		public Reference<bool> InterpolationLimitedDevice
+		{
+			get { if( _interpolationLimitedDevice.BeginGet() ) InterpolationLimitedDevice = _interpolationLimitedDevice.Get( this ); return _interpolationLimitedDevice.value; }
+			set { if( _interpolationLimitedDevice.BeginSet( this, ref value ) ) { try { InterpolationLimitedDeviceChanged?.Invoke( this ); } finally { _interpolationLimitedDevice.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="InterpolationLimitedDevice"/> property value changes.</summary>
+		public event Action<ProjectSettingsPage_Rendering> InterpolationLimitedDeviceChanged;
+		ReferenceField<bool> _interpolationLimitedDevice = true;
 
 		///// <summary>
 		///// Whether to allow using the deferred shading.
@@ -1043,7 +1072,7 @@ namespace NeoAxis
 		//ReferenceField<bool> _globalIllumination = true;
 
 		///// <summary>
-		///// Whether to allow using the deferred shading on limited devices (mobile, web).
+		///// Whether to allow using the deferred shading on limited devices (mobile).
 		///// </summary>
 		//[Category( "Rendering: Limited Device" )]
 		//[DisplayName( "Global Illumination" )]

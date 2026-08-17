@@ -1,0 +1,632 @@
+// Made with NeoAxis Engine 2026.2.
+
+.component Project.ShooterGameScreen
+{
+	Size = Parent 1 1
+	EditorScrollPosition = -0.307179452176041 0.473247005441028
+	Style
+	{
+		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+	}
+	.component NeoAxis.UIControl
+	{
+		Enabled = False
+		Name = Continuous Interaction Widget
+		Size = Units 1000 530
+		HorizontalAlignment = Center
+		VerticalAlignment = Bottom
+		Margin = Units 0 350 0 120
+		BackgroundColor = 0.1 0.1 0.1
+		BackgroundRounding = Units 16
+		ColorMultiplier = 1 1 1 0.9
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.UIText
+		{
+			Name = Text Message
+			Text = "Message Message Message Message Message Message Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message  Message "
+			Size = Units 940 130
+			HorizontalAlignment = Center
+			Margin = Units 10 30 10 0
+			EditorScrollPosition = 0 0
+			FontSize = Screen 0.03
+			TextHorizontalAlignment = Left
+			TextVerticalAlignment = Top
+			WordWrap = True
+			Shadow = True
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Answer 1
+			Text = Answer 1
+			Size = Units 960 60
+			HorizontalAlignment = Center
+			Margin = Units 0 170 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Answer 2
+			Text = Answer 2
+			Size = Units 960 60
+			HorizontalAlignment = Center
+			Margin = Units 0 240 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Answer 3
+			Text = Answer 3
+			Size = Units 960 60
+			HorizontalAlignment = Center
+			Margin = Units 0 310 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Answer 4
+			Text = Answer 4
+			Size = Units 960 60
+			HorizontalAlignment = Center
+			Margin = Units 0 380 0 0
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Answer 5
+			Text = Answer 5
+			Size = Units 960 60
+			HorizontalAlignment = Center
+			Margin = Units 0 450 0 0
+			EditorScrollPosition = 0 0
+		}
+	}
+	.component NeoAxis.UIControl
+	{
+		Name = Inventory Widget
+		Size = Units 570 80
+		HorizontalAlignment = Center
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 0 10
+		BackgroundColor = 0.3 0.3 0.3
+		BackgroundRounding = Units 12
+		ColorMultiplier = 1 1 1 0.7
+		EditorScrollPosition = 0 0
+		.component NeoAxis.UIImage
+		{
+			Name = Item 1
+			Size = Units 60 60
+			Margin = Units 10 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 1
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 2
+			Size = Units 60 60
+			Margin = Units 80 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 2
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 3
+			Size = Units 60 60
+			Margin = Units 150 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 3
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 4
+			Size = Units 60 60
+			Margin = Units 220 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 4
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 5
+			Size = Units 60 60
+			Margin = Units 290 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 5
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 6
+			Size = Units 60 60
+			Margin = Units 360 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 6
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 7
+			Size = Units 60 60
+			Margin = Units 430 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 7
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+		.component NeoAxis.UIImage
+		{
+			Name = Item 8
+			Size = Units 60 60
+			Margin = Units 500 10 0 0
+			BackgroundColor = 0 0 0
+			BackgroundRounding = Units 8
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text Number
+				Text = 8
+				Size = Units 60 30
+				Margin = Units 0 0 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				TextVerticalAlignment = Top
+				Offset = Units 2 1
+			}
+			.component NeoAxis.UIText
+			{
+				Name = Text Count
+				Text = 999
+				Size = Units 60 30
+				Margin = Units 0 30 0 0
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Right
+				TextVerticalAlignment = Bottom
+				Offset = Units -2 -1
+			}
+		}
+	}
+	.component NeoAxis.UIControl
+	{
+		Name = In-Game Menu
+		CanBeSelected = False
+		Size = Parent 1 1
+		BackgroundColor = 0 0 0 0.75
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.UIList
+		{
+			Name = List Chat
+			Visible = False
+			Size = Units 470 190
+			VerticalAlignment = Bottom
+			Margin = Units 10 600 210 60
+			EditorScrollPosition = 0 0
+			ItemsAsText
+			{
+				Count = 0
+			}
+			.component NeoAxis.UIScroll
+			{
+				Name = Scroll
+				CanBeSelected = False
+				Size = Units 30 400
+				HorizontalAlignment = Right
+				VerticalAlignment = Stretch
+				Margin = Units 0 2 2 2
+				EditorScrollPosition = 0 0
+				Vertical = True
+			}
+		}
+		.component NeoAxis.UIEdit
+		{
+			Name = Edit Chat Message
+			Size = Units 360 40
+			VerticalAlignment = Bottom
+			Margin = Units 10 730 360 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UIText
+			{
+				Name = Text
+				CanBeSelected = False
+				Size = Parent 1 1
+				HorizontalAlignment = Stretch
+				VerticalAlignment = Stretch
+				Margin = Units 4 2 4 2
+				EditorScrollPosition = 0 0
+				TextHorizontalAlignment = Left
+				ClipRectangle = True
+				Text
+				{
+					GetByReference = "this:..\\DisplayText"
+				}
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler KeyDownBefore
+				Event
+				{
+					GetByReference = "this:..\\event:KeyDownBefore"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:EditChatMessage_KeyDownBefore(NeoAxis.UIControl,NeoAxis.KeyEvent,ref System.Boolean)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Chat Send
+			Text = Send
+			Size = Units 100 40
+			VerticalAlignment = Bottom
+			Margin = Units 380 740 200 10
+			EditorScrollPosition = 0 0
+			.component NeoAxis.UITooltip
+			{
+				Name = Tooltip
+				Text = Send a message in the chat.
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonChatSend_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIControl
+		{
+			Name = Control Background
+			Size = Units 220 280
+			HorizontalAlignment = Center
+			Margin = Parent 0 0.36 0 0
+			BackgroundColor = 0 0 0 0.7
+			EditorScrollPosition = 0 0
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Match Reset
+			Text = Reset Match
+			Size = Units 160 40
+			HorizontalAlignment = Center
+			Margin = Units 0 400 0 0
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonMatchReset_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+			.component NeoAxis.UITooltip
+			{
+				Name = Tooltip
+				Text = Reset the match.
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Match Delete
+			Text = Delete Match
+			Size = Units 160 40
+			HorizontalAlignment = Center
+			Margin = Units 0 450 0 0
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonMatchDelete_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+			.component NeoAxis.UITooltip
+			{
+				Name = Tooltip
+				Text = Delete the match.
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Add Bot
+			Text = Add Bot
+			Size = Units 160 40
+			HorizontalAlignment = Center
+			Margin = Units 0 510 0 0
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonAddBot_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+		.component NeoAxis.UIButton
+		{
+			Name = Button Delete Bot
+			Text = Delete Bot
+			Size = Units 160 40
+			HorizontalAlignment = Center
+			Margin = Units 0 560 0 0
+			EditorScrollPosition = 0 0
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler Click
+				Event
+				{
+					GetByReference = "this:..\\event:Click"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\..\\..\\method:ButtonDeleteBot_Click(NeoAxis.UIButton)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button In-Game Menu
+		Text = In-Game Menu
+		Size = Units 160 40
+		HorizontalAlignment = Right
+		Margin = Units 650 10 180 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonInGameMenu_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Open the in-game menu.
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button System Menu
+		Text = System Menu
+		Size = Units 160 40
+		HorizontalAlignment = Right
+		Margin = Units 650 10 10 10
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonSystemMenu_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Open the system menu.
+		}
+	}
+}

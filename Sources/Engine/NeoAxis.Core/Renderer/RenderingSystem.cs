@@ -848,8 +848,8 @@ namespace NeoAxis
 			//!!!!
 			var message = OgreNativeWrapper.GetOutString( messagePointer, false );
 
-			//!!!!только из основного может прийти?
-			EngineThreading.CheckMainThread();
+			////!!!!только из основного может прийти?
+			//EngineThreading.CheckMainThread();
 
 
 			if( !EnableInternalLogMessages )
@@ -1223,8 +1223,6 @@ namespace NeoAxis
 			}
 		}
 
-		//the parameters must be cached
-
 		static ProjectSettingsPage_Rendering.ShadowTechniqueEnum? shadowTechnique;
 		public static ProjectSettingsPage_Rendering.ShadowTechniqueEnum ShadowTechnique
 		{
@@ -1371,12 +1369,9 @@ namespace NeoAxis
 		}
 
 		static bool? lightMask;
-		public static bool LightMask
+		[MethodImpl( MethodImplOptions.NoInlining )]
+		static bool InitializeLightMask()
 		{
-			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get
-			{
-
 				//!!!!temp consider Vulkan as limited device. no shadows, light masks
 				if( Capabilities.Backend == RendererBackend.Vulkan )
 					return false;
@@ -1385,24 +1380,22 @@ namespace NeoAxis
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 					return false;
 
-				if( !lightMask.HasValue )
-				{
 					if( SystemSettings.LimitedDevice )
 						lightMask = ProjectSettings.Get.Rendering.LightMaskLimitedDevice;
 					else
 						lightMask = ProjectSettings.Get.Rendering.LightMask;
-				}
+
 				return lightMask.Value;
 			}
+		public static bool LightMask
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return lightMask ?? InitializeLightMask(); }
 		}
 
 		static bool? lightGrid;
-		public static bool LightGrid
-		{
-			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get
-			{
-				if( !lightGrid.HasValue )
+		[MethodImpl( MethodImplOptions.NoInlining )]
+		static bool InitializeLightGrid()
 				{
 					if( SystemSettings.LimitedDevice )
 					{
@@ -1412,9 +1405,12 @@ namespace NeoAxis
 					}
 					else
 						lightGrid = ProjectSettings.Get.Rendering.LightGrid;
-				}
 				return lightGrid.Value;
 			}
+		public static bool LightGrid
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return lightGrid ?? InitializeLightGrid(); }
 		}
 
 		static int? displacementMaxSteps;
@@ -1520,12 +1516,8 @@ namespace NeoAxis
 		//}
 
 		static int? cutVolumeMaxAmount;
-		public static int CutVolumeMaxAmount
-		{
-			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get
-			{
-				if( !cutVolumeMaxAmount.HasValue )
+		[MethodImpl( MethodImplOptions.NoInlining )]
+		static int InitializeCutVolumeMaxAmount()
 				{
 					if( SystemSettings.LimitedDevice )
 						cutVolumeMaxAmount = ProjectSettings.Get.Rendering.CutVolumeMaxAmountLimitedDevice;
@@ -1537,9 +1529,13 @@ namespace NeoAxis
 						cutVolumeMaxAmount = 0;
 					if( cutVolumeMaxAmount > 4 )
 						cutVolumeMaxAmount = 4;
-				}
+
 				return cutVolumeMaxAmount.Value;
 			}
+		public static int CutVolumeMaxAmount
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return cutVolumeMaxAmount ?? InitializeCutVolumeMaxAmount(); }
 		}
 
 		static bool? fadeByVisibilityDistance;
@@ -1611,20 +1607,19 @@ namespace NeoAxis
 		}
 
 		static ProjectSettingsPage_Rendering.SkeletalAnimationEnum? skeletalAnimation;
-		public static ProjectSettingsPage_Rendering.SkeletalAnimationEnum SkeletalAnimation
-		{
-			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get
-			{
-				if( !skeletalAnimation.HasValue )
+		[MethodImpl( MethodImplOptions.NoInlining )]
+		static ProjectSettingsPage_Rendering.SkeletalAnimationEnum InitializeSkeletalAnimation()
 				{
 					if( SystemSettings.LimitedDevice )
 						skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimationLimitedDevice;
 					else
 						skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimation;
-				}
 				return skeletalAnimation.Value;
 			}
+		public static ProjectSettingsPage_Rendering.SkeletalAnimationEnum SkeletalAnimation
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return skeletalAnimation ?? InitializeSkeletalAnimation(); }
 		}
 
 		static bool? voxelLOD;
@@ -1661,22 +1656,6 @@ namespace NeoAxis
 			}
 		}
 
-		//static bool? virtualizedGeometry;
-		//public static bool VirtualizedGeometry
-		//{
-		//	get
-		//	{
-		//		if( virtualizedGeometry == null )
-		//		{
-		//			if( SystemSettings.LimitedDevice )
-		//				virtualizedGeometry = ProjectSettings.Get.Rendering.VirtualizedGeometryLimitedDevice;
-		//			else
-		//				virtualizedGeometry = ProjectSettings.Get.Rendering.VirtualizedGeometry;
-		//		}
-		//		return virtualizedGeometry.Value;
-		//	}
-		//}
-
 		static ProjectSettingsPage_Rendering.MaterialShadingEnum? materialShading;
 		public static ProjectSettingsPage_Rendering.MaterialShadingEnum MaterialShading
 		{
@@ -1695,22 +1674,19 @@ namespace NeoAxis
 		}
 
 		static bool? anisotropicFiltering;
-		public static bool AnisotropicFiltering
-		{
-			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get
-			{
-				//!!!!slowly проверять HasValue? везде так
-
-				if( !anisotropicFiltering.HasValue )
+		[MethodImpl( MethodImplOptions.NoInlining )]
+		static bool InitializeAnisotropicFiltering()
 				{
 					if( SystemSettings.LimitedDevice )
 						anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFilteringLimitedDevice;
 					else
 						anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFiltering;
-				}
 				return anisotropicFiltering.Value;
 			}
+		public static bool AnisotropicFiltering
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return anisotropicFiltering ?? InitializeAnisotropicFiltering(); }
 		}
 
 		static bool? deferredShading;
@@ -1768,20 +1744,19 @@ namespace NeoAxis
 		}
 
 		static int? limitTextureSize;
-		public static int LimitTextureSize
-		{
-			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get
-			{
-				if( !limitTextureSize.HasValue )
+		[MethodImpl( MethodImplOptions.NoInlining )]
+		static int InitializeLimitTextureSize()
 				{
 					if( SystemSettings.LimitedDevice )
 						limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSizeLimitedDevice;
 					else
 						limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSize;
-				}
 				return limitTextureSize.Value;
 			}
+		public static int LimitTextureSize
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get { return limitTextureSize ?? InitializeLimitTextureSize(); }
 		}
 
 		static bool? accurateSrgbCorrection;
@@ -1799,6 +1774,22 @@ namespace NeoAxis
 				}
 				return accurateSrgbCorrection.Value;
 			}
+		}
+
+		static bool? interpolation;
+		[MethodImpl( MethodImplOptions.NoInlining )]
+		static bool InitializeInterpolation()
+		{
+			if( SystemSettings.LimitedDevice )
+				interpolation = ProjectSettings.Get.Rendering.InterpolationLimitedDevice;
+			else
+				interpolation = ProjectSettings.Get.Rendering.Interpolation;
+			return interpolation.Value;
+		}
+		public static bool Interpolation
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization )]
+			get { return interpolation ?? InitializeInterpolation(); }
 		}
 
 		public static bool ReversedZ

@@ -181,7 +181,7 @@ namespace NeoAxis.Editor
 			Helper.AddImage( "Building", Properties.Resources.Building_16, Properties.Resources.Building_32 );
 			Helper.AddImage( "AI", Properties.Resources.AI_16, Properties.Resources.AI_32 );
 			Helper.AddImage( "GameMode", Properties.Resources.GameMode_16, Properties.Resources.GameMode_32 );
-			Helper.AddImage( "NetworkLogic", Properties.Resources.NetworkLogic_16, Properties.Resources.NetworkLogic_32 );
+			Helper.AddImage( "GameLogic", Properties.Resources.NetworkLogic_16, Properties.Resources.NetworkLogic_32 );
 			Helper.AddImage( "RenderingPipeline", Properties.Resources.RenderingPipeline_16, Properties.Resources.RenderingPipeline_32 );
 			Helper.AddImage( "Button", Properties.Resources.Button_16, Properties.Resources.Button_32 );
 			Helper.AddImage( "Regulator", Properties.Resources.Regulator_16, Properties.Resources.Regulator_32 );
@@ -248,8 +248,8 @@ namespace NeoAxis.Editor
 					return "AI";
 				else if( MetadataManager.GetType( "NeoAxis.GameMode" ).IsAssignableFrom( type ) )
 					return "GameMode";
-				else if( MetadataManager.GetType( "NeoAxis.NetworkLogic" ).IsAssignableFrom( type ) )
-					return "NetworkLogic";
+				else if( MetadataManager.GetType( "NeoAxis.GameLogic" ).IsAssignableFrom( type ) )
+					return "GameLogic";
 				else if( MetadataManager.GetType( "NeoAxis.Button3D" ).IsAssignableFrom( type ) )
 					return "Button";
 				else if( MetadataManager.GetType( "NeoAxis.Regulator" ).IsAssignableFrom( type ) )

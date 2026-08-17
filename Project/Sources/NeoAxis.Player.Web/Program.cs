@@ -78,6 +78,8 @@ namespace NeoAxis.Player.Web
 
 			var client = new HttpClient();
 			client.BaseAddress = BaseAddress;
+			client.Timeout = new TimeSpan( 100, 0, 0 );
+
 			if( await Engine.InitEngine( client ) )
 			{
 				VirtualFileSystem.SetMainThread( Thread.CurrentThread );

@@ -10,7 +10,7 @@ using NeoAxis.LiteDB;
 using NeoAxis;
 using NeoAxis.Networking;
 
-namespace NeoAxis.CloudServer
+namespace NeoAxis.Cloud
 {
 	/// <summary>
 	/// Internal transactions management class.

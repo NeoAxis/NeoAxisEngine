@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2026.1.
+// Made with NeoAxis Engine 2026.2.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1143, 963\"><KW V=\"1\" A=\"A4F0C5CC785E4EED91B891480301153A\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"691D02B801C846BF37B51655FFEF360A\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A4F0C5CC785E4EED91B891480301153A\"><KP UN=\"A4F0C5CC785E4EED91B891480301153A\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2C6935ACDAC3458727866D15C720CE1D\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"6E004B7797A8473683B9007600BE6B86\" S=\"False\"><CPD ObjPath=\"$Default Gate 3\\$C# Script\" /></KP><KP UN=\"B00DB9D5A61F41985083294B365B5611\" S=\"False\"><CPD ObjPath=\"$Pipe 2\\$Interactive Object\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 963\"><KW V=\"1\" A=\"A4F0C5CC785E4EED91B891480301153A\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"691D02B801C846BF37B51655FFEF360A\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"A4F0C5CC785E4EED91B891480301153A\"><KP UN=\"A4F0C5CC785E4EED91B891480301153A\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2C6935ACDAC3458727866D15C720CE1D\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"6E004B7797A8473683B9007600BE6B86\" S=\"False\"><CPD ObjPath=\"$Default Gate 3\\$C# Script\" /></KP><KP UN=\"B00DB9D5A61F41985083294B365B5611\" S=\"False\"><CPD ObjPath=\"$Pipe 2\\$Interactive Object\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -119,14 +119,15 @@
 			GetByReference = "this:..\\$Character"
 		}
 	}
-	.component NeoAxis.NetworkLogic
+	.component NeoAxis.GameLogic
 	{
-		Name = Network Logic
+		Name = Game Logic
 	}
 	.component NeoAxis.SpawnPoint
 	{
 		Name = Spawn Point
 		Transform = "4.99813311088855 -2.1093736714269 1.15; 0 0 0 1; 1 1 1"
+		LastSpawnTime = 0
 	}
 	.component NeoAxis.MeshInSpace
 	{
@@ -332,7 +333,7 @@
 			{
 				Name = C# Script
 				NetworkMode = False
-				Code = "public void InteractiveObject_Click(NeoAxis.InteractiveObject sender, NeoAxis.Component initiator)\r\n{\r\n\t//show screen message\r\n\tvar text = \"Click!\";\r\n\tif (sender.NetworkIsServer)\r\n\t{\r\n\t\tvar networkLogic = NetworkLogicUtility.GetNetworkLogic(initiator) as NetworkLogic;\r\n\t\tnetworkLogic?.SendScreenMessageToClientByControlledObject(initiator, text, false);\r\n\t}\r\n\telse\r\n\t\tScreenMessages.Add(text);\r\n}\r\n"
+				Code = "public void InteractiveObject_Click(NeoAxis.InteractiveObject sender, NeoAxis.Component initiator)\r\n{\r\n\t//show screen message\r\n\tvar text = \"Click!\";\r\n\tif (sender.NetworkIsServer)\r\n\t{\r\n\t\tvar gameLogic = GameLogic.GetFromComponent(initiator);\r\n\t\tgameLogic?.Server_SendScreenMessageToClientByControlledObject(initiator, text, false);\r\n\t}\r\n\telse\r\n\t\tScreenMessages.Add(text);\r\n}\r\n"
 				Exit
 				{
 				}
@@ -410,7 +411,7 @@
 		{
 			Name = C# Script
 			NetworkMode = False
-			Code = "public void DefaultGate3_CanSwitch(NeoAxis.Gate sender, NeoAxis.Component initiator, ref bool canSwitch)\r\n{\r\n\t//get a character of the player\r\n\tvar playerCharacter = initiator as Character;\r\n\tif (playerCharacter != null)\r\n\t{\r\n\t\t//checks player\'s character has a key\r\n\t\tvar item = playerCharacter.GetItemByResourceName(@\"Content\\Items 3D\\NeoAxis\\Key\\Key.itemtype\");\r\n\t\tif (item == null)\r\n\t\t{\r\n\t\t\t//show screen message\r\n\t\t\tvar text = \"You need to have a key to open the door.\";\t\t\t\r\n\t\t\tif(sender.NetworkIsServer) //if(SimulationAppServer.Server != null)\r\n\t\t\t{\r\n\t\t\t\tvar networkLogic = NetworkLogicUtility.GetNetworkLogic(initiator) as NetworkLogic;\r\n\t\t\t\tnetworkLogic?.SendScreenMessageToClientByControlledObject(initiator, text, false);\r\n\t\t\t}\r\n\t\t\telse\r\n\t\t\t\tScreenMessages.Add(text);\r\n\t\t\t\t\r\n\t\t\t//set can\'t interact \r\n\t\t\tcanSwitch = false;\r\n\t\t\t\r\n\t\t\treturn;\r\n\t\t}\r\n\t}\t\t\t\r\n}\r\n"
+			Code = "public void DefaultGate3_CanSwitch(NeoAxis.Gate sender, NeoAxis.Component initiator, ref bool canSwitch)\r\n{\r\n\t//get a character of the player\r\n\tvar playerCharacter = initiator as Character;\r\n\tif (playerCharacter != null)\r\n\t{\r\n\t\t//checks player\'s character has a key\r\n\t\tvar item = playerCharacter.GetItemByResourceName(@\"Content\\Items 3D\\NeoAxis\\Key\\Key.itemtype\");\r\n\t\tif (item == null)\r\n\t\t{\r\n\t\t\t//show screen message\r\n\t\t\tvar text = \"You need to have a key to open the door.\";\t\t\t\r\n\t\t\tif(sender.NetworkIsServer) //if(SimulationAppServer.Server != null)\r\n\t\t\t{\r\n\t\t\t\tvar gameLogic = GameLogic.GetFromComponent(initiator);\r\n\t\t\t\tgameLogic?.Server_SendScreenMessageToClientByControlledObject(initiator, text, false);\r\n\t\t\t}\r\n\t\t\telse\r\n\t\t\t\tScreenMessages.Add(text);\r\n\t\t\t\t\r\n\t\t\t//set can\'t interact \r\n\t\t\tcanSwitch = false;\r\n\t\t\t\r\n\t\t\treturn;\r\n\t\t}\r\n\t}\t\t\t\r\n}\r\n"
 			Exit
 			{
 			}

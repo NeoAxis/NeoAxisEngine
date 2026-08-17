@@ -84,6 +84,33 @@ namespace NeoAxis
 		public event Action<Regulator> AllowInteractChanged;
 		ReferenceField<bool> _allowInteract = true;
 
+		/// <summary>
+		/// Whether to change the direction of the regulator each time when the user interacts with it.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> AlternateDirection
+		{
+			get { if( _alternateDirection.BeginGet() ) AlternateDirection = _alternateDirection.Get( this ); return _alternateDirection.value; }
+			set { if( _alternateDirection.BeginSet( this, ref value ) ) { try { AlternateDirectionChanged?.Invoke( this ); } finally { _alternateDirection.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AlternateDirection"/> property value changes.</summary>
+		public event Action<Regulator> AlternateDirectionChanged;
+		ReferenceField<bool> _alternateDirection = false;
+
+		/////////////////////////////////////////
+
+		[Browsable( false )]
+		[NetworkSynchronize( true )]
+		[DefaultValue( false )]
+		public Reference<bool> AlternateDirectionCurrent
+		{
+			get { if( _alternateDirectionCurrent.BeginGet() ) AlternateDirectionCurrent = _alternateDirectionCurrent.Get( this ); return _alternateDirectionCurrent.value; }
+			set { if( _alternateDirectionCurrent.BeginSet( this, ref value ) ) { try { AlternateDirectionCurrentChanged?.Invoke( this ); } finally { _alternateDirectionCurrent.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AlternateDirectionCurrent"/> property value changes.</summary>
+		public event Action<Regulator> AlternateDirectionCurrentChanged;
+		ReferenceField<bool> _alternateDirectionCurrent = false;
+
 		/////////////////////////////////////////
 
 		[Browsable( false )]
@@ -422,12 +449,40 @@ namespace NeoAxis
 
 		public virtual bool InteractionInputMessage( GameMode gameMode, Component initiator, InputMessage message )
 		{
+			var keyDown = message as InputMessageKeyDown;
+			if( keyDown != null )
+			{
+				if( keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2 )
+				{
+					var forward = keyDown.Key == gameMode.KeyInteract1;
+					if( AlternateDirectionCurrent )
+						forward = !forward;
+					TryChangingBegin( forward, initiator );
+					return true;
+				}
+			}
+
+			var keyUp = message as InputMessageKeyUp;
+			if( keyUp != null )
+			{
+				if( keyUp.Key == gameMode.KeyInteract1 || keyUp.Key == gameMode.KeyInteract2 )
+				{
+					var forward = keyUp.Key == gameMode.KeyInteract1;
+					TryChangingEnd( forward, initiator );
+					if( AlternateDirection )
+						AlternateDirectionCurrent = !AlternateDirectionCurrent;
+					return true;
+				}
+			}
+
 			var mouseDown = message as InputMessageMouseButtonDown;
 			if( mouseDown != null )
 			{
 				if( mouseDown.Button == EMouseButtons.Left || mouseDown.Button == EMouseButtons.Right )
 				{
 					var forward = mouseDown.Button == EMouseButtons.Left;
+					if( AlternateDirectionCurrent )
+						forward = !forward;
 					//var initiator = gameMode.ObjectControlledByPlayer.Value;
 					TryChangingBegin( forward, initiator );
 					return true;
@@ -455,6 +510,8 @@ namespace NeoAxis
 					var forward = mouseUp.Button == EMouseButtons.Left;
 					//var initiator = gameMode.ObjectControlledByPlayer.Value;
 					TryChangingEnd( forward, initiator );
+					if( AlternateDirection )
+						AlternateDirectionCurrent = !AlternateDirectionCurrent;
 					return true;
 
 					//if( mouseUp.Button == EMouseButtons.Left && Changing && ChangingForward )

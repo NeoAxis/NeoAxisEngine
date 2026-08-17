@@ -597,7 +597,7 @@ namespace OpenALSoundSystem
 			if( active && Internal_SuspendWorkingWhenApplicationIsNotActive )
 			{
 				//!!!!add uwp?
-				if( SystemSettings.DesktopDevice )
+				if( SystemSettings.DesktopDevice && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
 				{
 					active = EngineApp.platform.ApplicationIsActive();
 

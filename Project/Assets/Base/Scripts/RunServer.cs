@@ -30,7 +30,7 @@ namespace Project
 
 		public static string TextStatus
 		{
-			get { return Running ? "Running" : "Stopped"; }
+			get { return Running ? "Server Running." : "Server Stopped."; }
 		}
 
 		public static bool Start( int port, string password, bool rendering, string sceneName, out string error )

@@ -90,7 +90,7 @@ namespace NeoAxis
 			}
 
 			//third person camera
-			if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+			if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPersonAutoRotation )
 			{
 				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 				var cameraSettings = viewport.CameraSettings;
@@ -127,29 +127,6 @@ namespace NeoAxis
 				}
 
 				Character.LookToPosition( lookAt, false );
-
-
-				////var lookDirection = ( lookAt - characterCenter ).GetNormalize();
-
-				////need?
-				////float limit = fpsCamera ? 0.1f : MathEx.PI / 8;
-				////if( lookDirection.Vertical < -( MathEx.PI / 2 - limit ) )
-				////	lookDirection.Vertical = -( MathEx.PI / 2 - limit );
-				////if( lookDirection.Vertical > MathEx.PI / 2 - limit )
-				////	lookDirection.Vertical = MathEx.PI / 2 - limit;
-
-				////if( !gameMode.ThirdPersonCameraFollowDirection )
-				////{
-
-				////Character.TurnToDirection( (float)MathEx.DegreeToRadian( gameMode.ThirdPersonCameraHorizontalAngle.Value ), false );
-
-				////var direction = new SphericalDirection( MathEx.DegreeToRadian( gameMode.ThirdPersonCameraHorizontalAngle.Value ), MathEx.DegreeToRadian( gameMode.ThirdPersonCameraVerticalAngle.Value ) );
-				////Character.TurnToDirection( direction.ToSphericalDirectionF(), true );
-
-				////	//Character.TurnToDirection( SphericalDirectionF.FromVector( lookDirection.ToVector3F() ), true );
-				////}
-
-				////Character.LookToPosition( lookAt, false );
 			}
 		}
 
@@ -159,7 +136,7 @@ namespace NeoAxis
 
 			var character = Character;
 
-			if( character != null && InputEnabled && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
+			if( character != null && InputEnabled && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None || gameMode.GetCameraManagementOfCurrentObject() != null ) )
 			{
 				//key down
 				var keyDown = message as InputMessageKeyDown;
@@ -201,20 +178,25 @@ namespace NeoAxis
 						}
 					}
 
-					////drop item
-					//if( keyDown.Key == gameMode.KeyDrop1 || keyDown.Key == gameMode.KeyDrop2 )
-					//{
-					//	var item = character.GetActiveItem();
-					//	//var item = character.ItemGetFirst();
-					//	if( item != null )
-					//	{
-					//		var amount = 1;
-					//		if( NetworkIsClient )
-					//			character.ItemDropClient( item, amount );
-					//		else
-					//			character.ItemDrop( gameMode, item, amount );
-					//	}
-					//}
+					//fire
+					if( keyDown.Key == gameMode.KeyFire1 || keyDown.Key == gameMode.KeyFire2 )
+					{
+						var weapon = Character.GetActiveWeapon();
+						if( weapon != null )
+						{
+							var mode = keyDown.Key == gameMode.KeyFire1 ? 1 : 2;
+
+							firing[ mode ] = true;
+
+							if( NetworkIsClient )
+								weapon.FiringBeginClient( mode );
+							else
+							{
+								var gameLogic = character.ParentScene?.GetGameLogic();
+								weapon.FiringBegin( mode, gameLogic?.Single_GetUserByObjectControlled( character )?.UserID ?? -1 );
+							}
+						}
+					}
 
 					//exit from seat
 					if( keyDown.Key == gameMode.KeyInteract1 || keyDown.Key == gameMode.KeyInteract2 )
@@ -278,7 +260,10 @@ namespace NeoAxis
 						if( NetworkIsClient )
 							weapon.FiringBeginClient( mode );
 						else
-							weapon.FiringBegin( mode, 0 );
+						{
+							var gameLogic = character.ParentScene?.GetGameLogic();
+							weapon.FiringBegin( mode, gameLogic?.Single_GetUserByObjectControlled( character )?.UserID ?? -1 );
+						}
 					}
 				}
 
@@ -313,9 +298,9 @@ namespace NeoAxis
 			if( character != null && InputEnabled )
 			{
 				var scene = ParentRoot as Scene;
-				var gameMode = (GameMode)scene?.GetGameMode();//var gameMode = scene?.GetComponent<GameMode>();
+				var gameMode = scene?.GetGameMode();//var gameMode = scene?.GetComponent<GameMode>();
 
-				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.FirstPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.GetCameraManagementOfCurrentObject() != null ) )
+				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None || gameMode.GetCameraManagementOfCurrentObject() != null ) )
 				{
 
 					character.AllowLookToBackWhenNoActiveItem = gameMode.ThirdPersonCameraAllowLookToBackWhenNoActiveItem;
@@ -388,7 +373,7 @@ namespace NeoAxis
 						//character.SetMoveVector( vector, run );
 
 
-						if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson )
+						if( gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPerson || gameMode.UseBuiltInCamera.Value == GameMode.BuiltInCameraEnum.ThirdPersonAutoRotation )
 						{
 							var turnToVector = vector;
 
@@ -418,7 +403,40 @@ namespace NeoAxis
 					//!!!!don't send same for weapon if possible. jump too
 
 
-					//update firing
+					//update firing by key
+					if( gameMode != null )
+					{
+						if( IsKeyPressed( gameMode.KeyFire1 ) && firing[ 1 ] )
+						{
+							var weapon = Character.GetActiveWeapon();
+							if( weapon != null )
+							{
+								if( NetworkIsClient )
+									weapon.FiringBeginClient( 1 );
+								else
+								{
+									var gameLogic = character.ParentScene?.GetGameLogic();
+									weapon.FiringBegin( 1, gameLogic?.Single_GetUserByObjectControlled( character )?.UserID ?? -1 );
+								}
+							}
+						}
+						if( IsKeyPressed( gameMode.KeyFire2 ) && firing[ 2 ] )
+						{
+							var weapon = Character.GetActiveWeapon();
+							if( weapon != null )
+							{
+								if( NetworkIsClient )
+									weapon.FiringBeginClient( 2 );
+								else
+								{
+									var gameLogic = character.ParentScene?.GetGameLogic();
+									weapon.FiringBegin( 2, gameLogic?.Single_GetUserByObjectControlled( character )?.UserID ?? -1 );
+								}
+							}
+						}
+					}
+
+					//update firing by mouse
 					if( IsMouseButtonPressed( EMouseButtons.Left ) && firing[ 1 ] )
 					{
 						var weapon = Character.GetActiveWeapon();
@@ -427,7 +445,10 @@ namespace NeoAxis
 							if( NetworkIsClient )
 								weapon.FiringBeginClient( 1 );
 							else
-								weapon.FiringBegin( 1, 0 );
+							{
+								var gameLogic = character.ParentScene?.GetGameLogic();
+								weapon.FiringBegin( 1, gameLogic?.Single_GetUserByObjectControlled( character )?.UserID ?? -1 );
+							}
 						}
 					}
 					if( IsMouseButtonPressed( EMouseButtons.Right ) && firing[ 2 ] )
@@ -438,7 +459,10 @@ namespace NeoAxis
 							if( NetworkIsClient )
 								weapon.FiringBeginClient( 2 );
 							else
-								weapon.FiringBegin( 2, 0 );
+							{
+								var gameLogic = character.ParentScene?.GetGameLogic();
+								weapon.FiringBegin( 2, gameLogic?.Single_GetUserByObjectControlled( character )?.UserID ?? -1 );
+							}
 						}
 					}
 
@@ -518,8 +542,8 @@ namespace NeoAxis
 			if( character != null )
 			{
 				//security check the object is controlled by the player
-				var networkLogic = NetworkLogicUtility.GetNetworkLogic( character );
-				if( networkLogic != null && networkLogic.ServerGetObjectControlledByUser( client.User, true ) == character )
+				var gameLogic = character.ParentScene?.GetGameLogic();
+				if( gameLogic != null && gameLogic.Server_GetObjectControlledByUser( client.User ) == character )
 				{
 					if( message == "UpdateObjectControlCharacter" )
 					{
@@ -571,7 +595,6 @@ namespace NeoAxis
 						if( seat != null )
 						{
 							seat.RemoveObjectFromSeat( seatIndex );
-							//networkLogic.ServerChangeObjectControlled( client.User, obj );
 						}
 					}
 				}
