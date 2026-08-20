@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Threading;
 
 namespace NeoAxis
 {
@@ -18,18 +19,12 @@ namespace NeoAxis
 	{
 		static readonly DateTime setTimeToFilesInZip = new DateTime( 2001, 1, 1, 1, 1, 1 );
 
-		public enum ConfigurationEnum
-		{
-			Debug,
-			Release,
-		}
-
-		//!!!!? Release by default
+		//!!!!change later to Release
 
 		/// <summary>
 		/// The build configuration. Release enables AOT compilation.
 		/// </summary>
-		[Category( "Web" )]
+		[Category( "Compilation" )]
 		[DefaultValue( ConfigurationEnum.Debug )]
 		public Reference<ConfigurationEnum> Configuration
 		{
@@ -40,37 +35,33 @@ namespace NeoAxis
 		public event Action<Product_Web> ConfigurationChanged;
 		ReferenceField<ConfigurationEnum> _configuration = ConfigurationEnum.Debug;
 
+		/// <summary>
+		/// Define constants for Project assembly separated by semicolon. For example: "CLIENT;ANOTHER_CONSTANT".
+		/// </summary>
+		[Category( "Compilation" )]
+		[DefaultValue( "" )]
+		public Reference<string> DefineConstants
+		{
+			get { if( _defineConstants.BeginGet() ) DefineConstants = _defineConstants.Get( this ); return _defineConstants.value; }
+			set { if( _defineConstants.BeginSet( this, ref value ) ) { try { DefineConstantsChanged?.Invoke( this ); } finally { _defineConstants.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DefineConstants"/> property value changes.</summary>
+		public event Action<Product_Web> DefineConstantsChanged;
+		ReferenceField<string> _defineConstants = "";
 
-		///// <summary>
-		///// The package name of the package.
-		///// </summary>
-		//[Category( "Product" )]
-		//public string PackageName
-		//{
-		//	get
-		//	{
-		//		// PackageName in manifest must match pattern '[-.A-Za-z0-9]+'
-
-		//		var result = ProductName.Value.Replace( " ", "" ).Replace( "_", "" );
-
-		//		////check
-		//		//if( !System.Text.RegularExpressions.Regex.IsMatch( packageName, "^[-.A-Za-z0-9]+$" ) )
-		//		//	throw new Exception( "PackageName must match pattern '[-.A-Za-z0-9]+'" );
-
-		//		return result;
-		//	}
-		//}
-
-		//[Category( "Web" )]// and Run" )]
-		//[DefaultValue( "x64" )]
-		//public Reference<string> BuildPlatform
-		//{
-		//	get { if( _buildPlatform.BeginGet() ) BuildPlatform = _buildPlatform.Get( this ); return _buildPlatform.value; }
-		//	set { if( _buildPlatform.BeginSet( this, ref value ) ) { try { BuildPlatformChanged?.Invoke( this ); } finally { _buildPlatform.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="BuildPlatform"/> property value changes.</summary>
-		//public event Action<Product_Web> BuildPlatformChanged;
-		//ReferenceField<string> _buildPlatform = "x64";
+		/// <summary>
+		/// The verbosity level of the build process. Minimal shows only essential information, while Normal provides more detailed output.
+		/// </summary>
+		[Category( "Compilation" )]
+		[DefaultValue( VerbosityLevelEnum.Minimal )]
+		public Reference<VerbosityLevelEnum> VerbosityLevel
+		{
+			get { if( _verbosityLevel.BeginGet() ) VerbosityLevel = _verbosityLevel.Get( this ); return _verbosityLevel.value; }
+			set { if( _verbosityLevel.BeginSet( this, ref value ) ) { try { VerbosityLevelChanged?.Invoke( this ); } finally { _verbosityLevel.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="VerbosityLevel"/> property value changes.</summary>
+		public event Action<Product_Web> VerbosityLevelChanged;
+		ReferenceField<VerbosityLevelEnum> _verbosityLevel = VerbosityLevelEnum.Minimal;
 
 		/// <summary>
 		/// Whether to compress Zip archive with the project data.
@@ -86,170 +77,6 @@ namespace NeoAxis
 		public event Action<Product_Web> CompressDataChanged;
 		ReferenceField<bool> _compressData = true;
 
-		//!!!!impl
-		//[Category( "Web" )]
-		//[DefaultValue( true )]
-		//public Reference<bool> PatchProjectFiles
-		//{
-		//	get { if( _patchProjectFiles.BeginGet() ) PatchProjectFiles = _patchProjectFiles.Get( this ); return _patchProjectFiles.value; }
-		//	set { if( _patchProjectFiles.BeginSet( this, ref value ) ) { try { PatchProjectFilesChanged?.Invoke( this ); } finally { _patchProjectFiles.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="PatchProjectFiles"/> property value changes.</summary>
-		//public event Action<Product_Web> PatchProjectFilesChanged;
-		//ReferenceField<bool> _patchProjectFiles = true;
-
-		///// <summary>
-		///// The displayable name of the package.
-		///// </summary>
-		//[Category( "Web" )]
-		//[DefaultValue( "NeoAxis.Player" )]
-		//[Serialize]
-		//public Reference<string> PackageDisplayName
-		//{
-		//	get { if( _packageDisplayName.BeginGet() ) PackageDisplayName = _packageDisplayName.Get( this ); return _packageDisplayName.value; }
-		//	set { if( _packageDisplayName.BeginSet( this, ref value ) ) { try { PackageDisplayNameChanged?.Invoke( this ); } finally { _packageDisplayName.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="PackageDisplayName"/> property value changes.</summary>
-		//public event Action<Product_Web> PackageDisplayNameChanged;
-		//ReferenceField<string> _packageDisplayName = "NeoAxis.Player";
-
-		///// <summary>
-		///// The version of the product package.
-		///// </summary>
-		//[Category( "Web" )]
-		//[DefaultValue( "1.0.0.0" )]
-		//[Serialize]
-		//public Reference<string> PackageVersion
-		//{
-		//	get { if( _packageVersion.BeginGet() ) PackageVersion = _packageVersion.Get( this ); return _packageVersion.value; }
-		//	set { if( _packageVersion.BeginSet( this, ref value ) ) { try { PackageVersionChanged?.Invoke( this ); } finally { _packageVersion.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="PackageVersion"/> property value changes.</summary>
-		//public event Action<Product_Web> PackageVersionChanged;
-		//ReferenceField<string> _packageVersion = "1.0.0.0";
-
-		///// <summary>
-		///// The name of the package publisher.
-		///// </summary>
-		//[Category( "Web" )]
-		//[DefaultValue( "CN=DefaultPublisher" )]
-		//public Reference<string> PackagePublisher
-		//{
-		//	get { if( _packagePublisher.BeginGet() ) PackagePublisher = _packagePublisher.Get( this ); return _packagePublisher.value; }
-		//	set { if( _packagePublisher.BeginSet( this, ref value ) ) { try { PackagePublisherChanged?.Invoke( this ); } finally { _packagePublisher.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="PackagePublisher"/> property value changes.</summary>
-		//public event Action<Product_Web> PackagePublisherChanged;
-		//ReferenceField<string> _packagePublisher = "CN=DefaultPublisher";
-
-		///// <summary>
-		///// Displayed publisher name.
-		///// </summary>
-		//[Category( "Web" )]
-		////[DisplayName( "PublisherDisplayName" )]
-		//[DefaultValue( "Default Publisher" )]
-		//[Serialize]
-		//public Reference<string> PublisherDisplayName
-		//{
-		//	get { if( _publisherDisplayName.BeginGet() ) PublisherDisplayName = _publisherDisplayName.Get( this ); return _publisherDisplayName.value; }
-		//	set { if( _publisherDisplayName.BeginSet( this, ref value ) ) { try { PublisherDisplayNameChanged?.Invoke( this ); } finally { _publisherDisplayName.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="PublisherDisplayName"/> property value changes.</summary>
-		//public event Action<Product_Web> PublisherDisplayNameChanged;
-		//ReferenceField<string> _publisherDisplayName = "Default Publisher";
-
-		/////// <summary>
-		/////// Whether to create Appx package.
-		/////// </summary>
-		////[Category( "Build" )]
-		////[DefaultValue( false )]
-		////[Serialize]
-		////public Reference<bool> CreateAppxPackage
-		////{
-		////	get { if( _createAppxPackage.BeginGet() ) CreateAppxPackage = _createAppxPackage.Get( this ); return _createAppxPackage.value; }
-		////	set { if( _createAppxPackage.BeginSet( this, ref value ) ) { try { CreateAppxPackageChanged?.Invoke( this ); } finally { _createAppxPackage.EndSet(); } } }
-		////}
-		/////// <summary>Occurs when the <see cref="CreateAppxPackage"/> property value changes.</summary>
-		////public event Action<Product_Web> CreateAppxPackageChanged;
-		////ReferenceField<bool> _createAppxPackage = false;
-
-		/////// <summary>
-		/////// Whether to create Appx bundle.
-		/////// </summary>
-		////[Category( "Build" )]
-		////[DefaultValue( "Always" )]
-		////[Serialize]
-		////[Browsable( false )]
-		////public string CreateAppxBundle { get; } = "Always";
-
-		///////////////////////////////////////////
-		//// app ui (windows Start menu, main window caption)
-
-		//[Category( "Web" )]
-		////[DisplayName( "DisplayName" )]
-		//[DefaultValue( "NeoAxis Player" )]
-		//[Serialize]
-		//public Reference<string> AppDisplayName
-		//{
-		//	get { if( _appDisplayName.BeginGet() ) AppDisplayName = _appDisplayName.Get( this ); return _appDisplayName.value; }
-		//	set { if( _appDisplayName.BeginSet( this, ref value ) ) { try { AppDisplayNameChanged?.Invoke( this ); } finally { _appDisplayName.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="AppDisplayName"/> property value changes.</summary>
-		//public event Action<Product_Web> AppDisplayNameChanged;
-		//ReferenceField<string> _appDisplayName = "NeoAxis Player";
-
-		///// <summary>
-		///// The description of the product.
-		///// </summary>
-		//[Category( "Web" )]
-		////[DisplayName( "Description" )]
-		//[DefaultValue( "NeoAxis Application" )]
-		//[Serialize]
-		//public Reference<string> AppDescription
-		//{
-		//	get { if( _appDescription.BeginGet() ) AppDescription = _appDescription.Get( this ); return _appDescription.value; }
-		//	set
-		//	{
-		//		if( string.IsNullOrWhiteSpace( value ) )
-		//		{
-		//			value = ProductName;
-		//			//throw new Exception( "Description must not begin or end with whitespace" );
-		//		}
-		//		if( _appDescription.BeginSet( this, ref value ) ) { try { AppDescriptionChanged?.Invoke( this ); } finally { _appDescription.EndSet(); } }
-		//	}
-		//}
-		///// <summary>Occurs when the <see cref="AppDescription"/> property value changes.</summary>
-		//public event Action<Product_Web> AppDescriptionChanged;
-		//ReferenceField<string> _appDescription = "NeoAxis Application";
-
-		///// <summary>
-		///// The application identifier.
-		///// </summary>
-		//[Category( "Web" )]
-		//[DefaultValue( "App" )]
-		//public Reference<string> ApplicationId
-		//{
-		//	get { if( _applicationId.BeginGet() ) ApplicationId = _applicationId.Get( this ); return _applicationId.value; }
-		//	set { if( _applicationId.BeginSet( this, ref value ) ) { try { ApplicationIdChanged?.Invoke( this ); } finally { _applicationId.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="ApplicationId"/> property value changes.</summary>
-		//public event Action<Product_Web> ApplicationIdChanged;
-		//ReferenceField<string> _applicationId = "App";
-
-		///// <summary>
-		///// The entry point of the product.
-		///// </summary>
-		//[Category( "Web" )]
-		//[DefaultValue( "NeoAxis.Player.App" )]
-		//public Reference<string> EntryPoint
-		//{
-		//	get { if( _entryPoint.BeginGet() ) EntryPoint = _entryPoint.Get( this ); return _entryPoint.value; }
-		//	set { if( _entryPoint.BeginSet( this, ref value ) ) { try { EntryPointChanged?.Invoke( this ); } finally { _entryPoint.EndSet(); } } }
-		//}
-		///// <summary>Occurs when the <see cref="EntryPoint"/> property value changes.</summary>
-		//public event Action<Product_Web> EntryPointChanged;
-		//ReferenceField<string> _entryPoint = "NeoAxis.Player.App";
-
 		/////////////////////////////////////////
 
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
@@ -261,13 +88,6 @@ namespace NeoAxis
 			{
 				//switch( p.Name )
 				//{
-				//case nameof( PackageDisplayName ):
-				//case nameof( PackageVersion ):
-				//case nameof( PackagePublisher ):
-				//case nameof( PublisherDisplayName ):
-				//case nameof( AppDisplayName ):
-				//case nameof( AppDescription ):
-				//case nameof( ApplicationId ):
 				//case nameof( EntryPoint ):
 				//	if( !PatchProjectFiles )
 				//		skip = true;
@@ -352,13 +172,6 @@ namespace NeoAxis
 
 		void PatchCSharpProjects( ProductBuildInstance buildInstance )
 		{
-			//{
-			//	var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.Web.csproj" );
-			//	var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.csproj" );
-			//	if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, out var error, out _ ) )
-			//		throw new Exception( error );
-			//}
-
 			{
 				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.Web.csproj" );
 				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
@@ -456,28 +269,68 @@ namespace NeoAxis
 			var release = Configuration.Value == ConfigurationEnum.Release;
 
 			buildInstance.ProgressText = release
-				? "Building projects Release (can update up 30 min)..."
-				: "Building projects Debug (up to 5 min)...";
+				? "Building projects Release (AOT compilation may take some time)..."
+				: "Building projects Debug...";
 
 			var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player.Web\NeoAxis.Player.Web.csproj" );
 
 			var arguments = $"publish \"{projectFullPath}\"";
 			arguments += $" --configuration {( release ? "Release" : "Debug" )}";
 			arguments += $" --output \"{publishFolder}\"";
-			arguments += " --verbosity minimal";
+			arguments += $" --verbosity {VerbosityLevel.Value.ToString().ToLower()}";
+			arguments += " --nologo";
+			arguments += " -tl:off";
 			arguments += " -p:NeoAxisProductBuild=true";
-
 			if( release )
 				arguments += " -p:RunAOTCompilation=true -p:PublishTrimmed=true -p:TrimMode=partial";
 
-			//??
-			//var defineConstants = DefineConstants.Value.Trim();
-			//if( !string.IsNullOrEmpty( defineConstants ) )
-			//	arguments += $" -p:DefineConstants=\"{defineConstants}\"";
+			var defineConstants = DefineConstants.Value.Trim();
+			if( !string.IsNullOrEmpty( defineConstants ) )
+				arguments += $" -p:DefineConstants=\"{defineConstants}\"";
 
-			var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
-			if( !success )
-				throw new Exception( $"Unable to publish project.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+			void ErrorReceived( string text )
+			{
+				var text2 = text.Trim();
+				if( !string.IsNullOrEmpty( text2 ) )
+				{
+					//add to build instance logs
+					var buildInstance2 = buildInstance;
+					if( buildInstance2 != null )
+						buildInstance2.Logs += "Error: " + text2 + "\r\n";
+
+					//write to log files
+					Log.InvisibleInfo( "Build: Error: " + text2 );
+				}
+			}
+
+			void OutputReceived( string text )
+			{
+				var text2 = text.Trim();
+
+				//add to build instance logs
+				var buildInstance2 = buildInstance;
+				if( buildInstance2 != null )
+					buildInstance2.Logs += text2 + "\r\n";
+
+				//write to log files
+				Log.InvisibleInfo( "Build: Output: " + text2 );
+			}
+
+			{
+				var cts = new CancellationTokenSource();
+				var runResultTask = ProcessUtility.RunAndWaitAsync( dotnetExePath, arguments, errorDataReceivedCallback: ErrorReceived, outputDataReceivedCallback: OutputReceived, cancellationToken: cts.Token );
+				while( !runResultTask.IsCompleted )
+				{
+					if( buildInstance.RequestCancel )
+						cts.Cancel();
+					Thread.Sleep( 10 );
+				}
+				if( CheckCancel( buildInstance ) )
+					return;
+				var runResult = runResultTask.Result;
+				if( runResult.ExitCode != 0 )
+					throw new Exception( $"Unable to publish project.\r\n\r\n{runResult.Output}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+			}
 
 			buildInstance.Progress = (float)progressRange.Maximum;
 		}
@@ -524,150 +377,17 @@ namespace NeoAxis
 			//copy files
 			var copyPaths = GetPaths();
 
-			//var paths = new List<string>();
-
-			//paths.Add( "Caches" );
-
-			////Caches
-			//if( !ShaderCache )
-			//	paths.Add( @"exclude:Caches\ShaderCache" );
-			//if( !FileCache )
-			//	paths.Add( @"exclude:Caches\Files" );
-
-			////Paths
-			//foreach( var path in Paths.Value.Split( '\n', StringSplitOptions.RemoveEmptyEntries ) )
-			//{
-			//	var path2 = path.Replace( "\r", "" ).Trim();
-			//	if( path2 != "" )
-			//		paths.Add( path2 );
-			//}
-
-			////remove rooted paths
-			//for( int n = 0; n < paths.Count; n++ )
-			//	paths[ n ] = paths[ n ].Replace( VirtualFileSystem.Directories.Project + Path.DirectorySeparatorChar, "" );
-
 			//execute
 			CopyIncludeExcludePaths( copyPaths, buildInstance, new Range( 0, 0.4 ) );
-
-			////copy Assets
-			//{
-			//	string sourceAssetsPath = VirtualFileSystem.Directories.Assets;
-			//	string destAssetsPath = Path.Combine( buildInstance.DestinationFolder, "Assets" );
-
-			//	var assetsExcludePaths = new List<string>();
-			//	{
-			//		assetsExcludePaths.Add( Path.Combine( sourceAssetsPath, @"Base\Tools" ) );
-			//		assetsExcludePaths.Add( Path.Combine( sourceAssetsPath, @"Base\Learning" ) );
-
-			//		var excluded = ExcludedAssets.Value.Trim();
-			//		if( !string.IsNullOrEmpty( excluded ) )
-			//		{
-			//			foreach( var v in excluded.Split( new char[] { ';', '\r', '\n' } ) )
-			//			{
-			//				var v2 = v.Trim( ' ', '\t' );
-			//				if( !string.IsNullOrEmpty( v2 ) )
-			//					assetsExcludePaths.Add( Path.Combine( sourceAssetsPath, v2 ) );
-			//			}
-			//		}
-			//	}
-
-			//	bool skipDefaultBehavior = false;
-
-			//	var values = Paths.Value.Trim();
-			//	if( !string.IsNullOrEmpty( values ) )
-			//	{
-			//		foreach( var v in values.Split( new char[] { ';', '\r', '\n' } ) )
-			//		{
-			//			var v2 = v.Trim( ' ', '\t' );
-			//			if( !string.IsNullOrEmpty( v2 ) )
-			//			{
-			//				var sourceFolder2 = Path.Combine( VirtualFileSystem.Directories.Project, "Assets", v2 );
-			//				var destFolder2 = Path.Combine( buildInstance.DestinationFolder, "Assets", v2 );
-			//				var percentRange2 = new Range( 0.0, 0.0 );
-
-			//				CopyFolder( sourceFolder2, destFolder2, buildInstance, percentRange2, assetsExcludePaths );
-
-			//				if( CheckCancel( buildInstance ) )
-			//					return;
-			//			}
-			//		}
-
-			//		skipDefaultBehavior = true;
-			//	}
-
-			//	if( !skipDefaultBehavior )
-			//		CopyFolder( VirtualFileSystem.Directories.Assets, destAssetsPath, buildInstance, new Range( 0.0, 0.3 ), assetsExcludePaths );
-			//}
-
-			////copy Caches
-			//{
-			//	string sourceCachesPath = Path.Combine( VirtualFileSystem.Directories.Project, "Caches" );
-			//	string destCachesPath = Path.Combine( buildInstance.DestinationFolder, "Caches" );
-
-			//	var excludePaths = new List<string>();
-			//	if( !ShaderCache )
-			//		excludePaths.Add( @"Caches\ShaderCache" );
-			//	if( !FileCache )
-			//		excludePaths.Add( @"Caches\Files" );
-
-			//	CopyFolder( sourceCachesPath, destCachesPath, buildInstance, new Range( 0.3, 0.4 ), excludePaths );
-
-			//	if( CheckCancel( buildInstance ) )
-			//		return;
-			//}
-
-			////copy Build.Web.sln or Build.Web.Extended.sln
-			//if( File.Exists( Path.Combine( VirtualFileSystem.Directories.Project, "Build.Web.Extended.sln" ) ) )
-			//{
-			//	CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Web.Extended.sln" );
-			//}
-			//else
-			//{
-			//CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Web.sln" );
-			////}
-
-			////copy Project.Web.csproj
-			//CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Project.Web.csproj" );
-
-			////copy Properties
-			//CopyFolder( Path.Combine( VirtualFileSystem.Directories.Project, "Properties" ), Path.Combine( buildInstance.DestinationFolder, "Properties" ), buildInstance, new Range( 0.4, 0.4 ) );
-
-			////copy part of Sources
-			//var sourceSourcesPath = Path.Combine( VirtualFileSystem.Directories.Project, "Sources" );
-			//string destSourcesPath = Path.Combine( buildInstance.DestinationFolder, "Sources" );
-
-			////copy Sources\NeoAxis.Player.Web exclude Project.zip.hash, Project.zip
-			//{
-			//	var excludePaths = new List<string>();
-			//	excludePaths.Add( @"Sources\NeoAxis.Player.Web\Assets\wwwroot\Project.zip.hash" );
-			//	excludePaths.Add( @"Sources\NeoAxis.Player.Web\Assets\wwwroot\Project.zip" );
-
-			//	CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.Player.Web" ), Path.Combine( destSourcesPath, "NeoAxis.Player.Web" ), buildInstance, new Range( 0.4, 0.45 ), excludePaths );
-			//}
-
-			////copy Sources\NeoAxis.CoreExtension
-			//CopyFolder( Path.Combine( sourceSourcesPath, "NeoAxis.CoreExtension" ), Path.Combine( destSourcesPath, "NeoAxis.CoreExtension" ), buildInstance, new Range( 0.45, 0.5 ) );
 
 			var sourceBinariesPath = VirtualFileSystem.Directories.Binaries;
 			string destBinariesPath = Path.Combine( buildInstance.DestinationFolder, "Binaries" );
 
-			//var sourcePlatformFolder = Path.Combine( sourceBinariesPath, "NeoAxis.Internal\\Platforms", Platform.ToString() );
-			//var destPlatformFolder = Path.Combine( destBinariesPath, "NeoAxis.Internal\\Platforms", Platform.ToString() );
-
-			////copy managed dll references from original folder
-			//CopyFiles( VirtualFileSystem.Directories.Binaries, destBinariesPath, buildInstance, new Range( 0.5, 0.6 ), "*.dll" );
 			//copy NeoAxis.DefaultSettings.config
 			Directory.CreateDirectory( Path.Combine( destBinariesPath, "NeoAxis.Internal" ) );
 			File.Copy(
 				Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ),
 				Path.Combine( destBinariesPath, "NeoAxis.Internal", "NeoAxis.DefaultSettings.config" ), true );
-			//!!!!unnecessary dlls are copied? we need a list of references?
-			//copy managed dll references from Web folder
-
-			//managed dll references are not needed for the final build. dotnet publish resolves references by itself
-			//CopyFiles(
-			//	Path.Combine( sourcePlatformFolder, "Managed" ),
-			//	Path.Combine( destPlatformFolder, "Managed" ), buildInstance, new Range( 0.6, 0.7 ), "*.dll" );
 
 			if( CheckCancel( buildInstance ) )
 				return;
@@ -687,7 +407,6 @@ namespace NeoAxis
 				var paths = new List<string>();
 				paths.Add( Path.Combine( buildInstance.DestinationFolder, "Assets" ) );
 				paths.Add( Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\NeoAxis.DefaultSettings.config" ) );
-				//!!!!without CSharpScripts
 				paths.Add( Path.Combine( buildInstance.DestinationFolder, "Caches" ) );
 
 				using( var archive = ZipFile.Open( destinationFileName, ZipArchiveMode.Create ) )
@@ -707,6 +426,9 @@ namespace NeoAxis
 								entry.LastWriteTime = new DateTimeOffset( setTimeToFilesInZip );
 								using( var stream = entry.Open() )
 									stream.Write( bytes, 0, bytes.Length );
+
+								if( CheckCancel( buildInstance ) )
+									return;
 							}
 						}
 						else if( File.Exists( path ) )
@@ -720,6 +442,9 @@ namespace NeoAxis
 							entry.LastWriteTime = new DateTimeOffset( setTimeToFilesInZip );
 							using( var stream = entry.Open() )
 								stream.Write( bytes, 0, bytes.Length );
+
+							if( CheckCancel( buildInstance ) )
+								return;
 						}
 					}
 				}
@@ -746,76 +471,7 @@ namespace NeoAxis
 					File.WriteAllText( fileName, hashString );
 				}
 			}
-
-			//delete Assets, Caches, Binaries\NeoAxis.Internal\Tips, Binaries\NeoAxis.Internal\Tools
-			//{
-			//	//need for cs files
-			//	//var destFolder = Path.Combine( buildInstance.DestinationFolder, "Assets" );
-			//	//if( Directory.Exists( destFolder ) )
-			//	//	Directory.Delete( destFolder, true );
-
-			//	//need for cs files
-			//	//destFolder = Path.Combine( buildInstance.DestinationFolder, "Caches" );
-			//	//if( Directory.Exists( destFolder ) )
-			//	//	Directory.Delete( destFolder, true );
-
-			//	var destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tips" );
-			//	if( Directory.Exists( destFolder ) )
-			//		Directory.Delete( destFolder, true );
-
-			//	destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tools" );
-			//	if( Directory.Exists( destFolder ) )
-			//		Directory.Delete( destFolder, true );
-			//}
-
 		}
-
-		//void DoPatchProjectFiles( ProductBuildInstance buildInstance )
-		//{
-		//!!!!
-
-		//string destSourcesPath = Path.Combine( buildInstance.DestinationFolder, "Sources" );
-
-		//PatchManifestFile( Path.Combine( destSourcesPath, "NeoAxis.Player.UWP\\Package.appxmanifest" ) );
-		//PatchCSProjFile( Path.Combine( destSourcesPath, "NeoAxis.Player.UWP\\NeoAxis.Player.UWP.csproj" ) );
-		//PatchAssemblyInfoFile( Path.Combine( destSourcesPath, "NeoAxis.Player.UWP\\Properties\\AssemblyInfo.cs" ) );
-		//}
-
-		//// The package manifest is an XML document that contains the info the system needs to deploy, display, or update a Windows app.
-		//// https://docs.microsoft.com/en-us/uwp/schemas/appxpackage/appx-package-manifest
-		//void PatchManifestFile( string manifestPath )
-		//{
-		//	string data = File.ReadAllText( manifestPath );
-
-		//	data = data
-		//		.Replace( "Name=\"NeoAxis.Player\"", "Name=\"" + PackageName + "\"" )
-		//		.Replace( "Publisher=\"CN=DefaultPublisher\"", "Publisher=\"" + PackagePublisher + "\"" )
-		//		.Replace( "Version=\"1.0.0.0\"", "Version=\"" + PackageVersion + "\"" )
-		//		.Replace( "<DisplayName>NeoAxis.Player</DisplayName>", "<DisplayName>" + PackageDisplayName + "</DisplayName>" )
-		//		.Replace( "<PublisherDisplayName>Default Publisher</PublisherDisplayName>", "<PublisherDisplayName>" + PublisherDisplayName + "</PublisherDisplayName>" )
-		//		.Replace( "Id=\"App\"", "Id=\"" + ApplicationId + "\"" )
-		//		//.Replace( "{Executable}", ExecutableName + ".exe" )
-		//		.Replace( "EntryPoint=\"NeoAxis.Player.App\"", "EntryPoint=\"" + EntryPoint + "\"" )
-		//		//.Replace( "{BackgroundColor}", BackgroundColor )
-		//		.Replace( "DisplayName=\"NeoAxis Player\"", "DisplayName=\"" + AppDisplayName + "\"" )
-		//		.Replace( "Description=\"NeoAxis Application\"", "Description=\"" + AppDescription + "\"" );
-
-		//	File.WriteAllText( manifestPath, data );
-		//}
-
-		//void PatchCSProjFile( string path )
-		//{
-		//	string data = File.ReadAllText( path );
-		//	data = data.Replace( "<AssemblyName>NeoAxis.Player</AssemblyName>", "<AssemblyName>" + ProductName + "</AssemblyName>" );
-		//	File.WriteAllText( path, data );
-		//}
-
-		//void PatchAssemblyInfoFile( string path )
-		//{
-		//	string data = File.ReadAllText( path );
-		//	data = data.Replace( "NeoAxis.Player.UWP", ProductName );
-		//	File.WriteAllText( path, data );
-		//}
 
 		protected override void OnGetPaths( List<string> paths )
 		{

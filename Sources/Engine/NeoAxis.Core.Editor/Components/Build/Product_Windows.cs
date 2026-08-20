@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using NeoAxis.Editor;
 using Internal;
+using System.Threading;
 
 namespace NeoAxis
 {
@@ -17,6 +18,7 @@ namespace NeoAxis
 		/// <summary>
 		/// The target platform architecture.
 		/// </summary>
+		[Category( "Compilation" )]
 		[DefaultValue( ProfileEnum.x64 )]
 		public Reference<ProfileEnum> Profile
 		{
@@ -28,8 +30,23 @@ namespace NeoAxis
 		ReferenceField<ProfileEnum> _profile = ProfileEnum.x64;
 
 		/// <summary>
+		/// The build configuration. Release enables AOT compilation.
+		/// </summary>
+		[Category( "Compilation" )]
+		[DefaultValue( ConfigurationEnum.Release )]
+		public Reference<ConfigurationEnum> Configuration
+		{
+			get { if( _configuration.BeginGet() ) Configuration = _configuration.Get( this ); return _configuration.value; }
+			set { if( _configuration.BeginSet( this, ref value ) ) { try { ConfigurationChanged?.Invoke( this ); } finally { _configuration.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Configuration"/> property value changes.</summary>
+		public event Action<Product_Windows> ConfigurationChanged;
+		ReferenceField<ConfigurationEnum> _configuration = ConfigurationEnum.Release;
+
+		/// <summary>
 		/// Define constants for Project assembly separated by semicolon. For example: "CLIENT;ANOTHER_CONSTANT".
 		/// </summary>
+		[Category( "Compilation" )]
 		[DefaultValue( "" )]
 		public Reference<string> DefineConstants
 		{
@@ -41,8 +58,23 @@ namespace NeoAxis
 		ReferenceField<string> _defineConstants = "";
 
 		/// <summary>
+		/// The verbosity level of the build process. Minimal shows only essential information, while Normal provides more detailed output.
+		/// </summary>
+		[Category( "Compilation" )]
+		[DefaultValue( VerbosityLevelEnum.Minimal )]
+		public Reference<VerbosityLevelEnum> VerbosityLevel
+		{
+			get { if( _verbosityLevel.BeginGet() ) VerbosityLevel = _verbosityLevel.Get( this ); return _verbosityLevel.value; }
+			set { if( _verbosityLevel.BeginSet( this, ref value ) ) { try { VerbosityLevelChanged?.Invoke( this ); } finally { _verbosityLevel.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="VerbosityLevel"/> property value changes.</summary>
+		public event Action<Product_Windows> VerbosityLevelChanged;
+		ReferenceField<VerbosityLevelEnum> _verbosityLevel = VerbosityLevelEnum.Minimal;
+
+		/// <summary>
 		/// The name of application executable file.
 		/// </summary>
+		[Category( "Compilation" )]
 		[DefaultValue( "NeoAxis.Player" )]
 		//[Category( "Product" )]
 		public Reference<string> ExecutableName
@@ -57,6 +89,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Whether to include .NET runtime and assemblies to support compiling C# scripts in the built product.
 		/// </summary>
+		[Category( "Compilation" )]
 		[DefaultValue( false )]
 		public Reference<bool> CompilingScripts
 		{
@@ -83,6 +116,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Whether to include tools that are intended to import 3D models.
 		/// </summary>
+		[Category( "Windows" )]
 		[DefaultValue( false )]
 		public Reference<bool> ImportTools
 		{
@@ -96,6 +130,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Whether to include tools that are intended to process environment cubemaps.
 		/// </summary>
+		[Category( "Windows" )]
 		[DefaultValue( false )]
 		public Reference<bool> CubemapProcessingTools
 		{
@@ -122,6 +157,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Whether to include files for debugging (xml, pdb).
 		/// </summary>
+		[Category( "Windows" )]
 		[DefaultValue( false )]
 		public Reference<bool> DebugFiles
 		{
@@ -135,6 +171,7 @@ namespace NeoAxis
 		/// <summary>
 		/// Whether to include files to support UIWebBrowser control.
 		/// </summary>
+		[Category( "Windows" )]
 		[DisplayName( "UIWebBrowser" )]
 		[DefaultValue( false )]
 		public Reference<bool> UIWebBrowser
@@ -244,54 +281,130 @@ namespace NeoAxis
 			var destinationFolder = Path.Combine( buildInstance.DestinationFolder, "Binaries" );
 			Directory.CreateDirectory( destinationFolder );
 
+			void ErrorReceived( string text )
+			{
+				var text2 = text.Trim();
+				if( !string.IsNullOrEmpty( text2 ) )
+				{
+					//add to build instance logs
+					var buildInstance2 = buildInstance;
+					if( buildInstance2 != null )
+						buildInstance2.Logs += "Error: " + text2 + "\r\n";
+
+					//write to log files
+					Log.InvisibleInfo( "Build: Error: " + text2 );
+				}
+			}
+
+			void OutputReceived( string text )
+			{
+				var text2 = text.Trim();
+
+				//add to build instance logs
+				var buildInstance2 = buildInstance;
+				if( buildInstance2 != null )
+					buildInstance2.Logs += text2 + "\r\n";
+
+				//write to log files
+				Log.InvisibleInfo( "Build: Output: " + text2 );
+			}
+
+			var configuration = Configuration.Value.ToString();
+			var verbosity = VerbosityLevel.Value.ToString().ToLower();
+
 			buildInstance.Progress = (float)progressRange.Minimum;
 
 			//build assembly for compiling scripts
 			if( CompilingScripts )
 			{
-				var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Core.CompileScripts\NeoAxis.Core.CompileScripts.csproj" );
-				var arguments = $"build \"{projectFullPath}\" --configuration Release --output \"{destinationFolder}\" --verbosity minimal";
+				buildInstance.ProgressText = "Building CompileScripts assembly...";
 
-				var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
-				if( !success )
+				var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Core.CompileScripts\NeoAxis.Core.CompileScripts.csproj" );
+				var arguments = $"build \"{projectFullPath}\" --configuration {configuration} --output \"{destinationFolder}\" --verbosity {verbosity}";
+
+				var cts = new CancellationTokenSource();
+				var runResultTask = ProcessUtility.RunAndWaitAsync( dotnetExePath, arguments, errorDataReceivedCallback: ErrorReceived, outputDataReceivedCallback: OutputReceived, cancellationToken: cts.Token );
+				while( !runResultTask.IsCompleted )
 				{
-					throw new Exception( $"Unable to compile project.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+					if( buildInstance.RequestCancel )
+						cts.Cancel();
+					Thread.Sleep( 10 );
 				}
+				if( CheckCancel( buildInstance ) )
+					return;
+				var runResult = runResultTask.Result;
+				if( runResult.ExitCode != 0 )
+					throw new Exception( $"Unable to publish project.\r\n\r\n{runResult.Output}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+
+				//var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
+				//if( !success )
+				//{
+				//	throw new Exception( $"Unable to compile project.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+				//}
 			}
 
 			buildInstance.Progress = (float)MathEx.Lerp( progressRange.Minimum, progressRange.Maximum, 0.33 );
 
 			//build Project assembly
 			{
+				buildInstance.ProgressText = "Building Project assembly...";
+
 				var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
-				var arguments = $"build \"{projectFullPath}\" --configuration Release --output \"{destinationFolder}\" --verbosity minimal";
+				var arguments = $"build \"{projectFullPath}\" --configuration {configuration} --output \"{destinationFolder}\" --verbosity {verbosity}";
 
 				var defineConstants = DefineConstants.Value.Trim();
 				if( !string.IsNullOrEmpty( defineConstants ) )
-				{
 					arguments += $" -p:DefineConstants=\"{defineConstants}\"";
-					//arguments += " -p:DefineConstants=\"$(DefineConstants);CLIENT\"";
-				}
 
-				var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
-				if( !success )
+				var cts = new CancellationTokenSource();
+				var runResultTask = ProcessUtility.RunAndWaitAsync( dotnetExePath, arguments, errorDataReceivedCallback: ErrorReceived, outputDataReceivedCallback: OutputReceived, cancellationToken: cts.Token );
+				while( !runResultTask.IsCompleted )
 				{
-					throw new Exception( $"Unable to compile project.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+					if( buildInstance.RequestCancel )
+						cts.Cancel();
+					Thread.Sleep( 10 );
 				}
+				if( CheckCancel( buildInstance ) )
+					return;
+				var runResult = runResultTask.Result;
+				if( runResult.ExitCode != 0 )
+					throw new Exception( $"Unable to publish project.\r\n\r\n{runResult.Output}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+
+				//var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
+				//if( !success )
+				//{
+				//	throw new Exception( $"Unable to compile project.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+				//}
 			}
 
 			buildInstance.Progress = (float)MathEx.Lerp( progressRange.Minimum, progressRange.Maximum, 0.66 );
 
 			//build Player assembly
 			{
-				var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player\NeoAxis.Player.csproj" );
-				var arguments = $"build \"{projectFullPath}\" --configuration Release-Windows-{Profile.Value} --output \"{destinationFolder}\" --verbosity minimal";
+				buildInstance.ProgressText = "Building Player assembly...";
 
-				var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
-				if( !success )
+				var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player\NeoAxis.Player.csproj" );
+				var arguments = $"build \"{projectFullPath}\" --configuration {configuration}-Windows-{Profile.Value} --output \"{destinationFolder}\" --verbosity {verbosity}";
+
+				var cts = new CancellationTokenSource();
+				var runResultTask = ProcessUtility.RunAndWaitAsync( dotnetExePath, arguments, errorDataReceivedCallback: ErrorReceived, outputDataReceivedCallback: OutputReceived, cancellationToken: cts.Token );
+				while( !runResultTask.IsCompleted )
 				{
-					throw new Exception( $"Unable to compile project.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+					if( buildInstance.RequestCancel )
+						cts.Cancel();
+					Thread.Sleep( 10 );
 				}
+				if( CheckCancel( buildInstance ) )
+					return;
+				var runResult = runResultTask.Result;
+				if( runResult.ExitCode != 0 )
+					throw new Exception( $"Unable to publish project.\r\n\r\n{runResult.Output}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+
+				//var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
+				//if( !success )
+				//{
+				//	throw new Exception( $"Unable to compile project.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+				//}
 			}
 
 			buildInstance.Progress = (float)progressRange.Maximum;

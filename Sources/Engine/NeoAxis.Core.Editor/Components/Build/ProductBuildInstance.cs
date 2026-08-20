@@ -18,6 +18,7 @@ namespace NeoAxis.Editor
 		volatile float progress;
 		volatile string progressText = "Building...";
 		volatile string error = "";
+		volatile string logs = "";
 
 		Thread buildThread;
 		//Task buildTask;
@@ -103,6 +104,12 @@ namespace NeoAxis.Editor
 		{
 			get { return error; }
 			set { error = value; }
+		}
+
+		public string Logs
+		{
+			get { return logs; }
+			set { logs = value; }
 		}
 
 		public bool RequestCancel

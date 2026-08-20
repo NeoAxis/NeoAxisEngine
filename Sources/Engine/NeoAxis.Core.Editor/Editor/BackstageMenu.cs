@@ -176,6 +176,10 @@ namespace NeoAxis.Editor
 			//if( EngineInfo.EngineMode == EngineInfo.EngineModeEnum.CloudClient )
 			//	kryptonPageNew.Visible = false;
 
+			//hide build logs at the start
+			kryptonLabelPackageLogs.Visible = false;
+			kryptonTextBoxPackageLogs.Visible = false;
+
 			LoginLoad();
 			if( DefaultPage == kryptonPageBuild )
 				PackagingInit();
@@ -584,6 +588,9 @@ namespace NeoAxis.Editor
 				contentBrowserPackage.SelectItems( new ContentBrowser.Item[] { selectItem } );
 			else if( items.Count != 0 )
 				contentBrowserPackage.SelectItems( new ContentBrowser.Item[] { items[ 0 ] } );
+
+			kryptonLabelPackageLogs.Visible = false;
+			kryptonTextBoxPackageLogs.Visible = false;
 		}
 
 		private void kryptonButtonPackageBrowse_Click( object sender, EventArgs e )
@@ -601,7 +608,13 @@ namespace NeoAxis.Editor
 				packageBuildInstance = null;
 
 				if( instance2.State == ProductBuildInstance.StateEnum.Error )
-					EditorMessageBox.ShowWarning( instance2.Error );
+				{
+					var text = instance2.Error;
+					if( text.Length > 3000 )
+						text = text.Substring( 0, 3000 ) + "...";
+
+					EditorMessageBox.ShowWarning( text );
+				}
 			}
 
 			//update controls
@@ -628,6 +641,24 @@ namespace NeoAxis.Editor
 			}
 			progressBarBuild.Visible = building;
 			kryptonButtonBuildCancel.Visible = building;
+
+			//update logs
+			if( packageBuildInstance != null )
+			{
+				var logs = packageBuildInstance != null ? packageBuildInstance.Logs : null;
+				kryptonLabelPackageLogs.Visible = !string.IsNullOrEmpty( logs );
+				kryptonTextBoxPackageLogs.Visible = !string.IsNullOrEmpty( logs );
+				if( kryptonTextBoxPackageLogs.Text != logs )
+				{
+					kryptonTextBoxPackageLogs.Text = logs;
+
+					//move caret to the end of the text
+					kryptonTextBoxPackageLogs.SelectionStart = kryptonTextBoxPackageLogs.Text.Length;
+					kryptonTextBoxPackageLogs.SelectionLength = 0;
+					//scroll to the caret position
+					kryptonTextBoxPackageLogs.ScrollToCaret();
+				}
+			}
 		}
 
 		bool CanPackageProject()

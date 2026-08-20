@@ -7,4 +7,5 @@
 	Paths = "Assets\\Base\r\nAssets\\Samples\\Simple Game\r\n\r\nexclude:Assets\\Base\\Build\r\nexclude:Assets\\Base\\Tools\r\nexclude:Assets\\Base\\Learning\r\nexclude:Assets\\Base\\Models\r\nexclude:Assets\\Content\\Environments\\Base\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf\r\nexclude:Assets\\Base\\Fonts\\FlowGraphEditor.ttf.settings"
 	FileCache = False
 	ShaderCache = False
+	SkipFilesWithExtension = "blend1;cs"
 }

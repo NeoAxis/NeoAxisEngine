@@ -1372,21 +1372,21 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static bool InitializeLightMask()
 		{
-				//!!!!temp consider Vulkan as limited device. no shadows, light masks
-				if( Capabilities.Backend == RendererBackend.Vulkan )
-					return false;
+			//!!!!temp consider Vulkan as limited device. no shadows, light masks
+			if( Capabilities.Backend == RendererBackend.Vulkan )
+				return false;
 
-				//!!!!temp Web
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
-					return false;
+			//!!!!temp Web
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+				return false;
 
-					if( SystemSettings.LimitedDevice )
-						lightMask = ProjectSettings.Get.Rendering.LightMaskLimitedDevice;
-					else
-						lightMask = ProjectSettings.Get.Rendering.LightMask;
+			if( SystemSettings.LimitedDevice )
+				lightMask = ProjectSettings.Get.Rendering.LightMaskLimitedDevice;
+			else
+				lightMask = ProjectSettings.Get.Rendering.LightMask;
 
-				return lightMask.Value;
-			}
+			return lightMask.Value;
+		}
 		public static bool LightMask
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -1396,17 +1396,17 @@ namespace NeoAxis
 		static bool? lightGrid;
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static bool InitializeLightGrid()
-				{
-					if( SystemSettings.LimitedDevice )
-					{
-						//!!!!disabled because samplers limit
-						lightGrid = false;
-						//lightGrid = ProjectSettings.Get.Rendering.LightGridLimitedDevice;
-					}
-					else
-						lightGrid = ProjectSettings.Get.Rendering.LightGrid;
-				return lightGrid.Value;
+		{
+			if( SystemSettings.LimitedDevice )
+			{
+				//!!!!disabled because samplers limit
+				lightGrid = false;
+				//lightGrid = ProjectSettings.Get.Rendering.LightGridLimitedDevice;
 			}
+			else
+				lightGrid = ProjectSettings.Get.Rendering.LightGrid;
+			return lightGrid.Value;
+		}
 		public static bool LightGrid
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -1518,20 +1518,20 @@ namespace NeoAxis
 		static int? cutVolumeMaxAmount;
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static int InitializeCutVolumeMaxAmount()
-				{
-					if( SystemSettings.LimitedDevice )
-						cutVolumeMaxAmount = ProjectSettings.Get.Rendering.CutVolumeMaxAmountLimitedDevice;
-					else
-						cutVolumeMaxAmount = ProjectSettings.Get.Rendering.CutVolumeMaxAmount;
+		{
+			if( SystemSettings.LimitedDevice )
+				cutVolumeMaxAmount = ProjectSettings.Get.Rendering.CutVolumeMaxAmountLimitedDevice;
+			else
+				cutVolumeMaxAmount = ProjectSettings.Get.Rendering.CutVolumeMaxAmount;
 
-					//maximum 4 cut volumes. it is predefined in draw buffer
-					if( cutVolumeMaxAmount < 0 )
-						cutVolumeMaxAmount = 0;
-					if( cutVolumeMaxAmount > 4 )
-						cutVolumeMaxAmount = 4;
+			//maximum 4 cut volumes. it is predefined in draw buffer
+			if( cutVolumeMaxAmount < 0 )
+				cutVolumeMaxAmount = 0;
+			if( cutVolumeMaxAmount > 4 )
+				cutVolumeMaxAmount = 4;
 
-				return cutVolumeMaxAmount.Value;
-			}
+			return cutVolumeMaxAmount.Value;
+		}
 		public static int CutVolumeMaxAmount
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -1609,13 +1609,13 @@ namespace NeoAxis
 		static ProjectSettingsPage_Rendering.SkeletalAnimationEnum? skeletalAnimation;
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static ProjectSettingsPage_Rendering.SkeletalAnimationEnum InitializeSkeletalAnimation()
-				{
-					if( SystemSettings.LimitedDevice )
-						skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimationLimitedDevice;
-					else
-						skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimation;
-				return skeletalAnimation.Value;
-			}
+		{
+			if( SystemSettings.LimitedDevice )
+				skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimationLimitedDevice;
+			else
+				skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimation;
+			return skeletalAnimation.Value;
+		}
 		public static ProjectSettingsPage_Rendering.SkeletalAnimationEnum SkeletalAnimation
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -1676,13 +1676,13 @@ namespace NeoAxis
 		static bool? anisotropicFiltering;
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static bool InitializeAnisotropicFiltering()
-				{
-					if( SystemSettings.LimitedDevice )
-						anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFilteringLimitedDevice;
-					else
-						anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFiltering;
-				return anisotropicFiltering.Value;
-			}
+		{
+			if( SystemSettings.LimitedDevice )
+				anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFilteringLimitedDevice;
+			else
+				anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFiltering;
+			return anisotropicFiltering.Value;
+		}
 		public static bool AnisotropicFiltering
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
@@ -1746,13 +1746,13 @@ namespace NeoAxis
 		static int? limitTextureSize;
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static int InitializeLimitTextureSize()
-				{
-					if( SystemSettings.LimitedDevice )
-						limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSizeLimitedDevice;
-					else
-						limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSize;
-				return limitTextureSize.Value;
-			}
+		{
+			if( SystemSettings.LimitedDevice )
+				limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSizeLimitedDevice;
+			else
+				limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSize;
+			return limitTextureSize.Value;
+		}
 		public static int LimitTextureSize
 		{
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
