@@ -1,5 +1,183 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
+
+//constants
+// Ctrl+Shift+S = open Spector UI
+// Ctrl+Shift+C = capture current canvas
+// 3-finger double tap = open Spector UI
+// 4-finger double tap = capture current canvas
+const allowSpector = true;
+
+
 import { dotnet } from './_framework/dotnet.js'
+let canvas = null;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Spector.js integration
+
+let spectorInstance = null;
+let spectorLoadingPromise = null;
+
+const shouldAutoEnableSpector = () =>
+{
+	if (!allowSpector)
+		return false;
+
+	const value = new URLSearchParams(window.location.search).get("spector");
+	return value !== null && value !== "0" && value.toLowerCase() !== "false";
+}
+
+const loadScriptAsync = (src) =>
+{
+	return new Promise((resolve, reject) =>
+	{
+		const existing = document.querySelector(`script[data-src="${src}"]`);
+		if (existing)
+		{
+			if (existing.dataset.loaded === "true" || globalThis.SPECTOR)
+			{
+				resolve();
+				return;
+			}
+
+			existing.addEventListener("load", () => resolve(), { once: true });
+			existing.addEventListener("error", () => reject(new Error(`Unable to load script '${src}'.`)), { once: true });
+			return;
+		}
+
+		const script = document.createElement("script");
+		script.src = src;
+		script.async = true;
+		script.dataset.src = src;
+		script.addEventListener("load", () =>
+		{
+			script.dataset.loaded = "true";
+			resolve();
+		}, { once: true });
+		script.addEventListener("error", () => reject(new Error(`Unable to load script '${src}'.`)), { once: true });
+		document.head.appendChild(script);
+	});
+}
+
+const initializeSpectorAsync = async () =>
+{
+	if (!allowSpector)
+		return null;
+
+	if (spectorInstance !== null)
+		return spectorInstance;
+	if (spectorLoadingPromise !== null)
+		return await spectorLoadingPromise;
+
+	spectorLoadingPromise = (async () =>
+	{
+		try
+		{
+			if (!globalThis.SPECTOR)
+				await loadScriptAsync("https://cdn.jsdelivr.net/npm/spectorjs@0.9.30/dist/spector.bundle.js");
+
+			spectorInstance = new globalThis.SPECTOR.Spector();
+			spectorInstance.spyCanvases();
+			spectorInstance.displayUI();
+
+			console.info("Spector.js enabled.");
+			return spectorInstance;
+		}
+		catch (err)
+		{
+			console.warn(`Unable to initialize Spector.js: ${err?.message ?? err}`);
+			return null;
+		}
+		finally
+		{
+			spectorLoadingPromise = null;
+		}
+	})();
+
+	return await spectorLoadingPromise;
+}
+
+const captureWithSpectorAsync = async () =>
+{
+	if (!allowSpector)
+		return;
+
+	const instance = await initializeSpectorAsync();
+	if (instance !== null && canvas !== null)
+		instance.captureCanvas(canvas);
+}
+
+globalThis.neoAxisSpector =
+{
+	enable: async () => allowSpector ? await initializeSpectorAsync() : null,
+	capture: async () => { if (allowSpector) await captureWithSpectorAsync(); }
+};
+
+if (allowSpector)
+{
+	window.addEventListener("keydown", async (e) =>
+	{
+		if (!e.ctrlKey || !e.shiftKey || e.altKey || e.metaKey)
+			return;
+
+		if (e.code === "KeyS")
+		{
+			e.preventDefault();
+			const instance = await initializeSpectorAsync();
+			if (instance !== null)
+				instance.displayUI();
+		}
+		else if (e.code === "KeyC")
+		{
+			e.preventDefault();
+			await captureWithSpectorAsync();
+		}
+	}, { capture: true });
+
+	if (shouldAutoEnableSpector())
+		await initializeSpectorAsync();
+}
+
+let lastSpectorTouchGestureTime = 0;
+let lastSpectorTouchGestureFingers = 0;
+const SPECTOR_TOUCH_GESTURE_INTERVAL = 400;
+
+const processSpectorTouchGestureAsync = async (touchCount) =>
+{
+	if (!allowSpector)
+		return false;
+
+	if (touchCount !== 3 && touchCount !== 4)
+		return false;
+
+	const now = performance.now();
+	const isDoubleTap =
+		lastSpectorTouchGestureFingers === touchCount &&
+		now - lastSpectorTouchGestureTime <= SPECTOR_TOUCH_GESTURE_INTERVAL;
+
+	lastSpectorTouchGestureTime = now;
+	lastSpectorTouchGestureFingers = touchCount;
+
+	if (!isDoubleTap)
+		return false;
+
+	lastSpectorTouchGestureTime = 0;
+	lastSpectorTouchGestureFingers = 0;
+
+	if (touchCount === 3)
+	{
+		const instance = await initializeSpectorAsync();
+		if (instance !== null)
+			instance.displayUI();
+	}
+	else
+		await captureWithSpectorAsync();
+
+	return true;
+}
+
+// Spector.js integration END
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 const splash = (() =>
 {
@@ -51,7 +229,7 @@ const config = getConfig();
 const exports = await getAssemblyExports(config.mainAssemblyName);
 const interop = exports.NeoAxis.Player.Web.Interop;
 
-const canvas = globalThis.document.getElementById("canvas");
+canvas = globalThis.document.getElementById("canvas");
 dotnet.instance.Module["canvas"] = canvas;
 
 let mouseRelativeModeHandler = (enable) => { };
@@ -397,7 +575,7 @@ setModuleImports("main.js", {
 
 			const touches = e.changedTouches;
 			for (let i = 0; i < touches.length; i++)
-		{
+			{
 				if (touches[i].identifier === activeTouchId)
 					return touches[i];
 			}
@@ -407,6 +585,18 @@ setModuleImports("main.js", {
 		const touchStart = (e) =>
 		{
 			e.preventDefault();
+
+			//Spector specific
+			if (allowSpector)
+			{
+				const spectorTouchCount = e.touches.length;
+				if (spectorTouchCount >= 3 && spectorTouchCount <= 4)
+				{
+					processSpectorTouchGestureAsync(spectorTouchCount);
+					return;
+				}
+			}
+			//Spector specific END
 
 			if (activeTouchId !== null)
 				return;
@@ -419,9 +609,9 @@ setModuleImports("main.js", {
 			canvas.focus();
 			invalidateCanvasRect();
 
-				const position = getCanvasPosition(touch.clientX, touch.clientY);
-				interop.OnTouchStart(touch.identifier, position.x, position.y, getEventModifiers(e));
-			}
+			const position = getCanvasPosition(touch.clientX, touch.clientY);
+			interop.OnTouchStart(touch.identifier, position.x, position.y, getEventModifiers(e));
+		}
 
 		const touchMove = (e) =>
 		{
