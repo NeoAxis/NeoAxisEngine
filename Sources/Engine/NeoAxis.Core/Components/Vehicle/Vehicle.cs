@@ -534,13 +534,16 @@ namespace NeoAxis
 				//not works
 				//Static = !IsMustBeDynamic();
 
-
 				var updated = false;
 				SimulateVisualHeadlights( ref updated, true );
 				SimulateVisualBrake( ref updated, true );
 				SimulateVisualTurnSignals( ref updated, true );
 				SimulateVisualMoveBack( ref updated, true );
 				UpdateLightComponents();
+
+				//fix Mesh when the vehicle was created during simulation (not at scene loading)
+				if( NetworkIsClient && dynamicData != null )
+					Mesh = dynamicData.Mesh;
 			}
 			else
 			{
@@ -636,7 +639,9 @@ namespace NeoAxis
 
 		void SetDriverInput( double lastSteering, bool initialization )
 		{
-			var activateBody = Throttle != 0 || currentSteering != 0;
+			var throttle = Throttle.Value;
+
+			var activateBody = throttle != 0 || currentSteering != 0;
 			if( driverInputNeedUpdate || activateBody || lastSteering != currentSteering )
 			{
 				var type = dynamicData.VehicleType;
@@ -644,12 +649,12 @@ namespace NeoAxis
 				var wheels = !tracks;
 
 				if( wheels )
-					dynamicData.constraint.SetDriverInput( (float)Throttle, 0, (float)currentSteering, (float)Brake, (float)HandBrake, activateBody );
+					dynamicData.constraint.SetDriverInput( (float)throttle, 0, (float)currentSteering, (float)Brake, (float)HandBrake, activateBody );
 
 				if( tracks )
 				{
-					var forward = MathEx.Clamp( Math.Abs( Throttle ) + Math.Abs( currentSteering ), 0, 1 );
-					if( Throttle < 0 )
+					var forward = MathEx.Clamp( Math.Abs( throttle ) + Math.Abs( currentSteering ), 0, 1 );
+					if( throttle < 0 )
 						forward = -forward;
 
 					var left = MathEx.Clamp( 1.0f + currentSteering, 0.01f, 1.0f );
@@ -955,6 +960,10 @@ namespace NeoAxis
 		protected override void OnSimulationStepClient()
 		{
 			base.OnSimulationStepClient();
+
+			//fix Mesh when the vehicle was created during simulation (not at scene loading)
+			if( dynamicData != null )
+				Mesh = dynamicData.Mesh;
 
 			var updated = false;
 
@@ -2689,6 +2698,9 @@ namespace NeoAxis
 
 				foreach( var turret in GetComponents<Turret>() )
 					turret.RemoveFromParent( false );
+
+				foreach( var light in GetComponents<Light>() )
+					light.RemoveFromParent( false );
 
 				//!!!!
 				//foreach( var engine in GetComponents<VehicleAeroEngine>() )

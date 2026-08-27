@@ -349,6 +349,10 @@ namespace NeoAxis
 				foreach( var clientItem in GetAllClientItems() )
 					clientItem.synchronizedFlagAndSentPropertyValues.Clear();
 
+				//reset ControlledByPlayer
+				foreach( var user in users.Users )
+					users.UpdateObjectControlledByPlayerToClient( user, "" );
+
 				scene = null;
 				sceneInfo = "";
 

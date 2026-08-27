@@ -31,6 +31,18 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
+		[DefaultValue( true )]
+		public Reference<bool> AllowInput
+		{
+			get { if( _allowInput.BeginGet() ) AllowInput = _allowInput.Get( this ); return _allowInput.value; }
+			set { if( _allowInput.BeginSet( this, ref value ) ) { try { AllowInputChanged?.Invoke( this ); } finally { _allowInput.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="AllowInput"/> property value changes.</summary>
+		public event Action<InputProcessing> AllowInputChanged;
+		ReferenceField<bool> _allowInput = true;
+
+		/////////////////////////////////////////
+
 		public class TouchPointerData
 		{
 			public Vector2 Position;
@@ -102,181 +114,184 @@ namespace NeoAxis
 				}
 			}
 
-			//key down
+			if( AllowInput )
 			{
-				var m = message as InputMessageKeyDown;
-				if( m != null )
+				//key down
 				{
-					if( keys == null )
-						keys = new bool[ GetEKeysMaxIndex() + 1 ];
-					keys[ (int)m.Key ] = true;
-				}
-			}
-
-			//key up
-			{
-				var m = message as InputMessageKeyUp;
-				if( m != null )
-				{
-					if( keys == null )
-						keys = new bool[ GetEKeysMaxIndex() + 1 ];
-					keys[ (int)m.Key ] = false;
-				}
-			}
-
-			//mouse button down
-			{
-				var m = message as InputMessageMouseButtonDown;
-				if( m != null )
-					mouseButtons[ (int)m.Button ] = true;
-			}
-
-			//mouse button up
-			{
-				var m = message as InputMessageMouseButtonUp;
-				if( m != null )
-					mouseButtons[ (int)m.Button ] = false;
-			}
-
-			//mouse move
-			{
-				var m = message as InputMessageMouseMove;
-				if( m != null )
-					mousePosition = m.Position;
-			}
-
-			//mouse relative mode
-			{
-				var m = message as InputMessageMouseRelativeModeChanged;
-				if( m != null )
-					mouseRelativeMode = m.Value;
-			}
-
-			//joystick
-			{
-				var m = message as InputMessageJoystick;
-				if( m != null )
-				{
-					//button down
+					var m = message as InputMessageKeyDown;
+					if( m != null )
 					{
-						var m2 = m.InputEvent as JoystickButtonDownEvent;
-						if( m2 != null )
-						{
-							var index = m2.Button.Index;
-							if( index >= 0 && index < joystickButtons.Length )
-								joystickButtons[ index ] = true;
-						}
-					}
-
-					//button up
-					{
-						var m2 = m.InputEvent as JoystickButtonUpEvent;
-						if( m2 != null )
-						{
-							var index = m2.Button.Index;
-							if( index >= 0 && index < joystickButtons.Length )
-								joystickButtons[ index ] = false;
-						}
-					}
-
-					//axis
-					{
-						var m2 = m.InputEvent as JoystickAxisChangedEvent;
-						if( m2 != null )
-						{
-							var index = (int)m2.Axis.Name;
-							if( index >= 0 && index < joystickAxes.Length )
-								joystickAxes[ index ] = m2.Axis.Value;
-						}
-					}
-
-					//POV
-					{
-						var m2 = m.InputEvent as JoystickPOVChangedEvent;
-						if( m2 != null )
-						{
-							var index = (int)m2.POV.Name;
-							if( index >= 0 && index < joystickPOVs.Length )
-								joystickPOVs[ index ] = m2.POV.Value;
-						}
-					}
-
-					//slider
-					{
-						var m2 = m.InputEvent as JoystickSliderChangedEvent;
-						if( m2 != null )
-						{
-							var index = (int)m2.Slider.Name;
-							if( index >= 0 && index < joystickPOVs.Length )
-								joystickSliders[ index ] = m2.Slider.Value;
-						}
+						if( keys == null )
+							keys = new bool[ GetEKeysMaxIndex() + 1 ];
+						keys[ (int)m.Key ] = true;
 					}
 				}
-			}
 
-			//touch pointers
-			{
-				var m2 = message as InputMessageTouch;
-				if( m2 != null )
+				//key up
 				{
-					var touch = m2.TouchEvent;
-
-					switch( touch.Action )
+					var m = message as InputMessageKeyUp;
+					if( m != null )
 					{
-					case TouchData.ActionEnum.Down:
+						if( keys == null )
+							keys = new bool[ GetEKeysMaxIndex() + 1 ];
+						keys[ (int)m.Key ] = false;
+					}
+				}
+
+				//mouse button down
+				{
+					var m = message as InputMessageMouseButtonDown;
+					if( m != null )
+						mouseButtons[ (int)m.Button ] = true;
+				}
+
+				//mouse button up
+				{
+					var m = message as InputMessageMouseButtonUp;
+					if( m != null )
+						mouseButtons[ (int)m.Button ] = false;
+				}
+
+				//mouse move
+				{
+					var m = message as InputMessageMouseMove;
+					if( m != null )
+						mousePosition = m.Position;
+				}
+
+				//mouse relative mode
+				{
+					var m = message as InputMessageMouseRelativeModeChanged;
+					if( m != null )
+						mouseRelativeMode = m.Value;
+				}
+
+				//joystick
+				{
+					var m = message as InputMessageJoystick;
+					if( m != null )
+					{
+						//button down
 						{
-							var data = GetTouchPointerByIdentifier( touch.PointerIdentifier );
-							//if already down, but it is not a normal behavior
-							if( data != null )
-								data.Position = touch.Position;
-							else
+							var m2 = m.InputEvent as JoystickButtonDownEvent;
+							if( m2 != null )
 							{
-								data = new TouchPointerData( touch.Position, touch.PointerIdentifier );
-								touchPointers.Add( data );
+								var index = m2.Button.Index;
+								if( index >= 0 && index < joystickButtons.Length )
+									joystickButtons[ index ] = true;
 							}
 						}
-						break;
 
-					case TouchData.ActionEnum.Up:
+						//button up
 						{
-							for( int n = touchPointers.Count - 1; n >= 0; n-- )
+							var m2 = m.InputEvent as JoystickButtonUpEvent;
+							if( m2 != null )
 							{
-								var data = touchPointers[ n ];
-								if( ReferenceEquals( data.PointerIdentifier, touch.PointerIdentifier ) )
-									touchPointers.RemoveAt( n );
+								var index = m2.Button.Index;
+								if( index >= 0 && index < joystickButtons.Length )
+									joystickButtons[ index ] = false;
 							}
 						}
-						break;
 
-					case TouchData.ActionEnum.Move:
+						//axis
 						{
-							var data = GetTouchPointerByIdentifier( touch.PointerIdentifier );
-							if( data != null )
-								data.Position = touch.Position;
+							var m2 = m.InputEvent as JoystickAxisChangedEvent;
+							if( m2 != null )
+							{
+								var index = (int)m2.Axis.Name;
+								if( index >= 0 && index < joystickAxes.Length )
+									joystickAxes[ index ] = m2.Axis.Value;
+							}
 						}
-						break;
+
+						//POV
+						{
+							var m2 = m.InputEvent as JoystickPOVChangedEvent;
+							if( m2 != null )
+							{
+								var index = (int)m2.POV.Name;
+								if( index >= 0 && index < joystickPOVs.Length )
+									joystickPOVs[ index ] = m2.POV.Value;
+							}
+						}
+
+						//slider
+						{
+							var m2 = m.InputEvent as JoystickSliderChangedEvent;
+							if( m2 != null )
+							{
+								var index = (int)m2.Slider.Name;
+								if( index >= 0 && index < joystickPOVs.Length )
+									joystickSliders[ index ] = m2.Slider.Value;
+							}
+						}
 					}
 				}
-			}
 
-			//touch slider
-			{
-				var m2 = message as InputMessageTouchSliderChanged;
-				if( m2 != null )
+				//touch pointers
 				{
-					var index = m2.Slider;
-					if( index >= 0 && index < touchSliders.Length )
-						touchSliders[ index ] = m2.Value;
-				}
-			}
+					var m2 = message as InputMessageTouch;
+					if( m2 != null )
+					{
+						var touch = m2.TouchEvent;
 
-			////special input device
-			//{
-			//	var m = message as InputMessageSpecialInputDevice;
-			//	if( m != null )
-			//	{
-			//	}
-			//}
+						switch( touch.Action )
+						{
+						case TouchData.ActionEnum.Down:
+							{
+								var data = GetTouchPointerByIdentifier( touch.PointerIdentifier );
+								//if already down, but it is not a normal behavior
+								if( data != null )
+									data.Position = touch.Position;
+								else
+								{
+									data = new TouchPointerData( touch.Position, touch.PointerIdentifier );
+									touchPointers.Add( data );
+								}
+							}
+							break;
+
+						case TouchData.ActionEnum.Up:
+							{
+								for( int n = touchPointers.Count - 1; n >= 0; n-- )
+								{
+									var data = touchPointers[ n ];
+									if( ReferenceEquals( data.PointerIdentifier, touch.PointerIdentifier ) )
+										touchPointers.RemoveAt( n );
+								}
+							}
+							break;
+
+						case TouchData.ActionEnum.Move:
+							{
+								var data = GetTouchPointerByIdentifier( touch.PointerIdentifier );
+								if( data != null )
+									data.Position = touch.Position;
+							}
+							break;
+						}
+					}
+				}
+
+				//touch slider
+				{
+					var m2 = message as InputMessageTouchSliderChanged;
+					if( m2 != null )
+					{
+						var index = m2.Slider;
+						if( index >= 0 && index < touchSliders.Length )
+							touchSliders[ index ] = m2.Value;
+					}
+				}
+
+				////special input device
+				//{
+				//	var m = message as InputMessageSpecialInputDevice;
+				//	if( m != null )
+				//	{
+				//	}
+				//}
+			}
 		}
 
 		public bool PerformMessage( GameMode gameMode, InputMessage message )

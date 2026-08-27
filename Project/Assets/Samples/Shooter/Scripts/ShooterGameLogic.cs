@@ -13,10 +13,9 @@ namespace Project
 	/// </summary>
 	public class ShooterGameLogic : GameLogic
 	{
-#if !CLIENT
+		//for server, single
 		int freeForAllTeamCounter;
 		double deleteObjectsBelowHeightLastTime;
-#endif
 
 		///////////////////////////////////////////////
 		//settings
@@ -122,7 +121,7 @@ namespace Project
 		[Browsable( false )]
 		[Serialize( SerializeType.Enable )]
 		[NetworkSynchronize( true )]
-		[DefaultValue( GameStatusEnum.Preparing )]
+		[DefaultValue( GameStatusEnum.Prepare )]
 		public Reference<GameStatusEnum> CurrentGameStatus
 		{
 			get { if( _currentGameStatus.BeginGet() ) CurrentGameStatus = _currentGameStatus.Get( this ); return _currentGameStatus.value; }
@@ -130,7 +129,7 @@ namespace Project
 		}
 		/// <summary>Occurs when the <see cref="CurrentGameStatus"/> property value changes.</summary>
 		public event Action<ShooterGameLogic> CurrentGameStatusChanged;
-		ReferenceField<GameStatusEnum> _currentGameStatus = GameStatusEnum.Preparing;
+		ReferenceField<GameStatusEnum> _currentGameStatus = GameStatusEnum.Prepare;
 
 		[Browsable( false )]
 		[Serialize( SerializeType.Enable )]
@@ -158,8 +157,8 @@ namespace Project
 
 		public enum GameStatusEnum
 		{
-			Preparing,
-			Playing,
+			Prepare,
+			Play,
 		}
 
 
@@ -168,19 +167,22 @@ namespace Project
 
 		public double GetRemainingTime()
 		{
-			if( CurrentGameStatus == GameStatusEnum.Preparing )
+			if( CurrentGameStatus == GameStatusEnum.Prepare )
 				return PreparationTime - CurrentGameTime;
 			else
 				return GameTime - CurrentGameTime;
 		}
 
 
-#if !CLIENT
 		///////////////////////////////////////////////
 		// Server, Single
 
 		double sendPlayersInfoToClientsRemainingTime;
 		Dictionary<long, int> singleFrags = new Dictionary<long, int>(); // zero index is player
+
+		//cloud mode specific
+		[Browsable( false )]
+		public long[] CloudPlayers { get; set; }
 
 		///////////////////////////////////////////////
 
@@ -422,7 +424,7 @@ namespace Project
 			if( EnabledInHierarchyAndIsInstance )
 				ServerOrSingle_ResetSpawnPoints();
 
-			if( CurrentGameStatus.Value == GameStatusEnum.Playing )
+			if( CurrentGameStatus.Value == GameStatusEnum.Play )
 			{
 				//game started
 
@@ -452,7 +454,7 @@ namespace Project
 
 			currentGameTime += Time.SimulationDelta;
 
-			if( currentGameStatus == GameStatusEnum.Preparing )
+			if( currentGameStatus == GameStatusEnum.Prepare )
 			{
 				if( currentGameTime > PreparationTime.Value )
 				{
@@ -485,17 +487,17 @@ namespace Project
 						sendPlayersInfoToClientsRemainingTime = 0;
 						singleFrags.Clear();
 
-						currentGameStatus = GameStatusEnum.Playing;
+						currentGameStatus = GameStatusEnum.Play;
 						currentGameTime = 0;
 					}
 					else
 					{
-						currentGameStatus = GameStatusEnum.Preparing;
+						currentGameStatus = GameStatusEnum.Prepare;
 						currentGameTime = 0;
 					}
 				}
 			}
-			else if( currentGameStatus == GameStatusEnum.Playing )
+			else if( currentGameStatus == GameStatusEnum.Play )
 			{
 				//game end
 
@@ -513,7 +515,7 @@ namespace Project
 
 				if( end )
 				{
-					currentGameStatus = GameStatusEnum.Preparing;
+					currentGameStatus = GameStatusEnum.Prepare;
 					currentGameTime = 0;
 				}
 			}
@@ -525,9 +527,16 @@ namespace Project
 			CurrentGameTime = currentGameTime;
 		}
 
-		public override NeoAxis.Component ServerOrSingle_CreateObjectControlledByPlayer( ServerUserItem serverUserItem, SingleUserItem singleUserItem, Metadata.TypeInfo objectType, Transform transform )
+		public override NeoAxis.Component ServerOrSingle_CreateObjectControlledByPlayer( ServerUserItem serverUserItem, SingleUserItem singleUserItem, Reference<Metadata.TypeInfo> objectTypeWithReference, Transform transform )
 		{
-			var obj = base.ServerOrSingle_CreateObjectControlledByPlayer( serverUserItem, singleUserItem, objectType, transform );
+			//cloud specific: check for spectator
+			if( serverUserItem != null && CloudPlayers != null )
+			{
+				if( Array.IndexOf( CloudPlayers, serverUserItem.User.UserID ) == -1 )
+					return null;
+			}
+
+			var obj = base.ServerOrSingle_CreateObjectControlledByPlayer( serverUserItem, singleUserItem, objectTypeWithReference, transform );
 
 			if( obj != null )
 			{
@@ -597,7 +606,7 @@ namespace Project
 			if( ParentRoot == sender.ParentRoot )
 			{
 				//check the game is playing
-				if( CurrentGameStatus.Value == GameStatusEnum.Playing )
+				if( CurrentGameStatus.Value == GameStatusEnum.Play )
 				{
 					//add frags to the player who fired the shot if the character was killed
 					if( oldHealth > 0 && sender.Health.Value <= 0 )
@@ -695,8 +704,6 @@ namespace Project
 			singleFrags.TryGetValue( userID, out var frags );
 			return frags;
 		}
-
-#endif
 
 
 		///////////////////////////////////////////////

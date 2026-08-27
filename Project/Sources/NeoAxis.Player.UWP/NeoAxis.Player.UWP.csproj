@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
@@ -7,14 +7,11 @@
     <Platforms>x64;arm64</Platforms>
     <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
     <DefaultLanguage>en-US</DefaultLanguage>
-
     <SelfContained>true</SelfContained>
     <PublishTrimmed>false</PublishTrimmed>
     <PublishAot>False</PublishAot>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
-    
     <EnableMsixTooling>true</EnableMsixTooling>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -26,11 +23,9 @@
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <PackageCertificateThumbprint>2A2010862FA2191EF975658C1F5BB8F601888DB3</PackageCertificateThumbprint>
   </PropertyGroup>
-
   <PropertyGroup>
     <OutputPath>C:\_TestUWP\</OutputPath>
-  </PropertyGroup>  
-  
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>UWP;DEPLOY;CLIENT;TRACE;DEBUG</DefineConstants>
@@ -62,10 +57,7 @@
     <Compile Include="Implementation\Utility\DebugUtil.cs" />
     <Compile Include="Implementation\Utility\PlatformSpecificUtilityUWP.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\ClientUtility.cs" />
     <Compile Include="Project\Assets\Base\Scripts\RunServer.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\NetworkLogic.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\CloudServiceClient.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
     <Compile Include="Project\Assets\Base\Scripts\SimulationAppClient.cs" />
     <Compile Include="Project\Assets\Base\Scripts\SimulationAppServer.cs" />
@@ -80,22 +72,22 @@
     <Compile Include="Project\Assets\Base\UI\Styles\UIStyleEditor.cs" />
     <Compile Include="Project\Assets\Base\UI\Styles\UIStyleSimple.cs" />
     <Compile Include="Project\Assets\Base\UI\Windows\MessageBoxWindow.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
-    <Compile Include="Project\Assets\Samples\Simple Game\SimpleGameGUI.cs" />
     <Compile Include="Project\Caches\CSharpScripts\CSharpScripts.cs" />
     <Compile Include="Project\Assets\Base\WindowApp\WindowAppMainForm.cs" />
-    <Compile Include="Project\Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
-    <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameGUI.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\BasicSceneScreen.cs" />
-    <Compile Include="Project\Assets\Base\UI\Screens\EntranceScreen.cs" />
-    <Compile Include="Project\Assets\Base\UI\Screens\InGameContextScreen.cs" />
-    <Compile Include="Project\Assets\Base\UI\Screens\AvatarWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MatchesWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MatchWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\Cloud\MatchSceneClient.cs" />
+    <Compile Include="Project\Assets\Samples\Simple Game\SimpleGameScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Spaceship Game\SpaceshipGameScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterGameLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterGameScreen.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ProjectSettingsPage_Extension.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ShaderFunctions.cs" />
+    <Compile Include="Project\Assets\Samples\Racing\Scripts\RacingGameLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Racing\UI\RacingGameScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -132,7 +124,7 @@
   </PropertyGroup>
   <Target Name="RunCommandLineTools" BeforeTargets="BeforeBuild">
     <Exec Condition="Exists('$(ProjectDir)..\..\Project.csproj') and Exists('$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe')" Command="&quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.UWP.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot;" />
-  </Target>  
+  </Target>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">
     <Optimize>True</Optimize>
     <DebugOptimization>True</DebugOptimization>

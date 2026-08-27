@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using NeoAxis;
 using NeoAxis.Cloud;
-using NeoAxis.Networking;
 
 namespace Project
 {
@@ -33,6 +32,8 @@ namespace Project
 		//chat
 		bool chatNewMessagesAvailable = true;
 		volatile bool chatGettingNewMessages;
+
+		bool processingMatchStatusChangedToPlay;
 
 		/////////////////////////////////////////
 
@@ -295,7 +296,7 @@ namespace Project
 					return;
 
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodAsync<Matches.Match>( "Matches", "GetMatch", cts.Token, MatchID );
+				var result = await client.CallMethodAsync<Matches.Match>( "CloudServerImplementation", "GetMatch", cts.Token, MatchID );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
 					Log.Warning( "Error: " + result.Error );
@@ -303,6 +304,20 @@ namespace Project
 				}
 
 				matchInfo = result.Value;
+
+				//go to Play when event about match status changed to Play is not received. it may be when status changed during user entering the match
+				if( matchInfo.Status == "Play" )
+					ProcessMatchStatusChangedToPlay();
+
+				//var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				//var result = await client.CallMethodAsync<Matches.Match>( "Matches", "GetMatch", cts.Token, MatchID );
+				//if( !string.IsNullOrEmpty( result.Error ) )
+				//{
+				//	Log.Warning( "Error: " + result.Error );
+				//	return;
+				//}
+
+				//matchInfo = result.Value;
 			}
 			catch( Exception e )
 			{
@@ -662,6 +677,28 @@ namespace Project
 			ChatSendMessage();
 		}
 
+		void ProcessMatchStatusChangedToPlay()
+		{
+			if( processingMatchStatusChangedToPlay )
+				return;
+			processingMatchStatusChangedToPlay = true;
+
+			EngineThreading.ExecuteFromMainThreadLater( delegate ()
+			{
+				//hide match window. remove after until subscribed to get events from the server about the match status
+				Visible = false;
+
+				//delete matches window
+				//it's inside the event handler
+
+				//open play screen
+				MatchStatusChangedToPlay?.Invoke( this, matchInfo );
+
+				//close window
+				RemoveFromParent( true );
+			} );
+		}
+
 		private void Messages_ReceiveMessageString( ClientNetworkService_Messages sender2, string message, string data )
 		{
 			//handle messages from the server
@@ -711,20 +748,22 @@ namespace Project
 
 					case "Play":
 						{
-							EngineThreading.ExecuteFromMainThreadLater( delegate ()
-							{
-								//hide match window. remove after until subscribed to get events from the server about the match status
-								Visible = false;
+							ProcessMatchStatusChangedToPlay();
 
-								//delete matches window
-								//it's inside the event handler
+							//EngineThreading.ExecuteFromMainThreadLater( delegate ()
+							//{
+							//	//hide match window. remove after until subscribed to get events from the server about the match status
+							//	Visible = false;
 
-								//open play screen
-								MatchStatusChangedToPlay?.Invoke( this, matchInfo );
+							//	//delete matches window
+							//	//it's inside the event handler
 
-								//close window
-								RemoveFromParent( true );
-							} );
+							//	//open play screen
+							//	MatchStatusChangedToPlay?.Invoke( this, matchInfo );
+
+							//	//close window
+							//	RemoveFromParent( true );
+							//} );
 						}
 						break;
 					}

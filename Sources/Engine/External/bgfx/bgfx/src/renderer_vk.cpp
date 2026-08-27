@@ -4119,6 +4119,7 @@ VK_IMPORT_DEVICE
 			{
 				{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,          kDescriptorPoolChunkSize * BGFX_CONFIG_MAX_TEXTURE_SAMPLERS },
 				{ VK_DESCRIPTOR_TYPE_SAMPLER,                kDescriptorPoolChunkSize * BGFX_CONFIG_MAX_TEXTURE_SAMPLERS },
+				{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, kDescriptorPoolChunkSize * BGFX_CONFIG_MAX_TEXTURE_SAMPLERS },
 				{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, kDescriptorPoolChunkSize * 2                                },
 				{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,         kDescriptorPoolChunkSize * BGFX_CONFIG_MAX_TEXTURE_SAMPLERS },
 				{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,          kDescriptorPoolChunkSize * BGFX_CONFIG_MAX_TEXTURE_SAMPLERS },
@@ -4303,6 +4304,22 @@ VK_IMPORT_DEVICE
 								, sampleStencil
 								);
 
+							if (bindInfo.binding == bindInfo.samplerBinding) // combined sampler type
+							{
+								wds[wdsCount].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+								wds[wdsCount].pNext = NULL;
+								wds[wdsCount].dstSet = descriptorSet;
+								wds[wdsCount].dstBinding = bindInfo.binding;
+								wds[wdsCount].dstArrayElement = 0;
+								wds[wdsCount].descriptorCount = 1;
+								wds[wdsCount].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+								wds[wdsCount].pImageInfo = &imageInfo[imageCount];
+								wds[wdsCount].pBufferInfo = NULL;
+								wds[wdsCount].pTexelBufferView = NULL;
+								++wdsCount;
+							}
+							else
+							{
 							wds[wdsCount].sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 							wds[wdsCount].pNext            = NULL;
 							wds[wdsCount].dstSet           = descriptorSet;
@@ -4326,6 +4343,7 @@ VK_IMPORT_DEVICE
 							wds[wdsCount].pBufferInfo      = NULL;
 							wds[wdsCount].pTexelBufferView = NULL;
 							++wdsCount;
+							}
 
 							++imageCount;
 						}
@@ -5655,8 +5673,17 @@ VK_DESTROY
 
 						m_bindInfo[stage].uniformHandle    = info->m_handle;
 						m_bindInfo[stage].type             = BindType::Sampler;
+
+						if (num == 1) // combined sampler type
+						{
+							m_bindInfo[stage].binding = regIndex;
+							m_bindInfo[stage].samplerBinding = regIndex;
+						}
+						else
+						{
 						m_bindInfo[stage].binding          = regIndex;
 						m_bindInfo[stage].samplerBinding   = regIndex + kSpirvSamplerShift;
+						}
 
 						const VkImageViewType viewType = hasTexData
 							? textureDimensionToViewType(idToTextureDimension(texDimension) )
@@ -5800,6 +5827,18 @@ VK_DESTROY
 
 				case BindType::Sampler:
 				{
+					if (m_bindInfo[ii].binding == m_bindInfo[ii].samplerBinding) // combined sampler type
+					{
+						VkDescriptorSetLayoutBinding& textureBinding = m_bindings[bidx];
+						textureBinding.stageFlags = shaderStage;
+						textureBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+						textureBinding.binding = m_bindInfo[ii].binding;
+						textureBinding.pImmutableSamplers = NULL;
+						textureBinding.descriptorCount = 1;
+						bidx++;
+					}
+					else
+					{
 					VkDescriptorSetLayoutBinding& textureBinding = m_bindings[bidx];
 					textureBinding.stageFlags = shaderStage;
 					textureBinding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
@@ -5815,6 +5854,7 @@ VK_DESTROY
 					samplerBinding.pImmutableSamplers = NULL;
 					samplerBinding.descriptorCount = 1;
 					bidx++;
+				}
 				}
 				break;
 

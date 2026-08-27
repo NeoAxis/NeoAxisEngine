@@ -430,15 +430,11 @@
     <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.Draw.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.Draw.cs" />
     <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.Editor.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.Input.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.Input.cs" />
     <Compile Update="Libraries\Aga.Controls\Tree\TreeViewAdv.Properties.cs">
       <SubType>Component</SubType>
     </Compile>

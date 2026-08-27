@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0-android</TargetFramework>
     <OutputType>Exe</OutputType>
@@ -67,28 +67,25 @@
     <Compile Include="Project\Assets\Base\UI\Styles\UIStyleEditor.cs" />
     <Compile Include="Project\Assets\Base\UI\Styles\UIStyleSimple.cs" />
     <Compile Include="Project\Assets\Base\UI\Windows\MessageBoxWindow.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
-    <Compile Include="Project\Assets\Samples\Simple Game\SimpleGameGUI.cs" />
     <Compile Include="Project\Caches\CSharpScripts\CSharpScripts.cs" />
     <Compile Include="Project\Assets\Base\WindowApp\WindowAppMainForm.cs" />
-    <Compile Include="Project\Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
-    <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameGUI.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\BasicSceneScreen.cs" />
-    <Compile Include="Project\Assets\Base\UI\Screens\EntranceScreen.cs" />
-    <Compile Include="Project\Assets\Base\UI\Screens\InGameContextScreen.cs" />
-    <Compile Include="Project\Assets\Base\UI\Screens\AvatarWindow.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\ClientUtility.cs" />
     <Compile Include="Project\Assets\Base\Scripts\RunServer.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\NetworkLogic.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\CloudServiceClient.cs" />
     <Compile Include="Project\Assets\Base\Scripts\SimulationAppClient.cs" />
     <Compile Include="Project\Assets\Base\Scripts\SimulationAppServer.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MatchesWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MatchWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\Cloud\MatchSceneClient.cs" />
+    <Compile Include="Project\Assets\Samples\Simple Game\SimpleGameScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Spaceship Game\SpaceshipGameScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterGameLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterGameScreen.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ProjectSettingsPage_Extension.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ShaderFunctions.cs" />
+    <Compile Include="Project\Assets\Samples\Racing\Scripts\RacingGameLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Racing\UI\RacingGameScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Project.zip" />
@@ -103,7 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidNativeLibrary Include="libs\arm64-v8a\libNeoAxisCoreNative.so">
-    <Link>libs\arm64-v8a\libNeoAxisCoreNative.so</Link>
+      <Link>libs\arm64-v8a\libNeoAxisCoreNative.so</Link>
     </AndroidNativeLibrary>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

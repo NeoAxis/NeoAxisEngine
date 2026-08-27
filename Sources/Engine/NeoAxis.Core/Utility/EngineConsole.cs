@@ -492,7 +492,7 @@ namespace NeoAxis
 				return true;
 			}
 
-			return true;
+			return false;
 		}
 
 		public static bool PerformKeyPress( KeyPressEvent e )

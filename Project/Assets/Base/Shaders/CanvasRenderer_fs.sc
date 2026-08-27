@@ -7,7 +7,12 @@ $input v_color0, v_texCoord0
 uniform vec4 u_canvasClipRectangle;
 uniform vec4/*bool, bool*/ u_bc5UNorm_L;//u_bc5UNorm
 
+//!!!!
+#if SPIRV_GLSL
+SAMPLER2D(s_baseTexture, 2);
+#else
 SAMPLER2D(s_baseTexture, 0);
+#endif
 
 void main()
 {

@@ -408,7 +408,7 @@ namespace NeoAxis
 		void ObjectControlSimulationStep()
 		{
 			var vehicle = Vehicle;
-			if( vehicle != null && InputEnabled )
+			if( vehicle != null && InputEnabled && AllowInput )
 			{
 				//get control data
 

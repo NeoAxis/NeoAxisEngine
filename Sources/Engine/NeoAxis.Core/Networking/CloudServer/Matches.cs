@@ -194,42 +194,46 @@ namespace NeoAxis.Cloud
 			}
 		}
 
+		//!!!!rejectReason
 		public delegate void GetMatchesCheckAccessRightsDelegate( long callerID, long[] matches, long[] users, string[] groups, string[] statuses, ref bool allow );
 		public static event GetMatchesCheckAccessRightsDelegate GetMatchesCheckAccessRights;
 
-		[CloudMethod( MaxCallPerClientPermit = 60 )]
-		public static Match[] GetMatches( ServerNetworkService_CloudFunctions.CallMethodContext context, long[] matches, long[] users, string[] groups, string[] statuses )
-		{
-			//check initialized
-			if( !initialized )
-				throw new InvalidOperationException( "Match service is not initialized." );
 
-			//get caller
-			var callerID = context.Client.LoginDataUserID;
-			if( callerID == 0 )
-				throw new InvalidOperationException( "Client is not logged in." );
+		//!!!!moved to CloudServerImplementation
 
+		//[CloudMethod( MaxCallPerClientPermit = 60 )]
+		//public static Match[] GetMatches( ServerNetworkService_CloudFunctions.CallMethodContext context, long[] matches, long[] users, string[] groups, string[] statuses )
+		//{
+		//	//check initialized
+		//	if( !initialized )
+		//		throw new InvalidOperationException( "Match service is not initialized." );
 
-			//!!!!impl public/private matches. Private only for friends or something like that.
-
-			//!!!!or maybe also when has invitation
+		//	//get caller
+		//	var callerID = context.Client.LoginDataUserID;
+		//	if( callerID == 0 )
+		//		throw new InvalidOperationException( "Client is not logged in." );
 
 
-			var allowByOwner = users != null && users.Length == 1 && users[ 0 ] == callerID;
-			var allowByLobbyStatus = statuses != null && statuses.Length == 1 && statuses[ 0 ] == "Lobby";
-			var allow = allowByOwner || allowByLobbyStatus;
+		//	//!!!!impl public/private matches. Private only for friends or something like that.
 
-			GetMatchesCheckAccessRights?.Invoke( callerID, matches, users, groups, statuses, ref allow );
-			if( !allow )
-				throw new Exception( "Access denied." );
+		//	//!!!!or maybe also when has invitation
 
-			//get matches
-			var result = GetMatches( matches, users, groups, statuses );
-			if( !string.IsNullOrEmpty( result.Error ) )
-				throw new Exception( result.Error );
+		//	var allowByOwner = users != null && users.Length == 1 && users[ 0 ] == callerID;
+		//	var allowByLobbyStatus = statuses != null && statuses.Length == 1 && statuses[ 0 ] == "Lobby";
+		//	var allow = allowByOwner || allowByLobbyStatus;
 
-			return result.Matches;
-		}
+		//	GetMatchesCheckAccessRights?.Invoke( callerID, matches, users, groups, statuses, ref allow );
+		//	if( !allow )
+		//		throw new Exception( "Access denied." );
+
+		//	//get matches
+		//	var result = GetMatches( matches, users, groups, statuses );
+		//	if( !string.IsNullOrEmpty( result.Error ) )
+		//		throw new Exception( result.Error );
+
+		//	return result.Matches;
+		//}
+
 
 		public class GetMatchCountResult
 		{
@@ -367,48 +371,52 @@ namespace NeoAxis.Cloud
 			}
 		}
 
-		public delegate void GetMatchCheckAccessRightsDelegate( long callerID, long matchID, ref bool allow );
-		public static event GetMatchCheckAccessRightsDelegate GetMatchCheckAccessRights;
 
-		[CloudMethod( MaxCallPerClientPermit = 100 )]
-		public static Match GetMatch( ServerNetworkService_CloudFunctions.CallMethodContext context, long matchID )
-		{
-			//check initialized
-			if( !initialized )
-				throw new InvalidOperationException( "Match service is not initialized." );
+		//!!!!moved to CloudServerImplementation
 
-			//get caller
-			var callerID = context.Client.LoginDataUserID;
-			if( callerID == 0 )
-				throw new InvalidOperationException( "Client is not logged in." );
+		//public delegate void GetMatchCheckAccessRightsDelegate( long callerID, long matchID, ref bool allow );
+		//public static event GetMatchCheckAccessRightsDelegate GetMatchCheckAccessRights;
 
-			//get match
-			var result = GetMatch( matchID );
-			if( !string.IsNullOrEmpty( result.Error ) )
-				throw new Exception( result.Error );
-			if( result.NotFound )
-				throw new Exception( "Match not found." );
+		//[CloudMethod( MaxCallPerClientPermit = 100 )]
+		//public static Match GetMatch( ServerNetworkService_CloudFunctions.CallMethodContext context, long matchID )
+		//{
+		//	//check initialized
+		//	if( !initialized )
+		//		throw new InvalidOperationException( "Match service is not initialized." );
 
-			//set default access rights by lobby status
-			var allow = result.Match.Status == "Lobby";
+		//	//get caller
+		//	var callerID = context.Client.LoginDataUserID;
+		//	if( callerID == 0 )
+		//		throw new InvalidOperationException( "Client is not logged in." );
 
-			//set default access rights by user in the match
-			if( !allow )
-			{
-				//get match user
-				var getMatchUserResult = GetMatchUser( matchID, callerID );
-				if( !string.IsNullOrEmpty( getMatchUserResult.Error ) )
-					throw new Exception( getMatchUserResult.Error );
+		//	//get match
+		//	var result = GetMatch( matchID );
+		//	if( !string.IsNullOrEmpty( result.Error ) )
+		//		throw new Exception( result.Error );
+		//	if( result.NotFound )
+		//		throw new Exception( "Match not found." );
 
-				allow = getMatchUserResult.User != null;
-			}
+		//	//set default access rights by lobby status
+		//	var allow = result.Match.Status == "Lobby";
 
-			GetMatchCheckAccessRights?.Invoke( callerID, matchID, ref allow );
-			if( !allow )
-				throw new Exception( "Access denied." );
+		//	//set default access rights by user in the match
+		//	if( !allow )
+		//	{
+		//		//get match user
+		//		var getMatchUserResult = GetMatchUser( matchID, callerID );
+		//		if( !string.IsNullOrEmpty( getMatchUserResult.Error ) )
+		//			throw new Exception( getMatchUserResult.Error );
 
-			return result.Match;
-		}
+		//		allow = getMatchUserResult.User != null;
+		//	}
+
+		//	GetMatchCheckAccessRights?.Invoke( callerID, matchID, ref allow );
+		//	if( !allow )
+		//		throw new Exception( "Access denied." );
+
+		//	return result.Match;
+		//}
+
 
 		static long GetUniqueMatchID()
 		{
@@ -543,7 +551,7 @@ namespace NeoAxis.Cloud
 			}
 		}
 
-		public delegate void NewMatchCheckAccessRightsDelegate( long callerID, ref string name, ref string anyData, ref bool allow );
+		public delegate void NewMatchCheckAccessRightsDelegate( long callerID, ref string name, ref string anyData, ref string rejectReason );
 		public static event NewMatchCheckAccessRightsDelegate NewMatchCheckAccessRights;
 
 		[CloudMethod( MaxCallPerClientPermit = 5 )]
@@ -559,10 +567,12 @@ namespace NeoAxis.Cloud
 				throw new Exception( "Client is not logged in." );
 
 			//check access rights
-			var allow = true;
-			NewMatchCheckAccessRights?.Invoke( callerID, ref name, ref anyData, ref allow );
-			if( !allow )
-				throw new Exception( "Access denied." );
+			var rejectReason = "";
+			if( CloudFunctionsServer.NewMatchOnlyByOwner && CloudServerProcessUtility.CommandLineParameters.UserID != callerID )
+				rejectReason = "Access denied. Only the owner of the server process can create matches.";
+			NewMatchCheckAccessRights?.Invoke( callerID, ref name, ref anyData, ref rejectReason );
+			if( !string.IsNullOrEmpty( rejectReason ) )
+				throw new Exception( rejectReason );
 
 			//call create match
 			var result = NewMatch( callerID, name, anyData );
@@ -667,6 +677,7 @@ namespace NeoAxis.Cloud
 			}
 		}
 
+		//!!!!rejectReason
 		public delegate void UpdateMatchCheckAccessRightsDelegate( long callerID, Match match, ref string status, ref string name, ref string anyData, ref bool allow );
 		public static event UpdateMatchCheckAccessRightsDelegate UpdateMatchCheckAccessRights;
 
@@ -812,7 +823,7 @@ namespace NeoAxis.Cloud
 			return 0;
 		}
 
-		public delegate void NewMatchUserBeforeDelegate( long userID, ref string username, ref string anyData, ref string error );
+		public delegate void NewMatchUserBeforeDelegate( long matchID, long userID, ref string username, ref string anyData, ref string error );
 		public static event NewMatchUserBeforeDelegate NewMatchUserBefore;
 
 		public delegate void NewMatchUserAfterDelegate( MatchUser matchUser );
@@ -835,7 +846,7 @@ namespace NeoAxis.Cloud
 					return new AddMatchUserResult { Error = $"The match user anyData length exceeds the maximum allowed. Limit: {MatchUserAnyDataMaxLength} characters." };
 
 				string error = null;
-				NewMatchUserBefore?.Invoke( userID, ref username, ref anyData, ref error );
+				NewMatchUserBefore?.Invoke( matchID, userID, ref username, ref anyData, ref error );
 				if( !string.IsNullOrEmpty( error ) )
 					return new AddMatchUserResult { Error = error };
 
@@ -952,6 +963,7 @@ namespace NeoAxis.Cloud
 		///////////////////////////////////////////////
 		// Additional Methods
 
+		//!!!!rejectReason
 		public delegate void EnterMatchCheckAccessRightsDelegate( long callerID, Match match, ref string anyData, ref bool allow );
 		public static event EnterMatchCheckAccessRightsDelegate EnterMatchCheckAccessRights;
 
@@ -1017,6 +1029,7 @@ namespace NeoAxis.Cloud
 			return addMatchUserResult.User.Id;
 		}
 
+		//!!!!rejectReason
 		public delegate void RemoveMatchUserCheckAccessRightsDelegate( long callerID, Match match, MatchUser matchUser, ref bool allow );
 		public static event RemoveMatchUserCheckAccessRightsDelegate RemoveMatchUserCheckAccessRights;
 

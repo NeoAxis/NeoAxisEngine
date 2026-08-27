@@ -32,6 +32,7 @@ namespace NeoAxis.Cloud
 		public static bool MatchesEnabled;
 		public static bool ServerWebSocket = true;
 		public static bool ServerUDP = true;
+		public static bool NewMatchOnlyByOwner;
 
 		//client settings
 		public static double ConnectionDefaultMaxLifetime = 31536000;
@@ -149,6 +150,8 @@ namespace NeoAxis.Cloud
 				ServerWebSocket = serverWebSocket;
 			if( bool.TryParse( settingsBlock.GetAttribute( "ServerUDP" ), out var serverUDP ) )
 				ServerUDP = serverUDP;
+			if( bool.TryParse( settingsBlock.GetAttribute( "NewMatchOnlyByOwner" ), out var newMatchOnlyByOwner ) )
+				NewMatchOnlyByOwner = newMatchOnlyByOwner;
 
 			if( ServerLogsEnabled )
 				ServerLogs.Init();

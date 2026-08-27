@@ -92,7 +92,7 @@
 		Name = Button Play City Demo
 		Text = City Demo
 		Size = Units 180 40
-		Margin = Units 10 530 130 318.058171164124
+		Margin = Units 10 480 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -109,7 +109,7 @@
 		Name = Button Play Nature Demo
 		Text = Nature Demo
 		Size = Units 180 40
-		Margin = Units 10 580 130 318.058171164124
+		Margin = Units 10 530 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -126,7 +126,7 @@
 		Name = Button Play SciFi Demo
 		Text = Sci-Fi Demo
 		Size = Units 180 40
-		Margin = Units 10 630 130 318.058171164124
+		Margin = Units 10 580 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -143,7 +143,7 @@
 		Name = Button Play Battle Demo
 		Text = Battle Demo
 		Size = Units 180 40
-		Margin = Units 10 680 130 318.058171164124
+		Margin = Units 10 630 130 318.058171164124
 		EditorScrollPosition = 0 0
 		Style
 		{
@@ -165,7 +165,19 @@
 	.component NeoAxis.UIButton
 	{
 		Name = Button Play Shooter Game
-		Text = Shooter Game
+		Text = Shooter
+		Size = Units 180 40
+		Margin = Units 10 680 130 318.058171164124
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Play Racing Game
+		Text = Racing
 		Size = Units 180 40
 		Margin = Units 10 730 130 318.058171164124
 		EditorScrollPosition = 0 0

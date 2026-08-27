@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -164,9 +165,6 @@ namespace Project
 									MessageBoxWindow.Show( this, text, "Can't create match", EMessageBoxButtons.OK, EMessageBoxIcon.Warning );
 								} );
 
-								//Log.Warning( "Error: " + result.Error );
-								//matchesFromServer = Array.Empty<Matches.Match>();
-
 								return;
 							}
 
@@ -195,11 +193,13 @@ namespace Project
 			return selectedMatch;
 		}
 
-		async Task EnterToMatchAsync( long matchID )
+		async Task EnterToMatchAsync( Matches.Match match )// long matchID )
 		{
 			var client = CloudServiceClient.Client;
 			if( client == null )
 				return;
+
+			var matchID = match.Id;
 
 			//call EnterMatch on the server
 			var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
@@ -217,13 +217,28 @@ namespace Project
 				return;
 			}
 
-			//open match window
-			EngineThreading.ExecuteFromMainThreadLater( delegate ()
+			if( match.Status == "Lobby" )
 			{
-				var matchWindow = ResourceManager.LoadSeparateInstance<MatchWindow>( @"Base\UI\Screens\MatchWindow.ui", false, true );
-				matchWindow.MatchID = matchID;
-				Parent.AddComponent( matchWindow );
-			} );
+				//open match window
+				EngineThreading.ExecuteFromMainThreadLater( delegate ()
+				{
+					var matchWindow = ResourceManager.LoadSeparateInstance<MatchWindow>( @"Base\UI\Screens\MatchWindow.ui", false, true );
+					matchWindow.MatchID = matchID;
+					Parent.AddComponent( matchWindow );
+				} );
+			}
+			else
+			{
+				//the match is already in Play status. go to play mode
+				EngineThreading.ExecuteFromMainThreadLater( delegate ()
+				{
+					//delete matches window
+					//it's inside the event handler
+
+					//open play screen
+					MatchContinuePlay?.Invoke( this, match );
+				} );
+			}
 		}
 
 		void EnterToSelectedMatch()
@@ -263,7 +278,7 @@ namespace Project
 						{
 							if( result == EDialogResult.Yes )
 							{
-								Task.Run( () => EnterToMatchAsync( selectedMatch.Id ) );
+								Task.Run( () => EnterToMatchAsync( selectedMatch ) );//.Id ) );
 							}
 						} );
 					} );
@@ -294,16 +309,29 @@ namespace Project
 				if( client == null )
 					return;
 
-				//get matches with Lobby status
 				var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-				var result = await client.CallMethodAsync<Matches.Match[]>( "Matches", "GetMatches", cts.Token, null, null, null, new[] { "Lobby" } );
+				var result = await client.CallMethodAsync<Matches.Match[]>( "CloudServerImplementation", "GetMatchesToEnterOrContinue", cts.Token );
 				if( !string.IsNullOrEmpty( result.Error ) )
 				{
 					Log.Warning( "Error: " + result.Error );
 					matchesFromServer = Array.Empty<Matches.Match>();
 					return;
 				}
+
 				matchesFromServer = result.Value;
+
+
+				////get matches with Lobby status
+				//var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
+				//var result = await client.CallMethodAsync<Matches.Match[]>( "Matches", "GetMatches", cts.Token, null, null, null, new[] { "Lobby" } );
+				//if( !string.IsNullOrEmpty( result.Error ) )
+				//{
+				//	Log.Warning( "Error: " + result.Error );
+				//	matchesFromServer = Array.Empty<Matches.Match>();
+				//	return;
+				//}
+
+				//matchesFromServer = result.Value;
 			}
 			catch( Exception e )
 			{
@@ -322,6 +350,8 @@ namespace Project
 				{
 					var match = matchesFromServer[ n ];
 					var matchInList = matchesInList[ n ];
+
+					//!!!!? status
 
 					if( match.Id != matchInList.Id || match.Name != matchInList.Name || match.AnyData != matchInList.AnyData )
 					{
@@ -348,7 +378,11 @@ namespace Project
 
 				foreach( var match in matches )
 				{
-					var text = match.Name;
+					var statusUserFriendly = match.Status;
+					if( statusUserFriendly == "Play" )
+						statusUserFriendly = "Playing";
+
+					var text = $"[{statusUserFriendly}] {match.Name}"; //var text = match.Name;
 					if( !string.IsNullOrEmpty( match.AnyData ) )
 						text += " - " + match.AnyData;
 

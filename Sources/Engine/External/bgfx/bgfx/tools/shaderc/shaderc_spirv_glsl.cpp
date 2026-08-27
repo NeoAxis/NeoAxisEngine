@@ -959,6 +959,31 @@ namespace bgfx { namespace spirv
 						uniforms.push_back(un);
 					}
 
+					// Loop through the sampled_images, and extract the uniform names:
+					for (auto& resource : resourcesrefl.sampled_images)
+					{
+						std::string name = refl.get_name(resource.id);
+
+						if (name.size() > 7
+							&& 0 == bx::strCmp(name.c_str() + name.length() - 7, "Texture"))
+						{
+							name = name.substr(0, name.length() - 7);
+						}
+
+						uint32_t binding_index = refl.get_decoration(resource.id, spv::Decoration::DecorationBinding);
+
+						Uniform un;
+						un.name = name;
+						un.type = UniformType::Enum(kUniformSamplerBit | UniformType::Sampler);
+
+						un.num = 1; // combined sampler type
+
+						un.regIndex = uint16_t(binding_index);
+						un.regCount = 0; // unused
+
+						uniforms.push_back(un);
+					}
+
 					// Loop through the storage_images, and extract the uniform names:
 					for (auto &resource : resourcesrefl.storage_images)
 					{
@@ -1021,11 +1046,37 @@ namespace bgfx { namespace spirv
 					bx::write(_shaderWriter, nul, &err);
 
 					const uint8_t numAttr = (uint8_t)program->getNumLiveAttributes();
-					bx::write(_shaderWriter, numAttr, &err);
-
+					bgfx::Attrib::Enum attrMap[bgfx::Attrib::Enum::Count];
+					for (uint8_t ii = 0; ii < bgfx::Attrib::Enum::Count; ++ii)
+					{
+						attrMap[ii] = bgfx::Attrib::Enum::Count;
+					}
+					int numLocations = 0;
 					for (uint8_t ii = 0; ii < numAttr; ++ii)
 					{
-						bgfx::Attrib::Enum attr = toAttribEnum(program->getAttributeName(ii) );
+						bgfx::Attrib::Enum attr = toAttribEnum(program->getAttributeName(ii));
+						if (bgfx::Attrib::Count != attr)
+						{
+							int loc = program->getPipeInput(ii).layoutLocation();
+							if (loc >= 0 && loc < bgfx::Attrib::Enum::Count) {
+								bgfx::Attrib::Enum attr = toAttribEnum(program->getAttributeName(ii));
+								if (bgfx::Attrib::Count != attr)
+								{
+									attrMap[loc] = attr;
+									if (loc > numLocations) {
+										numLocations = loc;
+									}
+								}
+							}
+						}
+					}
+					numLocations += 1;
+
+					bx::write(_shaderWriter, uint8_t(numLocations), &err);
+
+					for (uint8_t ii = 0; ii < numLocations; ++ii)
+					{
+						bgfx::Attrib::Enum attr = attrMap[ii];
 						if (bgfx::Attrib::Count != attr)
 						{
 							bx::write(_shaderWriter, bgfx::attribToId(attr), &err);

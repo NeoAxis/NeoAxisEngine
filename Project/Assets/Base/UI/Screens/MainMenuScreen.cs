@@ -151,6 +151,15 @@ namespace Project
 				if( button.Visible )
 					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
 			}
+			if( Components[ "Button Play Racing Game" ] != null )
+			{
+				var button = (UIButton)Components[ "Button Play Racing Game" ];
+				var fileName = @"Samples\Racing\Scenes\Racing.scene";
+				button.AnyData = fileName;
+				button.Click += ButtonPlay_Click;
+				if( button.Visible )
+					button.ReadOnly = !VirtualFile.Exists( fileName ) || SimulationAppClient.Created;
+			}
 			if( Components[ "Button Play Simple Game" ] != null )
 			{
 				var button = (UIButton)Components[ "Button Play Simple Game" ];

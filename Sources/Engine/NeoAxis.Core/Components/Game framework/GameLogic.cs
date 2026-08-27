@@ -42,10 +42,8 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-#if !CLIENT
 			if( NetworkIsServer || NetworkIsSingle )
 				ServerOrSingle_OnEnabledInHierarchyChanged();
-#endif
 			if( NetworkIsClient )
 				Client_OnEnabledInHierarchyChanged();
 		}
@@ -54,10 +52,8 @@ namespace NeoAxis
 		{
 			base.OnEnabledInSimulation();
 
-#if !CLIENT
 			if( NetworkIsServer || NetworkIsSingle )
 				ServerOrSingle_OnEnabledInSimulation();
-#endif
 			if( NetworkIsClient )
 				Client_OnEnabledInSimulation();
 		}
@@ -66,10 +62,8 @@ namespace NeoAxis
 		{
 			base.OnDisabledInSimulation();
 
-#if !CLIENT
 			if( NetworkIsServer || NetworkIsSingle )
 				ServerOrSingle_OnDisabledInSimulation();
-#endif
 			if( NetworkIsClient )
 				Client_OnDisabledInSimulation();
 		}
@@ -132,7 +126,6 @@ namespace NeoAxis
 		{
 			base.OnSimulationStep();
 
-#if !CLIENT
 			serverOrSingleUpdateRemainingTime -= Time.SimulationDelta;
 			if( serverOrSingleUpdateRemainingTime < 0 )
 			{
@@ -141,7 +134,6 @@ namespace NeoAxis
 				Server_UpdateUsersList();
 				ServerOrSingle_UpdateObjectControlledByPlayers();
 			}
-#endif
 		}
 
 		protected virtual ServerUserItem Server_OnNewUserItem()
@@ -160,11 +152,14 @@ namespace NeoAxis
 		{
 			serverUsers.Remove( item.User );
 
-			if( item.ObjectControlledByPlayer != null )
+			if( ServerOrSingle_IsAllowToUpdateObjectControlledByPlayers() )
 			{
-				item.ObjectControlledByPlayer.RemoveFromParent( true );
-				item.ObjectControlledByPlayerInputEnabled = false;
-				item.ObjectControlledByPlayer = null;
+				if( item.ObjectControlledByPlayer != null )
+				{
+					item.ObjectControlledByPlayer.RemoveFromParent( true );
+					item.ObjectControlledByPlayerInputEnabled = false;
+					item.ObjectControlledByPlayer = null;
+				}
 			}
 		}
 
@@ -208,11 +203,24 @@ namespace NeoAxis
 		public delegate void ObjectControlledByPlayerCreatedDelegate( GameLogic sender, ServerUserItem serverUserItem, SingleUserItem singleUserItem, Component obj );
 		public event ObjectControlledByPlayerCreatedDelegate ObjectControlledByPlayerCreated;
 
-		public virtual Component ServerOrSingle_CreateObjectControlledByPlayer( ServerUserItem serverUserItem, SingleUserItem singleUserItem, Metadata.TypeInfo objectType, Transform transform )
+		public virtual Component ServerOrSingle_CreateObjectControlledByPlayer( ServerUserItem serverUserItem, SingleUserItem singleUserItem, Reference<Metadata.TypeInfo> objectTypeWithReference, Transform transform )
 		{
 			if( ParentScene != null )
 			{
-				var obj = ParentScene.CreateComponent( objectType, enabled: false, setUniqueName: true );
+				Component obj = null;
+				if( MetadataManager.GetTypeOfNetType( typeof( VehicleType ) ).IsAssignableFrom( objectTypeWithReference.Value ) )
+				{
+					//Vehicle specific
+					obj = ParentScene.CreateComponent<Vehicle>( enabled: false, setUniqueName: true );
+					var vehicle = (Vehicle)obj;
+					vehicle.VehicleType = ReferenceUtility.MakeReference( objectTypeWithReference.GetByReference );
+				}
+				else
+				{
+					//default behaviour
+					obj = ParentScene.CreateComponent( objectTypeWithReference.Value, enabled: false, setUniqueName: true );
+				}
+
 				obj.NewObjectSetDefaultConfiguration();
 
 				//add input processing component

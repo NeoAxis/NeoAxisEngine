@@ -2,7 +2,7 @@
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1171, 963\"><KW V=\"1\" A=\"2CABB93EFA594714F0AE454C73589B95\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"3380822B186E41A3B0AF1BCE3A2E7635\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2CABB93EFA594714F0AE454C73589B95\"><KP UN=\"2CABB93EFA594714F0AE454C73589B95\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2FC76A6B8D48421BCAA3FD59DD0F7CB3\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"BF7F219544234EEACA946AE1342D9CB4\" S=\"False\"><CPD ObjPath=\"$Regulator\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1162, 963\"><KW V=\"1\" A=\"2CABB93EFA594714F0AE454C73589B95\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"3380822B186E41A3B0AF1BCE3A2E7635\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"2CABB93EFA594714F0AE454C73589B95\"><KP UN=\"2CABB93EFA594714F0AE454C73589B95\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"2FC76A6B8D48421BCAA3FD59DD0F7CB3\" S=\"False\"><CPD ObjPath=\"$Button\\$C# Script\" /></KP><KP UN=\"BF7F219544234EEACA946AE1342D9CB4\" S=\"False\"><CPD ObjPath=\"$Regulator\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	RenderingPipeline
 	{
 		GetByReference = "root:$Rendering Pipeline"
@@ -124,7 +124,8 @@
 	.component NeoAxis.SpawnPoint
 	{
 		Name = Spawn Point
-		Transform = "-4.48731908441571 -1.09364035505468 1.15; 0 0 0 1; 1 1 1"
+		Transform = "-1.43222486954087 -3.1118589420306 0; 0 0 0.573576436351046 0.819152044288992; 1 1 1"
+		LastExistTime = 0
 	}
 	.component NeoAxis.Light
 	{
@@ -379,7 +380,7 @@
 					Value
 					{
 						Length = 2304
-						.elements = "UEsDBBQAAAAIAFg4Bl0+AW2lXgEAAAAJAAAEAAAAZmlsZa2VQU7DMBBF5wTZcR5vuAgSW8QOscOcgE3PwrLpYXoMpKKf+d+xQ9J4IiJVbpN5mT/jP+7wfBnNLD2cvs5mGd9xZS78jfs5tR+PGMibGWKCfE7kwQV517PBu7iiZ01/yy/q7+TNVH+cZ4rPa0L/Uf/t9oEVl/rP39v6jfzL23uK82bkxzhPpZ5/yfMheoxrTT9DyC/q58M9PifVH+fb/Xf/Seu0ai/u6C/56d8I7/nr/nvRmiHVrncyvpnDdv+O8Jof969yTWtH/cX/B+r3HJof9X/2sPogTWv1l/OD55dZjC/9S/A/MvXziP7L+xmJB3v6Ha/963e07z38XL/615/f+7nsPzXwvKfGzfkt/kfvdPZX83KP535W86/o+bzQHfRibf9L/yv/gVH8Pi//x/X7u/+rf/Df0/B9xlt/Hl/5X9utf/J/jG/0j5j/OF/8d5ivz79Y/sY/0/zGebNfUEsBAhQAFAAAAAgAWDgGXT4BbaVeAQAAAAkAAAQAAAAAAAAAAAAAAAAAAAAAAGZpbGVQSwUGAAAAAAEAAQAyAAAAgAEAAAAA"
+						.elements = "UEsDBBQAAAAIALkNGl0+AW2lXgEAAAAJAAAEAAAAZmlsZa2VQU7DMBBF5wTZcR5vuAgSW8QOscOcgE3PwrLpYXoMpKKf+d+xQ9J4IiJVbpN5mT/jP+7wfBnNLD2cvs5mGd9xZS78jfs5tR+PGMibGWKCfE7kwQV517PBu7iiZ01/yy/q7+TNVH+cZ4rPa0L/Uf/t9oEVl/rP39v6jfzL23uK82bkxzhPpZ5/yfMheoxrTT9DyC/q58M9PifVH+fb/Xf/Seu0ai/u6C/56d8I7/nr/nvRmiHVrncyvpnDdv+O8Jof969yTWtH/cX/B+r3HJof9X/2sPogTWv1l/OD55dZjC/9S/A/MvXziP7L+xmJB3v6Ha/963e07z38XL/615/f+7nsPzXwvKfGzfkt/kfvdPZX83KP535W86/o+bzQHfRibf9L/yv/gVH8Pi//x/X7u/+rf/Df0/B9xlt/Hl/5X9utf/J/jG/0j5j/OF/8d5ivz79Y/sY/0/zGebNfUEsBAhQAFAAAAAgAuQ0aXT4BbaVeAQAAAAkAAAQAAAAAAAAAAAAAAAAAAAAAAGZpbGVQSwUGAAAAAAEAAQAyAAAAgAEAAAAA"
 						.elementsZip = True
 					}
 				}

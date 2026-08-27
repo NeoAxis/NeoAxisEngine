@@ -75,5 +75,7 @@
     <Compile Include="Assets\Base\UI\Screens\MatchWindow.cs" />
     <Compile Include="Assets\Base\Scripts\ProjectSettingsPage_Extension.cs" />
     <Compile Include="Assets\Base\Scripts\ShaderFunctions.cs" />
+    <Compile Include="Assets\Samples\Racing\Scripts\RacingGameLogic.cs" />
+    <Compile Include="Assets\Samples\Racing\UI\RacingGameScreen.cs" />
   </ItemGroup>
 </Project>

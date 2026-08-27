@@ -85,6 +85,8 @@
     <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameScreen.cs" />
     <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterGameLogic.cs" />
     <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterGameScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Racing\Scripts\RacingGameLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Racing\UI\RacingGameScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NeoAxis.Core">

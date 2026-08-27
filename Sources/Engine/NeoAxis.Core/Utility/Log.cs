@@ -22,7 +22,7 @@ namespace NeoAxis
 		static Queue<CachedItem> cachedQueue = new Queue<CachedItem>();
 		//static List<CachedItem> cachedList = new List<CachedItem>();
 
-		static bool fatalActivated;
+		static volatile bool fatalActivated;
 
 		///////////////////////////////////////////
 

@@ -19,9 +19,13 @@ namespace NeoAxis
 		ConcurrentDictionary<ServerNode.Client, UserInfo> usersByClient = new ConcurrentDictionary<ServerNode.Client, UserInfo>();
 		//UserInfo serverUser;
 
-		long botIDCounter = 10000000000L;
-		long botUniqueNameCounter = 1;
-		long directConnectionUserCounter = 20000000000L;
+		//auto ID counter for bots (multiplayer mode)
+		long botIDCounter = -1L;
+		//long botIDCounter = 10000000000L;
+		//long botUniqueNameCounter = 1;
+
+		long directConnectionUserCounter = 1L;
+		//long directConnectionUserCounter = 20000000000L;
 
 		///////////////////////////////////////////
 
@@ -201,13 +205,15 @@ namespace NeoAxis
 
 		public UserInfo AddUserBot( long? userID, string? username, object? anyData )
 		{
-			var userID2 = userID ?? Interlocked.Increment( ref botIDCounter );
+			var userID2 = userID ?? Interlocked.Decrement( ref botIDCounter ); //var userID2 = userID ?? Interlocked.Increment( ref botIDCounter );
 
 			var username2 = username;
 			if( string.IsNullOrEmpty( username2 ) )
 			{
-				username2 = "Bot " + botUniqueNameCounter.ToString();
-				botUniqueNameCounter++;
+				username2 = "Bot " + Math.Abs( userID2 ).ToString();
+
+				//username2 = "Bot " + botUniqueNameCounter.ToString();
+				//botUniqueNameCounter++;
 			}
 
 			var newUser = new UserInfo( userID2, username2 );

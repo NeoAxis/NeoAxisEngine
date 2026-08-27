@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using NeoAxis;
 using NeoAxis.Cloud;
-using NeoAxis.Networking;
 
 namespace Project
 {
@@ -1501,15 +1500,6 @@ namespace Project
 				MatchDelete();
 				return;
 			}
-
-			//go to entrance screen
-			if( GameLogic != null )
-			{
-				var m = GameLogic.BeginNetworkMessageToServer( "TryLeaveWorld" );
-				if( m != null )
-					m.End();
-				return;
-			}
 		}
 
 		public void ButtonMatchReset_Click( NeoAxis.UIButton sender )
@@ -1799,10 +1789,9 @@ namespace Project
 
 		protected virtual void UpdateControlsToOpenMenus()
 		{
-
-			//!!!!change to machines with keyboard
-
-			var keyboardAvailable = !SystemSettings.MobileDevice; //var keyboardAvailable = SystemSettings.KeyboardAvailable;
+			
+			//!!!!good?
+			var keyboardAvailable = !SystemSettings.MobileDevice;
 
 			var inGameMenu = GetInGameMenu();
 

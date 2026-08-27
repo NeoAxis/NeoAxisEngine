@@ -11,13 +11,14 @@ using NeoAxis.Cloud;
 
 namespace Project
 {
-	public class ShooterGameScreen : BasicSceneScreen
+	public class RacingGameScreen : BasicSceneScreen
 	{
-		//not used right now. synchronized via ShooterGameLogic. Can be used for additional info.
+		//not used right now. synchronized via RacingGameLogic. Can be used for additional info.
 		//match settings
 		bool matchSettingsNeedRequest = true;
 		MatchSettings matchSettings;
 
+		//!!!!
 		//match details
 		volatile bool matchDetailsNeedRequest = true;
 		volatile MatchDetails matchDetails;
@@ -25,6 +26,8 @@ namespace Project
 
 		//various
 		double lastOnUpdateTime;
+		RacingGameLogic.StatusInfo currentStatus = new RacingGameLogic.StatusInfo();
+		int checkpointsPassedByThisPlayer;
 
 		///////////////////////////////////////////////
 
@@ -36,23 +39,21 @@ namespace Project
 
 		///////////////////////////////////////////////
 
+		//not used right now. synchronized via RacingGameLogic. Can be used for additional info.
 		public class MatchSettings
 		{
-			//public string SceneName = "";
-			//public string/*GameTypeEnum*/ GameType = "Free For All";
-			//public int MatchTimeLimit = 10; //in minutes
-
-			//public string[] Bots = { "", "", "", "", "", "", "", "", "", "" };
-			//public Dictionary<long, string> UserRoles = new Dictionary<long, string>();
 		}
 
 		///////////////////////////////////////////////
 
-		//!!!!to basic or merge?
-		public abstract class MatchDetailsBase
+		public class MatchDetails
 		{
+			//common
 			public List<Participant> Participants = new List<Participant>();
 			public int GameCounter;
+
+			//game specific
+			public Participant[] Players = Array.Empty<Participant>();
 
 			/////////////////////
 
@@ -88,17 +89,6 @@ namespace Project
 			{
 				return Participants.FirstOrDefault( p => p.UserID == userID );
 			}
-		}
-
-		///////////////////////////////////////////////
-
-		public class MatchDetails : MatchDetailsBase
-		{
-			//public float PreraceTimeDuration = 10;
-			public Participant[] Players = Array.Empty<Participant>();
-			public float GameTime;
-
-			///////////////////////
 
 			public int GetThisUserPlayerIndex()
 			{
@@ -116,20 +106,106 @@ namespace Project
 
 		///////////////////////////////////////////////
 
-		public ShooterGameScreen()
+		public RacingGameScreen()
 		{
 			EngineConfig.RegisterClassParameters( GetType() );
 		}
 
-		public new ShooterGameLogic GameLogic
+		public new RacingGameLogic GameLogic
 		{
-			get { return base.GameLogic as ShooterGameLogic; }
+			get { return base.GameLogic as RacingGameLogic; }
 		}
 
-		//public ShooterGameLogic GetShooterGameLogic()
-		//{
-		//	return Scene?.GetGameLogic() as ShooterGameLogic;
-		//}
+		protected override void OnEnabledInSimulationAndIsInstance()
+		{
+			base.OnEnabledInSimulationAndIsInstance();
+
+			if( GameLogic != null )
+				GameLogic.CheckpointsPassedTimeChanged += GameLogic_CheckpointsPassedTimeChanged;
+		}
+
+		public int GetPlayerIndex()
+		{
+			var gameLogic = GameLogic;
+
+			if( MatchInfo != null && matchDetails != null )
+			{
+				//cloud mode
+				return matchDetails.GetThisUserPlayerIndex();
+			}
+			else if( gameLogic.NetworkIsClient && SimulationAppClient.Created )
+			{
+				//multiplayer mode
+				var thisUserID = SimulationAppClient.ConnectionNode?.Users.ThisUser?.UserID ?? 0;
+				var users = gameLogic.Client_GetUsers().Values.ToArray();
+				for( int n = 0; n < users.Length; n++ )
+				{
+					var user = users[ n ];
+					if( user.UserID == thisUserID )
+						return n;
+				}
+			}
+			else if( gameLogic.NetworkIsSingle )
+			{
+				//single mode
+				var users = gameLogic.Single_GetUsers();
+				for( int n = 0; n < users.Length; n++ )
+				{
+					var user = users[ n ];
+					if( !user.Bot )
+						return n;
+				}
+			}
+
+			return -1;
+		}
+
+		private void GameLogic_CheckpointsPassedTimeChanged( RacingGameLogic sender )
+		{
+			var gameLogic = GameLogic;
+
+			//update checkpointsPassedByThisPlayer to play sound when checkpoint passed
+			{
+				var playerIndex = GetPlayerIndex();
+				if( playerIndex != -1 )
+				{
+					if( checkpointsPassedByThisPlayer != gameLogic.CheckpointsPassed[ playerIndex ] )
+					{
+						checkpointsPassedByThisPlayer = gameLogic.CheckpointsPassed[ playerIndex ];
+
+						//play sound checkpoint passed
+						SoundPlay2D( @"Samples\Racing\Sounds\Checkpoint passed.ogg" );
+					}
+				}
+			}
+
+			//play sound game ended
+			if( GameLogic.IsMatchOver() )
+				SoundPlay2D( @"Samples\Racing\Sounds\Game ended.ogg" );
+		}
+
+		void ProcessGameEvents()
+		{
+			var newStatus = GameLogic.GetStatus();
+
+			//play sound countdown 3
+			if( currentStatus.PreRaceTimeRemaining >= 3 && newStatus.PreRaceTimeRemaining < 3 )
+				SoundPlay2D( @"Samples\Racing\Sounds\Countdown.ogg" );
+
+			//play sound countdown 2
+			if( currentStatus.PreRaceTimeRemaining >= 2 && newStatus.PreRaceTimeRemaining < 2 )
+				SoundPlay2D( @"Samples\Racing\Sounds\Countdown.ogg" );
+
+			//play sound countdown 1
+			if( currentStatus.PreRaceTimeRemaining >= 1 && newStatus.PreRaceTimeRemaining < 1 )
+				SoundPlay2D( @"Samples\Racing\Sounds\Countdown.ogg" );
+
+			//play sound go
+			if( currentStatus.RaceTime == 0 && newStatus.RaceTime > 0 )
+				SoundPlay2D( @"Samples\Racing\Sounds\Go.ogg" );
+
+			currentStatus = newStatus;
+		}
 
 		protected override void OnUpdate( float delta )
 		{
@@ -137,7 +213,7 @@ namespace Project
 
 			if( Scene != null )
 			{
-				if( EngineApp.EngineTime - lastOnUpdateTime > 0.1 )
+				if( EngineApp.EngineTime - lastOnUpdateTime > 0.05 )
 				{
 					lastOnUpdateTime = EngineApp.EngineTime;
 
@@ -184,6 +260,12 @@ namespace Project
 						if( ButtonDeleteBot != null )
 							ButtonDeleteBot.ReadOnly = true;
 					}
+
+					if( GameLogic != null )
+					{
+						ProcessGameEvents();
+						UpdateCheckpointsDependsPassedState();
+					}
 				}
 			}
 		}
@@ -213,12 +295,6 @@ namespace Project
 						{
 							//username
 							var text = participant.GetDisplayName();
-
-							//frags
-							var user = gameLogic.Client_GetUser( participant.UserID );
-							if( user != null )
-								text += $" - {user.Frags}";
-
 							lines.Add( (text, new ColorValue( 0.95, 0.95, 0.95 )) );
 						}
 						else
@@ -250,7 +326,6 @@ namespace Project
 					foreach( var serverUserItem in gameLogic.Client_GetUsers() )
 					{
 						var text = serverUserItem.Value.Username;
-						text += $" - {serverUserItem.Value.Frags}";
 						lines.Add( (text, new ColorValue( 0.95, 0.95, 0.95 )) );
 					}
 				}
@@ -260,8 +335,7 @@ namespace Project
 					lines.Add( ("Players:", new ColorValue( 0.95, 0.95, 0.95 )) );
 					foreach( var singleUserItem in gameLogic.Single_GetUsers() )
 					{
-						var text = !singleUserItem.Bot ? "You" : $"Bot {singleUserItem.UserID}";
-						text += $" - {gameLogic.Single_GetFrags( singleUserItem.UserID )}";
+						var text = singleUserItem.UserID == 0 ? "You" : $"Bot {singleUserItem.UserID}";
 						lines.Add( (text, new ColorValue( 0.95, 0.95, 0.95 )) );
 					}
 				}
@@ -296,55 +370,118 @@ namespace Project
 			var text = "";
 			var color = new ColorValue( 0.95, 0.95, 0.95 );
 
-			var gameLogic = GameLogic;
-			if( gameLogic != null )
+			if( currentStatus.PreRaceTimeRemaining > 0 )
 			{
-				var remainingTimeSeconds = (int)gameLogic.GetRemainingTime();
-				if( gameLogic.CurrentGameStatus.Value == ShooterGameLogic.GameStatusEnum.Prepare )
-					text = $"Game starts in {remainingTimeSeconds} seconds.";
-				else
-					text = $"Game ends in {remainingTimeSeconds} seconds.";
+				var secondsToStart = (int)currentStatus.PreRaceTimeRemaining + 1;
+				text = $"{secondsToStart} seconds before start.";
 			}
-			else
-				text = "ShooterGameLogic not found.";
+
+			if( currentStatus.RaceTime > 0 && currentStatus.RaceTime < 3 )
+			{
+				text = "Go!";
+				color = new ColorValue( 0, 1, 0 );
+			}
+
+			if( GameLogic.IsMatchOver() )
+			{
+				var thisUserPlayerIndex = GetPlayerIndex();
+				if( thisUserPlayerIndex != -1 )
+				{
+					var endResult = GameLogic.GetEndedGamePlayerIndexesWithTime();
+
+					var thisUserTime = -1.0f;
+					foreach( var item in endResult )
+					{
+						if( item.Item1 == thisUserPlayerIndex )
+						{
+							thisUserTime = item.Item2;
+							break;
+						}
+					}
+
+					if( endResult.Length != 0 && endResult[ 0 ].Item1 == thisUserPlayerIndex )
+					{
+						text = "You win with time " + thisUserTime.ToString( "0.00" ) + " seconds!";
+						color = new ColorValue( 0.1, 0.95, 0.1 );
+					}
+					else
+					{
+						text = "You didn't win. Finished in " + thisUserTime.ToString( "0.00" ) + " seconds.";
+						color = new ColorValue( 0.95, 0.1, 0.1 );
+					}
+				}
+				else
+				{
+					text = "Game over.";
+					color = new ColorValue( 0.95, 0.95, 0.1 );
+				}
+			}
 
 			if( !string.IsNullOrEmpty( text ) )
 			{
 				var fontHeight = renderer.DefaultFontSize * 1.5;
 				var position = new Vector2( 0.5, 0.0 + fontHeight / 2 );
-
 				CanvasRendererUtility.AddTextWithShadow( renderer.ViewportForScreenCanvasRenderer, renderer.DefaultFont, fontHeight, text, position, EHorizontalAlignment.Center, EVerticalAlignment.Top, color );
 			}
 		}
 
-		void DrawPlayerHealth( CanvasRenderer renderer )
+		void DrawCurrentPlayerProgress( CanvasRenderer renderer )
 		{
-			//simple drawing health info by the text
 			var gameLogic = GameLogic;
-			if( GameMode != null && gameLogic != null )
-			{
-				var maxHealth = gameLogic.ObjectControlledByPlayerHealth.Value;
+			var laps = gameLogic.Laps.Value;
 
-				var character = GameMode.ObjectControlledByPlayer.Value as Character;
-				if( character != null && maxHealth > 0 )
+			var lines = new List<string>();
+
+			lines.Add( currentStatus.RaceTime.ToString( "0.00" ) );
+
+			var playerIndex = GetPlayerIndex();
+			if( playerIndex != -1 )
+			{
+				var totalCheckpointsToPass = gameLogic.Checkpoints.Length * laps;
+
+				var previousLapTime = 0.0;
+				var raceTime = 0.0;
+
+				for( int nLap = 0; nLap < laps; nLap++ )
 				{
-					var text = $"{(int)Math.Ceiling( character.Health.Value )} / {(int)maxHealth}";
-					var fontHeight = renderer.DefaultFontSize;
-					var position = new Vector2( fontHeight / 2 * renderer.AspectRatioInv, 1.0 - fontHeight / 2 );
-					CanvasRendererUtility.AddTextWithShadow( renderer.ViewportForScreenCanvasRenderer, renderer.DefaultFont, fontHeight, text, position, EHorizontalAlignment.Left, EVerticalAlignment.Bottom, new ColorValue( 0.95, 0.95, 0.95 ) );
+					var lapTime = 0.0;
+					var index = playerIndex * totalCheckpointsToPass + gameLogic.Checkpoints.Length * ( nLap + 1 ) - 1;
+					if( index >= 0 && index < gameLogic.CheckpointsPassedTime.Length )
+						lapTime = gameLogic.CheckpointsPassedTime[ index ];
+
+					if( lapTime != 0.0 )
+					{
+						var lapTime2 = lapTime - previousLapTime;
+						previousLapTime = lapTime;
+						if( nLap == laps - 1 )
+							raceTime = lapTime;
+
+						lines.Add( $"Lap {nLap + 1}: {lapTime2.ToString( "0.00" )}" );
+					}
+					else
+						lines.Add( $"Lap {nLap + 1}: -" );
 				}
+
+				if( raceTime != 0.0 )
+					lines.Add( $"Race: {raceTime.ToString( "0.00" )}" );
+				else
+					lines.Add( $"Race: -" );
 			}
+
+			var fontHeight = renderer.DefaultFontSize;
+			var position = ConvertOffset( new UIMeasureValueVector2( UIMeasure.Units, 10, 10 ), UIMeasure.Screen );
+			CanvasRendererUtility.AddTextLinesWithShadow( renderer.ViewportForScreenCanvasRenderer, renderer.DefaultFont, fontHeight, lines, new Rectangle( position.X, position.Y, 1, 1 ), EHorizontalAlignment.Left, EVerticalAlignment.Top, new ColorValue( 1, 1, 1 ) );
 		}
 
 		protected override void OnRenderUI( CanvasRenderer renderer )
 		{
 			base.OnRenderUI( renderer );
 
-			if( Scene != null )
+			if( Scene != null && GameLogic != null )
 			{
 				DrawTextInRightTopCorner( renderer );
 				DrawGameStatus( renderer );
-				DrawPlayerHealth( renderer );
+				DrawCurrentPlayerProgress( renderer );
 			}
 		}
 
@@ -362,101 +499,16 @@ namespace Project
 		protected override void Messages_ReceiveMessageBinary( ClientNetworkService_Messages sender, string message, byte[] data )
 		{
 			base.Messages_ReceiveMessageBinary( sender, message, data );
-
-			//var settings = matchSettings;
-			//if( settings == null )
-			//	return;
-			//var details = matchDetails;
-			//if( details == null )
-			//	return;
-
-			//if( message == "GameTime" )
-			//{
-			//	EngineThreading.ExecuteFromMainThreadLater( delegate ()
-			//	{
-			//		var previousGameTime = details.GameTime;
-
-			//		var reader = new ArrayDataReader( data );
-			//		details.GameTime = reader.ReadSingle();
-
-			//		if( previousGameTime != 0 )
-			//		{
-			//			//play sound countdown 3
-			//			if( previousGameTime <= details.PreraceTimeDuration - 3 && details.GameTime > details.PreraceTimeDuration - 3 )
-			//				SoundPlay2D( @"Game\Sounds\Countdown.ogg" );
-
-			//			//play sound countdown 2
-			//			if( previousGameTime <= details.PreraceTimeDuration - 2 && details.GameTime > details.PreraceTimeDuration - 2 )
-			//				SoundPlay2D( @"Game\Sounds\Countdown.ogg" );
-
-			//			//play sound countdown 1
-			//			if( previousGameTime <= details.PreraceTimeDuration - 1 && details.GameTime > details.PreraceTimeDuration - 1 )
-			//				SoundPlay2D( @"Game\Sounds\Countdown.ogg" );
-
-			//			//play sound go
-			//			if( previousGameTime <= details.PreraceTimeDuration && details.GameTime > details.PreraceTimeDuration )
-			//				SoundPlay2D( @"Game\Sounds\Go.ogg" );
-			//		}
-
-			//		return;
-			//	} );
-			//}
-		}
-
-		protected override void OnEnabledInSimulationAndIsInstance()
-		{
-			base.OnEnabledInSimulationAndIsInstance();
-
-			//subscribe to ShooterGameLogic events
-			var gameLogic = GameLogic;
-			if( gameLogic != null )
-				gameLogic.CurrentGameStatusChanged += GameLogic_CurrentGameStatusChanged;
-		}
-
-		private void GameLogic_CurrentGameStatusChanged( ShooterGameLogic gameLogic )
-		{
-			if( gameLogic.CurrentGameStatus.Value == ShooterGameLogic.GameStatusEnum.Play )
-			{
-				ScreenMessages.Add( "The game has started!" );
-				Scene?.SoundPlay2D( @"Samples\Shooter\Sounds\Game started.ogg" );
-			}
-			else
-			{
-				ScreenMessages.Add( "The game has ended." );
-				Scene?.SoundPlay2D( @"Samples\Shooter\Sounds\Game ended.ogg" );
-			}
 		}
 
 		protected override void Scene_RenderEvent( Scene scene, Viewport viewport )
 		{
 			base.Scene_RenderEvent( scene, viewport );
-
-			//var settings = matchSettings;
-			//if( settings == null )
-			//	return;
-			//var details = matchDetails;
-			//if( details == null )
-			//	return;
-
-			//if( !IsOverlappedByOtherWindows() )
-			//{
-			//	var renderer = viewport.Simple3DRenderer;
-
-			//	//renderer.AddRectangle( rectangle, Matrix4.Identity );
-
-			//	//renderer.SetColor( new ColorValue( 0.1, 0.1, 0.1, 0.7 ) );
-			//	//renderer.AddSphere( transform, 0.01, 32, true );
-			//}
 		}
 
 		protected override void GameMode_GetCameraSettingsEvent( GameMode sender, Viewport viewport, Camera cameraDefault, ref Viewport.CameraSettingsClass cameraSettings )
 		{
 			base.GameMode_GetCameraSettingsEvent( sender, viewport, cameraDefault, ref cameraSettings );
-
-			////var details = matchDetails;
-			////if( details == null )
-			////	return;
-			////var playerIndex = details.GetThisUserPlayerIndex();
 
 			//override default camera when player character is dead
 			if( !GameMode.FreeCamera )
@@ -471,10 +523,6 @@ namespace Project
 		{
 			//unfocus controls to prevent them from processing input and to allow the scene to receive input
 			ParentContainer.FocusedControl?.Unfocus();
-
-			//if( button == EMouseButtons.Left )
-			//{
-			//}
 
 			return base.OnMouseDown( button );
 		}
@@ -504,55 +552,55 @@ namespace Project
 
 				var settings = new MatchSettings();
 
-				//this data gets from ShooterGameLogic
+				//this data gets via RacingGameLogic
 
-				////SceneName
-				//{
-				//	var block = rootBlock.FindChild( "Scene Name" );
-				//	if( block != null )
-				//		settings.SceneName = block.GetAttribute( "CurrentValue" );
-				//}
+				//////SceneName
+				////{
+				////	var block = rootBlock.FindChild( "Scene Name" );
+				////	if( block != null )
+				////		settings.SceneName = block.GetAttribute( "CurrentValue" );
+				////}
 
-				////GameType
-				//{
-				//	var block = rootBlock.FindChild( "Game Type" );
-				//	if( block != null )
-				//		settings.GameType = block.GetAttribute( "CurrentValue" );
-				//}
+				//////GameType
+				////{
+				////	var block = rootBlock.FindChild( "Game Type" );
+				////	if( block != null )
+				////		settings.GameType = block.GetAttribute( "CurrentValue" );
+				////}
 
-				////MatchTime
-				//{
-				//	var block = rootBlock.FindChild( "Match Time" );
-				//	if( block != null )
-				//		int.TryParse( block.GetAttribute( "CurrentValue" ), out settings.MatchTimeLimit );
-				//}
+				//////MatchTime
+				////{
+				////	var block = rootBlock.FindChild( "Match Time" );
+				////	if( block != null )
+				////		int.TryParse( block.GetAttribute( "CurrentValue" ), out settings.MatchTimeLimit );
+				////}
 
-				////bots
-				//for( int n = 0; n < 6; n++ )
-				//{
-				//	var block = rootBlock.FindChild( $"Bot {n + 1}" );
-				//	if( block != null )
-				//	{
-				//		var valueString = block.GetAttribute( "CurrentValue" );
+				//////bots
+				////for( int n = 0; n < 6; n++ )
+				////{
+				////	var block = rootBlock.FindChild( $"Bot {n + 1}" );
+				////	if( block != null )
+				////	{
+				////		var valueString = block.GetAttribute( "CurrentValue" );
 
-				//		if( valueString == "No Bot" || valueString == "" )
-				//			settings.Bots[ n ] = "";
-				//		else
-				//			settings.Bots[ n ] = valueString;
-				//	}
-				//}
+				////		if( valueString == "No Bot" || valueString == "" )
+				////			settings.Bots[ n ] = "";
+				////		else
+				////			settings.Bots[ n ] = valueString;
+				////	}
+				////}
 
-				////user roles
-				//foreach( var block in rootBlock.Children )
-				//{
-				//	if( block.Name.StartsWith( "UserRole " ) )
-				//	{
-				//		long.TryParse( block.Name.Substring( "UserRole ".Length ), out var userID );
-				//		var valueString = block.GetAttribute( "CurrentValue" );
+				//////user roles
+				////foreach( var block in rootBlock.Children )
+				////{
+				////	if( block.Name.StartsWith( "UserRole " ) )
+				////	{
+				////		long.TryParse( block.Name.Substring( "UserRole ".Length ), out var userID );
+				////		var valueString = block.GetAttribute( "CurrentValue" );
 
-				//		settings.UserRoles[ userID ] = valueString;
-				//	}
-				//}
+				////		settings.UserRoles[ userID ] = valueString;
+				////	}
+				////}
 
 				matchSettings = settings;
 			}
@@ -593,7 +641,7 @@ namespace Project
 				{
 					foreach( var itemBlock in participantsBlock.Children )
 					{
-						var participant = new MatchDetailsBase.Participant();
+						var participant = new MatchDetails.Participant();
 
 						if( int.TryParse( itemBlock.GetAttribute( "PlayerIndex" ), out var playerIndex ) )
 							participant.PlayerIndex = playerIndex;
@@ -609,7 +657,7 @@ namespace Project
 
 				//Players
 				{
-					var players = new List<MatchDetailsBase.Participant>();
+					var players = new List<MatchDetails.Participant>();
 					foreach( var participant in details.Participants )
 					{
 						if( participant.PlayerIndex >= 0 )
@@ -679,6 +727,45 @@ namespace Project
 					var array = gameLogic.Single_GetUsers();
 					if( array.Length > 0 )
 						gameLogic.Single_DeleteBot( array[ array.Length - 1 ].UserID );
+				}
+			}
+		}
+
+		void UpdateCheckpointsDependsPassedState()
+		{
+			var gameLogic = GameLogic;
+
+			var playerIndex = GetPlayerIndex();
+			if( playerIndex == -1 )
+				return;
+			if( gameLogic.Laps == 0 )
+				return;
+
+			var totalCheckpointsToPass = gameLogic.Laps * gameLogic.Checkpoints.Length;
+
+			var checkpointsPassed = 0;
+			if( playerIndex < gameLogic.CheckpointsPassed.Length )
+				checkpointsPassed = gameLogic.CheckpointsPassed[ playerIndex ];
+
+			var checkpointIndexToPass = -1;
+			if( checkpointsPassed < totalCheckpointsToPass )
+				checkpointIndexToPass = checkpointsPassed + 1;
+
+			var currentCheckpointToPass = checkpointIndexToPass != -1 ? checkpointIndexToPass % gameLogic.Checkpoints.Length : -1;
+
+			for( int n = 0; n < gameLogic.Checkpoints.Length; n++ )
+			{
+				var checkpoint = gameLogic.Checkpoints[ n ];
+
+				foreach( var obj in checkpoint.MeshObjects )
+				{
+					if( currentCheckpointToPass == n )
+					{
+						var outline = new ObjectSpecialRenderingEffect_Outline() { Color = new ColorValue( 1, 1, 0 ), Scale = 1 };
+						obj.SpecialEffects = new List<ObjectSpecialRenderingEffect> { outline };
+					}
+					else
+						obj.SpecialEffects = null;
 				}
 			}
 		}
