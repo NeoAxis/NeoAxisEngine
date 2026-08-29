@@ -2782,6 +2782,11 @@ namespace NeoAxis
 						{
 							if( ( cameraPosition - item.data.Position ).LengthSquared() > ( shadowPointSpotlightDistance + item.data.AttenuationFar ) * ( shadowPointSpotlightDistance + item.data.AttenuationFar ) )
 								skip = true;
+
+							//!!!!temp Web
+							//no point light shadows on web platform
+							if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+								skip = true;
 						}
 						else if( item.data.Type == Light.TypeEnum.Spotlight )
 						{
@@ -14758,6 +14763,7 @@ namespace NeoAxis
 				}
 
 				//shadow map array point
+				if( SystemSettings.CurrentPlatform != SystemSettings.Platform.Web ) //!!!!temp Web
 				{
 					var shadowMap = frameData.ShadowTextureArrayPoint;
 					if( shadowMap == null )

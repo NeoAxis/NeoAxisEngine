@@ -8,9 +8,10 @@ $output v_texCoord0, v_worldPosition, v_lodValue_visibilityDistance_receiveDecal
 
 //uniform vec4 u_renderOperationData[8];
 #ifdef GLOBAL_SKELETAL_ANIMATION
-	SAMPLER2D(s_bones, 0);
+	SAMPLER2D(s_bones_0, 0);
 #endif
-SAMPLER2D(s_drawBufferTexture, 5);
+SAMPLER2D(s_drawBufferTexture_5, 5);
+#define s_drawBufferTexture s_drawBufferTexture_5
 #include "DrawBuffer.sh"
 
 void main()
@@ -19,7 +20,7 @@ void main()
 	vec3 normalLocal = vec3_splat(0);
 	vec4 tangentLocal = vec4_splat(0);
 #ifdef GLOBAL_SKELETAL_ANIMATION
-	getAnimationData(d_renderOperationData0, s_bones, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
+	getAnimationData(d_renderOperationData0, s_bones_0, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
 #endif
 
 	mat4 worldMatrix;

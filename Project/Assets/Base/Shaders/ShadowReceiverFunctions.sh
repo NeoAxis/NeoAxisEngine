@@ -756,12 +756,16 @@ float getShadowValuePointSimple( float shadowMapIndex, vec4 shadowUV, int nLight
 {
 	float compareDepth = shadowUV.w / d_lightShadowMapFarClipDistance;
 
-	//flipped cubemaps. conversion already done in the vertex shader.	
-#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
-	vec4 shadowValue = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( shadowUV.xyz, shadowMapIndex ), 0.0 );
-	MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;
-#else	
-	MEDIUMP float shadowFactor = shadowCubeArray( s_shadowMapShadowPoint, vec4( shadowUV.xyz, shadowMapIndex ), compareDepth ).r;
+	//flipped cubemaps. conversion already done in the vertex shader.
+#ifndef WEBGL
+	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+		vec4 shadowValue = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( shadowUV.xyz, shadowMapIndex ), 0.0 );
+		MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;
+	#else	
+		MEDIUMP float shadowFactor = shadowCubeArray( s_shadowMapShadowPoint, vec4( shadowUV.xyz, shadowMapIndex ), compareDepth ).r;
+	#endif
+#else
+	MEDIUMP float shadowFactor = 0.0;
 #endif
 
 //#ifdef REVERSEDZ
@@ -863,12 +867,16 @@ float getShadowValuePointPCF( float shadowMapIndex, vec4 shadowUV, int nLight )
 		vec3 texCoord = texPos + offset;
 
 		//flipped cubemaps. conversion already done in the vertex shader.		
+#ifndef WEBGL
 	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
 		vec4 shadowValue = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( texCoord, shadowMapIndex ), 0.0 );
 		MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;
 	#else
 		MEDIUMP float shadowFactor = shadowCubeArray( s_shadowMapShadowPoint, vec4( texCoord, shadowMapIndex ), compareDepth ).r;
 	#endif
+#else
+	MEDIUMP float shadowFactor = 0.0;
+#endif
 
 		shadow += shadowFactor;
 	}

@@ -10,7 +10,8 @@ $input v_worldPosition, v_lodValue_visibilityDistance_receiveDecals, v_texCoord0
 #if defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)
 	SAMPLER2D(s_voxelData, 2);
 #endif
-SAMPLER2D(s_drawBufferTexture, 5);
+SAMPLER2D(s_drawBufferTexture_5, 5);
+#define s_drawBufferTexture s_drawBufferTexture_5
 #include "DrawBuffer.sh"
 
 #include "FragmentFunctions.sh"

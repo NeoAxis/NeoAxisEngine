@@ -70,20 +70,26 @@ SAMPLER2D(s_lightsTexture_7, 7);
 		//limited device specific. light grid is disabled, reused by shadows and masks because of samplers limit
 
 		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
-			SAMPLER2DARRAY(s_shadowMapShadowDirectional, 8);
+			SAMPLER2DARRAY(s_shadowMapShadowDirectional_8, 8);
 		#else
-			SAMPLER2DARRAYSHADOW(s_shadowMapShadowDirectional, 8);
+			SAMPLER2DARRAYSHADOW(s_shadowMapShadowDirectional_8, 8);
 		#endif
+#define s_shadowMapShadowDirectional s_shadowMapShadowDirectional_8
+
 		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
-			SAMPLER2DARRAY(s_shadowMapShadowSpot, 9);
+			SAMPLER2DARRAY(s_shadowMapShadowSpot_9, 9);
 		#else
-			SAMPLER2DARRAYSHADOW(s_shadowMapShadowSpot, 9);
+			SAMPLER2DARRAYSHADOW(s_shadowMapShadowSpot_9, 9);
 		#endif
+#define s_shadowMapShadowSpot s_shadowMapShadowSpot_9
+		
+#ifndef WEBGL		
 		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
 			SAMPLERCUBEARRAY(s_shadowMapShadowPoint, 10);
 		#else
 			SAMPLERCUBEARRAYSHADOW(s_shadowMapShadowPoint, 10);
 		#endif
+#endif
 	
 	#else	
 
@@ -558,7 +564,9 @@ void main()
 					//dir = float3(-dir.y, dir.z, dir.x);
 					#ifdef LIMITED_DEVICE
 						#ifdef SHADOW_MAP
-							lightMaskMultiplier = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( dir, lightMaskIndex ), 0 ).rgb;
+							#ifndef WEBGL
+								lightMaskMultiplier = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( dir, lightMaskIndex ), 0 ).rgb;
+							#endif
 						#endif
 					#else
 						lightMaskMultiplier = textureCubeArrayLod( s_lightMaskPoint, vec4( dir, lightMaskIndex ), 0 ).rgb;

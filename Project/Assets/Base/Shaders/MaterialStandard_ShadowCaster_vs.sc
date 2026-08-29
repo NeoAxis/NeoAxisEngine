@@ -10,9 +10,10 @@ $output v_texCoord01, v_color0, v_texCoord23, v_colorParameter, v_worldPosition_
 //uniform vec4 u_materialCustomParameters[2];
 //uniform vec4 u_objectInstanceParameters[2];
 #ifdef GLOBAL_SKELETAL_ANIMATION
-	SAMPLER2D(s_bones, 0);
+	SAMPLER2D(s_bones_0, 0);
 #endif
-SAMPLER2D(s_drawBufferTexture, 5);
+SAMPLER2D(s_drawBufferTexture_5, 5);
+#define s_drawBufferTexture s_drawBufferTexture_5
 #include "DrawBuffer.sh"
 #ifndef GLSL
 	SAMPLER2D(s_linearSamplerVertex, 9);
@@ -34,7 +35,7 @@ void main()
 	vec3 normalLocal = a_normal;
 	vec4 tangentLocal = a_tangent;
 #ifdef GLOBAL_SKELETAL_ANIMATION
-	getAnimationData(d_renderOperationData0, s_bones, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
+	getAnimationData(d_renderOperationData0, s_bones_0, a_indices, a_weight, positionLocal, normalLocal, tangentLocal);
 #endif
 	
 	mat4 worldMatrix;

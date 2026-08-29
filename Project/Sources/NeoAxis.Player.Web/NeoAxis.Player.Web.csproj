@@ -94,8 +94,8 @@
     </Reference>
   </ItemGroup>
   <PropertyGroup>
-    <NeoAxisProductFile Condition="'$(NeoAxisProductFile)' == ''">Base\Build\Demo Web.product</NeoAxisProductFile>
-    <!--<NeoAxisProductFile Condition="'$(NeoAxisProductFile)' == ''">Base\Build\Simple Game Web.product</NeoAxisProductFile>-->
+    <!--<NeoAxisProductFile Condition="'$(NeoAxisProductFile)' == ''">Base\Build\Demo Web.product</NeoAxisProductFile>-->
+    <NeoAxisProductFile Condition="'$(NeoAxisProductFile)' == ''">Base\Build\Simple Game Web.product</NeoAxisProductFile>
   </PropertyGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if EXIST &quot;$(ProjectDir)..\..\Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.Web.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot; ) )&#xD;&#xA;&#xD;&#xA;if &quot;$(NeoAxisProductBuild)&quot; neq &quot;true&quot; ( &#xD;&#xA;if exist &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -prepareProductAssets 1 -productFile &quot;$(NeoAxisProductFile)&quot; -destinationFolder &quot;$(ProjectDir)wwwroot\Assets&quot; -platform Web &#xD;&#xA;)&#xD;&#xA;" />

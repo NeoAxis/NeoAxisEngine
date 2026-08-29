@@ -9,11 +9,13 @@ $input v_texCoord01, v_color0, v_texCoord23, v_colorParameter, v_worldPosition_d
 //uniform vec4 u_materialCustomParameters[2];
 //uniform vec4 u_objectInstanceParameters[2];
 
-SAMPLER2D(s_materials, 1);
+SAMPLER2D(s_materials_1, 1);
+#define s_materials s_materials_1
 #if defined(GLOBAL_VOXEL_LOD) && defined(VOXEL)
 	SAMPLER2D(s_voxelData, 2);
 #endif
-SAMPLER2D(s_drawBufferTexture, 5);
+SAMPLER2D(s_drawBufferTexture_5, 5);
+#define s_drawBufferTexture s_drawBufferTexture_5
 #include "DrawBuffer.sh"
 #ifndef GLSL
 	SAMPLER2D(s_linearSamplerFragment, 9);

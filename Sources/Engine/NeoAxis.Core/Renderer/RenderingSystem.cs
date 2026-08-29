@@ -1234,7 +1234,7 @@ namespace NeoAxis
 				if( Capabilities.Backend == RendererBackend.Vulkan )
 					return ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
 
-				//!!!!temp Web
+				//!!!!temp Web Shadows
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 					return ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
 
