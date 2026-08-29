@@ -25,7 +25,8 @@ namespace Project
 		void InitializeSceneEvents()
 		{
 			//subscribe to Render event of the scene
-			Scene.RenderEvent += SceneRenderEvent;
+			if( Scene != null )
+				Scene.RenderEvent += SceneRenderEvent;
 		}
 
 		void SceneRenderEvent( Scene scene, Viewport viewport )

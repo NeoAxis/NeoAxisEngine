@@ -414,7 +414,7 @@ namespace NeoAxis
 
 				excludePaths.AddRange( GetPlatformsExcludePaths() );
 
-				excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tips" ) );
+				//excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tips" ) );
 				excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Localization" ) );
 				excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\PlatformTools" ) );
 

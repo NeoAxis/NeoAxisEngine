@@ -358,8 +358,15 @@ namespace NeoAxis
 					//if( AfterFatal != null )
 					//	AfterFatal();
 
-					Process process = Process.GetCurrentProcess();
-					process.Kill();
+					if( SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
+					{
+						try
+						{
+							Process process = Process.GetCurrentProcess();
+							process.Kill();
+						}
+						catch { }
+					}
 				}
 			}
 		}

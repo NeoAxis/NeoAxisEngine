@@ -444,7 +444,7 @@ namespace NeoAxis
 
 				//if( !Editor )
 				{
-					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tips" ) );
+					//excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tips" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Localization" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\PlatformTools" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\Obfuscar" ) );

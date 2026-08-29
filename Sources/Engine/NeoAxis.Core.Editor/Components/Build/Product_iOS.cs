@@ -569,11 +569,11 @@ namespace NeoAxis
 				//if( Directory.Exists( destFolder ) )
 				//	Directory.Delete( destFolder, true );
 
-				var destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tips" );
-				if( Directory.Exists( destFolder ) )
-					Directory.Delete( destFolder, true );
+				//var destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tips" );
+				//if( Directory.Exists( destFolder ) )
+				//	Directory.Delete( destFolder, true );
 
-				destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tools" );
+				var destFolder = Path.Combine( buildInstance.DestinationFolder, @"Binaries\NeoAxis.Internal\Tools" );
 				if( Directory.Exists( destFolder ) )
 					Directory.Delete( destFolder, true );
 			}
