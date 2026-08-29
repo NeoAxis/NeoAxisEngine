@@ -1,0 +1,54 @@
+Tip
+{
+	Title = Руководство
+	Text = "Добро пожаловать в NeoAxis Engine! Чтобы открыть документацию, используйте Ribbon -> Home -> Manual."
+	Image = StartManual.png
+}
+Tip
+{
+	Title = Создание сцены
+	Text = Самый простой способ создать сцену — использовать стартовую страницу.
+	Image = CreateScene.png
+}
+Tip
+{
+	Title = Воспроизведение
+	Text = "Используйте кнопку 'Play' для запуска сцен и файлов UI."
+	Image = PlayButton.png
+}
+Tip
+{
+	Title = Запуск проигрывателя
+	Text = "Используйте кнопку 'Run Player', чтобы запустить проект как отдельное приложение."
+	Image = RunPlayer.png
+}
+Tip
+{
+	Title = Найти ресурс
+	Text = "Чтобы найти, где расположен файл, используйте пункт 'Find in Resources Window' в контекстном меню."
+	Image = FindInResourcesWindow.png
+}
+Tip
+{
+	Title = "Создание объектов перетаскиванием"
+	Text = "Чтобы создать объект, выберите его в окне Resources и перетащите в сцену."
+	Image = DropFromResourcesWindow.png
+}
+Tip
+{
+	Title = Дублирование клавишей Shift
+	Text = "Чтобы дублировать объект в сцене, удерживайте клавишу Shift во время трансформации объекта."
+	Image = DuplicateByShift.png
+}
+Tip
+{
+	Title = Объект под управлением игрока
+	Text = "Чтобы назначить объект для управления игроком, используйте опцию 'Object Controlled By Player' в режиме 'Game Mode'."
+	Image = ObjectControlledByPlayer.png
+}
+Tip
+{
+	Title = Тип камеры
+	Text = "Чтобы изменить тип камеры, выберите 'Use Built-In Camera' в режиме 'Game Mode'."
+	Image = UseBuiltInCamera.png
+}

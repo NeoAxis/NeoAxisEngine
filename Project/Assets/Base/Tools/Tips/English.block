@@ -1,0 +1,54 @@
+Tip
+{
+	Title = Manual
+	Text = "Welcome to NeoAxis Engine! To open the documentation use Ribbon -> Home -> Manual."
+	Image = StartManual.png
+}
+Tip
+{
+	Title = Create a Scene
+	Text = The easiest way to create a scene is by using the Start page.
+	Image = CreateScene.png
+}
+Tip
+{
+	Title = Play
+	Text = "Use the 'Play' button to run scenes and UI files."
+	Image = PlayButton.png
+}
+Tip
+{
+	Title = Run Player
+	Text = "Use the 'Run Player' button to run your project as a separate application."
+	Image = RunPlayer.png
+}
+Tip
+{
+	Title = Find Resource
+	Text = "To find where the file is located, use the 'Find in Resources Window' item in the context menu."
+	Image = FindInResourcesWindow.png
+}
+Tip
+{
+	Title = "Create objects by Drag & Drop"
+	Text = "To create an object, select it in the Resources Window and drop it into the scene."
+	Image = DropFromResourcesWindow.png
+}
+Tip
+{
+	Title = Duplicate by Shift key
+	Text = "To duplicate an object in the scene, you can hold the Shift key while transforming the object."
+	Image = DuplicateByShift.png
+}
+Tip
+{
+	Title = Object Controlled by the Player
+	Text = "To assign an object for the player’s control, use the 'Object Controlled By Player' option in the 'Game Mode'."
+	Image = ObjectControlledByPlayer.png
+}
+Tip
+{
+	Title = Camera Type
+	Text = "To change the camera type, select 'Use Built-In Camera' in the 'Game Mode'."
+	Image = UseBuiltInCamera.png
+}

@@ -147,7 +147,12 @@ namespace NeoAxis.Editor
 					return;
 				parsedAssemblies.Add( assembly );
 
-				var fileName = Path.GetFileName( assembly.Location );
+				string fileName;
+				if( string.IsNullOrEmpty( assembly.Location ) )
+					fileName = assembly.GetName().Name + ".dll";
+				else
+					fileName = Path.GetFileName( assembly.Location );
+
 				if( !string.IsNullOrEmpty( fileName ) )
 				{
 					var xmlFileName = Path.ChangeExtension( fileName, ".xml" );
