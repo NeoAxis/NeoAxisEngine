@@ -1,18 +1,21 @@
 ﻿// Copyright 2006–2026 Ivan Efimov. All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Threading;
+using Internal.DotRecast.Core;
+using Internal.DotRecast.Core.Numerics;
 using Internal.DotRecast.Detour;
+using Internal.DotRecast.Detour.Dynamic;
+using Internal.DotRecast.Detour.Dynamic.Colliders;
+using Internal.DotRecast.Detour.Dynamic.Io;
 using Internal.DotRecast.Recast;
 using Internal.DotRecast.Recast.Geom;
-using Internal.DotRecast.Core.Numerics;
 using Internal.DotRecast.Recast.Toolset;
 using Internal.DotRecast.Recast.Toolset.Builder;
 using Internal.DotRecast.Recast.Toolset.Tools;
-using Internal.DotRecast.Detour.TileCache.Io.Compress;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NeoAxis
 {
@@ -31,7 +34,9 @@ namespace NeoAxis
 
 		bool firstOnUpdateAfterEnabledInHierarchy;
 
-		Dictionary<PathfindingGeometry, DynamicGeometriesToUpdateItem> dynamicGeometriesToUpdate = new Dictionary<PathfindingGeometry, DynamicGeometriesToUpdateItem>();
+		const int areaWalkable = SampleAreaModifications.SAMPLE_POLYAREA_TYPE_WALKABLE;
+		const int areaNotWalkable = 0;
+		Dictionary<Component, DynamicGeometriesToUpdateItem> dynamicGeometriesToUpdate = new Dictionary<Component, DynamicGeometriesToUpdateItem>();
 
 		double dynamicGeometriesUpdateRemainingTime;
 		//double autoUpdateEditorRemainingTime;
@@ -491,7 +496,7 @@ namespace NeoAxis
 			public Queue<Command> commandQueue = new Queue<Command>();
 			Thread commandThread;
 
-			public RcObstacleTool obstacleTool;
+			public DtDynamicNavMesh dynamicNavMesh;
 			public DtNavMesh navMesh;
 			public Queue<DtNavMeshQuery> freeNavMeshQueries = new Queue<DtNavMeshQuery>();
 
@@ -501,7 +506,7 @@ namespace NeoAxis
 			public volatile Vector3[] navigationMeshVerticesPrevious;
 
 			//dynamic obstacles
-			public Dictionary<PathfindingGeometry, long> dynamicObstacles = new Dictionary<PathfindingGeometry, long>();
+			public Dictionary<Component, long> dynamicObstacles = new Dictionary<Component, long>();
 			public volatile int dynamicObstaclesCountLockFree;
 
 			////////////
@@ -633,7 +638,7 @@ namespace NeoAxis
 							//rasterize static geometry
 							if( staticGeometry != null && !staticGeometry.IsEmpty )
 							{
-								var areaData = staticGeometry.areaData;
+								var areaData = staticGeometry.data[ areaWalkable ];
 								if( areaData != null )
 								{
 									var startVertexIndex = vertices.Count;
@@ -689,14 +694,59 @@ namespace NeoAxis
 							//	geometryProvider.AddConvexVolume( volume );
 							//}
 
-							var obstacleTool = new RcObstacleTool( DtTileCacheCompressorFactory.Shared );
-							var buildResult = obstacleTool.Build( geometryProvider, settings, Internal.DotRecast.Core.RcByteOrder.LITTLE_ENDIAN, true );
+							var walkableRadius = (int)MathF.Ceiling( settings.agentRadius / settings.cellSize );
+							var cfg = new RcConfig(
+								true, settings.tileSize, settings.tileSize,
+								walkableRadius + 3,
+								RcPartitionType.OfValue( settings.partitioning ),
+								settings.cellSize, settings.cellHeight,
+								settings.agentMaxSlope, settings.agentHeight, settings.agentRadius, settings.agentMaxClimb,
+								(int)RcMath.Sqr( settings.minRegionSize ), (int)RcMath.Sqr( settings.mergedRegionSize ),
+								(int)( settings.edgeMaxLen / settings.cellSize ), settings.edgeMaxError,
+								settings.vertsPerPoly,
+								settings.detailSampleDist, settings.detailSampleMaxError,
+								true, true, true,
+								SampleAreaModifications.SAMPLE_AREAMOD_WALKABLE, true );
 
-							if( buildResult.Success )
+							var rcBuilder = new RcBuilder();
+							var results = rcBuilder.BuildTiles( geometryProvider, cfg, true, true );
+
+							var voxelFile = DtVoxelFile.From( cfg, results );
+							var dynaMesh = new DtDynamicNavMesh( voxelFile );
+							dynaMesh.config.minRegionArea = 0;
+
+							if( staticGeometry != null )
 							{
-								this.obstacleTool = obstacleTool;
-								navMesh = buildResult.NavMesh;
+								for( int area = 0; area < staticGeometry.data.Length; area++ )
+								{
+									if( area == areaWalkable )
+										continue;
+
+									var areaData = staticGeometry.data[ area ];
+									if( areaData == null || areaData.indices.Count == 0 )
+										continue;
+
+									var areaVertices = new float[ areaData.vertices.Count * 3 ];
+									for( int n = 0; n < areaData.vertices.Count; n++ )
+									{
+										var v = ConvertToDotRecastCoordinates( areaData.vertices[ n ] );
+										areaVertices[ n * 3 + 0 ] = v.X;
+										areaVertices[ n * 3 + 1 ] = v.Y;
+										areaVertices[ n * 3 + 2 ] = v.Z;
+									}
+
+									var areaIndices = new int[ areaData.indices.Count ];
+									for( int n = 0; n < areaData.indices.Count; n++ )
+										areaIndices[ n ] = areaData.indices[ n ];
+
+									dynaMesh.AddCollider( new DtTrimeshCollider( areaVertices, areaIndices, area, dynaMesh.config.walkableClimb ) );
+								}
 							}
+
+							dynaMesh.Build();
+
+							dynamicNavMesh = dynaMesh;
+							navMesh = dynaMesh.NavMesh();
 						}
 					}
 					catch//( Exception e )
@@ -766,6 +816,7 @@ namespace NeoAxis
 
 			public Box? Box;
 			public Cylinder? Cylinder;
+			public bool Walkable;
 		}
 
 		/////////////////////////////////////////
@@ -782,65 +833,73 @@ namespace NeoAxis
 
 		class CommandUpdateDynamicObstacles : Command
 		{
-			public KeyValuePair<PathfindingGeometry, DynamicGeometriesToUpdateItem>[] geometries;
+			public KeyValuePair<Component, DynamicGeometriesToUpdateItem>[] geometries;
 
 			//
 
 			protected override void Process()
 			{
-				var obstacleTool = owner.obstacleTool;
-				if( obstacleTool != null )
+				var dynamicNavMesh = owner.dynamicNavMesh;
+				if( dynamicNavMesh != null )
 				{
-					var tileCache = obstacleTool.GetTileCache();
-					if( tileCache != null )
+					var flagMergeThreshold = dynamicNavMesh.config.walkableClimb;
+
+					foreach( var pair in geometries )
 					{
-						foreach( var pair in geometries )
+						var geometry = pair.Key;
+						var item = pair.Value;
+
+						//remove
 						{
-							var geometry = pair.Key;
-							var item = pair.Value;
-
-							//remove
+							if( owner.dynamicObstacles.TryGetValue( geometry, out var id ) )
 							{
-								if( owner.dynamicObstacles.TryGetValue( geometry, out var id ) )
-								{
-									tileCache.RemoveObstacle( id );
-									owner.dynamicObstacles.Remove( geometry );
-								}
-							}
-
-							//add
-							if( item.Add )
-							{
-								if( item.Box != null )
-								{
-									var box = item.Box.Value;
-
-									var center = ConvertToDotRecastCoordinates( box.Center );
-									var extents = ConvertToDotRecastCoordinates( box.Extents, true );
-									var angle = -(float)MathEx.DegreeToRadian( box.Axis.ToAngles().Yaw );
-
-									var id = tileCache.AddBoxObstacle( center, extents, angle );
-									owner.dynamicObstacles[ geometry ] = id;
-								}
-								else if( item.Cylinder != null )
-								{
-									var cylinder = item.Cylinder.Value;
-
-									var position = ConvertToDotRecastCoordinates( cylinder.Point1 );
-									var id = tileCache.AddObstacle( position, (float)cylinder.Radius, (float)cylinder.GetLength() );
-									owner.dynamicObstacles[ geometry ] = id;
-								}
+								dynamicNavMesh.RemoveCollider( id );
+								owner.dynamicObstacles.Remove( geometry );
 							}
 						}
 
-						owner.dynamicObstaclesCountLockFree = owner.dynamicObstacles.Count;
-
-						while( !tileCache.Update() )
+						//add
+						if( item.Add )
 						{
-						}
+							var area = item.Walkable ? areaWalkable : areaNotWalkable;
 
-						owner.navigationMeshVertices = null;
+							IDtCollider collider = null;
+
+							if( item.Box != null )
+							{
+								var box = item.Box.Value;
+
+								var center = ConvertToDotRecastCoordinates( box.Center );
+								var up = ConvertToDotRecastCoordinates( box.Axis.Item2 );
+								var forward = ConvertToDotRecastCoordinates( box.Axis.Item1 );
+								var extent = ConvertToDotRecastCoordinates( box.Extents, true );
+
+								collider = new DtBoxCollider( center, DtBoxCollider.GetHalfEdges( up, forward, extent ), area, flagMergeThreshold );
+							}
+							else if( item.Cylinder != null )
+							{
+								var cylinder = item.Cylinder.Value;
+
+								var start = ConvertToDotRecastCoordinates( cylinder.Point1 );
+								var end = ConvertToDotRecastCoordinates( cylinder.Point2 );
+
+								collider = new DtCylinderCollider( start, end, (float)cylinder.Radius, area, flagMergeThreshold );
+							}
+
+							if( collider != null )
+								owner.dynamicObstacles[ geometry ] = dynamicNavMesh.AddCollider( collider );
+						}
 					}
+
+					owner.dynamicObstaclesCountLockFree = owner.dynamicObstacles.Count;
+
+					if( dynamicNavMesh.Update() )
+					{
+						owner.navMesh = dynamicNavMesh.NavMesh();
+						owner.freeNavMeshQueries.Clear();
+					}
+
+					owner.navigationMeshVertices = null;
 				}
 			}
 		}
@@ -1066,8 +1125,12 @@ namespace NeoAxis
 
 		internal class StaticGeometry
 		{
+			public double AgentHeight;
+			public double AgentMaxClimb;
+
 			public Bounds bounds = Bounds.Cleared;
-			public AreaData areaData = new AreaData();
+			public AreaData[] data = new AreaData[ 256 ];
+			public AreaData areaDataNotWalkable = new AreaData();
 
 			//public List<ConvexVolume> convexVolumes = new List<ConvexVolume>();
 
@@ -1088,7 +1151,7 @@ namespace NeoAxis
 				}
 			}
 
-			public void Add( Vector3[] vertices, int[] indices/*, byte area*/)//, bool clipByBounds, Rectangle clipBounds )
+			public void Add( Vector3[] vertices, int[] indices, int area ) //byte area
 			{
 				if( indices.Length == 0 || vertices.Length == 0 )
 					return;
@@ -1167,35 +1230,45 @@ namespace NeoAxis
 				//if( newVertices.Count == 0 )
 				//	return;
 
-				//var areaData = data[ area ];
-				//if( areaData == null )
-				//{
-				//	areaData = new AreaData( true );
-				//	data[ area ] = areaData;
-				//}
+				var areaData = data[ area ];
+				if( areaData == null )
+				{
+					areaData = new AreaData();
+					data[ area ] = areaData;
+				}
 
-				//areaData.vertices.AddRange( newVertices );
+				{
+					var startVertexIndex = areaData.vertices.Count;
+					areaData.vertices.AddRange( vertices );
+					foreach( var index in indices )
+						areaData.indices.Add( startVertexIndex + index );
 
-				var startVertexIndex = areaData.vertices.Count;
-				areaData.vertices.AddRange( vertices );
-				foreach( var index in indices )
-					areaData.indices.Add( startVertexIndex + index );
+					bounds.Add( vertices );
+				}
 
-				bounds.Add( vertices );// newVertices );
+				//fill walkable gap inside
+				if( area == areaNotWalkable )
+				{
+					var startVertexIndex = areaData.vertices.Count;
+					for( int n = 0; n < vertices.Length; n++ )
+						areaData.vertices.Add( vertices[ n ] + new Vector3( 0, 0, AgentHeight * 0.9 ) );
+					foreach( var index in indices )
+						areaData.indices.Add( startVertexIndex + index );
+
+					bounds.Add( vertices );
+				}
 			}
 
 			public bool IsEmpty
 			{
 				get
 				{
-					return areaData.indices.Count == 0;
-
-					//for( int n = 0; n < 256; n++ )
-					//{
-					//	if( data[ n ] != null )
-					//		return false;
-					//}
-					//return true;
+					for( int n = 0; n < data.Length; n++ )
+					{
+						if( data[ n ] != null && data[ n ].indices.Count != 0 )
+							return false;
+					}
+					return true;
 				}
 			}
 		}
@@ -1378,6 +1451,8 @@ namespace NeoAxis
 		StaticGeometry GetGeometriesForNavMesh( List<Component> allBakedGeometriesAndGeometryTags )//, bool clipByBounds, Rectangle clipBounds )
 		{
 			var result = new StaticGeometry();
+			result.AgentHeight = AgentHeight;
+			result.AgentMaxClimb = AgentMaxClimb;
 
 			foreach( var obj in allBakedGeometriesAndGeometryTags )
 			{
@@ -1396,7 +1471,7 @@ namespace NeoAxis
 						{
 							geometry.GetGeometry( out var vertices, out var indices );
 							if( vertices != null )
-								result.Add( vertices, indices/*, (byte)geometry.Area*/);//, clipByBounds, clipBounds );
+								result.Add( vertices, indices, geometry.Walkable ? areaWalkable : areaNotWalkable );
 						}
 					}
 				}
@@ -1407,35 +1482,89 @@ namespace NeoAxis
 					//var type = geometryTag.Type.Value;
 					//if( type == PathfindingGeometryTag.TypeEnum.BakedObstacle )
 					{
-						//MeshInSpace
-						var meshInSpace = geometryTag.Parent as MeshInSpace;
-						if( meshInSpace != null ) //&& ( !clipByBounds || meshInSpace.SpaceBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) ) )
+						if( !geometryTag.Dynamic )
 						{
-							var mesh = meshInSpace.Mesh.Value;
-							if( mesh != null && mesh.Result != null )
+							//MeshInSpace
+							var meshInSpace = geometryTag.Parent as MeshInSpace;
+							if( meshInSpace != null ) //&& ( !clipByBounds || meshInSpace.SpaceBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) ) )
 							{
-								var transform = meshInSpace.Transform.Value.ToMatrix4();
-								var extractedVertices = mesh.Result.ExtractedVerticesPositions;
+								var mesh = meshInSpace.Mesh.Value;
+								if( mesh != null && mesh.Result != null )
+								{
+									var transform = meshInSpace.Transform.Value.ToMatrix4();
+									var extractedVertices = mesh.Result.ExtractedVerticesPositions;
 
-								//!!!!slowly
+									//!!!!slowly
 
-								var vertices = new Vector3[ extractedVertices.Length ];
-								for( int n = 0; n < vertices.Length; n++ )
-									vertices[ n ] = transform * extractedVertices[ n ].ToVector3();
+									var vertices = new Vector3[ extractedVertices.Length ];
+									for( int n = 0; n < vertices.Length; n++ )
+										vertices[ n ] = transform * extractedVertices[ n ].ToVector3();
 
-								result.Add( vertices, mesh.Result.ExtractedIndices/*, (byte)geometryTag.Area*/);//, clipByBounds, clipBounds );
+									result.Add( vertices, mesh.Result.ExtractedIndices, geometryTag.Walkable ? areaWalkable : areaNotWalkable );
+								}
 							}
-						}
 
-						//Terrain
-						var terrain = geometryTag.Parent as Terrain;
-						if( terrain != null ) //&& ( !clipByBounds || terrain.GetBounds2().Intersects( clipBounds ) ) )
-						{
-							terrain.GetGeometryFromTiles( delegate ( SpaceBounds tileBounds, Vector3[] tileVertices, int[] tileIndices )
+							//Terrain
+							var terrain = geometryTag.Parent as Terrain;
+							if( terrain != null ) //&& ( !clipByBounds || terrain.GetBounds2().Intersects( clipBounds ) ) )
 							{
-								//if( !clipByBounds || tileBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) )
-								result.Add( tileVertices, tileIndices/*, (byte)geometryTag.Area*/);//, clipByBounds, clipBounds );
-							} );
+								terrain.GetGeometryFromTiles( delegate ( SpaceBounds tileBounds, Vector3[] tileVertices, int[] tileIndices )
+								{
+									//if( !clipByBounds || tileBounds.BoundingBox.ToRectangle().Intersects( clipBounds ) )
+									result.Add( tileVertices, tileIndices, geometryTag.Walkable ? areaWalkable : areaNotWalkable );
+								} );
+							}
+
+							//Fence
+							var fence = geometryTag.Parent as Fence;
+							if( fence != null )
+							{
+								var logicalData = fence.GetLogicalData();
+								if( logicalData != null )
+								{
+									foreach( var item in logicalData.GetMeshesToCreate() )
+									{
+										var mesh = item.mesh;
+										if( mesh == null || mesh.Result == null )
+											continue;
+
+										//the same correction as for collision bodies
+										Transform itemTransform;
+										if( item.clipDistanceFactor.HasValue )
+											itemTransform = item.transform.UpdateScale( item.transform.Scale * new Vector3( item.clipDistanceFactor.Value, 1, 1 ) );
+										else
+											itemTransform = item.transform;
+
+										var transform = itemTransform.ToMatrix4();
+										var extractedVertices = mesh.Result.ExtractedVerticesPositions;
+
+										var vertices = new Vector3[ extractedVertices.Length ];
+										for( int n = 0; n < vertices.Length; n++ )
+											vertices[ n ] = transform * extractedVertices[ n ].ToVector3();
+
+										result.Add( vertices, mesh.Result.ExtractedIndices, geometryTag.Walkable ? areaWalkable : areaNotWalkable );
+									}
+								}
+							}
+
+							//Building
+							var building = geometryTag.Parent as Building;
+							if( building != null )
+							{
+								var logicalData = building.GetLogicalData();
+								if( logicalData != null && logicalData.TotalHeight > 0 )
+								{
+									logicalData.GetCellsBox( out var box, out _ );
+
+									SimpleMeshGenerator.GenerateBox( box.Extents * 2, out Vector3[] verticesLocal, out int[] indices );
+
+									var vertices = new Vector3[ verticesLocal.Length ];
+									for( int n = 0; n < vertices.Length; n++ )
+										vertices[ n ] = box.Center + box.Axis * verticesLocal[ n ];
+
+									result.Add( vertices, indices, geometryTag.Walkable ? areaWalkable : areaNotWalkable );
+								}
+							}
 						}
 					}
 				}
@@ -1459,9 +1588,11 @@ namespace NeoAxis
 			var staticGeometry = GetBackgroundThreadData()?.precompiledData?.staticGeometry;
 			if( staticGeometry != null )
 			{
-				var areaData = staticGeometry.areaData;
-				if( areaData != null )
+				foreach( var areaData in staticGeometry.data )
 				{
+					if( areaData == null )
+						continue;
+
 					var vertices = areaData.vertices?.ToArray();
 					var indices = areaData.indices?.ToArray();
 					if( vertices != null && indices != null )
@@ -1661,17 +1792,35 @@ namespace NeoAxis
 					}
 				}
 
-				////foreach( var geometryTag in scene.GetComponents<Pathfinding_GeometryTag>( false, true, true ) )
-				////{
-				////	var type = geometryTag.Type.Value;
-				////	if( type == Pathfinding_GeometryTag.TypeEnum.WalkableArea || type == Pathfinding_GeometryTag.TypeEnum.BakedObstacle )
-				////		AddGeometryTagToCollector( collector, geometryTag );
-				////}
-
+				foreach( var geometryTag in scene.GetComponents<PathfindingGeometryTag>( false, true, true ) )
+				{
+					if( geometryTag.Dynamic )
+					{
+						var add = true;
+						FilterGeometry?.Invoke( this, geometryTag, ref add );
+						if( add )
+							geometryTag.DynamicMode_UpdatePathfindingComponents( this );
+					}
+				}
 			}
 		}
 
-		internal void OnUpdatePathfindingGeometry( PathfindingGeometry geometry, DynamicGeometriesToUpdateItem data )
+		internal static void UpdateDynamicGeometry( Component geometry, Scene scene, DynamicGeometriesToUpdateItem data, Pathfinding specifiedPathfinding )
+		{
+			if( scene == null )
+				return;
+
+			var instances = Instances;
+			for( int n = 0; n < instances.Count; n++ )
+			{
+				var pathfinding = instances[ n ];
+
+				if( scene == pathfinding.ParentScene && ( specifiedPathfinding == null || pathfinding == specifiedPathfinding ) )
+					pathfinding.OnUpdatePathfindingGeometry( geometry, data );
+			}
+		}
+
+		internal void OnUpdatePathfindingGeometry( Component geometry, DynamicGeometriesToUpdateItem data )
 		{
 			var add = true;
 			FilterGeometry?.Invoke( this, geometry, ref add );

@@ -284,7 +284,7 @@ namespace NeoAxis
 					aspectRatio = camera.AspectRatio.Value;
 				var tr = camera.TransformV;
 
-				return new Viewport.CameraSettingsClass( createdViewport, aspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, tr.Position, tr.Rotation.GetForward(), camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, renderingPipelineOverride: camera.RenderingPipelineOverride );
+				return new Viewport.CameraSettingsClass( createdViewport, aspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, tr.Position, tr.Rotation.GetForward(), camera.FixedUp, camera.Projection, camera.Height, camera.Exposure/*, camera.EmissiveFactor*/, renderingPipelineOverride: camera.RenderingPipelineOverride );
 			}
 
 			return null;

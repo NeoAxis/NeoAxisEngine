@@ -43,5 +43,106 @@ namespace NeoAxis
 		//public event Action<PathfindingGeometryTag> TypeChanged;
 		//ReferenceField<TypeEnum> _type = TypeEnum.BakedObstacle;
 
+		[DefaultValue( false )]
+		public Reference<bool> Dynamic
+		{
+			get { if( _dynamic.BeginGet() ) Dynamic = _dynamic.Get( this ); return _dynamic.value; }
+			set
+			{
+				if( _dynamic.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						DynamicChanged?.Invoke( this );
+						UpdateParentSubscription();
+						DynamicMode_UpdatePathfindingComponents();
+					}
+					finally { _dynamic.EndSet(); }
+				}
+			}
+		}
+
+		public event Action<PathfindingGeometryTag> DynamicChanged;
+		ReferenceField<bool> _dynamic = false;
+
+		[DefaultValue( true )]
+		public Reference<bool> Walkable
+		{
+			get { if( _walkable.BeginGet() ) Walkable = _walkable.Get( this ); return _walkable.value; }
+			set
+			{
+				if( _walkable.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						WalkableChanged?.Invoke( this );
+						if( Dynamic )
+							DynamicMode_UpdatePathfindingComponents();
+					}
+					finally { _walkable.EndSet(); }
+				}
+			}
+		}
+		public event Action<PathfindingGeometryTag> WalkableChanged;
+		ReferenceField<bool> _walkable = true;
+
+		public Box GetBox()
+		{
+			var parent = Parent as ObjectInSpace;
+			if( parent == null )
+				return new Box( Vector3.Zero, Vector3.Zero, Matrix3.Identity );
+
+			var meshResult = ( parent as MeshInSpace )?.MeshOutput?.Result;
+			if( meshResult == null )
+				return new Box( parent.SpaceBounds.BoundingBox );
+
+			var tr = parent.Transform.Value;
+			tr.Rotation.ToMatrix3( out var rot );
+
+			var localBounds = meshResult.SpaceBounds.BoundingBox;
+			var scaledBounds = new Bounds( localBounds.Minimum * tr.Scale, localBounds.Maximum * tr.Scale );
+
+			return new Box( scaledBounds, tr.Position, rot );
+		}
+
+		ObjectInSpace subscribedParent;
+
+		void UpdateParentSubscription()
+		{
+			var newParent = EnabledInHierarchy && Dynamic ? Parent as ObjectInSpace : null;
+			if( subscribedParent != newParent )
+			{
+				if( subscribedParent != null )
+					subscribedParent.TransformChanged -= ParentTransformChanged;
+				subscribedParent = newParent;
+				if( subscribedParent != null )
+					subscribedParent.TransformChanged += ParentTransformChanged;
+			}
+		}
+
+		void ParentTransformChanged( ObjectInSpace sender )
+		{
+			DynamicMode_UpdatePathfindingComponents();
+		}
+
+		protected override void OnEnabledInHierarchyChanged()
+		{
+			base.OnEnabledInHierarchyChanged();
+
+			UpdateParentSubscription();
+			if( Dynamic )
+				DynamicMode_UpdatePathfindingComponents();
+		}
+
+		internal void DynamicMode_UpdatePathfindingComponents( Pathfinding specifiedPathfinding = null )
+		{
+			var data = new Pathfinding.DynamicGeometriesToUpdateItem();
+			data.Add = EnabledInHierarchy && Dynamic && Parent is ObjectInSpace;
+			data.Walkable = Walkable;
+			if( data.Add )
+				data.Box = GetBox();
+
+			Pathfinding.UpdateDynamicGeometry( this, FindParent<Scene>(), data, specifiedPathfinding );
+		}
 	}
 }

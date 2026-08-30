@@ -83,7 +83,19 @@ namespace NeoAxis
 		public Reference<bool> Walkable
 		{
 			get { if( _walkable.BeginGet() ) Walkable = _walkable.Get( this ); return _walkable.value; }
-			set { if( _walkable.BeginSet( this, ref value ) ) { try { WalkableChanged?.Invoke( this ); } finally { _walkable.EndSet(); } } }
+			set
+			{
+				if( _walkable.BeginSet( this, ref value ) )
+				{
+					try
+					{
+						WalkableChanged?.Invoke( this );
+						if( Dynamic )
+							DynamicMode_UpdatePathfindingComponents();
+					}
+					finally { _walkable.EndSet(); }
+				}
+			}
 		}
 		/// <summary>Occurs when the <see cref="Walkable"/> property value changes.</summary>
 		public event Action<PathfindingGeometry> WalkableChanged;
@@ -94,18 +106,6 @@ namespace NeoAxis
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
-
-			var p = member as Metadata.Property;
-			if( p != null )
-			{
-				switch( p.Name )
-				{
-				case nameof( Walkable ):
-					if( Dynamic )
-						skip = true;
-					break;
-				}
-			}
 		}
 
 		public Box GetBox()
@@ -291,28 +291,28 @@ namespace NeoAxis
 				break;
 			}
 
-			if( indices != null && !Walkable )
-			{
-				//invert triangle order
-				for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
-				{
-					var index0 = indices[ nTriangle * 3 + 0 ];
-					var index1 = indices[ nTriangle * 3 + 1 ];
-					var index2 = indices[ nTriangle * 3 + 2 ];
+			//	if( indices != null && !Walkable )
+			//	{
+			//		//invert triangle order
+			//		for( int nTriangle = 0; nTriangle < indices.Length / 3; nTriangle++ )
+			//		{
+			//			var index0 = indices[ nTriangle * 3 + 0 ];
+			//			var index1 = indices[ nTriangle * 3 + 1 ];
+			//			var index2 = indices[ nTriangle * 3 + 2 ];
 
-					var vertex0 = vertices[ index0 ];
-					var vertex1 = vertices[ index1 ];
-					var vertex2 = vertices[ index2 ];
+			//			var vertex0 = vertices[ index0 ];
+			//			var vertex1 = vertices[ index1 ];
+			//			var vertex2 = vertices[ index2 ];
 
-					var normal = Vector3.Cross( vertex1 - vertex0, vertex2 - vertex0 );
-					if( normal.Z > 0 )
-					{
-						indices[ nTriangle * 3 + 0 ] = index0;
-						indices[ nTriangle * 3 + 1 ] = index2;
-						indices[ nTriangle * 3 + 2 ] = index1;
-					}
-				}
-			}
+			//			var normal = Vector3.Cross( vertex1 - vertex0, vertex2 - vertex0 );
+			//			if( normal.Z > 0 )
+			//			{
+			//				indices[ nTriangle * 3 + 0 ] = index0;
+			//				indices[ nTriangle * 3 + 1 ] = index2;
+			//				indices[ nTriangle * 3 + 2 ] = index1;
+			//			}
+			//		}
+			//	}
 		}
 
 		protected override void OnEnabledInHierarchyChanged()
@@ -333,37 +333,23 @@ namespace NeoAxis
 
 		internal void DynamicMode_UpdatePathfindingComponents( Pathfinding specifiedPathfinding = null )
 		{
-			var add = EnabledInHierarchy && Dynamic;
-
-			var scene = ParentScene;
-			if( scene != null )
+			var data = new Pathfinding.DynamicGeometriesToUpdateItem();
+			data.Add = EnabledInHierarchy && Dynamic;
+			data.Walkable = Walkable;
+			if( data.Add )
 			{
-				var instances = Pathfinding.Instances;
-				for( int n = 0; n < instances.Count; n++ )
+				switch( Shape.Value )
 				{
-					var pathfinding = instances[ n ];
-
-					if( scene == pathfinding.ParentScene && ( specifiedPathfinding == null || pathfinding == specifiedPathfinding ) )
-					{
-						var data = new Pathfinding.DynamicGeometriesToUpdateItem();
-						data.Add = add;
-						if( add )
-						{
-							switch( Shape.Value )
-							{
-							case ShapeEnum.Box:
-								data.Box = GetBox();
-								break;
-							case ShapeEnum.Cylinder:
-								data.Cylinder = GetCylinder();
-								break;
-							}
-						}
-
-						pathfinding.OnUpdatePathfindingGeometry( this, data );
-					}
+				case ShapeEnum.Box:
+					data.Box = GetBox();
+					break;
+				case ShapeEnum.Cylinder:
+					data.Cylinder = GetCylinder();
+					break;
 				}
 			}
+
+			Pathfinding.UpdateDynamicGeometry( this, ParentScene, data, specifiedPathfinding );
 		}
 	}
 }

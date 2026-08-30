@@ -617,7 +617,8 @@ void main()
 		#endif
 
 			//light color
-			vec3 lightColor = ( d_lightPower * 10000.0 ) * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
+			vec3 lightColor = d_lightPower * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
+			//vec3 lightColor = ( d_lightPower * 10000.0 ) * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
 
 			#ifdef SHADING_MODEL_SIMPLE
 				//Simple model
@@ -676,7 +677,7 @@ void main()
 
 	//ambient light
 	{
-		vec3 ambientLightPower = texelFetch( s_lightsTexture, ivec2( 2, 0 ), 0 ).xyz * 10000.0;
+		vec3 ambientLightPower = texelFetch( s_lightsTexture, ivec2( 2, 0 ), 0 ).xyz;// * 10000.0;
 		
 		//light color
 		MEDIUMP vec3 lightColor = ambientLightPower * u_cameraExposure;
@@ -810,7 +811,7 @@ void main()
 	
 		
 	//emissive
-	resultColor.rgb += emissive * u_emissiveMaterialsFactor;
+	resultColor.rgb += emissive;// * u_emissiveMaterialsFactor;
 
 	//blend mode Add. apply alpha
 	#ifdef BLEND_MODE_ADD

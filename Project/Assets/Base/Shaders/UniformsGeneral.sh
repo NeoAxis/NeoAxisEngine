@@ -10,7 +10,7 @@ uniform vec4 u_viewportOwnerSettings[10];
 #define u_viewportOwnerFarClipDistance u_viewportOwnerSettings[1].x
 #define u_viewportOwnerFieldOfView u_viewportOwnerSettings[1].y
 #define u_viewportOwnerDebugMode int(u_viewportOwnerSettings[1].z)
-#define u_emissiveMaterialsFactor u_viewportOwnerSettings[1].w
+//#define u_emissiveMaterialsFactor u_viewportOwnerSettings[1].w
 //#define u_cameraEv100 u_viewportOwnerSettings[1].w
 #define u_viewportOwnerShadowDirectionalDistance u_viewportOwnerSettings[2].xyz
 #define u_cameraExposure u_viewportOwnerSettings[2].w

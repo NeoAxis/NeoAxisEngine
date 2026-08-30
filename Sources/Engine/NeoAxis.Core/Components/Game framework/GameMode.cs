@@ -961,95 +961,95 @@ namespace NeoAxis
 			Viewport.CameraSettingsClass result = null;
 
 			if( builtInCamera == BuiltInCameraEnum.FirstPerson )
-				{
-					//first person camera
+			{
+				//first person camera
 
-					var objectInSpace = ObjectControlledByPlayer.Value as ObjectInSpace;
-					if( objectInSpace != null )
-					{
+				var objectInSpace = ObjectControlledByPlayer.Value as ObjectInSpace;
+				if( objectInSpace != null )
+				{
 					var tr = objectInSpace.GetTransformInterpolated();
 
-						var position = tr.Position;
-						var forward = tr.Rotation.GetForward();
-						var up = tr.Rotation.GetUp();
+					var position = tr.Position;
+					var forward = tr.Rotation.GetForward();
+					var up = tr.Rotation.GetUp();
 
+					//Character specific
+					var character = ObjectControlledByPlayer.Value as Character;
+					if( character != null )
+						character.GetFirstPersonCameraPosition( FirstPersonCameraAttachToEyes, out position, out forward, out up );
+
+					//Vehicle specific
+					var vehicle = ObjectControlledByPlayer.Value as Vehicle;
+					if( vehicle != null )
+						vehicle.GetFirstPersonCameraPosition( FirstPersonCameraAttachToEyes, out position, out forward, out up );
+
+					result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, position, forward, up, ProjectionType.Perspective, 1, cameraDefault.Exposure );//, cameraDefault.EmissiveFactor );
+				}
+			}
+			else if( builtInCamera == BuiltInCameraEnum.ThirdPerson || builtInCamera == BuiltInCameraEnum.ThirdPersonAutoRotation )
+			{
+				//third person camera
+
+				//3D
+				if( Scene.Mode.Value == Scene.ModeEnum._3D )
+				{
+					var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
+					//var character = ObjectControlledByPlayer.Value as Character;
+					if( obj != null )
+					{
+						var lookAt = obj.GetTransformInterpolated().Position;
 						//Character specific
 						var character = ObjectControlledByPlayer.Value as Character;
 						if( character != null )
-							character.GetFirstPersonCameraPosition( FirstPersonCameraAttachToEyes, out position, out forward, out up );
+							lookAt = character.GetCenteredSmoothPosition();
+						lookAt.Z += ThirdPersonCameraHeight;
 
-						//Vehicle specific
-						var vehicle = ObjectControlledByPlayer.Value as Vehicle;
-						if( vehicle != null )
-							vehicle.GetFirstPersonCameraPosition( FirstPersonCameraAttachToEyes, out position, out forward, out up );
+						var d = new SphericalDirection( MathEx.DegreeToRadian( ThirdPersonCameraHorizontalAngle.Value ), MathEx.DegreeToRadian( ThirdPersonCameraVerticalAngle.Value ) );
+						var direction = d.GetVector();
 
-						result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, position, forward, up, ProjectionType.Perspective, 1, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
+						var vector = direction * ThirdPersonCameraDistance.Value;
+						var from = lookAt - vector;
+
+						if( ThirdPersonCameraLeft.Value != 0 )
+						{
+							var d2 = new SphericalDirection( MathEx.DegreeToRadian( ThirdPersonCameraHorizontalAngle.Value + 90 ), 0 );
+							var direction2 = d2.GetVector();
+							from += direction2 * ThirdPersonCameraLeft;
+						}
+
+						//update when not visible
+						{
+							var volumeTestItem = new PhysicsVolumeTestItem( new Sphere( lookAt, 0.1 ), -vector, PhysicsVolumeTestItem.ModeEnum.OneClosestForEach );
+							Scene.PhysicsVolumeTest( volumeTestItem );
+
+							foreach( var item in volumeTestItem.Result )
+							{
+								var c = item.Body.Owner as Component;
+								if( c != null && ( c == obj || c.GetAllParents().Contains( obj ) ) )
+									continue;
+
+								from += vector * ( 1.0 - item.DistanceScale );
+								break;
+							}
+						}
+
+						result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, from, direction, Vector3.ZAxis, ProjectionType.Perspective, 1, cameraDefault.Exposure );//, cameraDefault.EmissiveFactor );
 					}
 				}
-			else if( builtInCamera == BuiltInCameraEnum.ThirdPerson || builtInCamera == BuiltInCameraEnum.ThirdPersonAutoRotation )
+
+				//2D
+				if( Scene.Mode.Value == Scene.ModeEnum._2D )
 				{
-					//third person camera
-
-					//3D
-					if( Scene.Mode.Value == Scene.ModeEnum._3D )
+					var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
+					//var character = ObjectControlledByPlayer.Value as Character2D;
+					if( obj != null )
 					{
-						var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
-						//var character = ObjectControlledByPlayer.Value as Character;
-						if( obj != null )
-						{
 						var lookAt = obj.GetTransformInterpolated().Position;
-							//Character specific
-							var character = ObjectControlledByPlayer.Value as Character;
-							if( character != null )
-								lookAt = character.GetCenteredSmoothPosition();
-							lookAt.Z += ThirdPersonCameraHeight;
+						var from = lookAt + new Vector3( 0, 0, 10 );
 
-							var d = new SphericalDirection( MathEx.DegreeToRadian( ThirdPersonCameraHorizontalAngle.Value ), MathEx.DegreeToRadian( ThirdPersonCameraVerticalAngle.Value ) );
-							var direction = d.GetVector();
-
-							var vector = direction * ThirdPersonCameraDistance.Value;
-							var from = lookAt - vector;
-
-							if( ThirdPersonCameraLeft.Value != 0 )
-							{
-								var d2 = new SphericalDirection( MathEx.DegreeToRadian( ThirdPersonCameraHorizontalAngle.Value + 90 ), 0 );
-								var direction2 = d2.GetVector();
-								from += direction2 * ThirdPersonCameraLeft;
-							}
-
-							//update when not visible
-							{
-								var volumeTestItem = new PhysicsVolumeTestItem( new Sphere( lookAt, 0.1 ), -vector, PhysicsVolumeTestItem.ModeEnum.OneClosestForEach );
-								Scene.PhysicsVolumeTest( volumeTestItem );
-
-								foreach( var item in volumeTestItem.Result )
-								{
-									var c = item.Body.Owner as Component;
-									if( c != null && ( c == obj || c.GetAllParents().Contains( obj ) ) )
-										continue;
-
-									from += vector * ( 1.0 - item.DistanceScale );
-									break;
-								}
-							}
-
-							result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, from, direction, Vector3.ZAxis, ProjectionType.Perspective, 1, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
-						}
+						result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, from, -Vector3.ZAxis, Vector3.YAxis, ProjectionType.Orthographic, cameraDefault.Height, cameraDefault.Exposure );//, cameraDefault.EmissiveFactor );
 					}
-
-					//2D
-					if( Scene.Mode.Value == Scene.ModeEnum._2D )
-					{
-						var obj = ObjectControlledByPlayer.Value as ObjectInSpace;
-						//var character = ObjectControlledByPlayer.Value as Character2D;
-						if( obj != null )
-						{
-						var lookAt = obj.GetTransformInterpolated().Position;
-							var from = lookAt + new Vector3( 0, 0, 10 );
-
-							result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, from, -Vector3.ZAxis, Vector3.YAxis, ProjectionType.Orthographic, cameraDefault.Height, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
-						}
-					}
+				}
 			}
 
 			return result;
@@ -1077,7 +1077,7 @@ namespace NeoAxis
 				if( FreeCamera )
 				{
 					//free camera
-					result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, freeCameraPosition, freeCameraDirection.GetVector(), Vector3.ZAxis, ProjectionType.Perspective, 1, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
+					result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, freeCameraPosition, freeCameraDirection.GetVector(), Vector3.ZAxis, ProjectionType.Perspective, 1, cameraDefault.Exposure );//, cameraDefault.EmissiveFactor );
 				}
 				else
 				{
@@ -1543,7 +1543,7 @@ namespace NeoAxis
 						{
 							var direction = obj.GetTransformInterpolated().Rotation.GetForward().ToVector2();
 							if( direction != Vector2.Zero )
-			{
+							{
 								var demandedAngle = Math.Atan2( -direction.Y, -direction.X );
 								var currentAngle = ThirdPersonCameraHorizontalAngle.Value.InRadians();
 
@@ -2277,7 +2277,7 @@ namespace NeoAxis
 					{
 						if( UseBuiltInCamera.Value != BuiltInCameraEnum.None || GetCameraManagementOfCurrentObject() != null )
 							display = AutoTrueFalse.True;
-						}
+					}
 
 					//Vehicle
 					var vehicle = obj as Vehicle;
@@ -2285,8 +2285,8 @@ namespace NeoAxis
 					{
 						if( UseBuiltInCamera.Value != BuiltInCameraEnum.None || GetCameraManagementOfCurrentObject() != null )
 							display = AutoTrueFalse.True;
-						}
 					}
+				}
 
 				if( display == AutoTrueFalse.True )
 				{

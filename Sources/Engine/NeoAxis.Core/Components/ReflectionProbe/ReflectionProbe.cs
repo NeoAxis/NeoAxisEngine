@@ -907,7 +907,7 @@ namespace NeoAxis
 					if( cameraEditor == null )
 						cameraEditor = new Camera();
 
-					var cameraSettings = new Viewport.CameraSettingsClass( viewport, 1, 90, NearClipPlane.Value, FarClipPlane.Value, position, dir, up, ProjectionType.Perspective, 1, cameraEditor.Exposure, cameraEditor.EmissiveFactor, renderSky: RenderSky );
+					var cameraSettings = new Viewport.CameraSettingsClass( viewport, 1, 90, NearClipPlane.Value, FarClipPlane.Value, position, dir, up, ProjectionType.Perspective, 1, cameraEditor.Exposure/*, cameraEditor.EmissiveFactor*/, renderSky: RenderSky );
 
 					viewport.Update( true, cameraSettings );
 
@@ -1402,7 +1402,7 @@ namespace NeoAxis
 							{
 								var sourceCamera = viewport.CameraSettings;
 
-								cameraSettings = new Viewport.CameraSettingsClass( faceViewport/*firstViewport*/, 1, 90, NearClipPlane.Value, FarClipPlane.Value, position, dir, up, ProjectionType.Perspective, 1, sourceCamera.Exposure, sourceCamera.EmissiveFactor, renderSky: RenderSky, renderingPipelineOverride: pipeline );
+								cameraSettings = new Viewport.CameraSettingsClass( faceViewport/*firstViewport*/, 1, 90, NearClipPlane.Value, FarClipPlane.Value, position, dir, up, ProjectionType.Perspective, 1, sourceCamera.Exposure/*, sourceCamera.EmissiveFactor*/, renderSky: RenderSky, renderingPipelineOverride: pipeline );
 							}
 							else
 							{
@@ -1410,7 +1410,7 @@ namespace NeoAxis
 								if( cameraEditor == null )
 									cameraEditor = new Camera();
 
-								cameraSettings = new Viewport.CameraSettingsClass( faceViewport/*firstViewport*/, 1, 90, NearClipPlane.Value, FarClipPlane.Value, position, dir, up, ProjectionType.Perspective, 1, cameraEditor.Exposure, cameraEditor.EmissiveFactor, renderSky: RenderSky, renderingPipelineOverride: pipeline );
+								cameraSettings = new Viewport.CameraSettingsClass( faceViewport/*firstViewport*/, 1, 90, NearClipPlane.Value, FarClipPlane.Value, position, dir, up, ProjectionType.Perspective, 1, cameraEditor.Exposure/*, cameraEditor.EmissiveFactor*/, renderSky: RenderSky, renderingPipelineOverride: pipeline );
 							}
 
 

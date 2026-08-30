@@ -107,31 +107,30 @@ namespace NeoAxis.Editor
 			var lines = new List<string>();
 
 			var backgroundThreadData = pathfinding.GetBackgroundThreadData();
-			var obstacleTool = backgroundThreadData?.obstacleTool;
-			var tileCache = obstacleTool?.GetTileCache();
+			var dynamicNavMesh = backgroundThreadData?.dynamicNavMesh;
+			var precompiledData = backgroundThreadData?.precompiledData;
 
-			if( tileCache != null )
+			if( dynamicNavMesh != null && precompiledData != null )
 			{
-				var tileSize = obstacleTool._setting.tileSize;
-				var cellSize = obstacleTool._setting.cellSize;
+				var settings = precompiledData.buildSettings;
+				var tileSize = settings.tileSize;
+				var cellSize = settings.cellSize;
 
 				lines.Add( $"Cell size: {cellSize}" );
-				lines.Add( $"Cell height: {obstacleTool._setting.cellHeight}" );
+				lines.Add( $"Cell height: {settings.cellHeight}" );
 				lines.Add( $"Tile size: {tileSize}" );
 				lines.Add( $"Tile size in units: {Math.Round( tileSize * cellSize, 5 )}" );
 
-				var bmin = obstacleTool._geom.GetMeshBoundsMin();
-				var bmax = obstacleTool._geom.GetMeshBoundsMax();
-				var boundsSize = Pathfinding.ConvertToEngineCoordinates( bmax - bmin, true );
-				lines.Add( $"Bounds: {boundsSize}" );
+				if( precompiledData.staticGeometry != null )
+					lines.Add( $"Bounds: {precompiledData.staticGeometry.bounds.GetSize()}" );
 
-				lines.Add( $"Tiles: {obstacleTool._tileCountW} x {obstacleTool._tileCountH}" );
+				lines.Add( $"Tiles: {dynamicNavMesh.VoxelTiles().Count}" );
 
 				lines.Add( $"Dynamic obstacles: {backgroundThreadData.dynamicObstaclesCountLockFree}" );
 			}
 			else
 			{
-				lines.Add( "No tile cache." );
+				lines.Add( "No navigation mesh." );
 			}
 
 			var text = "";

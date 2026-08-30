@@ -130,7 +130,7 @@ namespace NeoAxis
 
 		internal Viewport()
 		{
-			cameraSettings = new CameraSettingsClass( this, 1, 75, 0.1, 10000, Vector3.Zero, Vector3.XAxis, Vector3.ZAxis, ProjectionType.Perspective, 1, 1, 1 );
+			cameraSettings = new CameraSettingsClass( this, 1, 75, 0.1, 10000, Vector3.Zero, Vector3.XAxis, Vector3.ZAxis, ProjectionType.Perspective, 1, 1 );//, 1 );
 
 			lock( RenderingSystem.viewports )
 				RenderingSystem.viewports.Add( this );

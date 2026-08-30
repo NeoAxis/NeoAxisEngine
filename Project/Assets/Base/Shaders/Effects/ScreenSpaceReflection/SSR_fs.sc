@@ -420,7 +420,8 @@ vec4 glossyReflection( vec3 position, vec3 viewNormal, vec3 view, vec4 fragCoord
 			#endif
 			
 				//light color
-				vec3 lightColor = ( d_lightPower.rgb * 10000.0 ) * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
+				vec3 lightColor = d_lightPower.rgb * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
+				//vec3 lightColor = ( d_lightPower.rgb * 10000.0 ) * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
 			
 				if( shadingModelSimple )
 				{
@@ -492,7 +493,7 @@ vec4 glossyReflection( vec3 position, vec3 viewNormal, vec3 view, vec4 fragCoord
 		
 		//ambient light
 		{
-			vec3 ambientLightPower = texelFetch( s_lightsTexture, ivec2( 2, 0 ), 0 ).xyz * 10000.0;
+			vec3 ambientLightPower = texelFetch( s_lightsTexture, ivec2( 2, 0 ), 0 ).xyz;// * 10000.0;
 			
 			//light color
 			MEDIUMP vec3 lightColor = ambientLightPower * u_cameraExposure;
@@ -574,7 +575,7 @@ vec4 glossyReflection( vec3 position, vec3 viewNormal, vec3 view, vec4 fragCoord
 		}
 
 		//emissive
-		resultColor.rgb += emissive * u_emissiveMaterialsFactor;
+		resultColor.rgb += emissive;// * u_emissiveMaterialsFactor;
 				
 		reflection = max( resultColor.rgb, vec3_splat( 0 ) );
 		alpha = ssr_attenuation;

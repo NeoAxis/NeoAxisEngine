@@ -26,7 +26,7 @@ namespace NeoAxis
 			ProjectionType projection;
 			double height;
 			double exposure;
-			double emissiveFactor;
+			//double emissiveFactor;
 			bool reflectionEnabled;
 			Plane reflectionPlane;
 			RenderingPipeline renderingPipelineOverride;
@@ -60,7 +60,7 @@ namespace NeoAxis
 
 				Transform t = camera.Transform;
 
-				Init( null, viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, false, new Plane(), camera.RenderingPipelineOverride, true );
+				Init( null, viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure/*, camera.EmissiveFactor*/, false, new Plane(), camera.RenderingPipelineOverride, true );
 			}
 
 			public CameraSettingsClass( Viewport viewport, Camera camera, RenderingPipeline renderingPipelineOverride, bool frustumCullingTest = false )
@@ -69,20 +69,20 @@ namespace NeoAxis
 
 				Transform t = camera.Transform;
 
-				Init( null, viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure, camera.EmissiveFactor, false, new Plane(), renderingPipelineOverride, true );
+				Init( null, viewport, /*camera, */frustumCullingTest, camera.AspectRatio, camera.FieldOfView, camera.NearClipPlane, camera.FarClipPlane, t.Position, t.Rotation.GetForward()/* camera.Direction*/, camera.FixedUp, camera.Projection, camera.Height, camera.Exposure/*, camera.EmissiveFactor*/, false, new Plane(), renderingPipelineOverride, true );
 			}
 
 			public CameraSettingsClass( Viewport viewport, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance,
-				Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled = false, Plane reflectionPlane = new Plane(), bool frustumCullingTest = false, RenderingPipeline renderingPipelineOverride = null, bool renderSky = true )
+				Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure/*, double emissiveFactor*/, bool reflectionEnabled = false, Plane reflectionPlane = new Plane(), bool frustumCullingTest = false, RenderingPipeline renderingPipelineOverride = null, bool renderSky = true )
 			{
-				Init( null, viewport, /*null, */frustumCullingTest, aspectRatio, fieldOfView, nearClipDistance, farClipDistance, position, direction, fixedUp, projection, height, exposure, emissiveFactor, reflectionEnabled, reflectionPlane, renderingPipelineOverride, renderSky );
+				Init( null, viewport, /*null, */frustumCullingTest, aspectRatio, fieldOfView, nearClipDistance, farClipDistance, position, direction, fixedUp, projection, height, exposure/*, emissiveFactor*/, reflectionEnabled, reflectionPlane, renderingPipelineOverride, renderSky );
 			}
 
 			//for shadows
 			internal CameraSettingsClass( Vector3 ownerViewportCameraPosition, Viewport viewport, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance,
-	Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled = false, Plane reflectionPlane = new Plane(), bool frustumCullingTest = false, RenderingPipeline renderingPipelineOverride = null, bool renderSky = true )
+	Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure/*, double emissiveFactor*/, bool reflectionEnabled = false, Plane reflectionPlane = new Plane(), bool frustumCullingTest = false, RenderingPipeline renderingPipelineOverride = null, bool renderSky = true )
 			{
-				Init( ownerViewportCameraPosition, viewport, /*null, */frustumCullingTest, aspectRatio, fieldOfView, nearClipDistance, farClipDistance, position, direction, fixedUp, projection, height, exposure, emissiveFactor, reflectionEnabled, reflectionPlane, renderingPipelineOverride, renderSky );
+				Init( ownerViewportCameraPosition, viewport, /*null, */frustumCullingTest, aspectRatio, fieldOfView, nearClipDistance, farClipDistance, position, direction, fixedUp, projection, height, exposure/*, emissiveFactor*/, reflectionEnabled, reflectionPlane, renderingPipelineOverride, renderSky );
 			}
 
 
@@ -102,7 +102,7 @@ namespace NeoAxis
 			//		projection, height, reflectionEnabled, reflectionPlane );
 			//}
 
-			void Init( Vector3? ownerViewportCameraPosition, Viewport viewport, /*Camera sourceCamera, */bool frustumCullingTest, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance, Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure, double emissiveFactor, bool reflectionEnabled, Plane reflectionPlane, RenderingPipeline renderingPipelineOverride, bool renderSky )
+			void Init( Vector3? ownerViewportCameraPosition, Viewport viewport, /*Camera sourceCamera, */bool frustumCullingTest, double aspectRatio, Degree fieldOfView, double nearClipDistance, double farClipDistance, Vector3 position, Vector3 direction, Vector3 fixedUp, ProjectionType projection, double height, double exposure/*, double emissiveFactor*/, bool reflectionEnabled, Plane reflectionPlane, RenderingPipeline renderingPipelineOverride, bool renderSky )
 			{
 				this.ownerViewportCameraPosition = ownerViewportCameraPosition;
 				this.viewport = viewport;
@@ -133,7 +133,7 @@ namespace NeoAxis
 				this.projection = projection;
 				this.height = height;
 				this.exposure = exposure;
-				this.emissiveFactor = emissiveFactor;
+				//this.emissiveFactor = emissiveFactor;
 				this.reflectionEnabled = reflectionEnabled;
 				this.reflectionPlane = reflectionPlane;
 				this.renderingPipelineOverride = renderingPipelineOverride;
@@ -289,10 +289,10 @@ namespace NeoAxis
 				get { return exposure; }
 			}
 
-			public double EmissiveFactor
-			{
-				get { return emissiveFactor; }
-			}
+			//public double EmissiveFactor
+			//{
+			//	get { return emissiveFactor; }
+			//}
 
 			/// <summary>Returns whether this frustum is being reflected.</summary>
 			public bool ReflectionEnabled

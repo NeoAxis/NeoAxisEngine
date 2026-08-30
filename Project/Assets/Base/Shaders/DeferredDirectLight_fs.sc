@@ -234,7 +234,8 @@ void main()
 	#endif
 	
 		//light color
-		vec3 lightColor = ( d_lightPower.rgb * 10000.0 ) * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
+		vec3 lightColor = d_lightPower.rgb * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
+		//vec3 lightColor = ( d_lightPower.rgb * 10000.0 ) * u_cameraExposure * objectLightAttenuation * lightMaskMultiplier * shadowMultiplier;
 		
 		if(shadingModelSimple)
 		{

@@ -69,11 +69,11 @@ namespace NeoAxis
 			get { return 0; }
 		}
 
-		[ShaderGenerationFunction( "u_emissiveMaterialsFactor" )]
-		public static double EmissiveMaterialsFactor
-		{
-			get { return 0; }
-		}
+		//[ShaderGenerationFunction( "u_emissiveMaterialsFactor" )]
+		//public static double EmissiveMaterialsFactor
+		//{
+		//	get { return 0; }
+		//}
 
 		[ShaderGenerationFunction( "u_cameraExposure" )]
 		public static double CameraExposure

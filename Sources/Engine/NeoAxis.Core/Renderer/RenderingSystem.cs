@@ -1238,7 +1238,6 @@ namespace NeoAxis
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 					return ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
 
-
 				if( !shadowTechnique.HasValue )
 				{
 					if( SystemSettings.LimitedDevice )
@@ -1376,7 +1375,7 @@ namespace NeoAxis
 			if( Capabilities.Backend == RendererBackend.Vulkan )
 				return false;
 
-			//!!!!temp Web
+			//!!!!temp Web Masks
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				return false;
 

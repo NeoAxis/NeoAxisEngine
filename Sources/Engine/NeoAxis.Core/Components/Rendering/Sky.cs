@@ -1601,7 +1601,7 @@ namespace NeoAxis
 								}
 
 								var ownerCameraSettings = context.OwnerCameraSettings;
-								var cameraSettings = new Viewport.CameraSettingsClass( viewport, 1, 90, 0.1, 1000, Vector3.Zero, dir, up, ProjectionType.Perspective, 1, ownerCameraSettings.Exposure, ownerCameraSettings.EmissiveFactor );
+								var cameraSettings = new Viewport.CameraSettingsClass( viewport, 1, 90, 0.1, 1000, Vector3.Zero, dir, up, ProjectionType.Perspective, 1, ownerCameraSettings.Exposure );//, ownerCameraSettings.EmissiveFactor );
 
 								//render sky
 								var viewMatrix = cameraSettings.ViewMatrixRelative;

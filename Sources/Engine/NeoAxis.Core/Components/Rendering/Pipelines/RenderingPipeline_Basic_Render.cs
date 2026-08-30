@@ -1638,13 +1638,13 @@ namespace NeoAxis
 				{
 					float inner = data.SpotlightInnerAngle.InRadians();
 					float outer = data.SpotlightOuterAngle.InRadians();
-					outer = MathEx.Clamp( outer, .01f, MathEx.PI );
-					inner = MathEx.Clamp( inner, 0, outer - .0001f );
+					outer = MathEx.Clamp( outer, 0.01f, MathEx.PI );
+					inner = MathEx.Clamp( inner, 0, outer - 0.01f );
 
 					output->lightSpot = new Vector3F(
 						MathEx.Cos( inner * 0.5f ),
 						MathEx.Cos( outer * 0.5f ),
-						MathEx.Clamp( data.SpotlightFalloff, MathEx.Epsilon, 1 ) );
+						MathEx.Clamp( data.SpotlightFalloff, 0.001f /* MathEx.Epsilon*/, 1 ) );
 				}
 				else
 					output->lightSpot = Vector3F.Zero;
@@ -2783,9 +2783,8 @@ namespace NeoAxis
 							if( ( cameraPosition - item.data.Position ).LengthSquared() > ( shadowPointSpotlightDistance + item.data.AttenuationFar ) * ( shadowPointSpotlightDistance + item.data.AttenuationFar ) )
 								skip = true;
 
-							//!!!!temp Web
 							//no point light shadows on web platform
-							if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+							if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && RenderingSystem.Capabilities.Backend == RendererBackend.OpenGLES )
 								skip = true;
 						}
 						else if( item.data.Type == Light.TypeEnum.Spotlight )
@@ -2875,7 +2874,7 @@ namespace NeoAxis
 
 										double shadowMapFarClipDistance = ShadowDirectionalLightExtrusionDistance * 2;
 
-										var cascadeCameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, null, 1, 90, lightData.ShadowNearClipDistance/*shadowMapFarClipDistance / 1000.0*/, shadowMapFarClipDistance, pos, dir, up, ProjectionType.Orthographic, orthoSize, 0, 0 );
+										var cascadeCameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, null, 1, 90, lightData.ShadowNearClipDistance/*shadowMapFarClipDistance / 1000.0*/, shadowMapFarClipDistance, pos, dir, up, ProjectionType.Orthographic, orthoSize, 0 );//, 0 );
 
 										PrepareSoftwareOcclusionBuffer( context, scene, cascadeCameraSettings, false, out var cascadeOcclusionCullingBuffer, out var cascadeOcclusionCullingBufferRendered );
 
@@ -4206,7 +4205,7 @@ namespace NeoAxis
 
 					//!!!!context.Owner.CameraSettings.NearClipDistance?
 
-					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, shadowViewport, 1, fov, lightData.ShadowNearClipDistance/*context.Owner.CameraSettings.NearClipDistance*/, lightData.AttenuationFar * 1.05, lightData.Position, dir, up, ProjectionType.Perspective, 1, 0, 0 );
+					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, shadowViewport, 1, fov, lightData.ShadowNearClipDistance/*context.Owner.CameraSettings.NearClipDistance*/, lightData.AttenuationFar * 1.05, lightData.Position, dir, up, ProjectionType.Perspective, 1, 0 );//, 0 );
 				}
 				else if( lightData.Type == Light.TypeEnum.Point )
 				{
@@ -4238,7 +4237,7 @@ namespace NeoAxis
 						}
 					}
 
-					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, shadowViewport, 1, 90, lightData.ShadowNearClipDistance/*context.Owner.CameraSettings.NearClipDistance*/, lightData.AttenuationFar * 1.05, lightData.Position, dir, up, ProjectionType.Perspective, 1, 0, 0 );
+					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, shadowViewport, 1, 90, lightData.ShadowNearClipDistance/*context.Owner.CameraSettings.NearClipDistance*/, lightData.AttenuationFar * 1.05, lightData.Position, dir, up, ProjectionType.Perspective, 1, 0 );//, 0 );
 				}
 				else
 				{
@@ -4289,7 +4288,7 @@ namespace NeoAxis
 
 					double shadowMapFarClipDistance = ShadowDirectionalLightExtrusionDistance * 2;
 
-					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, shadowViewport, 1, 90, lightData.ShadowNearClipDistance/*shadowMapFarClipDistance / 1000.0*/ /*context.Owner.CameraSettings.NearClipDistance*/, shadowMapFarClipDistance, pos, dir, up, ProjectionType.Orthographic, orthoSize, 0, 0 );
+					shadowViewport.CameraSettings = new Viewport.CameraSettingsClass( context.OwnerCameraSettingsPosition, shadowViewport, 1, 90, lightData.ShadowNearClipDistance/*shadowMapFarClipDistance / 1000.0*/ /*context.Owner.CameraSettings.NearClipDistance*/, shadowMapFarClipDistance, pos, dir, up, ProjectionType.Orthographic, orthoSize, 0 );//, 0 );
 
 					lightItem.shadowCascadesProjectionViewMatrices[ nIteration ] = (shadowViewport.CameraSettings.ProjectionMatrix, shadowViewport.CameraSettings.ViewMatrixRelative);
 				}
@@ -12154,61 +12153,65 @@ namespace NeoAxis
 							{
 								//point
 
-								//create array if no shadows
-								if( frameData.ShadowTextureArrayPoint == null )
+								var webGL = SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && RenderingSystem.Capabilities.Backend == RendererBackend.OpenGLES;//no point shadow map array on WebGL
+								if( !webGL )
 								{
-									//!!!!workaround for Android. 1 depth arrays are not arrays
-									frameData.ShadowTextureArrayPoint = context.RenderTargetCube_Alloc( new Vector2I( maxSize, maxSize ), PixelFormat.A8R8G8B8, arrayLayers: Math.Max( dictionary.Count, 2 ) );
-								}
-
-								var arrayTexture = frameData.ShadowTextureArrayPoint;
-								if( arrayTexture != null )
-								{
-									var index = frameData.ShadowTextureArrayPointUsedForShadows;
-
-									foreach( var mask in dictionary.Keys )
+									//create array if no shadows
+									if( frameData.ShadowTextureArrayPoint == null )
 									{
-										if( mask.Result.TextureType == ImageComponent.TypeEnum._2D )
+										//!!!!workaround for Android. 1 depth arrays are not arrays
+										frameData.ShadowTextureArrayPoint = context.RenderTargetCube_Alloc( new Vector2I( maxSize, maxSize ), PixelFormat.A8R8G8B8, arrayLayers: Math.Max( dictionary.Count, 2 ) );
+									}
+
+									var arrayTexture = frameData.ShadowTextureArrayPoint;
+									if( arrayTexture != null )
+									{
+										var index = frameData.ShadowTextureArrayPointUsedForShadows;
+
+										foreach( var mask in dictionary.Keys )
 										{
-											//when mask is 2D texture
-
-											for( int face = 0; face < 6; face++ )
+											if( mask.Result.TextureType == ImageComponent.TypeEnum._2D )
 											{
-												var slice = index * 6 + face;
-												var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
-												context.SetViewport( viewport );
-												CopyToCurrentViewport( context, mask );
-											}
-										}
-										else if( mask.Result.TextureType == ImageComponent.TypeEnum.Cube )
-										{
-											//when mask is cube texture
+												//when mask is 2D texture
 
-											for( int face = 0; face < 6; face++ )
+												for( int face = 0; face < 6; face++ )
+												{
+													var slice = index * 6 + face;
+													var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+													context.SetViewport( viewport );
+													CopyToCurrentViewport( context, mask );
+												}
+											}
+											else if( mask.Result.TextureType == ImageComponent.TypeEnum.Cube )
 											{
-												var slice = index * 6 + face;
-												var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
-												context.SetViewport( viewport );
+												//when mask is cube texture
 
-												//!!!!GC. where else
-												//!!!!also can copy with one draw call, use mrt or compute
-												//but it only for current gen, for modern gen use dynamic indexing
+												for( int face = 0; face < 6; face++ )
+												{
+													var slice = index * 6 + face;
+													var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+													context.SetViewport( viewport );
 
-												var shader = new CanvasRenderer.ShaderItem();
-												shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
-												shader.FragmentProgramFileName = @"Base\Shaders\CopyCubemapFace_fs.sc";
+													//!!!!GC. where else
+													//!!!!also can copy with one draw call, use mrt or compute
+													//but it only for current gen, for modern gen use dynamic indexing
 
-												shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, mask, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+													var shader = new CanvasRenderer.ShaderItem();
+													shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+													shader.FragmentProgramFileName = @"Base\Shaders\CopyCubemapFace_fs.sc";
 
-												shader.Parameters.Set( "u_copyCubemapFaceIndex", new Vector4F( face, 0, 0, 0 ) );
+													shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, mask, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
 
-												context.RenderQuadToCurrentViewport( shader );
+													shader.Parameters.Set( "u_copyCubemapFaceIndex", new Vector4F( face, 0, 0, 0 ) );
 
-												//CopyToCurrentViewport( context, mask );
+													context.RenderQuadToCurrentViewport( shader );
+
+													//CopyToCurrentViewport( context, mask );
+												}
 											}
-										}
 
-										index++;
+											index++;
+										}
 									}
 								}
 							}
@@ -13642,10 +13645,10 @@ namespace NeoAxis
 			public float farClipDistance;
 			public float fieldOfView;
 			public float debugMode;
-			public float emissiveMaterialsFactor;//public float cameraEv100;//public float unused1;
+			public float unused1; //public float emissiveMaterialsFactor;//public float cameraEv100;//public float unused1;
 
 			public Vector3F shadowDirectionalDistance;
-			public float cameraExposure;
+			public float cameraExposure; //multiplied to 10000
 
 			public float displacementScale;
 			public float displacementMaxSteps;
@@ -13657,7 +13660,7 @@ namespace NeoAxis
 
 			public Vector3F cameraUp;
 			//mip bias is disabled
-			public float unused; //public float mipBias;
+			public float unused2; //public float mipBias;
 
 			public Vector2F windSpeed;
 			public float shadowObjectVisibilityDistanceFactor;
@@ -13714,8 +13717,8 @@ namespace NeoAxis
 					1.0f / ( Math.Max( farDistance - fadeMinDistance, .0001f ) ) );
 			}
 
-			data.emissiveMaterialsFactor = (float)cameraSettings.EmissiveFactor;
-			data.cameraExposure = (float)cameraSettings.Exposure;
+			//data.emissiveMaterialsFactor = (float)cameraSettings.EmissiveFactor;
+			data.cameraExposure = (float)( cameraSettings.Exposure * 10000 );
 			data.displacementScale = (float)DisplacementMappingScale;
 			if( GlobalTextureQuality <= 0 )
 				data.displacementScale = 0;
@@ -14763,7 +14766,8 @@ namespace NeoAxis
 				}
 
 				//shadow map array point
-				if( SystemSettings.CurrentPlatform != SystemSettings.Platform.Web ) //!!!!temp Web
+				var webGL = SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && RenderingSystem.Capabilities.Backend == RendererBackend.OpenGLES;//no point shadow map array on WebGL
+				if( !webGL )
 				{
 					var shadowMap = frameData.ShadowTextureArrayPoint;
 					if( shadowMap == null )

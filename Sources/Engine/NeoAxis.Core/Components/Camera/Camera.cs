@@ -428,17 +428,17 @@ namespace NeoAxis
 			get { return 1.0 / ( 1.2 * Math.Pow( 2.0, Ev100 ) ); }
 		}
 
-		[Category( "Exposure" )]
-		public double EmissiveFactor
-		{
-			get
-			{
-				var result = Exposure * 103000;
-				//var result = Exposure * 140000 * EmissiveMaterialsFactor;
-				//var result = Math.Pow( 2.0, Ev100 - 2.0 ) * Exposure;
-				return result;
-			}
-		}
+		//[Category( "Exposure" )]
+		//public double EmissiveFactor
+		//{
+		//	get
+		//	{
+		//		var result = Exposure * 103000;
+		//		//var result = Exposure * 140000 * EmissiveMaterialsFactor;
+		//		//var result = Math.Pow( 2.0, Ev100 - 2.0 ) * Exposure;
+		//		return result;
+		//	}
+		//}
 
 		public override ScreenLabelInfo GetScreenLabelInfo()
 		{

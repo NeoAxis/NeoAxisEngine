@@ -23,7 +23,7 @@ namespace NeoAxis
 			//default behavior
 			if( result == null )
 			{
-				result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, gameMode.FreeCameraPosition, gameMode.FreeCameraDirection.GetVector(), Vector3.ZAxis, ProjectionType.Perspective, 1, cameraDefault.Exposure, cameraDefault.EmissiveFactor );
+				result = new Viewport.CameraSettingsClass( viewport, cameraDefault.AspectRatio, cameraDefault.FieldOfView, cameraDefault.NearClipPlane, cameraDefault.FarClipPlane, gameMode.FreeCameraPosition, gameMode.FreeCameraDirection.GetVector(), Vector3.ZAxis, ProjectionType.Perspective, 1, cameraDefault.Exposure );//, cameraDefault.EmissiveFactor );
 			}
 
 			return result;

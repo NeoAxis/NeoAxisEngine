@@ -114,7 +114,8 @@ void main()
 	toCamera = normalize(toCamera);
 
 	//light color
-	vec3 lightColor = u_environmentLightParams.rgb/*u_lightPower.rgb*/ * u_cameraExposure;
+	vec3 lightColor = u_environmentLightParams.rgb/*u_lightPower.rgb*/ * u_cameraExposure / 10000.0;
+	//vec3 lightColor = u_environmentLightParams.rgb/*u_lightPower.rgb*/ * u_cameraExposure;
 
 	
 	vec4 resultColor = vec4_splat(0);
@@ -206,7 +207,7 @@ void main()
 	}
 
 	//emissive
-	resultColor.rgb += emissive * u_emissiveMaterialsFactor;
+	resultColor.rgb += emissive;// * u_emissiveMaterialsFactor;
 
 	BRANCH
 	if(u_reflectionProbeRadius > 0)

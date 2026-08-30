@@ -1,8 +1,8 @@
-// Made with NeoAxis Engine 2026.1.
+// Made with NeoAxis Engine 2026.2.
 
 .component NeoAxis.Scene
 {
-	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1192, 963\"><KW V=\"1\" A=\"0EAFB7E54B5D491992BC9D771168F12D\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"F90B5B3210FD48D68BB309247110F89B\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"0EAFB7E54B5D491992BC9D771168F12D\"><KP UN=\"0EAFB7E54B5D491992BC9D771168F12D\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"271F2319475A4C7E3493DBEC73D9163D\" S=\"False\"><CPD ObjPath=\"$Pathfinding Geometry\\$C# Script\" /></KP><KP UN=\"251265786676460F9E85B5DF6840C55D\" S=\"False\"><CPD ObjPath=\"$Default Gate\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
+	EditorDocumentConfiguration = "\xfeff<?xml version=\"1.0\" encoding=\"utf-16\"?><KD V=\"1\"><DGD /><DM N=\"DockingManager\" C=\"2\"><DW N=\"DockingWorkspace\" O=\"0\" S=\"1171, 963\"><KW V=\"1\" A=\"0EAFB7E54B5D491992BC9D771168F12D\"><CGD /><WS UN=\"4A87E34386084E14BC81ED10FBED4D99\" S=\"T,0,50:T,0,50\" D=\"Horizontal\"><WC UN=\"F90B5B3210FD48D68BB309247110F89B\" S=\"T,0,50:T,0,50\" NM=\"BarTabGroup\" AR=\"True\" SP=\"0EAFB7E54B5D491992BC9D771168F12D\"><KP UN=\"0EAFB7E54B5D491992BC9D771168F12D\" S=\"False\"><CPD ObjPath=\"\" /></KP><KP UN=\"271F2319475A4C7E3493DBEC73D9163D\" S=\"False\"><CPD ObjPath=\"$Pathfinding Geometry\\$C# Script\" /></KP><KP UN=\"251265786676460F9E85B5DF6840C55D\" S=\"False\"><CPD ObjPath=\"$Default Gate\\$C# Script\" /></KP><KP UN=\"1CEB392FBD0F4C168BAB708D36FDC797\" S=\"False\"><CPD ObjPath=\"$Box 12\\$C# Script\" /></KP></WC></WS></KW></DW><DF N=\"DockingFloating\" C=\"0\"></DF></DM></KD>"
 	DisplayDevelopmentDataInSimulation = True
 	RenderingPipeline
 	{
@@ -15,14 +15,14 @@
 	.component NeoAxis.Pathfinding
 	{
 		Name = Pathfinding
-		Transform = "5.08448815376109 -0.0403335682512012 0.0000009999999957; 0 0 0 1; 1 1 1"
+		Transform = "2.19139398111215 -0.466231364738514 0.0000009999999957; 0 0 0 1; 1 1 1"
 		ShowNavMesh = True
 	}
 	.component NeoAxis.Camera
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "-4.08911843948438 -8.73551172697176 8.7837412499879; -0.124633767411043 0.323899043392979 0.33680190931249 0.875282987149587; 1 1 1"
+		Transform = "-4.90326463897481 -6.9538869852933 11.4331173475269; -0.100853325569813 0.303359311870908 0.298922551895436 0.89913683196221; 1 1 1"
 	}
 	.component NeoAxis.Light
 	{
@@ -152,69 +152,8 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
-		Name = Sphere
-		Transform = "12.1411613165878 -5.62617941621898 0.5; 0 0 0 1; 1 1 1"
-		Color = 1 0 0
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "Base\\Materials\\White.material"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Sphere
-			{
-				Name = Mesh Geometry
-			}
-		}
-		.component NeoAxis.PathfindingGeometryTag
-		{
-			Name = Pathfinding Geometry Tag
-		}
-	}
-	.component NeoAxis.MeshInSpace
-	{
-		Name = Box
-		Transform = "11.380700739412 -10.5015671220635 0.500000000000008; 0 0 0 1; 1 1 1"
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "Base\\Materials\\White.material"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Box
-			{
-				Name = Mesh Geometry
-			}
-		}
-	}
-	.component NeoAxis.MeshInSpace
-	{
 		Name = Box2
-		Transform = "6.01430338027964 14.2805656209828 1.03403033585505; 0 0 0 1; 18.0629817901379 1 2.12915707286447"
+		Transform = "14.6704853474172 24.8245839364578 1.03403033585505; 0 0 0 1; 18.0629817901379 1 2.12915707286447"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -245,8 +184,72 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
-		Name = Box3
-		Transform = "17.1914923567342 5.57460391938656 1.03403033585505; 0 0 -0.6288253600853 0.777546568710577; 18.0629817901379 1 2.12915707286447"
+		Name = Box 3
+		Transform = "6.31746858850772 15.9037956680714 1.03403033585505; 0 0 0 1; 1.22292558509003 1 2.12915707286447"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\White.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.PathfindingGeometryTag
+		{
+			Name = Pathfinding Geometry Tag
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 7
+		Transform = "20.7527811035287 15.9037956680714 1.03403033585505; 0 0 0 1; 1.22292558509003 1 2.12915707286447"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\White.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.PathfindingGeometryTag
+		{
+			Name = Pathfinding Geometry Tag
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 8
+		Transform = "13.446115080778 15.9037956680714 1.45222219079864; 0 0 0 1; 1.22292558509003 1 3.03407980566034"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -278,7 +281,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Box5
-		Transform = "7.39531602923458 9.1007655740178 0.68793310723802; -0.426251223375143 0.527062356548517 -0.462310748369104 0.571650189209376; 11.2461963701335 1 3.12226750481345"
+		Transform = "6.40277881198005 9.60993301872733 1.28932122636793; 0.429031556669808 -0.562078218205866 0.429031556669808 -0.562078218205866; 11.2461963701335 1 3.12226750481345"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -309,8 +312,8 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
-		Name = Box8
-		Transform = "20.920663655734 18.241016158476 0.68793310723802; -0.426251223375143 0.527062356548517 -0.462310748369104 0.571650189209376; 11.2461963701335 1 2.85733352589806"
+		Name = Box 6
+		Transform = "20.4667272949173 6.76515671686724 1.28152729833921; 0.429031556669808 -0.562078218205866 0.429031556669808 -0.562078218205866; 11.2461963701335 1 3.12226750481345"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -341,8 +344,40 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
-		Name = Box6
-		Transform = "7.19615978513952 20.095206365461 1.75125935717365; -0.488873479890643 0.470689786904137 -0.519593187265014 0.519111514909402; 11.2461963701335 1 3.14911815784433"
+		Name = Box 4
+		Transform = "20.4615761886665 17.6754947832062 2.74967054329468; -0.5 0.5 -0.5 0.5; 11.2461963701335 1 3.14911815784433"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Base\\Materials\\White.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+		}
+		.component NeoAxis.PathfindingGeometryTag
+		{
+			Name = Pathfinding Geometry Tag
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 5
+		Transform = "6.40188980319922 20.5095284704095 2.74967054329468; -0.5 0.5 -0.5 0.5; 11.2461963701335 1 3.14911815784433"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -374,39 +409,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Box7
-		Transform = "14.9995451828357 24.692493811037 1.75125935717365; -0.67848117043814 -0.0144726016023655 0.00140741774775893 0.734473869064811; 14.1006504848233 1 3.05144344608939"
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		ReplaceMaterial
-		{
-			GetByReference = "Base\\Materials\\White.material"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Box
-			{
-				Name = Mesh Geometry
-			}
-		}
-		.component NeoAxis.PathfindingGeometryTag
-		{
-			Name = Pathfinding Geometry Tag
-		}
-	}
-	.component NeoAxis.MeshInSpace
-	{
-		Name = Box4
-		Transform = "14.7770414407409 -2.13924567004258 1.03403033585505; 0 0 -0.6288253600853 0.777546568710577; 18.0629817901379 1 2.12915707286447"
+		Transform = "14.9995451828357 24.692493811037 2.74967054329468; -0.707106781186548 0 -0 0.707106781186548; 14.1006504848233 1 3.05144344608939"
 		Mesh
 		{
 			GetByReference = "this:$Mesh"
@@ -465,36 +468,8 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
-		Name = Box 3
-		Transform = "-108.047580941103 28.4302530772858 1.03403033585505; 0 0 -0.6288253600853 0.777546568710577; 18.0629817901379 1 2.12915707286447"
-		Mesh
-		{
-			GetByReference = "this:$Mesh"
-		}
-		SpecialEffects
-		{
-			Value
-			{
-				Count = 0
-			}
-		}
-		.component NeoAxis.Mesh
-		{
-			Name = Mesh
-			.component NeoAxis.MeshGeometry_Box
-			{
-				Name = Mesh Geometry
-			}
-		}
-		.component NeoAxis.PathfindingGeometryTag
-		{
-			Name = Pathfinding Geometry Tag
-		}
-	}
-	.component NeoAxis.MeshInSpace
-	{
 		Name = Cylinder
-		Transform = "7.08816475328394 -4.50072401065346 0.499999999999976; 0 0 0 1; 1 1 1"
+		Transform = "15.274798318126 -3.97249796769365 0.499999999999976; 0 0 0 1; 1 1 1"
 		Color = 1 0 0
 		Mesh
 		{
@@ -527,7 +502,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Cylinder 6
-		Transform = "7.24081630796516 -3.34188365047313 0.499999999999976; 0 0 0 1; 1 1 1"
+		Transform = "15.4274498728072 -2.81365760751332 0.499999999999976; 0 0 0 1; 1 1 1"
 		Color = 1 0 0
 		Mesh
 		{
@@ -560,7 +535,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Cylinder 7
-		Transform = "7.58445392341968 0.684644960411553 0.499999999999976; 0 0 0 1; 1 1 1"
+		Transform = "8.03982410004183 0.684644960411553 0.499999999999976; 0 0 0 1; 1 1 1"
 		Color = 1 0 0
 		Mesh
 		{
@@ -593,7 +568,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Cylinder 8
-		Transform = "7.62486090928333 1.520564969206 0.499999999999976; 0 0 0 1; 1 1 1"
+		Transform = "8.08023108590548 1.520564969206 0.499999999999976; 0 0 0 1; 1 1 1"
 		Color = 1 0 0
 		Mesh
 		{
@@ -626,7 +601,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Cylinder 2
-		Transform = "6.71160637045776 -5.63070903876488 0.499999999999976; 0 0 0 1; 1 1 1"
+		Transform = "14.8982399352998 -5.10248299580507 0.499999999999976; 0 0 0 1; 1 1 1"
 		Color = 1 0 0
 		Mesh
 		{
@@ -659,7 +634,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Cylinder 3
-		Transform = "6.71599731860378 -6.64067300916054 0.499999999999976; 0 0 0 1; 1 1 1"
+		Transform = "14.9026308834459 -6.11244696620073 0.499999999999976; 0 0 0 1; 1 1 1"
 		Color = 1 0 0
 		Mesh
 		{
@@ -692,7 +667,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Cylinder 4
-		Transform = "6.60562924962021 -7.50705790033763 0.499999999999976; 0 0 0 1; 1 1 1"
+		Transform = "14.7922628144623 -6.97883185737782 0.499999999999976; 0 0 0 1; 1 1 1"
 		Color = 1 0 0
 		Mesh
 		{
@@ -725,7 +700,7 @@
 	.component NeoAxis.MeshInSpace
 	{
 		Name = Cylinder 5
-		Transform = "7.13181083438481 -8.26808261285733 0.499999999999976; 0 0 0 1; 1 1 1"
+		Transform = "15.3184443992269 -7.73985656989752 0.499999999999976; 0 0 0 1; 1 1 1"
 		Color = 1 0 0
 		Mesh
 		{
@@ -758,7 +733,7 @@
 	.component NeoAxis.PathfindingGeometry
 	{
 		Name = Pathfinding Geometry
-		Transform = "-0.684766712410988 -7.60168448224856 0.731263671513787; 0 0 -0.545729801238319 0.837961206763407; 4.15252983573404 1.15296445480089 1.89621720410855"
+		Transform = "0.394342446902076 10.1148319236075 0.731263671513787; 0 0 0.994797260415041 0.101874484885713; 4.15252983573404 1.15296445480089 1.89621720410855"
 		Dynamic = True
 		.component NeoAxis.CSharpScript
 		{
@@ -789,43 +764,14 @@
 	}
 	.component NeoAxis.PathfindingGeometry
 	{
-		Name = Pathfinding Geometry 5
-		Transform = "-24.8359559995291 -11.12652532901 0.731263671513787; 0 0 -0.337461171473497 0.941339448736605; 19.9527579274612 1.71081239400514 1.89621720410855"
-		Dynamic = True
-	}
-	.component NeoAxis.PathfindingGeometry
-	{
-		Name = Pathfinding Geometry 6
-		Transform = "-36.8778093301162 -11.2526673827394 0.731263671513787; 0 0 -0.562210306021717 0.826994299740311; 19.9527579274612 7.95059480018703 1.89621720410855"
-		Dynamic = True
-	}
-	.component NeoAxis.PathfindingGeometry
-	{
-		Name = Pathfinding Geometry 7
-		Transform = "-59.5419822618703 -6.63168721588796 0.731263671513787; 0 0 -0.89283274490042 0.450388376441469; 30.1286642430172 12.0053980576505 2.86328795658819"
-		Dynamic = True
-	}
-	.component NeoAxis.PathfindingGeometry
-	{
-		Name = Pathfinding Geometry2
-		Transform = "1.9695485239596 10.7300435683445 0.157219565486622; 0 0 -0.337461171473497 0.941339448736605; 1.79675973808343 1.71081239400514 1.81169963801594"
-	}
-	.component NeoAxis.PathfindingGeometry
-	{
 		Name = Pathfinding Geometry 2
-		Transform = "-3.20729319851108 1.26575151676164 0.50000000002415; 0 0 0 1; 2.63526173379013 2.63526173379013 1.33591053701134"
-		Shape = Cylinder
-	}
-	.component NeoAxis.PathfindingGeometry
-	{
-		Name = Pathfinding Geometry 4
-		Transform = "-17.9837968720049 0.75305474320913 0.50000000002415; 0 0 0 1; 17.4001071474529 17.4001071474529 1.33591053701134"
+		Transform = "-2.78211324175406 3.43080953810502 0.50000000002415; 0 0 0 1; 3.2719221090574 3.2719221090574 1.33591053701134"
 		Shape = Cylinder
 	}
 	.component NeoAxis.Character
 	{
 		Name = Character 2
-		Transform = "-3.25013738760523 5.72510230230864 -0.00999986033624012; 0 0 -0.59553074836731 0.803332507610321; 1 1 1"
+		Transform = "-2.82495743084821 7.89016032365203 -0.00999986033624012; 0 0 -0.59553074836731 0.803332507610321; 1 1 1"
 		Collision = True
 		SpecialEffects
 		{
@@ -882,14 +828,13 @@
 	.component NeoAxis.ObjectInSpace
 	{
 		Name = Object In Space
-		Transform = "-3.11317788990063 -2.35387616851468 0; 0 0 0 1; 1 1 1"
+		Transform = "-2.68799793314361 -0.188818147171295 0; 0 0 0 1; 1 1 1"
 	}
 	.component NeoAxis.Gate
 	{
 		Name = Default Gate
 		Transform = "7.15930837444816 -1.43512183146008 0.00916243526446436; 0 0 -0.723561675885963 0.690259734584813; 1 1 1"
 		Collision = True
-		DesiredState = 1
 		SpecialEffects
 		{
 			Value
@@ -903,7 +848,6 @@
 		}
 		.component NeoAxis.PathfindingGeometry
 		{
-			Enabled = False
 			Name = Pathfinding Geometry
 			Dynamic = True
 			Transform
@@ -947,6 +891,297 @@
 				{
 				}
 			}
+		}
+	}
+	.component NeoAxis.Text2D
+	{
+		Name = Text 2D
+		ScreenLabel = NeverDisplay
+		Transform = "2.19139398111215 -0.466231364738514 1.60224529844258; 0 0 0 1; 1 1 1"
+		Text = Pathfinding component
+	}
+	.component NeoAxis.Text2D
+	{
+		Name = Text 2D 2
+		ScreenLabel = NeverDisplay
+		Transform = "1.0943496274428 10.1148319236075 1.78017867679504; 0 0 0 1; 1 1 1"
+		Text = PathfindingGeometry, Dynamic mode
+	}
+	.component NeoAxis.Text2D
+	{
+		Name = Text 2D 6
+		ScreenLabel = NeverDisplay
+		Transform = "13.4319093409641 15.9386822708643 6.03865454988037; 0 0 0 1; 1 1 1"
+		Text = Component with PathfindingGeometryTag, Dynamic mode
+	}
+	.component NeoAxis.Text2D
+	{
+		Name = Text 2D 4
+		ScreenLabel = NeverDisplay
+		Transform = "16.3573073555777 -4.68765637996025 2.08894036524013; 0 0 0 1; 1 1 1"
+		Text = Component with PathfindingGeometryTag
+	}
+	.component NeoAxis.Text2D
+	{
+		Name = Text 2D 3
+		ScreenLabel = NeverDisplay
+		Transform = "-2.78211324175406 3.43080953810502 2; 0 0 0 1; 1 1 1"
+		Text = PathfindingGeometry
+	}
+	.component NeoAxis.Text2D
+	{
+		Name = Text 2D 5
+		ScreenLabel = NeverDisplay
+		Transform = "7.15930837444816 -1.43512183146008 3.42343612542357; 0 0 0 1; 1 1 1"
+		Text = PathfindingGeometry attached to Gate
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 12
+		Transform = "13.4319093409641 15.9386822708643 3.1564426765639; 0 0 0.994797260415041 0.101874484885713; 10.8285965707618 2.72365524010907 0.172804437534095"
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Wood\\Wood Floor 039.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 1 1
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "13.4319093409641 15.9386822708643 2.15803149044287; 0.00000001338989491 0.00010743822679809 0.00000041367072734 0.999999994228428; 10.8285965707618 2 0.172804437534095"
+			MotionType = Kinematic
+			Mass = 200
+			MaterialFriction = 1
+			.component NeoAxis.CollisionShape_Box
+			{
+			}
+		}
+		.component NeoAxis.PathfindingGeometryTag
+		{
+			Name = Pathfinding Geometry Tag
+			Dynamic = True
+		}
+		.component NeoAxis.CSharpScript
+		{
+			Name = C# Script
+			NetworkMode = False
+			Code = "public void Box12_UpdateEvent(NeoAxis.Component sender, float delta)\r\n{\t\r\n\tvar obj = (ObjectInSpace)sender;\r\n\tvar sourceTransform = obj.Transform.Value;\r\n\tvar rotation = Quaternion.FromRotateByZ( EngineApp.EngineTime * 0.2 );\r\n\tobj.Transform = new Transform( sourceTransform.Position, rotation, sourceTransform.Scale ); \r\n}\r\n"
+			__parameter_Delta = 0
+			Exit
+			{
+			}
+			.component NeoAxis.EventHandlerComponent
+			{
+				Name = Event Handler UpdateEvent
+				WhenEnable = Editor, Simulation, Instance
+				Event
+				{
+					GetByReference = "this:..\\..\\event:UpdateEvent"
+				}
+				HandlerMethod
+				{
+					GetByReference = "this:..\\method:Box12_UpdateEvent(NeoAxis.Component,System.Single)"
+				}
+				HandlerFlow
+				{
+				}
+			}
+		}
+	}
+	.component NeoAxis.Building
+	{
+		Name = Building
+		Transform = "34 2 0; 0 0 -0.707106781186548 0.707106781186548; 1 1 1"
+		Size = 2 2 1
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Side 1 Floor Window
+			Levels = 0 0
+			Sides = MinusY, PlusY
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Window level 1.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Side 1 Floor Wall
+			Sides = MinusX, PlusX
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Wall.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Side 2+ Floor Window
+			Levels = 1 10000
+			Sides = MinusY, PlusY
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Window level 2+.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Roof
+			ElementType = Roof
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Roof.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Roof Edge
+			ElementType = RoofEdge
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Roof side.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Roof Corner
+			ElementType = RoofCorner
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Roof corner.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Cell Level 1 1
+			ElementType = Cell
+			Levels = 0 0
+			Sides = MinusY, PlusY
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 2.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Cell Level 1 2
+			ElementType = Cell
+			Levels = 0 0
+			Sides = MinusY, PlusY
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 3.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Cell Level 1 3
+			ElementType = Cell
+			Levels = 0 0
+			Sides = PlusXMinusY, MinusXPlusY
+			RotationOffset = 0 0 -0.707106781186547 0.707106781186547
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 2.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Cell Level 2+ 1
+			ElementType = Cell
+			Levels = 1 10000
+			Sides = MinusY, PlusY
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 4.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Cell Level 2+ 2
+			ElementType = Cell
+			Levels = 1 10000
+			Sides = MinusY, PlusY
+			PositionOffset = 0 0 0.4
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 2.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Cell Level 2+ 3
+			ElementType = Cell
+			Levels = 1 10000
+			Sides = MinusY, PlusY
+			PositionOffset = 0 0 0.4
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 3.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.BuildingElement
+		{
+			Name = Element Cell Level 2+ 4
+			ElementType = Cell
+			Levels = 1 10000
+			Sides = PlusXMinusY, MinusXPlusY
+			PositionOffset = 0 0 0.4
+			RotationOffset = 0 0 -0.707106781186547 0.707106781186547
+			Mesh
+			{
+				GetByReference = "Content\\Constructors\\Buildings\\Modern building\\Data\\Room 3.obj|$Mesh"
+			}
+		}
+		.component NeoAxis.PathfindingGeometryTag
+		{
+			Name = Pathfinding Geometry Tag
+			Walkable = False
+		}
+	}
+	.component NeoAxis.Fence
+	{
+		Name = Fence
+		Transform = "7.42867444553915 -2.58692331812334 0; 0 0 0 1; 1 1 1"
+		.component NeoAxis.FencePoint
+		{
+			Name = Fence Point
+			Transform = "7.42867444553915 -8 0; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.FencePoint
+		{
+			Name = Fence Point 2
+			Transform = "10 -8 0; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.FencePoint
+		{
+			Name = Fence Point 3
+			Transform = "10 -10 0; 0 0 0 1; 1 1 1"
+		}
+		.component NeoAxis.PathfindingGeometryTag
+		{
+			Name = Pathfinding Geometry Tag
+			Walkable = False
 		}
 	}
 }

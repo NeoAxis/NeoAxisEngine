@@ -2862,6 +2862,8 @@ namespace bgfx { namespace gl
 					g_caps.formats[ii] = supported;
 				}
 
+				g_caps.formats[TextureFormat::BGRA8] |= BGFX_CAPS_FORMAT_TEXTURE_BACKBUFFER;
+
 				g_caps.supported |= !!(BGFX_CONFIG_RENDERER_OPENGL || m_gles3)
 					|| s_extension[Extension::OES_texture_3D].m_supported
 					? BGFX_CAPS_TEXTURE_3D
@@ -3019,6 +3021,7 @@ namespace bgfx { namespace gl
 				if (m_vaoSupport)
 				{
 					GL_CHECK(glGenVertexArrays(1, &m_vao) );
+					GL_CHECK(glBindVertexArray(m_vao) );
 				}
 
 				m_samplerObjectSupport = false
@@ -3809,10 +3812,16 @@ namespace bgfx { namespace gl
 
 		void updateResolution(const Resolution& _resolution)
 		{
-			m_maxAnisotropy = !!(_resolution.reset & BGFX_RESET_MAXANISOTROPY)
+			float maxAnisotropy = !!(_resolution.reset & BGFX_RESET_MAXANISOTROPY)
 				? m_maxAnisotropyDefault
 				: 0.0f
 				;
+
+			if (m_maxAnisotropy != maxAnisotropy)
+			{
+				m_maxAnisotropy = maxAnisotropy;
+				invalidateCache();
+			}
 
 			if (s_extension[Extension::ARB_depth_clamp].m_supported)
 			{
@@ -3918,6 +3927,13 @@ namespace bgfx { namespace gl
 					m_glctx.makeCurrent(NULL);
 					m_currentFbo = frameBuffer.m_fbo[0];
 				}
+			}
+
+			if (0 != m_vao)
+			{
+				GL_CHECK(glDeleteVertexArrays(1, &m_vao) );
+				GL_CHECK(glGenVertexArrays(1, &m_vao) );
+				GL_CHECK(glBindVertexArray(m_vao) );
 			}
 
 			if (m_srgbWriteControlSupport)
@@ -4621,10 +4637,9 @@ namespace bgfx { namespace gl
 			}
 			else
 			{
-				const GLuint defaultVao = m_vao;
-				if (0 != defaultVao)
+				if (0 != m_vao)
 				{
-					GL_CHECK(glBindVertexArray(defaultVao) );
+					GL_CHECK(glBindVertexArray(m_vao) );
 				}
 
 				GL_CHECK(glDisable(GL_SCISSOR_TEST) );
@@ -7390,10 +7405,6 @@ namespace bgfx { namespace gl
 
 			if (needResolve)
 			{
-				////!!!!
-				//std::string rr = "needResolve";
-				//LogLongText(rr);
-
 				GL_CHECK(glGenFramebuffers(1, &m_fbo[1]) );
 				GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, m_fbo[1]) );
 
@@ -7406,7 +7417,7 @@ namespace bgfx { namespace gl
 					{
 						const TextureGL& texture = s_renderGL->m_textures[at.handle.idx];
 
-						if (0 != texture.m_id)
+						if (0 != texture.m_rbo && 0 != texture.m_id)
 						{
 
 							GLenum attachment = GL_INVALID_ENUM;
@@ -7426,7 +7437,9 @@ namespace bgfx { namespace gl
 								{
 									attachment = GL_DEPTH_ATTACHMENT;
 								}
-							} else {
+							}
+							else
+							{
 								attachment = GL_COLOR_ATTACHMENT0 + colorIdx;
 								++colorIdx;
 							}
@@ -7435,8 +7448,6 @@ namespace bgfx { namespace gl
 									? GL_TEXTURE_CUBE_MAP_POSITIVE_X + at.layer
 									: texture.m_target
 									;
-
-								//!!!!
 
 								GL_CHECK(glFramebufferTexture2D(GL_FRAMEBUFFER
 									, attachment
@@ -7776,19 +7787,9 @@ namespace bgfx { namespace gl
 
 		BGFX_GL_PROFILER_BEGIN_LITERAL("rendererSubmit", kColorView);
 
-		if (1 < m_numWindows
-		&&  m_vaoSupport)
+		if (0 != m_vao)
 		{
-			m_vaoSupport = false;
-			GL_CHECK(glBindVertexArray(0) );
-			GL_CHECK(glDeleteVertexArrays(1, &m_vao) );
-			m_vao = 0;
-		}
-
-		const GLuint defaultVao = m_vao;
-		if (0 != defaultVao)
-		{
-			GL_CHECK(glBindVertexArray(defaultVao) );
+			GL_CHECK(glBindVertexArray(m_vao) );
 		}
 
 		GL_CHECK(glBindFramebuffer(GL_FRAMEBUFFER, m_backBufferFbo) );
@@ -8883,11 +8884,6 @@ namespace bgfx { namespace gl
 
 			blitMsaaFbo();
 
-			if (m_vaoSupport)
-			{
-				GL_CHECK(glBindVertexArray(m_vao) );
-			}
-
 			if (0 < _render->m_numRenderItems)
 			{
 				if (0 != (m_resolution.reset & BGFX_RESET_FLUSH_AFTER_RENDER) )
@@ -9144,6 +9140,11 @@ namespace bgfx { namespace gl
 			blit(this, _textVideoMemBlitter, _render->m_textVideoMem);
 
 			BGFX_GL_PROFILER_END();
+		}
+
+		if (0 != m_vao)
+		{
+			GL_CHECK(glBindVertexArray(0) );
 		}
 	}
 } } // namespace bgfx
