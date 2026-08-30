@@ -2783,15 +2783,18 @@ namespace NeoAxis
 							if( ( cameraPosition - item.data.Position ).LengthSquared() > ( shadowPointSpotlightDistance + item.data.AttenuationFar ) * ( shadowPointSpotlightDistance + item.data.AttenuationFar ) )
 								skip = true;
 
-							//no point light shadows on web platform
-							if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && RenderingSystem.Capabilities.Backend == RendererBackend.OpenGLES )
-								skip = true;
+							////no point light shadows on web platform
+							//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && RenderingSystem.Capabilities.Backend == RendererBackend.OpenGLES )
+							//	skip = true;
 						}
 						else if( item.data.Type == Light.TypeEnum.Spotlight )
 						{
 							if( item.data.BoundingBox.GetPointDistance( cameraPosition ) > shadowPointSpotlightDistance )
 								skip = true;
 						}
+
+						if( RenderingSystem.WebGL && item.data.Type != Light.TypeEnum.Directional )
+							skip = true;
 
 						if( !skip )
 						{
@@ -12153,67 +12156,67 @@ namespace NeoAxis
 							{
 								//point
 
-								var webGL = SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && RenderingSystem.Capabilities.Backend == RendererBackend.OpenGLES;//no point shadow map array on WebGL
-								if( !webGL )
+								//var webGL = SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && RenderingSystem.Capabilities.Backend == RendererBackend.OpenGLES;//no point shadow map array on WebGL
+								//if( !webGL )
+								//{
+								//create array if no shadows
+								if( frameData.ShadowTextureArrayPoint == null )
 								{
-									//create array if no shadows
-									if( frameData.ShadowTextureArrayPoint == null )
-									{
-										//!!!!workaround for Android. 1 depth arrays are not arrays
-										frameData.ShadowTextureArrayPoint = context.RenderTargetCube_Alloc( new Vector2I( maxSize, maxSize ), PixelFormat.A8R8G8B8, arrayLayers: Math.Max( dictionary.Count, 2 ) );
-									}
+									//!!!!workaround for Android. 1 depth arrays are not arrays
+									frameData.ShadowTextureArrayPoint = context.RenderTargetCube_Alloc( new Vector2I( maxSize, maxSize ), PixelFormat.A8R8G8B8, arrayLayers: Math.Max( dictionary.Count, 2 ) );
+								}
 
-									var arrayTexture = frameData.ShadowTextureArrayPoint;
-									if( arrayTexture != null )
-									{
-										var index = frameData.ShadowTextureArrayPointUsedForShadows;
+								var arrayTexture = frameData.ShadowTextureArrayPoint;
+								if( arrayTexture != null )
+								{
+									var index = frameData.ShadowTextureArrayPointUsedForShadows;
 
-										foreach( var mask in dictionary.Keys )
+									foreach( var mask in dictionary.Keys )
+									{
+										if( mask.Result.TextureType == ImageComponent.TypeEnum._2D )
 										{
-											if( mask.Result.TextureType == ImageComponent.TypeEnum._2D )
+											//when mask is 2D texture
+
+											for( int face = 0; face < 6; face++ )
 											{
-												//when mask is 2D texture
-
-												for( int face = 0; face < 6; face++ )
-												{
-													var slice = index * 6 + face;
-													var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
-													context.SetViewport( viewport );
-													CopyToCurrentViewport( context, mask );
-												}
+												var slice = index * 6 + face;
+												var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+												context.SetViewport( viewport );
+												CopyToCurrentViewport( context, mask );
 											}
-											else if( mask.Result.TextureType == ImageComponent.TypeEnum.Cube )
-											{
-												//when mask is cube texture
-
-												for( int face = 0; face < 6; face++ )
-												{
-													var slice = index * 6 + face;
-													var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
-													context.SetViewport( viewport );
-
-													//!!!!GC. where else
-													//!!!!also can copy with one draw call, use mrt or compute
-													//but it only for current gen, for modern gen use dynamic indexing
-
-													var shader = new CanvasRenderer.ShaderItem();
-													shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
-													shader.FragmentProgramFileName = @"Base\Shaders\CopyCubemapFace_fs.sc";
-
-													shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, mask, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
-
-													shader.Parameters.Set( "u_copyCubemapFaceIndex", new Vector4F( face, 0, 0, 0 ) );
-
-													context.RenderQuadToCurrentViewport( shader );
-
-													//CopyToCurrentViewport( context, mask );
-												}
-											}
-
-											index++;
 										}
+										else if( mask.Result.TextureType == ImageComponent.TypeEnum.Cube )
+										{
+											//when mask is cube texture
+
+											for( int face = 0; face < 6; face++ )
+											{
+												var slice = index * 6 + face;
+												var viewport = arrayTexture.Result.GetRenderTarget( slice: slice ).Viewports[ 0 ];
+												context.SetViewport( viewport );
+
+												//!!!!GC. where else
+												//!!!!also can copy with one draw call, use mrt or compute
+												//but it only for current gen, for modern gen use dynamic indexing
+
+												var shader = new CanvasRenderer.ShaderItem();
+												shader.VertexProgramFileName = @"Base\Shaders\EffectsCommon_vs.sc";
+												shader.FragmentProgramFileName = @"Base\Shaders\CopyCubemapFace_fs.sc";
+
+												shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 0/*"sourceTexture"*/, mask, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Point ) );
+
+												shader.Parameters.Set( "u_copyCubemapFaceIndex", new Vector4F( face, 0, 0, 0 ) );
+
+												context.RenderQuadToCurrentViewport( shader );
+
+												//CopyToCurrentViewport( context, mask );
+											}
+										}
+
+										index++;
 									}
 								}
+								//}
 							}
 							else if( lightType == Light.TypeEnum.Spotlight )
 							{
@@ -14745,35 +14748,51 @@ namespace NeoAxis
 				////var filtering = FilterOption.Linear;
 				var textureFlags = isByte4Format ? 0 : TextureFlags.CompareLessEqual;
 
-				//shadow map directional
+				if( RenderingSystem.WebGL )
 				{
-					var shadowMap = frameData.ShadowTextureArrayDirectional;
-					if( shadowMap == null )
-						shadowMap = isByte4Format ? ResourceUtility.DummyTexture2DArrayARGB8 : ResourceUtility.DummyShadowMap2DArrayFloat32R;
+					//shadow map directional
+					{
+						var shadowMap = frameData.ShadowTextureArrayDirectional;
+						if( shadowMap == null )
+							shadowMap = isByte4Format ? ResourceUtility.BlackTexture2D : ResourceUtility.BlackTexture2D;
 
-					var wrap = isByte4Format;
+						var wrap = isByte4Format;
 
-					context.BindTexture( SystemSettings.LimitedDevice ? 8 : 10/*s_shadowMapShadowDirectional*/, shadowMap, wrap ? TextureAddressingMode.Wrap : TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+						context.BindTexture( SystemSettings.LimitedDevice ? 8 : 10/*s_shadowMapShadowDirectional*/, shadowMap, wrap ? TextureAddressingMode.Wrap : TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+					}
 				}
-
-				//shadow map array spot
+				else
 				{
-					var shadowMap = frameData.ShadowTextureArraySpot;
-					if( shadowMap == null )
-						shadowMap = isByte4Format ? ResourceUtility.DummyTexture2DArrayARGB8 : ResourceUtility.DummyShadowMap2DArrayFloat32R;
+					//shadow map directional
+					{
+						var shadowMap = frameData.ShadowTextureArrayDirectional;
+						if( shadowMap == null )
+							shadowMap = isByte4Format ? ResourceUtility.DummyTexture2DArrayARGB8 : ResourceUtility.DummyShadowMap2DArrayFloat32R;
 
-					context.BindTexture( SystemSettings.LimitedDevice ? 9 : 11/*s_shadowMapShadowSpot*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
-				}
+						var wrap = isByte4Format;
 
-				//shadow map array point
-				var webGL = SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && RenderingSystem.Capabilities.Backend == RendererBackend.OpenGLES;//no point shadow map array on WebGL
-				if( !webGL )
-				{
-					var shadowMap = frameData.ShadowTextureArrayPoint;
-					if( shadowMap == null )
-						shadowMap = isByte4Format ? ResourceUtility.DummyTextureCubeArrayARGB8 : ResourceUtility.DummyShadowMapCubeArrayFloat32R;
+						context.BindTexture( SystemSettings.LimitedDevice ? 8 : 10/*s_shadowMapShadowDirectional*/, shadowMap, wrap ? TextureAddressingMode.Wrap : TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+					}
 
-					context.BindTexture( SystemSettings.LimitedDevice ? 10 : 12/*s_shadowMapShadowPoint*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+					//shadow map array spot
+					{
+						var shadowMap = frameData.ShadowTextureArraySpot;
+						if( shadowMap == null )
+							shadowMap = isByte4Format ? ResourceUtility.DummyTexture2DArrayARGB8 : ResourceUtility.DummyShadowMap2DArrayFloat32R;
+
+						context.BindTexture( SystemSettings.LimitedDevice ? 9 : 11/*s_shadowMapShadowSpot*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+					}
+
+					//shadow map array point
+					//var webGL = SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && RenderingSystem.Capabilities.Backend == RendererBackend.OpenGLES;//no point shadow map array on WebGL
+					//if( !webGL )
+					{
+						var shadowMap = frameData.ShadowTextureArrayPoint;
+						if( shadowMap == null )
+							shadowMap = isByte4Format ? ResourceUtility.DummyTextureCubeArrayARGB8 : ResourceUtility.DummyShadowMapCubeArrayFloat32R;
+
+						context.BindTexture( SystemSettings.LimitedDevice ? 10 : 12/*s_shadowMapShadowPoint*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+					}
 				}
 			}
 

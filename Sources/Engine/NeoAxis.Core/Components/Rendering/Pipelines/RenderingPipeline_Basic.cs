@@ -323,7 +323,15 @@ namespace NeoAxis
 		[Category( "Shadows" )]
 		public Reference<int> ShadowDirectionalLightCascades
 		{
-			get { if( _shadowDirectionalLightCascades.BeginGet() ) ShadowDirectionalLightCascades = _shadowDirectionalLightCascades.Get( this ); return _shadowDirectionalLightCascades.value; }
+			get
+			{
+				if( _shadowDirectionalLightCascades.BeginGet() ) ShadowDirectionalLightCascades = _shadowDirectionalLightCascades.Get( this );
+
+				if( RenderingSystem.WebGL )
+					return Math.Min( _shadowDirectionalLightCascades.value, 1 );
+
+				return _shadowDirectionalLightCascades.value;
+			}
 			set
 			{
 				if( value < 1 )

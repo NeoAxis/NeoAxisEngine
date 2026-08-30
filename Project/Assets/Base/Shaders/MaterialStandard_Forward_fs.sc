@@ -69,26 +69,35 @@ SAMPLER2D(s_lightsTexture_7, 7);
 	#ifdef LIMITED_DEVICE
 		//limited device specific. light grid is disabled, reused by shadows and masks because of samplers limit
 
-		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
-			SAMPLER2DARRAY(s_shadowMapShadowDirectional_8, 8);
-		#else
-			SAMPLER2DARRAYSHADOW(s_shadowMapShadowDirectional_8, 8);
-		#endif
-#define s_shadowMapShadowDirectional s_shadowMapShadowDirectional_8
+		//on WebGL only directional light shadows are supported. only 1 cascade
+#ifdef WEBGL
 
-		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
-			SAMPLER2DARRAY(s_shadowMapShadowSpot_9, 9);
-		#else
-			SAMPLER2DARRAYSHADOW(s_shadowMapShadowSpot_9, 9);
-		#endif
-#define s_shadowMapShadowSpot s_shadowMapShadowSpot_9
+			#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+				SAMPLER2D(s_shadowMapShadowDirectional_8, 8);
+			#else
+			#endif
+			#define s_shadowMapShadowDirectional s_shadowMapShadowDirectional_8
+
+#else		
 		
-#ifndef WEBGL		
-		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
-			SAMPLERCUBEARRAY(s_shadowMapShadowPoint, 10);
-		#else
-			SAMPLERCUBEARRAYSHADOW(s_shadowMapShadowPoint, 10);
-		#endif
+			#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+				SAMPLER2DARRAY(s_shadowMapShadowDirectional, 8);
+			#else
+				SAMPLER2DARRAYSHADOW(s_shadowMapShadowDirectional, 8);
+			#endif
+
+			#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+				SAMPLER2DARRAY(s_shadowMapShadowSpot, 9);
+			#else
+				SAMPLER2DARRAYSHADOW(s_shadowMapShadowSpot, 9);
+			#endif
+			
+			#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+				SAMPLERCUBEARRAY(s_shadowMapShadowPoint, 10);
+			#else
+				SAMPLERCUBEARRAYSHADOW(s_shadowMapShadowPoint, 10);
+			#endif
+
 #endif
 	
 	#else	
@@ -564,9 +573,7 @@ void main()
 					//dir = float3(-dir.y, dir.z, dir.x);
 					#ifdef LIMITED_DEVICE
 						#ifdef SHADOW_MAP
-							#ifndef WEBGL
-								lightMaskMultiplier = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( dir, lightMaskIndex ), 0 ).rgb;
-							#endif
+							lightMaskMultiplier = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( dir, lightMaskIndex ), 0 ).rgb;
 						#endif
 					#else
 						lightMaskMultiplier = textureCubeArrayLod( s_lightMaskPoint, vec4( dir, lightMaskIndex ), 0 ).rgb;

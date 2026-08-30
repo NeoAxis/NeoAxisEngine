@@ -1235,8 +1235,8 @@ namespace NeoAxis
 					return ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
 
 				//!!!!temp Web Shadows
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
-					return ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
+				//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+				//	return ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
 
 				if( !shadowTechnique.HasValue )
 				{
@@ -1375,7 +1375,7 @@ namespace NeoAxis
 			if( Capabilities.Backend == RendererBackend.Vulkan )
 				return false;
 
-			//!!!!temp Web Masks
+			//!!!!temp Web Masks. Masks are not supported on WebGL
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				return false;
 
@@ -1800,6 +1800,11 @@ namespace NeoAxis
 		public static bool DepthBuffer32Float
 		{
 			get { return Capabilities.Backend == RendererBackend.Direct3D11 || Capabilities.Backend == RendererBackend.Direct3D12; }
+		}
+
+		public static bool WebGL
+		{
+			get { return SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && Capabilities.Backend == RendererBackend.OpenGLES; }
 		}
 	}
 }

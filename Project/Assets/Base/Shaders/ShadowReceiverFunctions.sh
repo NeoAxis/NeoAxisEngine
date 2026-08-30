@@ -144,6 +144,17 @@ float getShadowValueSimpleDirectional( int cascadeIndex, vec4 shadowUV, int nLig
 	float compareDepth = shadowUV.z / d_lightShadowMapFarClipDistance;
 	vec2 texCoord = shadowUV.xy / shadowUV.w;
 
+#ifdef WEBGL
+	
+	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+		vec4 shadowValue = texture2D( s_shadowMapShadowDirectional, texCoord );
+		MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;	
+	#else
+		MEDIUMP float shadowFactor = 0.0;
+	#endif
+	
+#else
+	
 	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
 		vec4 shadowValue = texture2DArrayLod( s_shadowMapShadowDirectional, vec3( texCoord, cascadeIndex ), 0 );
 		MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;
@@ -151,6 +162,8 @@ float getShadowValueSimpleDirectional( int cascadeIndex, vec4 shadowUV, int nLig
 		MEDIUMP float shadowFactor = shadow2DArray( s_shadowMapShadowDirectional, vec4( texCoord, cascadeIndex, compareDepth ) ).r;		
 	#endif
 	
+#endif
+	
 //#ifdef REVERSEDZ
 //	return shadowFactor;
 //#else
@@ -158,16 +171,12 @@ float getShadowValueSimpleDirectional( int cascadeIndex, vec4 shadowUV, int nLig
 //#endif
 }
 
+#ifndef WEBGL
 float getShadowValueSimpleSpot( float shadowMapIndex, vec4 shadowUV, int nLight )
 {
 	float compareDepth = shadowUV.z / d_lightShadowMapFarClipDistance;
 	vec2 texCoord = shadowUV.xy / shadowUV.w;
 
-//!!!!
-//#ifdef GLSL
-//	float shadowFactor = 0.0;
-//#else	
-	
 	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
 		vec4 shadowValue = texture2DArrayLod( s_shadowMapShadowSpot, vec3( texCoord, shadowMapIndex ), 0 );
 		MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;
@@ -175,14 +184,13 @@ float getShadowValueSimpleSpot( float shadowMapIndex, vec4 shadowUV, int nLight 
 		MEDIUMP float shadowFactor = shadow2DArray( s_shadowMapShadowSpot, vec4( texCoord, shadowMapIndex, compareDepth ) ).r;
 	#endif
 	
-//#endif
-
 //#ifdef REVERSEDZ
 //	return shadowFactor;
 //#else
 	return 1.0 - shadowFactor;
 //#endif
 }
+#endif //!WEBGL
 
 //#endif
 
@@ -455,12 +463,25 @@ float getShadowValuePCFDirectional( int cascadeIndex, vec4 shadowUV, vec4 fragCo
 	{
 		vec2 texCoord = shadowUVScaled.xy + vogelDiskSample(n, sampleCount, 0.0) * scale * penumbra;
 
+#ifdef WEBGL
+
+	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+		vec4 shadowValue = texture2D( s_shadowMapShadowDirectional, texCoord );
+		MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;	
+	#else
+		MEDIUMP float shadowFactor = 0.0;
+	#endif
+
+#else
+		
 	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
 		vec4 shadowValue = texture2DArrayLod( s_shadowMapShadowDirectional, vec3( texCoord, cascadeIndex ), 0 );
 		MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;	
 	#else		
 		MEDIUMP float shadowFactor = shadow2DArray( s_shadowMapShadowDirectional, vec4( texCoord, cascadeIndex, compareDepth ) ).r;
 	#endif
+	
+#endif
 		
 		shadow += shadowFactor;
 	}
@@ -472,6 +493,7 @@ float getShadowValuePCFDirectional( int cascadeIndex, vec4 shadowUV, vec4 fragCo
 //#endif
 }
 
+#ifndef WEBGL
 float getShadowValuePCFSpot( float shadowMapIndex, vec4 shadowUV, vec4 fragCoord, int nLight )
 {
 	float compareDepth = shadowUV.z / d_lightShadowMapFarClipDistance;
@@ -543,6 +565,7 @@ float getShadowValuePCFSpot( float shadowMapIndex, vec4 shadowUV, vec4 fragCoord
 	return 1.0 - shadow / float(sampleCount);
 //#endif
 }
+#endif // !WEBGL
 
 #endif
 
@@ -752,21 +775,18 @@ float getShadowValueEVSM(sampler2DArray shadowMapArray, int cascadeIndex, vec4 s
 //Point light
 
 //#ifdef GLOBAL_SHADOW_TECHNIQUE_SIMPLE
+#ifndef WEBGL
 float getShadowValuePointSimple( float shadowMapIndex, vec4 shadowUV, int nLight )
 {
 	float compareDepth = shadowUV.w / d_lightShadowMapFarClipDistance;
 
-	//flipped cubemaps. conversion already done in the vertex shader.
-#ifndef WEBGL
+	//flipped cubemaps. conversion already done in the vertex shader.	
 	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
 		vec4 shadowValue = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( shadowUV.xyz, shadowMapIndex ), 0.0 );
 		MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;
 	#else	
 		MEDIUMP float shadowFactor = shadowCubeArray( s_shadowMapShadowPoint, vec4( shadowUV.xyz, shadowMapIndex ), compareDepth ).r;
 	#endif
-#else
-	MEDIUMP float shadowFactor = 0.0;
-#endif
 
 //#ifdef REVERSEDZ
 //	return shadowFactor;
@@ -775,8 +795,10 @@ float getShadowValuePointSimple( float shadowMapIndex, vec4 shadowUV, int nLight
 //#endif
 
 }
+#endif // !WEBGL
 //#endif
 
+#ifndef WEBGL
 #if defined(GLOBAL_SHADOW_TECHNIQUE_PCF4) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF8) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF12) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF16) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF22) || defined(GLOBAL_SHADOW_TECHNIQUE_PCF32)
 float getShadowValuePointPCF( float shadowMapIndex, vec4 shadowUV, int nLight )
 {
@@ -867,16 +889,12 @@ float getShadowValuePointPCF( float shadowMapIndex, vec4 shadowUV, int nLight )
 		vec3 texCoord = texPos + offset;
 
 		//flipped cubemaps. conversion already done in the vertex shader.		
-#ifndef WEBGL
-	#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
-		vec4 shadowValue = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( texCoord, shadowMapIndex ), 0.0 );
-		MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;
-	#else
-		MEDIUMP float shadowFactor = shadowCubeArray( s_shadowMapShadowPoint, vec4( texCoord, shadowMapIndex ), compareDepth ).r;
-	#endif
-#else
-	MEDIUMP float shadowFactor = 0.0;
-#endif
+		#ifdef SHADOW_TEXTURE_FORMAT_BYTE4
+			vec4 shadowValue = textureCubeArrayLod( s_shadowMapShadowPoint, vec4( texCoord, shadowMapIndex ), 0.0 );
+			MEDIUMP float shadowFactor = compareDepth < unpackRgbaToFloat( shadowValue ) ? 1.0 : 0.0;
+		#else
+			MEDIUMP float shadowFactor = shadowCubeArray( s_shadowMapShadowPoint, vec4( texCoord, shadowMapIndex ), compareDepth ).r;
+		#endif
 
 		shadow += shadowFactor;
 	}
@@ -888,6 +906,7 @@ float getShadowValuePointPCF( float shadowMapIndex, vec4 shadowUV, int nLight )
 //#endif
 }
 #endif
+#endif // !WEBGL
 
 /*#ifdef GLOBAL_SHADOW_TECHNIQUE_CHS
 float getShadowValuePointCHS(vec4 shadowUV)
@@ -922,16 +941,21 @@ float calcWorldTexelSize( float worldDistanceToSample, int cascadeIndex, int lig
 		distScale = worldDistanceToSample;
 		//unitTexelSize = d_lightShadowUnitDistanceTexelSizes[ 0 ];
 	}
+#ifdef WEBGL
+	unitTexelSize = d_lightShadowUnitDistanceTexelSizes[ 0 ];
+#else
 	unitTexelSize = d_lightShadowUnitDistanceTexelSizes[ cascadeIndex ];
+#endif
 	return distScale * unitTexelSize;
 }
 
 float getShadowMultiplierMulti( vec3 worldPosition, float cameraDistance, float cascadeDepth, MEDIUMP vec3 lightWorldDirection, MEDIUMP vec3 worldNormal, vec2 texCoord, vec4 fragCoord, int lightType, float shadowMapIndex, int nLight )
 {
-	MEDIUMP float final;
-	MEDIUMP float finalAdd;
+	MEDIUMP float final = 0.0;
+	MEDIUMP float finalAdd = 0.0;
 
 	MEDIUMP int cascadeIndex = 0;
+#ifndef WEBGL
 #ifndef LIGHT_DIRECTIONAL_AMBIENT_ONLY
 	BRANCH
 	if( lightType == ENUM_LIGHT_TYPE_DIRECTIONAL )
@@ -949,7 +973,6 @@ float getShadowMultiplierMulti( vec3 worldPosition, float cameraDistance, float 
 			else
 				cascadeIndex = 3;
 			
-//#ifndef MOBILE
 			//overlap cascades
 			float from = lightShadowCascades[cascadeIndex];
 			float to = from * 1.2;//d_lightShadowCascadeOverlapping;
@@ -961,9 +984,9 @@ float getShadowMultiplierMulti( vec3 worldPosition, float cameraDistance, float 
 			}
 			int cascadeCount = int(lightShadowCascades.x) - 1;
 			cascadeIndex = min(cascadeIndex, cascadeCount);
-//#endif
 		}
 	}
+#endif //!WEBGL
 
 	worldNormal = normalize(worldNormal);
 	vec3 shadowTexelNormal = normalize( lightType == ENUM_LIGHT_TYPE_SPOTLIGHT ? -d_lightDirection : lightWorldDirection );
@@ -990,6 +1013,8 @@ float getShadowMultiplierMulti( vec3 worldPosition, float cameraDistance, float 
 		//////////////////////////////////////////////////
 		//Point
 
+		#ifndef WEBGL
+		
 		vec4 shadowUV;
 		shadowUV.xyz = worldPositionFixed - d_lightPosition;
 		shadowUV.w = length(shadowUV.xyz);
@@ -1023,6 +1048,8 @@ float getShadowMultiplierMulti( vec3 worldPosition, float cameraDistance, float 
 		//	#endif
 
 		finalAdd = saturate((cameraDistance + u_viewportOwnerShadowPointSpotlightDistance.y) * u_viewportOwnerShadowPointSpotlightDistance.z);
+		
+		#endif //!WEBGL
 	}
 	else if( lightType == ENUM_LIGHT_TYPE_DIRECTIONAL )
 #endif		
@@ -1082,6 +1109,8 @@ float getShadowMultiplierMulti( vec3 worldPosition, float cameraDistance, float 
 		//////////////////////////////////////////////////
 		//Spot
 
+		#ifndef WEBGL
+		
 		vec4 position4 = vec4(worldPositionFixed, 1);
 		vec4 shadowUV = mul( d_lightShadowTextureViewProjMatrix0, position4 );
 		
@@ -1104,6 +1133,8 @@ float getShadowMultiplierMulti( vec3 worldPosition, float cameraDistance, float 
 		//	#endif
 
 		finalAdd = saturate((cameraDistance + u_viewportOwnerShadowPointSpotlightDistance.y) * u_viewportOwnerShadowPointSpotlightDistance.z);
+		
+		#endif //!WEBGL
 	}
 #endif	
 
