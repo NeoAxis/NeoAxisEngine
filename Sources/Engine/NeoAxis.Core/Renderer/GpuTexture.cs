@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using NeoAxis.Editor;
 using Internal;
 using System.Runtime.CompilerServices;
+using System.Linq;
 
 namespace NeoAxis
 {
@@ -53,6 +54,8 @@ namespace NeoAxis
 		bool needUpdateNative;
 
 		List<RenderTargetItem> renderTargets = new List<RenderTargetItem>();
+
+		string compressedFileRealFileNameLoaded;
 
 		////bug fix for Intel
 		//internal bool _renderTargetCleared;
@@ -928,6 +931,7 @@ namespace NeoAxis
 					{
 						if( !LoadResultData( compressedFileRealFileName, false, out error ) )
 							return false;
+						compressedFileRealFileNameLoaded = compressedFileRealFileName;
 						sourceSize = currentCompressedSourceFileSize;
 						sourceFormat = currentCompressedSourceFileFormat;
 						error = "";
@@ -1162,6 +1166,7 @@ namespace NeoAxis
 
 					if( !LoadResultData( compressedFileRealFileName, false, out error ) )
 						return false;
+					compressedFileRealFileNameLoaded = compressedFileRealFileName;
 					return true;
 				}
 
@@ -1190,10 +1195,10 @@ namespace NeoAxis
 
 				nativeObject = null;
 				renderTargets.Clear();
-
-				lock( all )
-					all.Remove( this );
 			}
+
+			lock( all )
+				all.Remove( this );
 
 			//base.OnDispose();
 		}
@@ -1574,6 +1579,26 @@ namespace NeoAxis
 			get { return mode; }
 		}
 
+		public string[] LoadFileNames
+		{
+			get { return loadFileNames; }
+		}
+
+		public bool LoadFileCube4x3
+		{
+			get { return loadFileCube4x3; }
+		}
+
+		public string ComponentTextureVirtualFileName
+		{
+			get { return componentTextureVirtualFileName; }
+		}
+
+		public string CompressedFileRealFileNameLoaded
+		{
+			get { return compressedFileRealFileNameLoaded; }
+		}
+
 		//!!!!было
 		//public IntPtr CallCustomMethod( string message, IntPtr param )
 		//{
@@ -1660,5 +1685,23 @@ namespace NeoAxis
 		{
 			UnloadNotUsedForLongTime( -1 );
 		}
+
+		//public static void DisposeAllWithNameExceptBaseDirectory()
+		//{
+		//	foreach( var texture in GetAll() )
+		//	{
+		//		var fileNames = new List<string>();
+		//		if( !string.IsNullOrEmpty( texture.ComponentTextureVirtualFileName ) )
+		//			fileNames.Add( texture.ComponentTextureVirtualFileName );
+		//		if( texture.LoadFileNames != null )
+		//			foreach( var fileName2 in texture.LoadFileNames )
+		//				fileNames.Add( fileName2 );
+		//		if( !string.IsNullOrEmpty( texture.CompressedFileRealFileNameLoaded ) )
+		//			fileNames.Add( texture.CompressedFileRealFileNameLoaded );
+
+		//		if( fileNames.Count != 0 && !fileNames.Any( fileName => fileName.StartsWith( "Base\\" ) ) )
+		//			texture.Dispose();
+		//	}
+		//}
 	}
 }

@@ -31,12 +31,12 @@ namespace NeoAxis
 		///////////////////////////////////////////////
 		// Common
 
-		//!!!!optimize
-		[Browsable( false )]
-		public Scene ParentScene
-		{
-			get { return ParentRoot as Scene; }
-		}
+		////!!!!optimize
+		//[Browsable( false )]
+		//public Scene ParentScene
+		//{
+		//	get { return ParentRoot as Scene; }
+		//}
 
 		protected override void OnEnabledInHierarchyChanged()
 		{
@@ -108,7 +108,7 @@ namespace NeoAxis
 
 		public static GameLogic GetFromComponent( Component component )
 		{
-			return ( component.ParentRoot as Scene )?.GetGameLogic();
+			return ( component.ParentScene )?.GetGameLogic();
 		}
 
 		///////////////////////////////////////////////
@@ -521,7 +521,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		protected virtual SpawnPoint GetSpawnPointForPlayer( ServerUserItem serverUserInfo, SingleUserItem singleUserItem, Metadata.TypeInfo objectType )
+		public SpawnPoint[] GetCachedSpawnPointsForPlayer()
 		{
 			var array = spawnPointsForPlayerCache;
 			if( spawnPointsForPlayerCache == null || !EngineApp.IsSimulation )
@@ -529,13 +529,26 @@ namespace NeoAxis
 				array = ParentRoot.GetComponents<SpawnPoint>( onlyEnabledInHierarchy: true ).Where( p => p.Mode.Value == SpawnPoint.ModeEnum.Player ).ToArray();
 				spawnPointsForPlayerCache = array;
 			}
+			return spawnPointsForPlayerCache;
+		}
+
+		protected virtual SpawnPoint GetSpawnPointForPlayer( ServerUserItem serverUserInfo, SingleUserItem singleUserItem, Metadata.TypeInfo objectType )
+		{
+			var spawnPoints = GetCachedSpawnPointsForPlayer();
+
+			//var array = spawnPointsForPlayerCache;
+			//if( spawnPointsForPlayerCache == null || !EngineApp.IsSimulation )
+			//{
+			//	array = ParentRoot.GetComponents<SpawnPoint>( onlyEnabledInHierarchy: true ).Where( p => p.Mode.Value == SpawnPoint.ModeEnum.Player ).ToArray();
+			//	spawnPointsForPlayerCache = array;
+			//}
 
 			if( ParentScene != null )
 			{
 				var random = ParentScene.SceneRandom;
-				var index = random.Next( array.Length );
-				if( index >= 0 && index < array.Length )
-					return array[ index ];
+				var index = random.Next( spawnPoints.Length );
+				if( index >= 0 && index < spawnPoints.Length )
+					return spawnPoints[ index ];
 			}
 
 			return null;

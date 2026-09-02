@@ -101,7 +101,7 @@ namespace Project
 					//restore cursor visibility
 					EngineApp.ShowCursor = true;
 
-					SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", false );
+					SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", false, false, true );
 				}
 
 				if( resetTimeCounter == 0 && Time > GetTotalTime() )

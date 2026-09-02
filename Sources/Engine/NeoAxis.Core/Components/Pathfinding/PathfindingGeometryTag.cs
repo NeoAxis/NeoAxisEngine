@@ -142,7 +142,7 @@ namespace NeoAxis
 			if( data.Add )
 				data.Box = GetBox();
 
-			Pathfinding.UpdateDynamicGeometry( this, FindParent<Scene>(), data, specifiedPathfinding );
+			Pathfinding.UpdateDynamicGeometry( this, ParentScene, data, specifiedPathfinding );
 		}
 	}
 }

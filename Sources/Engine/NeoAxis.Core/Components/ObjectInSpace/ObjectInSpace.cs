@@ -17,7 +17,7 @@ namespace NeoAxis
 	[PreviewImage( "NeoAxis.Editor.ObjectInSpacePreviewImage" )]
 	public class ObjectInSpace : Component, IVisibleInHierarchy, ICanBeSelectedInHierarchy//, Scene_DocumentWindow.ICanDropToScene
 	{
-		Scene parentSceneCached;
+		//Scene parentSceneCached;
 		//RigidBody cachedRigidBodyByReference;
 
 		//scene octree
@@ -494,10 +494,10 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			if( EnabledInHierarchy )
-				parentSceneCached = ParentScene;
-			else
-				parentSceneCached = null;
+			//if( EnabledInHierarchy )
+			//	parentSceneCached = ParentScene;
+			//else
+			//	parentSceneCached = null;
 
 			if( EnabledInHierarchy )
 				SpaceBoundsUpdate();
@@ -736,17 +736,17 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		[Browsable( false )]
-		public Scene ParentScene
-		{
-			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
-			get
-			{
-				if( parentSceneCached != null )
-					return parentSceneCached;
-				return ParentRoot as Scene; //return FindParent<Scene>();
-			}
-		}
+		//[Browsable( false )]
+		//public Scene ParentScene
+		//{
+		//	[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+		//	get
+		//	{
+		//		if( parentSceneCached != null )
+		//			return parentSceneCached;
+		//		return ParentRoot as Scene; //return FindParent<Scene>();
+		//	}
+		//}
 
 		/////////////////////////////////////////
 

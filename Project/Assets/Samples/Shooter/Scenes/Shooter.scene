@@ -22,7 +22,7 @@
 	{
 		Name = Camera Editor
 		Visible = False
-		Transform = "-35.4512187282232 36.3624290072784 33.2602182729224; 0.154262187644403 0.368562981162184 -0.35393915264969 0.845630878457987; 1 1 1"
+		Transform = "-32.1621667052416 43.0191273493522 39.2930036911537; 0.180909089052031 0.404505100558925 -0.365994873948568 0.818349117042079; 1 1 1"
 	}
 	.component NeoAxis.Camera
 	{
@@ -37,7 +37,7 @@
 	.component NeoAxis.Light
 	{
 		Name = Ambient Light
-		Transform = "33.3672008088317 -5.39737456891382 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
+		Transform = "-24.0331107580156 25.2553151339531 0.8606866051066; 0.177025544047126 0 0 0.98420625722194; 1 1 1"
 		Type = Ambient
 		Brightness = 30000
 		ShadowNearClipDistance = 0.1
@@ -45,7 +45,7 @@
 	.component NeoAxis.Light
 	{
 		Name = Directional Light
-		Transform = "33.6705836506032 -12.3480975923698 0.979243192658027; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
+		Transform = "-27.2532970339889 22.5615697835676 0.979243192658027; -0.48553441582008 -0.67324283509012 0.472744885192886 -0.295825437679109; 1 1 1"
 		Type = Directional
 		Color = 1 0.9698039 0.8792549
 		AttenuationFar = 100
@@ -98,6 +98,11 @@
 			.component NeoAxis.RenderingEffect_MotionBlur
 			{
 				Name = Motion Blur
+			}
+			.component NeoAxis.RenderingEffect_ColorGrading
+			{
+				Name = Color Grading
+				ShaderFile = "Base\\Shaders\\Effects\\ColorGrading_fs.sc"
 			}
 		}
 		.component NeoAxis.Component
@@ -1530,6 +1535,56 @@
 	}
 	.component NeoAxis.MeshInSpace
 	{
+		Name = Box 24
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 0.2 2
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 1
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "-24.3482661273361 11.5551284842032 1; 0 0 0.25881904510252 0.965925826289068; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 10 0.2 2
+			}
+		}
+		.component NeoAxis.PathfindingGeometryTag
+		{
+			Name = Pathfinding Geometry Tag
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
 		Name = Box 4
 		Transform
 		{
@@ -1767,7 +1822,57 @@
 		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
-			Transform = "29 5 1; 0 0 -0.707106781186548 0.707106781186548; 1 1 1"
+			Transform = "29.480024282693 5.71561524637 1; 0 0 -0.906307787036651 -0.4226182617407; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 10 0.2 2
+			}
+		}
+		.component NeoAxis.PathfindingGeometryTag
+		{
+			Name = Pathfinding Geometry Tag
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 53
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 0.2 2
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 1
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "36.917471720366 8.52036078281745 1; 0 0 -0.951644778816983 -0.307200610270191; 1 1 1"
 			.component NeoAxis.CollisionShape_Box
 			{
 				Dimensions = 10 0.2 2
@@ -2067,7 +2172,7 @@
 		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
-			Transform = "29 18 1; 0 0 -0.17364817766693 0.984807753012208; 1 1 1"
+			Transform = "30.0078154714685 17.7481657087429 1; 0 0 -0.17364817766693 0.984807753012208; 1 1 1"
 			.component NeoAxis.CollisionShape_Box
 			{
 				Dimensions = 10 0.2 2
@@ -2168,6 +2273,106 @@
 		{
 			Name = Collision Body
 			Transform = "-10 -21 1; 0 0 -1 0.00000000000000039; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 10 0.2 2
+			}
+		}
+		.component NeoAxis.PathfindingGeometryTag
+		{
+			Name = Pathfinding Geometry Tag
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 51
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 0.2 2
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 1
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "-3.36104106554821 -16.3518901669234 1; 0 0 -0.819152044288992 0.573576436351046; 1 1 1"
+			.component NeoAxis.CollisionShape_Box
+			{
+				Dimensions = 10 0.2 2
+			}
+		}
+		.component NeoAxis.PathfindingGeometryTag
+		{
+			Name = Pathfinding Geometry Tag
+		}
+	}
+	.component NeoAxis.MeshInSpace
+	{
+		Name = Box 52
+		Transform
+		{
+			GetByReference = "this:$Collision Body\\Transform"
+		}
+		Mesh
+		{
+			GetByReference = "this:$Mesh"
+		}
+		ReplaceMaterial
+		{
+			GetByReference = "Content\\Materials\\Basic Library\\Asphalt\\Asphalt 015.material"
+		}
+		SpecialEffects
+		{
+			Value
+			{
+				Count = 0
+			}
+		}
+		.component NeoAxis.Mesh
+		{
+			Name = Mesh
+			.component NeoAxis.MeshGeometry_Box
+			{
+				Name = Mesh Geometry
+				Dimensions = 10 0.2 2
+			}
+			.component NeoAxis.MeshModifier_BoxUV
+			{
+				Name = Box UV
+				Tiles = 5 5 1
+			}
+		}
+		.component NeoAxis.RigidBody
+		{
+			Name = Collision Body
+			Transform = "3.04572269070964 -10.0960702025522 1; 0 0 -0.986669200571806 0.162738712797522; 1 1 1"
 			.component NeoAxis.CollisionShape_Box
 			{
 				Dimensions = 10 0.2 2
@@ -2926,8 +3131,7 @@
 		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
-			Transform = "3 7 2.63843959622311; -0.0000759608306421 0.00007597976681308 0.707107069614806 0.707106484596053; 8 2 0.172804437534095"
-			MotionType = Dynamic
+			Transform = "3 7 2.9255169179532; -0.0000759608306421 0.00007597976681308 0.707107069614806 0.707106484596053; 8 2 0.172804437534095"
 			Mass = 200
 			MaterialFriction = 1
 			.component NeoAxis.CollisionShape_Box
@@ -2973,7 +3177,7 @@
 		.component NeoAxis.RigidBody
 		{
 			Name = Collision Body
-			Transform = "3 7 1.242545190325; 0 0 0.707106781186548 0.707106781186548; 1 1 1.73527058803994"
+			Transform = "3 7 1.42279425021795; 0 0 0.707106781186548 0.707106781186548; 1 1 1.87404713453473"
 			.component NeoAxis.CollisionShape_Cylinder
 			{
 				Height = 1.5
@@ -3076,6 +3280,7 @@
 	}
 	.component NeoAxis.Constraint_SixDOF
 	{
+		Enabled = False
 		Name = Constraint SixDOF
 		Transform = "3 7 2.21591045787646; 0 0 0.707106781186548 0.707106781186548; 1 1 1"
 		AngularZAxis = Free
@@ -3094,6 +3299,6 @@
 	.component NeoAxis.Pathfinding
 	{
 		Name = Pathfinding
-		Transform = "35.7106766508477 2.84963128440163 0.0606445327350045; 0 0 0 1; 1 1 1"
+		Transform = "-20.3014004320259 27.7481221386237 0.0606445327350045; 0 0 0 1; 1 1 1"
 	}
 }

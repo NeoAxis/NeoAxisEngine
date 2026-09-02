@@ -76,7 +76,7 @@ namespace NeoAxis
 		{
 			if( GetSettingsFromScene )
 			{
-				var scene = ParentRoot as Scene;
+				var scene = ParentScene;
 				if( scene != null )
 					return scene.PrecipitationFalling;
 				else

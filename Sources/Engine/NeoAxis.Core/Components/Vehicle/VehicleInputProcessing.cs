@@ -23,7 +23,7 @@ namespace NeoAxis
 
 		public void UpdateTurnToDirectionAndLookToToPosition( GameMode gameMode )//, Vector2F? firstPersonMouseOffset )
 		{
-			var scene = ParentRoot as Scene;
+			var scene = ParentScene;
 			if( scene == null )
 				return;
 
@@ -416,7 +416,7 @@ namespace NeoAxis
 				float steering = 0;
 				bool brake = false;
 
-				var scene = ParentRoot as Scene;
+				var scene = ParentScene;
 				var gameMode = (GameMode)scene?.GetGameMode();
 
 				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None || gameMode.GetCameraManagementOfCurrentObject() != null ) )

@@ -1,0 +1,19 @@
+// Made with NeoAxis Engine 2026.2.
+
+.component NeoAxis.UIControl
+{
+	Size = Parent 1 1
+	BackgroundColor = 0 0 0
+	EditorScrollPosition = 0 0
+	.component NeoAxis.UIText
+	{
+		Name = Text
+		Text = Loading...
+		Size = Units 200 40
+		HorizontalAlignment = Center
+		VerticalAlignment = Center
+		Margin = Units 0 0 0 0
+		EditorScrollPosition = 0 0
+		FontSize = Screen 0.03
+	}
+}

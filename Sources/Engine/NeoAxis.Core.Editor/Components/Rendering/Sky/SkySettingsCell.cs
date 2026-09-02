@@ -73,7 +73,7 @@ namespace NeoAxis.Editor
 			var sky = GetFirstObject<Sky>();
 			if( sky != null )
 			{
-				var scene = sky.FindParent<Scene>();
+				var scene = sky.ParentScene;
 				if( scene != null )
 					easyImport = true;
 			}
@@ -93,7 +93,7 @@ namespace NeoAxis.Editor
 			var sky = GetFirstObject<Sky>();
 			if( sky == null )
 				return;
-			var scene = sky.FindParent<Scene>();
+			var scene = sky.ParentScene;
 			if( scene == null )
 				return;
 

@@ -46,7 +46,7 @@ namespace NeoAxis
 
 			if( EnabledInHierarchy && EngineApp.IsSimulation )
 			{
-				var scene = FindParent<Scene>();
+				var scene = ParentScene;
 				if( scene != null )
 				{
 					var gameMode = scene.GetGameMode();
@@ -140,7 +140,7 @@ namespace NeoAxis
 
 		public void UpdateWalkMode()
 		{
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene != null )
 			{
 				var gameMode = scene.GetGameMode();

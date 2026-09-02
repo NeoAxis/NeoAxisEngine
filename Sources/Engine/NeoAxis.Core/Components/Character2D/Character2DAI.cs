@@ -270,7 +270,7 @@ namespace NeoAxis
 				if( !reader.Complete() )
 					return false;
 
-				var scene = ParentRoot as Scene;
+				var scene = ParentScene;
 				if( scene != null )
 				{
 					var gameMode = scene.GetGameMode();

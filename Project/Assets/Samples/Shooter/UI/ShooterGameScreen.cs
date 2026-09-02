@@ -246,6 +246,13 @@ namespace Project
 				else if( gameLogic.NetworkIsClient && SimulationAppClient.Created )
 				{
 					//multiplayer mode
+
+					if( !SystemSettings.MobileDevice )
+					{
+						lines.Add( ("F1 - manage bots", new ColorValue( 0.95, 0.95, 0.95 )) );
+						lines.Add( ("", new ColorValue( 0.95, 0.95, 0.95 )) );
+					}
+
 					lines.Add( ("Players:", new ColorValue( 0.95, 0.95, 0.95 )) );
 					foreach( var serverUserItem in gameLogic.Client_GetUsers() )
 					{
@@ -257,6 +264,14 @@ namespace Project
 				else if( gameLogic.NetworkIsSingle )
 				{
 					//single mode
+
+					if( !SystemSettings.MobileDevice )
+					{
+						lines.Add( ("F1 - manage bots", new ColorValue( 0.95, 0.95, 0.95 )) );
+						lines.Add( ("F3 - debug visialization", new ColorValue( 0.95, 0.95, 0.95 )) );
+						lines.Add( ("", new ColorValue( 0.95, 0.95, 0.95 )) );
+					}
+
 					lines.Add( ("Players:", new ColorValue( 0.95, 0.95, 0.95 )) );
 					foreach( var singleUserItem in gameLogic.Single_GetUsers() )
 					{
@@ -427,9 +442,29 @@ namespace Project
 			}
 		}
 
+		RenderingEffect_ColorGrading GetColorGradingEffect()
+		{
+			var pipeline = Scene.GetComponent<RenderingPipeline>();
+			if( pipeline != null )
+				return pipeline.GetComponent<RenderingEffect_ColorGrading>( checkChildren: true );
+			return null;
+		}
+
 		protected override void Scene_RenderEvent( Scene scene, Viewport viewport )
 		{
 			base.Scene_RenderEvent( scene, viewport );
+
+			//visualize damage
+			{
+				var colorGrading = GetColorGradingEffect();
+				if( colorGrading != null )
+				{
+					if( EngineApp.EngineTime - GameLogic.PlayerDamagedEffectTime < 0.1 && !GameMode.FreeCamera )
+						colorGrading.Add = new Vector3( 0, -0.2, -0.2 );
+					else
+						colorGrading.Add = new Vector3( 0, 0, 0 );
+				}
+			}
 
 			//var settings = matchSettings;
 			//if( settings == null )
@@ -681,6 +716,18 @@ namespace Project
 						gameLogic.Single_DeleteBot( array[ array.Length - 1 ].UserID );
 				}
 			}
+		}
+
+		protected override bool OnKeyDown( KeyEvent e )
+		{
+			//debug visualization by F3 key in single mode
+			if( NetworkIsSingle && e.Key == EKeys.F3 )
+			{
+				GameLogic?.DebugVisualizationSwitch();
+				return true;
+			}
+
+			return base.OnKeyDown( e );
 		}
 	}
 }

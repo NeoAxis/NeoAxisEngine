@@ -9,18 +9,31 @@ namespace Project
 	public class ScenesWindow : UIWindow
 	{
 		List<string> fullPaths = new List<string>();
+
+		[EngineConfig( "ScenesWindow", "UnloadResources" )]
+		static bool unloadResources = true;
+
 		//static double savedScrollPosition;
 
-		//
+		///////////////////////////////////////////////
+
+		UIButton ButtonLoad { get { return GetComponent<UIButton>( "Button Load" ); } }
+		UIButton ButtonClose { get { return GetComponent<UIButton>( "Button Close" ); } }
+		UICheck CheckUnloadResources { get { return GetComponent<UICheck>( "Check Unload Resources" ); } }
+
+		///////////////////////////////////////////////
+
+		static ScenesWindow()
+		{
+			EngineConfig.RegisterClassParameters( typeof( ScenesWindow ) );
+		}
 
 		protected override void OnEnabledInSimulation()
 		{
 			fullPaths.Clear();
 
-			if( Components[ "Button Load" ] != null )
-				( (UIButton)Components[ "Button Load" ] ).Click += ButtonLoad_Click;
-			if( Components[ "Button Close" ] != null )
-				( (UIButton)Components[ "Button Close" ] ).Click += ButtonClose_Click;
+			if( CheckUnloadResources != null )
+				CheckUnloadResources.Checked = unloadResources ? UICheck.CheckValue.Checked : UICheck.CheckValue.Unchecked;
 
 			var list = GetComponent<UIList>( "List" );
 			if( list != null )
@@ -71,18 +84,23 @@ namespace Project
 			//	savedScrollPosition = list.GetScrollBar().Value;
 		}
 
-		void ButtonClose_Click( UIButton sender )
+		public void ButtonClose_Click( UIButton sender )
 		{
 			Dispose();
 		}
 
-		void ButtonLoad_Click( UIButton sender )
+		public void ButtonLoad_Click( UIButton sender )
 		{
 			var list = GetComponent<UIList>( "List" );
 			if( list != null && list.SelectedIndex != -1 )
 			{
 				var playFile = fullPaths[ list.SelectedIndex ];
-				SimulationApp.PlayFile( playFile );
+
+				var unloadResources = false;
+				if( CheckUnloadResources != null )
+					unloadResources = CheckUnloadResources.Checked.Value == UICheck.CheckValue.Checked;
+
+				SimulationApp.PlayFile( playFile, unloadResources );
 			}
 		}
 
@@ -106,6 +124,11 @@ namespace Project
 			}
 
 			return base.OnKeyDown( e );
+		}
+
+		public void CheckUnloadResources_Click( NeoAxis.UICheck sender )
+		{
+			unloadResources = sender.Checked.Value == UICheck.CheckValue.Checked;
 		}
 	}
 }

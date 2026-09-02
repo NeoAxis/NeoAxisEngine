@@ -22,7 +22,7 @@ namespace NeoAxis.Editor
 		{
 			var manager = GetFirstObject<BuildingManager>();
 
-			var scene = manager?.FindParent<Scene>();
+			var scene = manager?.ParentScene;
 			if( scene != null )
 			{
 				foreach( var building in scene.GetComponents<Building>() )

@@ -109,7 +109,7 @@ namespace Project
 
 		void ButtonMainMenu_Click( UIButton sender )
 		{
-			SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", true );
+			SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", true, false, true );
 		}
 
 		void ButtonExit_Click( UIButton sender )

@@ -23,7 +23,7 @@ namespace NeoAxis
 
 		public void UpdateTurnToDirectionAndLookToToPosition( GameMode gameMode, Vector2F? firstPersonMouseOffset )
 		{
-			var scene = ParentRoot as Scene;
+			var scene = ParentScene;
 			if( scene == null )
 				return;
 
@@ -297,7 +297,7 @@ namespace NeoAxis
 			var character = Character;
 			if( character != null && InputEnabled )
 			{
-				var scene = ParentRoot as Scene;
+				var scene = ParentScene;
 				var gameMode = scene?.GetGameMode();//var gameMode = scene?.GetComponent<GameMode>();
 
 				if( gameMode != null && !gameMode.FreeCamera && ( gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None || gameMode.GetCameraManagementOfCurrentObject() != null ) )

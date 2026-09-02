@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Globalization;
 
 namespace NeoAxis
 {
@@ -636,7 +637,7 @@ namespace NeoAxis
 			//!!!!call less often
 
 			var character = Character;
-			if( character != null )
+			if( character != null && ParentScene != null )
 			{
 				var alive = character.LifeStatus.Value == Character.LifeStatusEnum.Normal;
 
@@ -716,7 +717,7 @@ namespace NeoAxis
 			var result = PathfindingSpecific.Value;
 			if( result == null )
 			{
-				var scene = FindParent<Scene>();
+				var scene = ParentScene;
 				if( scene != null )
 					result = NeoAxis.Pathfinding.Instances.FirstOrDefault( p => p.ParentRoot == scene );
 			}
@@ -758,13 +759,13 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene != null )
 			{
 				if( EnabledInHierarchyAndIsInstance )
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
 				else
-					scene.GetRenderSceneData += Scene_GetRenderSceneData;
+					scene.GetRenderSceneData -= Scene_GetRenderSceneData;
 			}
 
 			combatModeUpdateTargetRemainingTime = Scene.GetRandomGuaranteed( scene ).Next( 1.0f );
@@ -805,7 +806,7 @@ namespace NeoAxis
 							var offset = new Vector3( 0, 0, 0.1 );
 							var color = new ColorValue( 0.3, 1, 0.3 );
 							renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
-							renderer.AddArrow( lastTarget, target.Value );
+							renderer.AddArrow( lastTarget, target.Value, 2, 0.5 );
 
 							lastTarget = target.Value;
 						}
@@ -954,7 +955,7 @@ namespace NeoAxis
 				if( !reader.Complete() )
 					return false;
 
-				var scene = ParentRoot as Scene;
+				var scene = ParentScene;
 				if( scene != null )
 				{
 					var gameMode = scene.GetGameMode();
@@ -1160,6 +1161,45 @@ namespace NeoAxis
 			return result;
 		}
 
+		bool IsDirectVisibility( Character thisObject, ObjectInSpace target )
+		{
+			for( int nIteration = 0; nIteration < 2; nIteration++ )
+			{
+				var startPosition = thisObject.GetCenteredPosition();
+				if( nIteration == 1 )
+				{
+					var activeWeapon = thisObject.GetActiveWeapon();
+					if( activeWeapon != null )
+						startPosition = activeWeapon.TransformV.Position;
+					else
+						continue;
+				}
+
+				var targetCenter = target.SpaceBounds.BoundingSphere.Center;
+				var targetMeshInSpace = target as MeshInSpace;
+
+				var ray = new Ray( startPosition, targetCenter - startPosition );
+				var item = new PhysicsRayTestItem( ray, PhysicsRayTestItem.ModeEnum.OneClosestForEach, PhysicsRayTestItem.FlagsEnum.None );
+				ParentScene.PhysicsRayTest( item );
+
+				foreach( var resultItem in item.Result )
+				{
+					//skip this character body
+					if( resultItem.Body == thisObject.PhysicalBody )
+						continue;
+
+					//skip target body
+					if( targetMeshInSpace != null && resultItem.Body == targetMeshInSpace.PhysicalBody )
+						continue;
+
+					//found
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		[MethodImpl( (MethodImplOptions)512 )]
 		void CombatModeSimulationStep( Character thisObject )
 		{
@@ -1192,15 +1232,15 @@ namespace NeoAxis
 							var range = GetOptimalAttackDistance();
 							var distanceSquared = ( combatModeCurrentTarget.TransformV.Position - thisObject.TransformV.Position ).LengthSquared();
 
-							//check by distance
-							if( distanceSquared > range.Maximum * range.Maximum )
+							//check distance and visibility
+							if( distanceSquared > range.Maximum * range.Maximum || !IsDirectVisibility( thisObject, combatModeCurrentTarget ) )
 							{
 								var alreadyMoving = false;
 
 								var currentTasks = GetComponents<AITask>();
 								if( currentTasks.Length == 1 )
 								{
-									var moveToObject = currentTasks[ 0 ] as VehicleAITask_MoveToObject;
+									var moveToObject = currentTasks[ 0 ] as CharacterAITask_MoveToObject;
 									if( moveToObject != null && moveToObject.Target.Value == combatModeCurrentTarget )
 										alreadyMoving = true;
 								}
@@ -1256,7 +1296,7 @@ namespace NeoAxis
 							if( weaponType.Mode1Enabled )
 							{
 								var range = weaponType.Mode1FiringDistance.Value;
-								if( distance > range.Minimum && distance < range.Maximum )
+								if( distance > range.Minimum && distance < range.Maximum && IsDirectVisibility( thisObject, combatModeCurrentTarget ) )
 								{
 									var gameLogic = Character?.ParentScene?.GetGameLogic();
 									weapon.FiringBegin( 1, gameLogic?.Single_GetUserByObjectControlled( Character )?.UserID ?? -1 );
@@ -1266,7 +1306,7 @@ namespace NeoAxis
 							if( weaponType.Mode2Enabled )
 							{
 								var range = weaponType.Mode2FiringDistance.Value;
-								if( distance > range.Minimum && distance < range.Maximum )
+								if( distance > range.Minimum && distance < range.Maximum && IsDirectVisibility( thisObject, combatModeCurrentTarget ) )
 								{
 									var gameLogic = Character?.ParentScene?.GetGameLogic();
 									weapon.FiringBegin( 2, gameLogic?.Single_GetUserByObjectControlled( Character )?.UserID ?? -1 );

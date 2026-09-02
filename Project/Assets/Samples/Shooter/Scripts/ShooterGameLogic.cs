@@ -17,6 +17,11 @@ namespace Project
 		int freeForAllTeamCounter;
 		double deleteObjectsBelowHeightLastTime;
 
+		[Browsable( false )]
+		public double PlayerDamagedEffectTime { get; set; }
+
+		bool debugVisualization;
+
 		///////////////////////////////////////////////
 		//settings
 
@@ -352,7 +357,11 @@ namespace Project
 
 		protected override SpawnPoint GetSpawnPointForPlayer( ServerUserItem serverUserInfo, SingleUserItem singleUserItem, Metadata.TypeInfo objectType )
 		{
-			//!!!!
+			//!!!!get spawn point maximally far from other players
+			//{
+			//	var spawnPoints = GetCachedSpawnPointsForPlayer();
+			//}
+
 
 			////override default behavior
 			//if( GameType.Value == ShooterGameTypeEnum.TeamDeathmatch )
@@ -571,6 +580,10 @@ namespace Project
 					{
 						var ai = character.CreateComponent<CharacterAI>();
 						ai.CombatMode = true;
+						ai.DebugVisualization = debugVisualization;
+
+						//!!!!
+						ai.AllowRun = false;
 					}
 				}
 
@@ -601,7 +614,6 @@ namespace Project
 		private void Character_ProcessDamageAfterAll( Character sender, long whoFired, float damage, object anyData, double oldHealth )
 		{
 			//detect frags
-
 			//process events only for the current scene
 			if( ParentRoot == sender.ParentRoot )
 			{
@@ -697,6 +709,26 @@ namespace Project
 					}
 				}
 			}
+
+			//visualize damage in single mode
+			if( NetworkIsSingle )
+			{
+				var damagedUser = Single_GetUserByObjectControlled( sender );
+				if( damagedUser != null && !damagedUser.Bot )
+					PlayerDamagedEffectTime = EngineApp.EngineTime;
+			}
+
+			//send message to damaged player to visualize damage
+			if( NetworkIsServer )
+			{
+				var user = Server_GetUserByObjectControlled( sender );
+				if( user != null && !user.Bot )
+				{
+					var m = BeginNetworkMessage( user, "VisualizeDamage" );
+					if( m != null )
+						m.End();
+				}
+			}
 		}
 
 		public int Single_GetFrags( long userID )
@@ -747,6 +779,13 @@ namespace Project
 				clientUsers = newList;
 			}
 
+			if( message == "VisualizeDamage" )
+			{
+				if( !reader.Complete() )
+					return false;
+				PlayerDamagedEffectTime = EngineApp.EngineTime;
+			}
+
 			return true;
 		}
 
@@ -781,6 +820,16 @@ namespace Project
 				m.Writer.WriteVariableInt64( userID );
 				m.End();
 			}
+		}
+
+		public void DebugVisualizationSwitch()
+		{
+			//change mode
+			debugVisualization = !debugVisualization;
+
+			//update all CharacterAI components in the scene
+			foreach( var ai in ParentScene.GetComponents<CharacterAI>( checkChildren: true ) )
+				ai.DebugVisualization = debugVisualization;
 		}
 	}
 }

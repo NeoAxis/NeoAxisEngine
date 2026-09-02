@@ -124,7 +124,7 @@ namespace NeoAxis
 			if( items.Count == 0 )
 				return;
 
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene == null )
 			{
 				for( int nItem = 0; nItem < items.Count; nItem++ )

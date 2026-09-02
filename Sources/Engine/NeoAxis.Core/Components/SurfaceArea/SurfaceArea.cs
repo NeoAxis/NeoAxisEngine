@@ -269,7 +269,7 @@ namespace NeoAxis
 				//!!!!512
 				var data = new OpenList<GroupOfObjects.Object>( 512 );// count );
 
-				var scene = groupOfObjects.FindParent<Scene>();
+				var scene = groupOfObjects.ParentScene;
 				if( scene != null )
 				{
 					var destinationCachedBaseObjects = groupOfObjects.GetBaseObjects();

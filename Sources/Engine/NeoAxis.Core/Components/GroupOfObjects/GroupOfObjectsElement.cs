@@ -360,7 +360,7 @@ namespace NeoAxis
 				//{
 
 				var indexes = GetObjectsOfElement();
-				var scene = groupOfObjects.FindParent<Scene>();
+				var scene = groupOfObjects.ParentScene;
 
 				var newObjects = groupOfObjects.ObjectsGetData( indexes );
 
@@ -523,7 +523,7 @@ namespace NeoAxis
 				if( surface != null )
 				{
 					var indexes = GetObjectsOfElement();
-					var scene = groupOfObjects.FindParent<Scene>();
+					var scene = groupOfObjects.ParentScene;
 
 					var newObjects = groupOfObjects.ObjectsGetData( indexes );
 

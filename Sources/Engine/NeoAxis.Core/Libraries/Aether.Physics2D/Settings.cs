@@ -38,21 +38,23 @@ namespace Internal.nkast.Aether.Physics2D
         public const float MaxFloat = 3.402823466e+38f;
         public const float Epsilon = 1.192092896e-07f;
 
-        // Common
+		// Common
 
-        /// <summary>
-        /// Enabling diagnistics causes the engine to gather timing information.
-        /// You can see how much time it took to solve the contacts, solve CCD
-        /// and update the controllers.
-        /// NOTE: If you are using a debug view that shows performance counters,
-        /// you might want to enable this.
-        /// </summary>
-        public const bool EnableDiagnostics = true;
+		/// <summary>
+		/// Enabling diagnistics causes the engine to gather timing information.
+		/// You can see how much time it took to solve the contacts, solve CCD
+		/// and update the controllers.
+		/// NOTE: If you are using a debug view that shows performance counters,
+		/// you might want to enable this.
+		/// </summary>
+		//!!!!betauser
+		public static bool EnableDiagnostics = false;
+		//public const bool EnableDiagnostics = true;
 
-        /// <summary>
-        /// The number of velocity iterations used in the solver.
-        /// </summary>
-        public static int VelocityIterations = 8;
+		/// <summary>
+		/// The number of velocity iterations used in the solver.
+		/// </summary>
+		public static int VelocityIterations = 8;
 
         /// <summary>
         /// The number of position iterations used in the solver.

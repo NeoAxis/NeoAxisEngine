@@ -322,6 +322,13 @@ namespace Project
 				else if( gameLogic.NetworkIsClient && SimulationAppClient.Created )
 				{
 					//multiplayer mode
+
+					if( !SystemSettings.MobileDevice )
+					{
+						lines.Add( ("F1 to manage bots", new ColorValue( 0.95, 0.95, 0.95 )) );
+						lines.Add( ("", new ColorValue( 0.95, 0.95, 0.95 )) );
+					}
+
 					lines.Add( ("Players:", new ColorValue( 0.95, 0.95, 0.95 )) );
 					foreach( var serverUserItem in gameLogic.Client_GetUsers() )
 					{
@@ -332,6 +339,13 @@ namespace Project
 				else if( gameLogic.NetworkIsSingle )
 				{
 					//single mode
+
+					if( !SystemSettings.MobileDevice )
+					{
+						lines.Add( ("F1 to manage bots", new ColorValue( 0.95, 0.95, 0.95 )) );
+						lines.Add( ("", new ColorValue( 0.95, 0.95, 0.95 )) );
+					}
+
 					lines.Add( ("Players:", new ColorValue( 0.95, 0.95, 0.95 )) );
 					foreach( var singleUserItem in gameLogic.Single_GetUsers() )
 					{

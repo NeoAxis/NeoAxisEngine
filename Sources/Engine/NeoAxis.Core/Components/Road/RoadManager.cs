@@ -120,7 +120,7 @@ namespace NeoAxis
 
 		void RoadsNeedUpdate()
 		{
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene == null )
 				return;
 

@@ -76,6 +76,7 @@ namespace NeoAxis
 		UniqueNameGenerator uniqueNameGenerator;
 
 		Component parentRootCached;
+		Scene parentSceneCached;
 
 		internal bool createdByBaseType;
 		/// <summary>
@@ -149,6 +150,7 @@ namespace NeoAxis
 				parentRootCached = ParentRoot;
 			else
 				parentRootCached = null;
+			parentSceneCached = null;
 
 			if( !EnabledInHierarchy )
 				_tempComponentListForUpdateAndSimulationStep = null;
@@ -2608,13 +2610,33 @@ namespace NeoAxis
 			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get
 			{
-				if( parentRootCached != null )
-					return parentRootCached;
+				var cached = parentRootCached;
+				if( cached != null )
+					return cached;
 
 				Component c = this;
 				while( c.Parent != null )
 					c = c.Parent;
 				return c;
+			}
+		}
+
+		/// <summary>
+		/// Gets the parent scene object.
+		/// </summary>
+		[Browsable( false )]
+		public Scene ParentScene
+		{
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
+			get
+			{
+				var result = parentSceneCached;
+				if( result == null )
+				{
+					result = ParentRoot as Scene;
+					parentSceneCached = result;
+				}
+				return result;
 			}
 		}
 

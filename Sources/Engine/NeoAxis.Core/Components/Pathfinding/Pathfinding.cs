@@ -1422,7 +1422,7 @@ namespace NeoAxis
 		{
 			var result = new List<Component>( 128 );
 
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene != null )
 			{
 				foreach( var geometry in scene.GetComponents<PathfindingGeometry>( false, true, true ) )
@@ -1778,7 +1778,7 @@ namespace NeoAxis
 			AddCommand( command, false, true );
 
 			//add dynamic obstacles update commands for all dynamic geometries
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene != null )
 			{
 				foreach( var geometry in scene.GetComponents<PathfindingGeometry>( false, true, true ) )

@@ -5,7 +5,7 @@
 // Ctrl+Shift+C = capture current canvas
 // 3-finger double tap = open Spector UI
 // 4-finger double tap = capture current canvas
-const allowSpector = true;
+const allowSpector = false;
 
 
 import { dotnet } from './_framework/dotnet.js'
@@ -566,21 +566,7 @@ setModuleImports("main.js", {
 			return false;
 		}
 
-		let activeTouchId = null;
-
-		const findActiveTouch = (e) =>
-		{
-			if (activeTouchId === null)
-				return null;
-
-			const touches = e.changedTouches;
-			for (let i = 0; i < touches.length; i++)
-			{
-				if (touches[i].identifier === activeTouchId)
-					return touches[i];
-			}
-			return null;
-		}
+		const activeTouchIds = new Set();
 
 		const touchStart = (e) =>
 		{
@@ -598,45 +584,58 @@ setModuleImports("main.js", {
 			}
 			//Spector specific END
 
-			if (activeTouchId !== null)
+			const touches = e.changedTouches;
+			if (!touches || touches.length === 0)
 				return;
 
-			const touch = e.changedTouches[0];
-			if (!touch)
-				return;
-
-			activeTouchId = touch.identifier;
 			canvas.focus();
 			invalidateCanvasRect();
 
-			const position = getCanvasPosition(touch.clientX, touch.clientY);
-			interop.OnTouchStart(touch.identifier, position.x, position.y, getEventModifiers(e));
+			const modifiers = getEventModifiers(e);
+			for (let i = 0; i < touches.length; i++)
+			{
+				const touch = touches[i];
+				if (activeTouchIds.has(touch.identifier))
+					continue;
+
+				activeTouchIds.add(touch.identifier);
+				const position = getCanvasPosition(touch.clientX, touch.clientY);
+				interop.OnTouchStart(touch.identifier, position.x, position.y, modifiers);
+			}
 		}
 
 		const touchMove = (e) =>
 		{
 			e.preventDefault();
 
-			const touch = findActiveTouch(e);
-			if (touch === null)
-				return;
+			const touches = e.changedTouches;
+			for (let i = 0; i < touches.length; i++)
+			{
+				const touch = touches[i];
+				if (!activeTouchIds.has(touch.identifier))
+					continue;
 
-			const position = getCanvasPosition(touch.clientX, touch.clientY);
-			interop.OnTouchMove(touch.identifier, position.x, position.y);
+				const position = getCanvasPosition(touch.clientX, touch.clientY);
+				interop.OnTouchMove(touch.identifier, position.x, position.y);
+			}
 		}
 
 		const touchEnd = (e) =>
 		{
 			e.preventDefault();
 
-			const touch = findActiveTouch(e);
-			if (touch === null)
-				return;
+			const touches = e.changedTouches;
+			const modifiers = getEventModifiers(e);
+			for (let i = 0; i < touches.length; i++)
+			{
+				const touch = touches[i];
+				if (!activeTouchIds.has(touch.identifier))
+					continue;
 
-			activeTouchId = null;
-
-			const position = getCanvasPosition(touch.clientX, touch.clientY);
-			interop.OnTouchEnd(touch.identifier, position.x, position.y, getEventModifiers(e));
+				activeTouchIds.delete(touch.identifier);
+				const position = getCanvasPosition(touch.clientX, touch.clientY);
+				interop.OnTouchEnd(touch.identifier, position.x, position.y, modifiers);
+			}
 		}
 
 		canvas.addEventListener("contextmenu", (e) => e.preventDefault(), false);

@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using NeoAxis;
 
 namespace Project
@@ -398,12 +400,68 @@ namespace Project
 			get { return currentUIScreen; }
 		}
 
-		public static bool ChangeUIScreen( string fileName, bool destroyNetworkClient )
+		public static bool ChangeUIScreen( string fileName, bool destroyNetworkClient, bool showLoadingScreen, bool unloadResources )
 		{
+			//destroy network client
 			if( destroyNetworkClient )
 				SimulationAppClient.Destroy();
 
-			//load
+			//remove previous screen
+			if( currentUIScreen != null )
+			{
+				currentUIScreen.RemoveFromParent( false );
+				currentUIScreen = null;
+			}
+
+			//show loading screen
+			UIControl loadingScreen = null;
+			if( showLoadingScreen )
+			{
+				var loadingScreenFileName = @"Base\UI\Screens\LoadingScreen.ui";
+				if( VirtualFile.Exists( loadingScreenFileName ) )
+					loadingScreen = ResourceManager.LoadSeparateInstance<UIControl>( loadingScreenFileName, false, true );
+				if( loadingScreen != null )
+					MainViewport.UIContainer.AddComponent( loadingScreen );
+			}
+
+			//reset mouse state
+			MainViewport.MouseRelativeMode = false;
+
+			//show loading screen and reset internal rendering state
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			{
+				for( int n = 0; n < 3; n++ )
+				{
+					EngineApp.RenderSceneInternal();
+					Thread.Sleep( 10 );
+				}
+			}
+
+			//unload previously loaded resources
+			if( unloadResources )
+			{
+				//unload resources except for the base ones
+				foreach( var resource in ResourceManager.GetAllResources() )
+				{
+					if( !resource.Name.StartsWith( "Base\\" ) )
+						resource.Dispose();
+				}
+
+				////dispose GPU textures except for the base ones
+				//GpuTexture.DisposeAllWithNameExceptBaseDirectory();
+
+				//reset internal rendering state after unloading resources
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+				{
+					for( int n = 0; n < 3; n++ )
+					{
+						EngineApp.RenderSceneInternal();
+						Thread.Sleep( 10 );
+					}
+				}
+			}
+
+			//load new screen
 			UIControl newScreen = null;
 			if( !string.IsNullOrEmpty( fileName ) )
 			{
@@ -412,24 +470,20 @@ namespace Project
 					return false;
 			}
 
-			//remove previous
-			if( currentUIScreen != null )
-			{
-				currentUIScreen.RemoveFromParent( false );
-				currentUIScreen = null;
-			}
+			//remove loading screen
+			if( loadingScreen != null )
+				loadingScreen.RemoveFromParent( false );
 
-			//enable
+			//enable new screen
 			if( newScreen != null )
 			{
 				currentUIScreen = newScreen;
 				MainViewport.UIContainer.AddComponent( currentUIScreen );
-
 				currentUIScreen.ResetCreateTime();
-
-				//reset mouse state
-				MainViewport.MouseRelativeMode = false;
 			}
+
+			//reset mouse state
+			MainViewport.MouseRelativeMode = false;
 
 			return true;
 		}
@@ -1011,17 +1065,17 @@ namespace Project
 				{
 					//default start screen
 					if( !string.IsNullOrEmpty( ProjectSettings.Get.General.InitialUIScreen.GetByReference ) )
-						ChangeUIScreen( ProjectSettings.Get.General.InitialUIScreen.GetByReference, false );
+						ChangeUIScreen( ProjectSettings.Get.General.InitialUIScreen.GetByReference, false, false, false );
 				}
 			}
 		}
 
-		public static void PlayFile( string virtualFileName )
+		public static void PlayFile( string virtualFileName, bool unloadResources = false )
 		{
 			if( !string.IsNullOrEmpty( virtualFileName ) && VirtualFile.Exists( virtualFileName ) && !SimulationAppClient.Created )
 			{
 				//load Play screen
-				if( ChangeUIScreen( @"Base\UI\Screens\PlayScreen.ui", true ) )
+				if( ChangeUIScreen( @"Base\UI\Screens\PlayScreen.ui", true, true, unloadResources ) )
 				{
 					var playScreen = CurrentUIScreen as PlayScreen;
 					if( playScreen != null )
@@ -1039,7 +1093,7 @@ namespace Project
 		public static void NetworkClientSceneCreated( Scene scene )
 		{
 			//load Play screen
-			if( ChangeUIScreen( @"Base\UI\Screens\PlayScreen.ui", false ) )
+			if( ChangeUIScreen( @"Base\UI\Screens\PlayScreen.ui", false, false, false ) )
 			{
 				var playScreen = CurrentUIScreen as PlayScreen;
 				if( playScreen != null )
@@ -1059,7 +1113,7 @@ namespace Project
 				PlayScreen.Instance.DestroyScene();
 
 			if( !anotherSceneWillLoaded )
-			ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", false );
+				ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", false, false, true );
 		}
 
 		private static void EngineApp_EnginePausedChanged( bool pause )

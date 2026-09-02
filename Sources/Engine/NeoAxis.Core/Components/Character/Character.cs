@@ -3940,7 +3940,7 @@ namespace NeoAxis
 			if( meshLength <= 0 )
 				return;
 
-			var scene = ParentScene;//FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene == null )
 				return;
 

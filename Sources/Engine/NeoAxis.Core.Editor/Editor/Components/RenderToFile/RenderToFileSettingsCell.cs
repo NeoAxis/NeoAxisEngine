@@ -141,7 +141,7 @@ namespace NeoAxis.Editor
 		void RenderByEngineRender()
 		{
 			var renderToFile = RenderToFile;
-			var scene = renderToFile.ParentRoot as Scene;
+			var scene = renderToFile.ParentScene;
 
 			//get camera
 			var camera = renderToFile.Camera.Value;
@@ -229,7 +229,7 @@ namespace NeoAxis.Editor
 		void RenderScreenshot( Camera camera, RenderingPipeline renderingPipeline, string destRealFileName )
 		{
 			var renderToFile = RenderToFile;
-			var scene = renderToFile.ParentRoot as Scene;
+			var scene = renderToFile.ParentScene;
 
 			ImageComponent texture = null;
 			ImageComponent textureRead = null;
@@ -635,7 +635,7 @@ namespace NeoAxis.Editor
 		void RenderMaterial( Camera camera, string destRealFileName )
 		{
 			var renderToFile = RenderToFile;
-			var scene = renderToFile.ParentRoot as Scene;
+			var scene = renderToFile.ParentScene;
 
 			var textureFileNames = new string[ 6 ];
 			//ImageUtility.Image2D opacityImage = null;

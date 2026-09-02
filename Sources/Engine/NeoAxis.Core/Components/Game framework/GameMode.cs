@@ -932,7 +932,7 @@ namespace NeoAxis
 
 		public static GameMode GetFromComponent( Component component )
 		{
-			return ( component.ParentRoot as Scene )?.GetGameMode();
+			return ( component.ParentScene )?.GetGameMode();
 		}
 
 		/////////////////////////////////////////
@@ -1493,7 +1493,7 @@ namespace NeoAxis
 
 				//subscribe to scene Render event
 				{
-					var scene = FindParent<Scene>();
+					var scene = ParentScene;
 					if( scene != null )
 						scene.RenderEvent += Scene_RenderEvent;
 				}
@@ -1502,7 +1502,7 @@ namespace NeoAxis
 			{
 				//unsubscribe from scene Render event
 				{
-					var scene = FindParent<Scene>();
+					var scene = ParentScene;
 					if( scene != null )
 						scene.RenderEvent -= Scene_RenderEvent;
 				}

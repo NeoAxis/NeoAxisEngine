@@ -673,7 +673,7 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene != null )
 			{
 				if( EnabledInHierarchyAndIsInstance )

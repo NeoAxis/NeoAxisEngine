@@ -45,7 +45,7 @@
 		Size = Units 250 250
 		HorizontalAlignment = Right
 		VerticalAlignment = Bottom
-		Margin = Units 0 0 250 0
+		Margin = Units 0 0 0 250
 		ColorMultiplier = 1 0.7348627 0
 		EditorScrollPosition = 0 0
 		TextureCoordinatesRotation = 270

@@ -12,25 +12,6 @@
 	{
 		GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
 	}
-	.component NeoAxis.UIButton
-	{
-		Name = Button Close
-		Text = Close
-		Size = Units 150 40
-		HorizontalAlignment = Right
-		VerticalAlignment = Bottom
-		Margin = Units 0 0 20 20
-		EditorScrollPosition = 0 0
-	}
-	.component NeoAxis.UIButton
-	{
-		Name = Button Load
-		Text = Load
-		Size = Units 150 40
-		VerticalAlignment = Bottom
-		Margin = Units 20 50 20 20
-		EditorScrollPosition = 0 0
-	}
 	.component NeoAxis.UIList
 	{
 		Name = List
@@ -79,6 +60,80 @@
 			HandlerMethod
 			{
 				GetByReference = "this:..\\..\\method:List_KeyDown(NeoAxis.UIControl,NeoAxis.KeyEvent,ref System.Boolean)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Load
+		Text = Load
+		Size = Units 150 40
+		VerticalAlignment = Bottom
+		Margin = Units 20 50 20 20
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonLoad_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UICheck
+	{
+		Name = Check Unload Resources
+		Text = Unload previously loaded resources
+		Size = Units 330 25
+		VerticalAlignment = Bottom
+		Margin = Units 190 790 0 25
+		EditorScrollPosition = 0 0
+		Checked = Checked
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:CheckUnloadResources_Click(NeoAxis.UICheck)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Close
+		Text = Close
+		Size = Units 150 40
+		HorizontalAlignment = Right
+		VerticalAlignment = Bottom
+		Margin = Units 0 0 20 20
+		EditorScrollPosition = 0 0
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonClose_Click(NeoAxis.UIButton)"
 			}
 			HandlerFlow
 			{

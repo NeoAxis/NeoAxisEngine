@@ -146,7 +146,7 @@ namespace NeoAxis
 
 		void BuildingsNeedUpdate()
 		{
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene == null )
 				return;
 
@@ -156,7 +156,7 @@ namespace NeoAxis
 
 		void UpdateGroupOfObjects()
 		{
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene == null )
 				return;
 

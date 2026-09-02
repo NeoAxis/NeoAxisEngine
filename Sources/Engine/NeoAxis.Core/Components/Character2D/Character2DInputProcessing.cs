@@ -151,7 +151,7 @@ namespace NeoAxis
 			var character = Character;
 			if( character != null && InputEnabled )
 			{
-				var scene = ParentRoot as Scene;
+				var scene = ParentScene;
 				var gameMode = scene?.GetGameMode();
 
 				double vector = 0;

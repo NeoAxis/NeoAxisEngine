@@ -548,7 +548,7 @@ namespace NeoAxis
 					CollisionBodiesDestroy();
 
 					var sectorCenter = ObjectsBounds.GetCenter();
-					var scene = owner.FindParent<Scene>();
+					var scene = owner.ParentScene;
 
 					var collisionDefinitionByMesh = new Dictionary<Mesh, RigidBody>( 64 );
 
@@ -1072,7 +1072,7 @@ namespace NeoAxis
 			{
 				if( ObjectInSpace != null )//&& !StaticShadowsAffectedBounds.IsCleared() )
 				{
-					var scene = owner.ParentRoot as Scene;
+					var scene = owner.ParentScene;
 					if( scene != null )
 					{
 						var item = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, null, true, bounds );// StaticShadowsAffectedBounds );
@@ -1252,7 +1252,7 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene != null )
 			{
 				if( EnabledInHierarchyAndIsInstance )

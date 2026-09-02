@@ -155,7 +155,7 @@ namespace NeoAxis
 			base.OnEnabledInHierarchyChanged();
 
 			//rendering pipeline optimization
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene != null )
 			{
 				if( EnabledInHierarchyAndIsInstance )

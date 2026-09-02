@@ -1146,7 +1146,7 @@ namespace Project
 							MessageBoxWindow.Show( this, "The match was deleted.", "Match Deleted", EMessageBoxButtons.OK, EMessageBoxIcon.None, null, delegate ( MessageBoxWindow sender, EDialogResult result, object anyData )
 							{
 								//go to the matches window
-								SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", false );
+								SimulationApp.ChangeUIScreen( @"Base\UI\Screens\MainMenuScreen.ui", false, false, true );
 								//CloudClientInitialization.Instance?.PlayInCloud();
 							} );
 						} );

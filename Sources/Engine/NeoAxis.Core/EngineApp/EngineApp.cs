@@ -1512,7 +1512,7 @@ namespace NeoAxis
 			platform.ProcessChangingVideoMode();
 		}
 
-		static public void CreatedWindowApplicationIdle( bool doTickOnly )
+		public static void CreatedWindowApplicationIdle( bool doTickOnly )
 		{
 			if( created && !closing && !afterFatalOperations )
 			{
@@ -1665,7 +1665,7 @@ namespace NeoAxis
 			return true;
 		}
 
-		static void RenderSceneInternal()
+		public static void RenderSceneInternal()
 		{
 			if( DrawSplashScreen != ProjectSettingsPage_General.EngineSplashScreenStyleEnum.Disabled )
 				return;

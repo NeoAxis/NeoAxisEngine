@@ -22,7 +22,7 @@ namespace NeoAxis.Editor
 		{
 			var manager = GetFirstObject<RoadManager>();
 
-			var scene = manager?.FindParent<Scene>();
+			var scene = manager?.ParentScene;
 			if( scene != null )
 			{
 				foreach( var road in scene.GetComponents<Road>() )

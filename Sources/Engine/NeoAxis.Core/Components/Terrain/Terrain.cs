@@ -2231,7 +2231,7 @@ end:;
 
 				if( owner.Collision && ObjectInSpace != null && Indices.Length != 0 )
 				{
-					var scene = owner.FindParent<Scene>();
+					var scene = owner.ParentScene;
 					if( scene == null )
 						return;
 
@@ -2969,7 +2969,7 @@ toSkip:
 
 				if( ObjectInSpace == null || !owner.Visible )
 					return;
-				var scene = owner.FindParent<Scene>();
+				var scene = owner.ParentScene;
 				if( scene == null )
 					return;
 
@@ -3293,7 +3293,7 @@ toSkip:
 			{
 				if( objectInSpace != null )
 				{
-					var scene = owner.ParentRoot as Scene;
+					var scene = owner.ParentScene;
 					if( scene != null )
 					{
 						var bounds = objectInSpace.SpaceBounds.BoundingBox;
@@ -3859,7 +3859,7 @@ toSkip:
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene != null )
 			{
 				if( EnabledInHierarchyAndIsInstance )
@@ -4525,7 +4525,7 @@ toSkip:
 
 		bool GetTiles( Ray ray, Predicate<Tile> callback )
 		{
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene != null )
 			{
 				//!!!!фильтр

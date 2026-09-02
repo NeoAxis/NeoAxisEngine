@@ -502,7 +502,7 @@ namespace NeoAxis
 		{
 			base.OnEnabledInHierarchyChanged();
 
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene != null )
 			{
 				if( EnabledInHierarchyAndIsInstance )
@@ -901,7 +901,7 @@ namespace NeoAxis
 
 		void UpdateParkedVehicles()
 		{
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene == null )
 				return;
 
@@ -1181,7 +1181,7 @@ namespace NeoAxis
 
 		protected virtual ObjectInstance CreateFlyingObject( bool initialization )
 		{
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			var sceneRandom = Scene.GetRandomGuaranteed( scene );
 
 			//var camerasPosition = GetCamerasPosition();
@@ -1256,7 +1256,7 @@ namespace NeoAxis
 
 		void SimulateFlyingObjects( bool initialization )
 		{
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			var sceneRandom = Scene.GetRandomGuaranteed( scene );
 
 			//simulate created objects
@@ -1357,7 +1357,7 @@ namespace NeoAxis
 			{
 				allWalkableRoadsCache = new List<Road.LogicalData>( 64 );
 
-				var scene = FindParent<Scene>();
+				var scene = ParentScene;
 				if( scene != null )
 				{
 					foreach( var road in scene.GetComponents<Road>( checkChildren: true, onlyEnabledInHierarchy: true ) )
@@ -1601,7 +1601,7 @@ namespace NeoAxis
 
 		void SimulateWalkingPedestrians( bool initialization )
 		{
-			var scene = FindParent<Scene>();
+			var scene = ParentScene;
 			if( scene == null )
 				return;
 			var sceneRandom = Scene.GetRandomGuaranteed( scene );
