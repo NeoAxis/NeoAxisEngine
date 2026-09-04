@@ -215,7 +215,7 @@ namespace NeoAxis
 				result = GlobalBasicTechnique.Value;
 			if( result == BasicTechniqueEnum.Auto )
 			{
-				if( SystemSettings.LimitedDevice )
+				if( SystemSettings.Mobile )
 					result = BasicTechniqueEnum.FXAA;
 				else
 					result = BasicTechniqueEnum.SSAAx2;
@@ -231,7 +231,7 @@ namespace NeoAxis
 			if( result == AdditionalTechniqueEnum.Auto )
 			{
 				var basicTechnique = GetBasicTechnique();
-				if( SystemSettings.LimitedDevice || basicTechnique == BasicTechniqueEnum.FXAA || basicTechnique == BasicTechniqueEnum.None )
+				if( SystemSettings.Limited || basicTechnique == BasicTechniqueEnum.FXAA || basicTechnique == BasicTechniqueEnum.None )
 					result = AdditionalTechniqueEnum.None;
 				else
 					result = AdditionalTechniqueEnum.FXAA;
@@ -246,7 +246,7 @@ namespace NeoAxis
 				result = GlobalMotionTechnique.Value;
 			if( result == MotionTechniqueEnum.Auto )
 			{
-				if( SystemSettings.LimitedDevice )
+				if( SystemSettings.Limited )
 					result = MotionTechniqueEnum.None;//no motion vector on mobile, because no MRT
 				else
 					result = MotionTechniqueEnum.TAA;

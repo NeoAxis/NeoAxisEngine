@@ -13,7 +13,7 @@ namespace Project
 		protected override void OnTouchControlsUpdate( float delta )
 		{
 			//override default behavior to show touch control with None camera
-			TouchControlsEnable( SystemSettings.MobileDevice && !GameMode.FreeCamera );
+			TouchControlsEnable( SystemSettings.Mobile && !GameMode.FreeCamera );
 
 			//base.OnTouchControlsUpdate( delta );
 		}

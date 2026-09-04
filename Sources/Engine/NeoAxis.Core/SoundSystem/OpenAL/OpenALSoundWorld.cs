@@ -36,7 +36,7 @@ namespace OpenALSoundSystem
 
 		//
 
-		internal static bool CheckError()
+		internal static bool CheckError( string methodName )
 		{
 			int error = Al.alGetError();
 
@@ -55,7 +55,7 @@ namespace OpenALSoundSystem
 			default: text = string.Format( "Unknown error ({0})", error ); break;
 			}
 
-			Log.Warning( "OpenALSoundSystem: Internal error: {0}.", text );
+			Log.Warning( "OpenALSoundSystem: Internal error in {0}: {1}.", methodName, text );
 
 			return true;
 		}
@@ -395,7 +395,7 @@ namespace OpenALSoundSystem
 			criticalSection.Enter();
 
 			Al.alDopplerFactor( (float)dopplerScale );
-			CheckError();
+			CheckError( "alDopplerFactor" );
 			//Al.alDopplerVelocity( 1.0f );
 			//CheckError();
 
@@ -409,7 +409,9 @@ namespace OpenALSoundSystem
 
 			//!!!!double
 			Al.alListener3f( Al.AL_POSITION, (float)position.X, (float)position.Y, (float)position.Z );
+			CheckError( "alListener3f, AL_POSITION" );
 			Al.alListener3f( Al.AL_VELOCITY, (float)velocity.X, (float)velocity.Y, (float)velocity.Z );
+			CheckError( "alListener3f, AL_VELOCITY" );
 
 			var forward = rotation.GetForward();
 			var up = rotation.GetUp();
@@ -425,10 +427,9 @@ namespace OpenALSoundSystem
 					orientation[ 4 ] = (float)up.Y;
 					orientation[ 5 ] = (float)up.Z;
 					Al.alListenerfv( Al.AL_ORIENTATION, orientation );
+					CheckError( "alListenerfv, AL_ORIENTATION" );
 				}
 			}
-
-			CheckError();
 
 			criticalSection.Leave();
 		}
@@ -597,7 +598,7 @@ namespace OpenALSoundSystem
 			if( active && Internal_SuspendWorkingWhenApplicationIsNotActive )
 			{
 				//!!!!add uwp?
-				if( SystemSettings.DesktopDevice && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
+				if( SystemSettings.Desktop && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
 				{
 					active = EngineApp.platform.ApplicationIsActive();
 

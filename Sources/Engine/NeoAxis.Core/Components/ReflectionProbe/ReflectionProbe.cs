@@ -826,7 +826,7 @@ namespace NeoAxis
 			if( hdr == AutoTrueFalse.Auto )
 			{
 				//!!!!better take from pipeline
-				hdr = SystemSettings.LimitedDevice ? AutoTrueFalse.False : AutoTrueFalse.True;
+				hdr = SystemSettings.Limited ? AutoTrueFalse.False : AutoTrueFalse.True;
 			}
 			return hdr == AutoTrueFalse.True;
 		}

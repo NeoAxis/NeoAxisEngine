@@ -266,4 +266,40 @@
 			}
 		}
 	}
+	.component NeoAxis.UIButton
+	{
+		Name = Button Fullscreen
+		Size = Units 40 40
+		HorizontalAlignment = Right
+		Margin = Units 0 10 10 0
+		EditorScrollPosition = 0 0
+		Style
+		{
+			GetByReference = "Base\\UI\\Styles\\Simple.uistyle"
+		}
+		Image
+		{
+			GetByReference = "Base\\UI\\Images\\Fullscreen.png"
+		}
+		.component NeoAxis.UITooltip
+		{
+			Name = Tooltip
+			Text = Toggle fullscreen mode.
+		}
+		.component NeoAxis.EventHandlerComponent
+		{
+			Name = Event Handler Click
+			Event
+			{
+				GetByReference = "this:..\\event:Click"
+			}
+			HandlerMethod
+			{
+				GetByReference = "this:..\\..\\method:ButtonFullscreen_Click(NeoAxis.UIButton)"
+			}
+			HandlerFlow
+			{
+			}
+		}
+	}
 }

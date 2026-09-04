@@ -331,7 +331,7 @@ namespace NeoAxis
 
 			public FrameData()
 			{
-				int multiplier = SystemSettings.LimitedDevice ? 1 : 4;
+				int multiplier = SystemSettings.Limited ? 1 : 4;
 
 				ObjectInSpaces = new OpenList<ObjectInSpaceItem>( 512 * multiplier );
 
@@ -2191,7 +2191,7 @@ namespace NeoAxis
 			{
 				this.managerIndex = managerIndex;
 
-				int multiplier = SystemSettings.LimitedDevice ? 1 : 4;
+				int multiplier = SystemSettings.Limited ? 1 : 4;
 
 				renderableItemArrays = new Stack<IntPtr>( 16 * multiplier );
 				notCompletedOutputItemsTableToClear = new OpenList<int>( 32 * multiplier );
@@ -7020,7 +7020,7 @@ namespace NeoAxis
 
 		static bool IsDirectionalAmbientOnlyModeEnabled( ViewportRenderingContext context, out bool prepareShadows )
 		{
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 			{
 				var frameData = context.FrameData;
 
@@ -12097,7 +12097,7 @@ namespace NeoAxis
 				//!!!!for modern graphics API use dynamic texture indexing
 
 
-				if( SystemSettings.LimitedDevice ) //if( SystemSettings.MobileDevice )
+				if( SystemSettings.Limited ) //if( SystemSettings.MobileDevice )
 				{
 					//on limited devices masks and shadow maps are managed inside one shadow map array
 
@@ -14528,7 +14528,7 @@ namespace NeoAxis
 			int lightCountToWrite = Math.Min( frameData.LightsInFrustumSorted.Length, size.Y );
 
 			//use half on mobile
-			if( SystemSettings.LimitedDevice ) // !Texture.IsValid( 1, false, 1, TextureFormat.RGBA32F ) )
+			if( SystemSettings.Limited ) // !Texture.IsValid( 1, false, 1, TextureFormat.RGBA32F ) )
 			{
 				//half
 
@@ -14598,7 +14598,7 @@ namespace NeoAxis
 				return false;
 
 			//deferred shading is not supported on limited devices
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 				return false;
 
 			var result = DeferredShading.Value;
@@ -14638,14 +14638,14 @@ namespace NeoAxis
 		bool IsProvideColorDepthTextureCopy()
 		{
 			//!!!!disabled on limited devices because reused in s_linearSamplerFragment, because s_drawBufferTexture
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 				return false;
 
 			if( UseRenderTargets && DebugMode.Value == DebugModeEnum.None )
 			{
 				var value = ProvideColorDepthTextureCopy.Value;
 				if( value == AutoTrueFalse.Auto )
-					value = SystemSettings.LimitedDevice ? AutoTrueFalse.False : AutoTrueFalse.True;
+					value = SystemSettings.Limited ? AutoTrueFalse.False : AutoTrueFalse.True;
 				return value == AutoTrueFalse.True;
 			}
 			else
@@ -14690,7 +14690,7 @@ namespace NeoAxis
 		{
 			if( drawBufferCurrentItem == null )
 			{
-				if( !SystemSettings.LimitedDevice )
+				if( !SystemSettings.Limited )
 				{
 					if( forceUpdate || currentBindSamplersForTextureOnlySlotsVoxelRendering != disableAnisotropic )
 					{
@@ -14710,7 +14710,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 		public void BindSamplersForTextureOnlySlots( CanvasRenderer.ShaderItem shader )
 		{
-			if( !SystemSettings.LimitedDevice )
+			if( !SystemSettings.Limited )
 			{
 				shader.Parameters.Set( new ViewportRenderingContext.BindTextureData( 9/*"s_linearSamplerVertex"*/, ResourceUtility.WhiteTexture2D, TextureAddressingMode.Wrap, FilterOption.Linear, FilterOption.Linear, FilterOption.Linear ) );
 			}
@@ -14758,7 +14758,7 @@ namespace NeoAxis
 
 						var wrap = isByte4Format;
 
-						context.BindTexture( SystemSettings.LimitedDevice ? 8 : 10/*s_shadowMapShadowDirectional*/, shadowMap, wrap ? TextureAddressingMode.Wrap : TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+						context.BindTexture( SystemSettings.Limited ? 8 : 10/*s_shadowMapShadowDirectional*/, shadowMap, wrap ? TextureAddressingMode.Wrap : TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
 					}
 				}
 				else
@@ -14771,7 +14771,7 @@ namespace NeoAxis
 
 						var wrap = isByte4Format;
 
-						context.BindTexture( SystemSettings.LimitedDevice ? 8 : 10/*s_shadowMapShadowDirectional*/, shadowMap, wrap ? TextureAddressingMode.Wrap : TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+						context.BindTexture( SystemSettings.Limited ? 8 : 10/*s_shadowMapShadowDirectional*/, shadowMap, wrap ? TextureAddressingMode.Wrap : TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
 					}
 
 					//shadow map array spot
@@ -14780,7 +14780,7 @@ namespace NeoAxis
 						if( shadowMap == null )
 							shadowMap = isByte4Format ? ResourceUtility.DummyTexture2DArrayARGB8 : ResourceUtility.DummyShadowMap2DArrayFloat32R;
 
-						context.BindTexture( SystemSettings.LimitedDevice ? 9 : 11/*s_shadowMapShadowSpot*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+						context.BindTexture( SystemSettings.Limited ? 9 : 11/*s_shadowMapShadowSpot*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
 					}
 
 					//shadow map array point
@@ -14791,14 +14791,14 @@ namespace NeoAxis
 						if( shadowMap == null )
 							shadowMap = isByte4Format ? ResourceUtility.DummyTextureCubeArrayARGB8 : ResourceUtility.DummyShadowMapCubeArrayFloat32R;
 
-						context.BindTexture( SystemSettings.LimitedDevice ? 10 : 12/*s_shadowMapShadowPoint*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
+						context.BindTexture( SystemSettings.Limited ? 10 : 12/*s_shadowMapShadowPoint*/, shadowMap, TextureAddressingMode.Clamp, filtering, filtering, FilterOption.None, textureFlags );
 					}
 				}
 			}
 
 			//light masks
 			//on limited devices masks and shadow maps are managed inside one shadow map array
-			if( RenderingSystem.LightMask && !SystemSettings.LimitedDevice ) //!SystemSettings.MobileDevice )
+			if( RenderingSystem.LightMask && !SystemSettings.Limited ) //!SystemSettings.MobileDevice )
 			{
 				//mask array directional
 				{

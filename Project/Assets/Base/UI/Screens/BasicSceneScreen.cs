@@ -144,8 +144,8 @@ namespace Project
 		public UIButton ButtonInGameMenu { get { return GetComponent<UIButton>( "Button In-Game Menu" ); } }
 		[Browsable( false )]
 		public UIButton ButtonSystemMenu { get { return GetComponent<UIButton>( "Button System Menu" ); } }
-		//[Browsable( false )]
-		//public UIText TextShowInGameMenu { get { return GetComponent<UIText>( "Text Show In-Game Menu" ); } }
+		[Browsable( false )]
+		public UIButton ButtonFullscreen { get { return GetComponent<UIButton>( "Button Fullscreen" ); } }
 
 		//In-game menu controls
 		[Browsable( false )]
@@ -532,6 +532,10 @@ namespace Project
 
 		protected override bool OnMouseDown( EMouseButtons button )
 		{
+			//focus on mouse down to activate focus and unfocus controls on the screen
+			if( !IsAnyWindowOpened() )
+				Focus();
+
 			//skip interaction fading in
 			if( scene != null && IsContinuousInteractionEnabled() )
 			{
@@ -561,7 +565,7 @@ namespace Project
 		protected virtual void OnTouchControlsUpdate( float delta )
 		{
 			//default implementation
-			var enable = SystemSettings.MobileDevice && !gameMode.FreeCamera && gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None;
+			var enable = SystemSettings.Mobile && !gameMode.FreeCamera && gameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None;
 			TouchControlsEnable( enable );
 		}
 
@@ -1053,6 +1057,10 @@ namespace Project
 
 		protected override bool OnTouch( TouchData e )
 		{
+			//focus on mouse down to activate focus and unfocus controls on the screen
+			if( !IsAnyWindowOpened() )
+				Focus();
+
 			touchModeActivated = true;
 
 			if( !IsAnyWindowOpened() && touchModeActivated )
@@ -1103,7 +1111,7 @@ namespace Project
 			}
 		}
 
-		//enable focus to allows unfocusing controls in the screen
+		//enable focus to allows unfocusing controls on the screen
 		[Browsable( false )]
 		public override bool CanFocus
 		{
@@ -1789,19 +1797,21 @@ namespace Project
 
 		protected virtual void UpdateControlsToOpenMenus()
 		{
-			
-			//!!!!good?
-			var keyboardAvailable = !SystemSettings.MobileDevice;
-
 			var inGameMenu = GetInGameMenu();
 
 			//disable menu buttons on PC by default
 			if( ButtonInGameMenu != null )
-				ButtonInGameMenu.Enabled = !keyboardAvailable && !InGameMenuAlwaysHide && inGameMenu != null;
+				ButtonInGameMenu.Enabled = SystemSettings.Mobile && !InGameMenuAlwaysHide && inGameMenu != null;
 			if( ButtonSystemMenu != null )
-				ButtonSystemMenu.Enabled = !keyboardAvailable && !InGameMenuAlwaysHide;
-			//if( TextShowInGameMenu != null )
-			//	TextShowInGameMenu.Enabled = keyboardAvailable && !InGameMenuAlwaysHide && inGameMenu != null;
+				ButtonSystemMenu.Enabled = ( SystemSettings.Mobile || SystemSettings.Web ) && !InGameMenuAlwaysHide;
+			if( ButtonFullscreen != null )
+				ButtonFullscreen.Enabled = !SystemSettings.Android && !SystemSettings.iOS;
+		}
+
+		public void ButtonFullscreen_Click( NeoAxis.UIButton sender )
+		{
+			SimulationApp.WindowedMode = SimulationApp.WindowedMode != WindowedModeEnum.Windowed ? WindowedModeEnum.Windowed : WindowedModeEnum.Fullscreen;
+			EngineApp.SetWindowedMode( SimulationApp.WindowedMode, EngineApp.WindowedModeSize );
 		}
 	}
 }

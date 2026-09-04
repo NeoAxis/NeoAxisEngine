@@ -491,7 +491,7 @@ namespace NeoAxis
 		{
 			var hdr = HDR.Value;
 			if( hdr == AutoTrueFalse.Auto )
-				hdr = SystemSettings.LimitedDevice ? AutoTrueFalse.False : AutoTrueFalse.True;
+				hdr = SystemSettings.Limited ? AutoTrueFalse.False : AutoTrueFalse.True;
 			return hdr == AutoTrueFalse.True;
 		}
 

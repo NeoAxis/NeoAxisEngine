@@ -125,7 +125,7 @@ namespace NeoAxis
 
 			if( result == ModeEnum.Auto )
 			{
-				if( SystemSettings.LimitedDevice )
+				if( SystemSettings.Limited )
 					result = ModeEnum.UltraQuality;
 				else
 					result = ModeEnum.Original;
@@ -141,14 +141,14 @@ namespace NeoAxis
 
 			if( result == TechniqueEnum.Auto )
 			{
-				if( SystemSettings.LimitedDevice )
+				if( SystemSettings.Limited )
 					result = TechniqueEnum.Lanczos2;
 				else
 					result = TechniqueEnum.AMDFSR1;
 			}
 
 			//FSR is not supported on mobile
-			if( SystemSettings.LimitedDevice && result == TechniqueEnum.AMDFSR1 )
+			if( SystemSettings.Limited && result == TechniqueEnum.AMDFSR1 )
 				result = TechniqueEnum.Lanczos2;
 
 			return result;

@@ -70,6 +70,8 @@ namespace Project
 		public UIButton ButtonMultiplayerCreate { get { return GetComponent<UIButton>( "Button Multiplayer Create" ); } }
 		[Browsable( false )]
 		public UIButton ButtonMultiplayerJoin { get { return GetComponent<UIButton>( "Button Multiplayer Join" ); } }
+		[Browsable( false )]
+		public UIButton ButtonFullscreen { get { return GetComponent<UIButton>( "Button Fullscreen" ); } }
 
 		///////////////////////////////////////////
 
@@ -195,7 +197,7 @@ namespace Project
 			currentDisplayBackgroundSceneOption = SimulationApp.DisplayBackgroundScene;
 			if( currentDisplayBackgroundSceneOption && EngineApp.IsSimulation )
 			{
-				var fileName = SystemSettings.LimitedDevice ? BackgroundSceneLimitedDevice.GetByReference : BackgroundScene.GetByReference;
+				var fileName = SystemSettings.Limited ? BackgroundSceneLimitedDevice.GetByReference : BackgroundScene.GetByReference;
 				if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
 					LoadScene( fileName );
 				else
@@ -279,7 +281,7 @@ namespace Project
 
 					if( currentDisplayBackgroundSceneOption && EngineApp.IsSimulation )
 					{
-						var fileName = SystemSettings.LimitedDevice ? BackgroundSceneLimitedDevice.GetByReference : BackgroundScene.GetByReference;
+						var fileName = SystemSettings.Limited ? BackgroundSceneLimitedDevice.GetByReference : BackgroundScene.GetByReference;
 						if( !string.IsNullOrEmpty( fileName ) && VirtualFile.Exists( fileName ) )
 							LoadScene( fileName );
 						else
@@ -309,11 +311,14 @@ namespace Project
 				if( ButtonMultiplayerCreate != null )
 				{
 					ButtonMultiplayerCreate.Highlighted = RunServer.Running;
-					ButtonMultiplayerCreate.ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows;
+					ButtonMultiplayerCreate.ReadOnly = !SystemSettings.Windows;
 				}
 
-				//if( GetButtonMultiplayerJoin() != null )
-				//	GetButtonMultiplayerJoin().ReadOnly = SystemSettings.CurrentPlatform != SystemSettings.Platform.Windows && SystemSettings.CurrentPlatform != SystemSettings.Platform.Android;
+				if( ButtonMultiplayerJoin != null )
+					ButtonMultiplayerJoin.ReadOnly = SystemSettings.Web;
+
+				if( ButtonFullscreen != null )
+					ButtonFullscreen.Enabled = !SystemSettings.Android && !SystemSettings.iOS;
 			}
 		}
 
@@ -458,6 +463,12 @@ namespace Project
 				multiplayerJoinWindow.Dispose();
 				multiplayerJoinWindow = null;
 			}
+		}
+
+		public void ButtonFullscreen_Click( NeoAxis.UIButton sender )
+		{
+			SimulationApp.WindowedMode = SimulationApp.WindowedMode != WindowedModeEnum.Windowed ? WindowedModeEnum.Windowed : WindowedModeEnum.Fullscreen;
+			EngineApp.SetWindowedMode( SimulationApp.WindowedMode, EngineApp.WindowedModeSize );
 		}
 	}
 }

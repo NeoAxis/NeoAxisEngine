@@ -167,7 +167,7 @@ namespace OpenALSoundSystem
 			fixed ( byte* pSamples = samples )
 				Al.alBufferData( alBuffer, alFormat, pSamples, sizeInBytes, frequency );
 
-			if( OpenALSoundWorld.CheckError() )
+			if( OpenALSoundWorld.CheckError( "alBufferData" ) )
 			{
 				Log.Warning( "OpenALSoundSystem: Creating sound failed \"{0}\".", name );
 				return;
@@ -184,7 +184,7 @@ namespace OpenALSoundSystem
 			if( alBuffer != 0 )
 			{
 				Al.alDeleteBuffers( 1, ref alBuffer );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alDeleteBuffers" );
 				alBuffer = 0;
 			}
 

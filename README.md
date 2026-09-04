@@ -17,9 +17,9 @@ Alternative website: <a href="https://www.neoaxis.cn/en/">www.neoaxis.cn/en/</a>
 <ul>
 <li>Windows 10+</li>
 <li>Android ARM64, ARM32</li>
-<li>UWP (Universal Windows Platform, Xbox)</li>
+<li>UWP x64 (Universal Windows Platform, Xbox)</li>
+<li>Linux x64 (Server only, no rendering)</li>
 <li>Web</li>
-<li>Linux. For a server, no rendering (coming soon).</li>
 <li>(Coming soon) macOS</li>
 <li>(Coming soon) iOS</li>
 </ul>

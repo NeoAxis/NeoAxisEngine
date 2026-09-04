@@ -69,7 +69,7 @@ namespace NeoAxis
 		{
 			get
 			{
-				if( SystemSettings.LimitedDevice && !LimitedDevicesSupport )
+				if( SystemSettings.Limited && !LimitedDevicesSupport )
 					return false;
 				return true;
 			}

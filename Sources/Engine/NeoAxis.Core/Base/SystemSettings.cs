@@ -14,9 +14,9 @@ namespace NeoAxis
 	{
 		static Platform platform;
 		static bool webMobileDevice;
-		static bool limitedDevice;
-		static bool mobileDevice;
-		static bool desktopDevice;
+		static bool limited;
+		static bool mobile;
+		static bool desktop;
 		static List<Vector2I> videoModes;
 
 		static NetRuntimeType netRuntime;
@@ -198,14 +198,14 @@ namespace NeoAxis
 
 		static void UpdateDeviceProperties()
 		{
-			limitedDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
-			mobileDevice = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || ( CurrentPlatform == Platform.Web && webMobileDevice );
-			desktopDevice = CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux || ( CurrentPlatform == Platform.Web && !webMobileDevice );
+			limited = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || CurrentPlatform == Platform.Web;
+			mobile = CurrentPlatform == Platform.Android || CurrentPlatform == Platform.iOS || ( CurrentPlatform == Platform.Web && webMobileDevice );
+			desktop = CurrentPlatform == Platform.Windows || CurrentPlatform == Platform.macOS || CurrentPlatform == Platform.Linux || ( CurrentPlatform == Platform.Web && !webMobileDevice );
 
 			//!!!!temp
 			//consider Vulkan as limited device
 			if( EngineApp.InitSettings.RendererBackend == Internal.SharpBgfx.RendererBackend.Vulkan )
-				limitedDevice = true;
+				limited = true;
 		}
 
 		public static void _SetPlatform( Platform platform, bool? webMobileDevice = null )
@@ -433,24 +433,27 @@ namespace NeoAxis
 		}
 
 		/// <summary>
-		/// Android, iOS, Web.
+		/// Whether the current device is considered a limited device. Limited devices include Android, iOS, and Web.
 		/// </summary>
-		public static bool LimitedDevice
+		public static bool Limited
 		{
-			get { return limitedDevice; }
+			get { return limited; }
 		}
 
 		/// <summary>
-		/// Android, iOS.
+		/// Whether the current device is a mobile device. Mobile devices include Android, iOS, and Web.
 		/// </summary>
-		public static bool MobileDevice
+		public static bool Mobile
 		{
-			get { return mobileDevice; }
+			get { return mobile; }
 		}
 
-		public static bool DesktopDevice
+		/// <summary>
+		/// Whether the current device is a desktop device. Desktop devices include Windows, macOS, Linux, and Web.
+		/// </summary>
+		public static bool Desktop
 		{
-			get { return desktopDevice; }
+			get { return desktop; }
 		}
 
 		static bool IsRunningInAppContainerCheckRegistry()
@@ -627,6 +630,63 @@ namespace NeoAxis
 				gpuExistsLinux = IsGpuExistsLinux2();
 			return gpuExistsLinux.Value;
 		}
+
+		/// <summary>
+		/// Whether the current platform is Windows.
+		/// </summary>
+		public static bool Windows
+		{
+			get { return CurrentPlatform == Platform.Windows; }
+		}
+
+		/// <summary>
+		/// Whether the current platform is macOS.
+		/// </summary>
+		public static bool macOS
+		{
+			get { return CurrentPlatform == Platform.macOS; }
+		}
+
+		/// <summary>
+		/// Whether the current platform is UWP.
+		/// </summary>
+		public static bool UWP
+		{
+			get { return CurrentPlatform == Platform.UWP; }
+		}
+
+		/// <summary>
+		/// Whether the current platform is Android.
+		/// </summary>
+		public static bool Android
+		{
+			get { return CurrentPlatform == Platform.Android; }
+		}
+
+		/// <summary>
+		/// Whether the current platform is iOS.
+		/// </summary>
+		public static bool iOS
+		{
+			get { return CurrentPlatform == Platform.iOS; }
+		}
+
+		/// <summary>
+		/// Whether the current platform is Web.
+		/// </summary>
+		public static bool Web
+		{
+			get { return CurrentPlatform == Platform.Web; }
+		}
+
+		/// <summary>
+		/// Whether the current platform is Linux.
+		/// </summary>
+		public static bool Linux
+		{
+			get { return CurrentPlatform == Platform.Linux; }
+		}
+
 
 
 		////Windows specific

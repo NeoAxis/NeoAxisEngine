@@ -106,7 +106,7 @@ namespace OpenALSoundSystem
 					streamAlDataBuffers = new int[ 2 ];
 					fixed( int* pAlDataBuffers = streamAlDataBuffers )
 						Al.alGenBuffers( streamAlDataBuffers.Length, pAlDataBuffers );
-					if( OpenALSoundWorld.CheckError() )
+					if( OpenALSoundWorld.CheckError( "alGenBuffers" ) )
 					{
 						streamAlDataBuffers = null;
 						PreDetachVirtualChannel();
@@ -124,7 +124,7 @@ namespace OpenALSoundSystem
 			if( alSource == 0 )
 			{
 				Al.alGenSources( 1, out alSource );
-				if( OpenALSoundWorld.CheckError() )
+				if( OpenALSoundWorld.CheckError( "alGenSources" ) )
 				{
 					PreDetachVirtualChannel();
 					OpenALSoundWorld.criticalSection.Leave();
@@ -137,7 +137,7 @@ namespace OpenALSoundSystem
 			{
 				//no stream sound
 				Al.alSourcei( alSource, Al.AL_BUFFER, sampleSound.alBuffer );
-				if( OpenALSoundWorld.CheckError() )
+				if( OpenALSoundWorld.CheckError( "alSourcei, AL_BUFFER" ) )
 				{
 					PreDetachVirtualChannel();
 					OpenALSoundWorld.criticalSection.Leave();
@@ -168,7 +168,7 @@ namespace OpenALSoundSystem
 				Al.alSourcei( alSource, Al.AL_LOOPING, loop ? Al.AL_TRUE : Al.AL_FALSE );
 			else
 				Al.alSourcei( alSource, Al.AL_LOOPING, Al.AL_FALSE );
-			if( OpenALSoundWorld.CheckError() )
+			if( OpenALSoundWorld.CheckError( "alSourcei, AL_LOOPING" ) )
 			{
 				PreDetachVirtualChannel();
 				OpenALSoundWorld.criticalSection.Leave();
@@ -179,7 +179,7 @@ namespace OpenALSoundSystem
 
 			//unpause
 			Al.alSourcePlay( alSource );
-			OpenALSoundWorld.CheckError();
+			OpenALSoundWorld.CheckError( "alSourcePlay" );
 
 			//add to fileStreamChannels
 			if( fileStreamSound != null )
@@ -194,7 +194,7 @@ namespace OpenALSoundSystem
 			OpenALSoundWorld.criticalSection.Enter();
 
 			Al.alSourceStop( alSource );
-			OpenALSoundWorld.CheckError();
+			OpenALSoundWorld.CheckError( "alSourceStop" );
 
 			//never delete buffer because cannot delete. maybe need some time to free buffer internally
 			////delete al data buffers
@@ -202,7 +202,7 @@ namespace OpenALSoundSystem
 			//{
 			//	fixed ( int* pAlDataBuffers = streamAlDataBuffers )
 			//		Al.alDeleteBuffers( streamAlDataBuffers.Length, pAlDataBuffers );
-			//	OpenALSoundWorld.CheckError();
+			//	OpenALSoundWorld.CheckError( "alDeleteBuffers" );
 			//	streamAlDataBuffers = null;
 			//}
 
@@ -231,7 +231,7 @@ namespace OpenALSoundSystem
 			}
 
 			Al.alSourcei( alSource, Al.AL_BUFFER, 0 );
-			OpenALSoundWorld.CheckError();
+			OpenALSoundWorld.CheckError( "alSourcei, AL_BUFFER" );
 
 			currentSound = null;
 
@@ -247,7 +247,7 @@ namespace OpenALSoundSystem
 
 				//!!!!!double
 				Al.alSource3f( alSource, Al.AL_POSITION, (float)value.X, (float)value.Y, (float)value.Z );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alSource3f, AL_POSITION" );
 			}
 		}
 
@@ -267,7 +267,7 @@ namespace OpenALSoundSystem
 				Vector3 value = CurrentVirtualChannel.Velocity;
 
 				Al.alSource3f( alSource, Al.AL_VELOCITY, (float)value.X, (float)value.Y, (float)value.Z );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alSource3f, AL_VELOCITY" );
 			}
 		}
 
@@ -286,7 +286,7 @@ namespace OpenALSoundSystem
 			{
 				double value = CurrentVirtualChannel.GetTotalVolume() * CurrentVirtualChannel.GetRolloffFactor();
 				Al.alSourcef( alSource, Al.AL_GAIN, (float)value );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alSourcef, AL_GAIN" );
 			}
 		}
 
@@ -304,7 +304,7 @@ namespace OpenALSoundSystem
 			if( CurrentVirtualChannel != null )
 			{
 				Al.alSourcef( alSource, Al.AL_PITCH, (float)CurrentVirtualChannel.GetTotalPitch() );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alSourcef, AL_PITCH" );
 			}
 		}
 
@@ -324,7 +324,7 @@ namespace OpenALSoundSystem
 				float value = (float)CurrentVirtualChannel.Pan;
 				MathEx.Clamp( ref value, -1, 1 );
 				Al.alSource3f( alSource, Al.AL_POSITION, value * .1f, 0, 0 );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alSource3f, AL_POSITION" );
 			}
 		}
 
@@ -342,7 +342,7 @@ namespace OpenALSoundSystem
 			if( CurrentVirtualChannel != null )
 			{
 				Al.alSourcef( alSource, Al.AL_SEC_OFFSET, (float)CurrentVirtualChannel.Time );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alSourcef, AL_SEC_OFFSET" );
 			}
 		}
 
@@ -378,7 +378,7 @@ namespace OpenALSoundSystem
 		{
 			int state;
 			Al.alGetSourcei( alSource, Al.AL_SOURCE_STATE, out state );
-			OpenALSoundWorld.CheckError();
+			OpenALSoundWorld.CheckError( "alGetSourcei, AL_SOURCE_STATE" );
 			if( state == Al.AL_STOPPED )
 				CurrentVirtualChannel.Stop();
 		}
@@ -429,7 +429,7 @@ namespace OpenALSoundSystem
 			int processed;
 
 			Al.alGetSourcei( alSource, Al.AL_BUFFERS_PROCESSED, out processed );
-			OpenALSoundWorld.CheckError();
+			OpenALSoundWorld.CheckError( "alGetSourcei, AL_BUFFERS_PROCESSED" );
 
 			while( processed != 0 )
 			{
@@ -438,20 +438,20 @@ namespace OpenALSoundSystem
 				int readed = ReadDataFromDataStream( (IntPtr)streamBuffer, streamBufferSize );
 
 				Al.alSourceUnqueueBuffers( alSource, 1, ref alBuffer );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alSourceUnqueueBuffers" );
 
 				Al.alBufferData( alBuffer, alFormat, streamBuffer, readed, currentSound.frequency );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alBufferData" );
 
 				Al.alSourceQueueBuffers( alSource, 1, ref alBuffer );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alSourceQueueBuffers" );
 
 				processed--;
 			}
 
 			int state;
 			Al.alGetSourcei( alSource, Al.AL_SOURCE_STATE, out state );
-			OpenALSoundWorld.CheckError();
+			OpenALSoundWorld.CheckError( "alGetSourcei, AL_SOURCE_STATE" );
 
 			if( state != Al.AL_PLAYING )
 			{
@@ -469,18 +469,18 @@ namespace OpenALSoundSystem
 			//update buffers
 			int processed;
 			Al.alGetSourcei( alSource, Al.AL_BUFFERS_PROCESSED, out processed );
-			OpenALSoundWorld.CheckError();
+			OpenALSoundWorld.CheckError( "alGetSourcei, AL_BUFFERS_PROCESSED" );
 			while( processed != 0 )
 			{
 				int alStreamBuffer = 0;
 				Al.alSourceUnqueueBuffers( alSource, 1, ref alStreamBuffer );
 
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alSourceUnqueueBuffers" );
 				FileStream( alStreamBuffer );
 				if( streamDataAvailable )
 				{
 					Al.alSourceQueueBuffers( alSource, 1, ref alStreamBuffer );
-					OpenALSoundWorld.CheckError();
+					OpenALSoundWorld.CheckError( "alSourceQueueBuffers" );
 				}
 
 				processed--;
@@ -489,7 +489,7 @@ namespace OpenALSoundSystem
 			//play if buffer stopped (from behind internal buffers processed)
 			int state;
 			Al.alGetSourcei( alSource, Al.AL_SOURCE_STATE, out state );
-			OpenALSoundWorld.CheckError();
+			OpenALSoundWorld.CheckError( "alGetSourcei, AL_SOURCE_STATE" );
 			bool stoppedNoQueued = false;
 			if( state == Al.AL_STOPPED )
 			{
@@ -514,12 +514,12 @@ namespace OpenALSoundSystem
 					//stop and unqueues sources
 					Al.alSourceStop( alSource );
 					Al.alGetSourcei( alSource, Al.AL_BUFFERS_PROCESSED, out processed );
-					OpenALSoundWorld.CheckError();
+					OpenALSoundWorld.CheckError( "alGetSourcei, AL_BUFFERS_PROCESSED" );
 					while( processed != 0 )
 					{
 						int alStreamBuffer = 0;
 						Al.alSourceUnqueueBuffers( alSource, 1, ref alStreamBuffer );
-						OpenALSoundWorld.CheckError();
+						OpenALSoundWorld.CheckError( "alSourceUnqueueBuffers" );
 						processed--;
 					}
 
@@ -543,7 +543,7 @@ namespace OpenALSoundSystem
 
 					//Pause = false;
 					Al.alSourcePlay( alSource );
-					OpenALSoundWorld.CheckError();
+					OpenALSoundWorld.CheckError( "alSourcePlay" );
 				}
 				else
 					CurrentVirtualChannel.Stop();
@@ -559,7 +559,7 @@ namespace OpenALSoundSystem
 					return;
 
 				Al.alSourceQueueBuffers( alSource, 1, ref streamAlDataBuffers[ n ] );
-				OpenALSoundWorld.CheckError();
+				OpenALSoundWorld.CheckError( "alSourceQueueBuffers" );
 			}
 		}
 
@@ -603,7 +603,7 @@ namespace OpenALSoundSystem
 
 			int alFormat = ( currentSound.channels == 1 ) ? Al.AL_FORMAT_MONO16 : Al.AL_FORMAT_STEREO16;
 			Al.alBufferData( alStreamBuffer, alFormat, streamBuffer, size, currentSound.frequency );
-			OpenALSoundWorld.CheckError();
+			OpenALSoundWorld.CheckError( "alBufferData" );
 
 			return true;
 		}

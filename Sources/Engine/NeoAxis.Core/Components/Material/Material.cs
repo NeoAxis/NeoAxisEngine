@@ -1375,7 +1375,7 @@ namespace NeoAxis
 			////	sourceMaterials.Add( this );
 
 			{
-				int textureRegisterCounter = SystemSettings.LimitedDevice ? 11 : 18;// 12;//11;
+				int textureRegisterCounter = SystemSettings.Limited ? 11 : 18;// 12;//11;
 
 				//vertex
 				{
@@ -1695,7 +1695,7 @@ namespace NeoAxis
 			//special shadow caster
 			if( needSpecialShadowCaster )
 			{
-				int textureRegisterCounter = SystemSettings.LimitedDevice ? 11 : 18;// 16;// 12;//11;
+				int textureRegisterCounter = SystemSettings.Limited ? 11 : 18;// 16;// 12;//11;
 
 				//////for depth texture
 				////if( SoftParticles )
@@ -2311,7 +2311,7 @@ namespace NeoAxis
 					var receiveShadows = ReceiveShadows.Value && RenderingSystem.ShadowTechnique != ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
 
 					var passIterations = 2;// 1;
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						passIterations += 2;
 
 					for( int nPassIteration = 0; nPassIteration < passIterations; nPassIteration++ )

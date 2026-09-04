@@ -2778,12 +2778,12 @@ namespace NeoAxis
 					info.AllowInteract = true;
 
 					var keyString = gameMode.KeyInteract1.Value.ToString();
-					if( SystemSettings.MobileDevice )
+					if( SystemSettings.Mobile )
 						keyString = "Interact";
 					info.Text = $"Press {keyString} to control the vehicle.";
 
 					//!!!!impl mobile
-					if( !SystemSettings.MobileDevice )
+					if( !SystemSettings.Mobile )
 					{
 						var lights = dynamicData.Lights;
 						if( lights != null )

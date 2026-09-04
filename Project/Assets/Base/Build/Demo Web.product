@@ -8,4 +8,5 @@
 	FileCache = False
 	ShaderCache = False
 	SkipFilesWithExtension = "blend1;cs"
+	Configuration = Release
 }

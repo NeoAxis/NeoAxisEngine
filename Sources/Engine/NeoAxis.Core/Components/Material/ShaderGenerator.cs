@@ -408,7 +408,7 @@ namespace NeoAxis
 							s.Append( returnLine );
 
 						string line;
-						if( !SystemSettings.LimitedDevice )
+						if( !SystemSettings.Limited )
 							line = string.Format( "SAMPLER2D_TEXTUREONLY({0}, {1});", item.nameInShader, item.textureRegister );
 						else
 							line = string.Format( "SAMPLER2D({0}, {1});", item.nameInShader, item.textureRegister );

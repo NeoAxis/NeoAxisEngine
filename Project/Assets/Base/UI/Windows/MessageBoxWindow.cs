@@ -225,7 +225,7 @@ namespace Project
 			
 			//!!!!
 			//fix width for mobile
-			if( SystemSettings.MobileDevice )
+			if( SystemSettings.Mobile )
 			{
 				var offset = 230;
 

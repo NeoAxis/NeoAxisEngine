@@ -102,7 +102,7 @@ namespace Project
 
 				var files = VirtualDirectory.GetFiles( "", "*.scene", SearchOption.AllDirectories );
 
-				var showOnlyFileNames = SystemSettings.MobileDevice;
+				var showOnlyFileNames = SystemSettings.Mobile;
 
 				CollectionUtility.MergeSort( files, delegate ( string name1, string name2 )
 				{

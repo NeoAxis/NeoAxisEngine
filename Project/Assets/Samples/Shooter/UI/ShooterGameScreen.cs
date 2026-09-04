@@ -247,7 +247,7 @@ namespace Project
 				{
 					//multiplayer mode
 
-					if( !SystemSettings.MobileDevice )
+					if( !SystemSettings.Mobile )
 					{
 						lines.Add( ("F1 - manage bots", new ColorValue( 0.95, 0.95, 0.95 )) );
 						lines.Add( ("", new ColorValue( 0.95, 0.95, 0.95 )) );
@@ -265,7 +265,7 @@ namespace Project
 				{
 					//single mode
 
-					if( !SystemSettings.MobileDevice )
+					if( !SystemSettings.Mobile )
 					{
 						lines.Add( ("F1 - manage bots", new ColorValue( 0.95, 0.95, 0.95 )) );
 						lines.Add( ("F3 - debug visialization", new ColorValue( 0.95, 0.95, 0.95 )) );
@@ -504,8 +504,8 @@ namespace Project
 
 		protected override bool OnMouseDown( EMouseButtons button )
 		{
-			//unfocus controls to prevent them from processing input and to allow the scene to receive input
-			ParentContainer.FocusedControl?.Unfocus();
+			////unfocus controls to prevent them from processing input and to allow the scene to receive input
+			//ParentContainer.FocusedControl?.Unfocus();
 
 			//if( button == EMouseButtons.Left )
 			//{

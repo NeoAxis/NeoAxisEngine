@@ -187,15 +187,15 @@ namespace Project
 			var comboAntialiasingBasic = GetComboAntialiasingBasic();
 			if( comboAntialiasingBasic != null )
 			{
-				//remove SSAA on mobile
-				if( SystemSettings.LimitedDevice )
-				{
-					for( int n = comboAntialiasingBasic.Items.Count - 1; n >= 0; n-- )
-					{
-						if( ( (string)comboAntialiasingBasic.Items[ n ].Value ).Contains( "SSAA" ) )
-							comboAntialiasingBasic.RemoveItem( n );
-					}
-				}
+				////remove SSAA on mobile
+				//if( SystemSettings.Limited )
+				//{
+				//	for( int n = comboAntialiasingBasic.Items.Count - 1; n >= 0; n-- )
+				//	{
+				//		if( ( (string)comboAntialiasingBasic.Items[ n ].Value ).Contains( "SSAA" ) )
+				//			comboAntialiasingBasic.RemoveItem( n );
+				//	}
+				//}
 
 				comboAntialiasingBasic.SelectItemByValue( SimulationApp.AntialiasingBasic );
 				comboAntialiasingBasic.SelectedIndexChanged += delegate ( UICombo sender )
@@ -208,8 +208,8 @@ namespace Project
 			var comboAntialiasingAdditional = GetComboAntialiasingAdditional();
 			if( comboAntialiasingAdditional != null )
 			{
-				if( SystemSettings.LimitedDevice )
-					comboAntialiasingAdditional.ReadOnly = true;
+				//if( SystemSettings.Limited )
+				//	comboAntialiasingAdditional.ReadOnly = true;
 
 				comboAntialiasingAdditional.SelectItemByValue( SimulationApp.AntialiasingAdditional );
 				comboAntialiasingAdditional.SelectedIndexChanged += delegate ( UICombo sender )
@@ -222,7 +222,7 @@ namespace Project
 			var comboAntialiasingMotion = GetComboAntialiasingMotion();
 			if( comboAntialiasingMotion != null )
 			{
-				if( SystemSettings.LimitedDevice )
+				if( SystemSettings.Limited )
 				{
 					comboAntialiasingMotion.ReadOnly = true;
 					comboAntialiasingMotion.RemoveItem( 2 );
@@ -257,7 +257,7 @@ namespace Project
 				};
 
 				//FSR is not supported on mobile
-				if( SystemSettings.LimitedDevice )
+				if( SystemSettings.Limited )
 					comboResolutionUpscaleTechnique.RemoveItem( 3 );
 			}
 
@@ -281,7 +281,7 @@ namespace Project
 						SimulationApp.WindowedMode = sender.SelectedIndex == 1 ? WindowedModeEnum.Windowed : WindowedModeEnum.Fullscreen;
 						EngineApp.SetWindowedMode( SimulationApp.WindowedMode, EngineApp.WindowedModeSize );
 					};
-					comboWindowedMode.ReadOnly = SystemSettings.MobileDevice;
+					comboWindowedMode.ReadOnly = SystemSettings.Mobile;
 				}
 				else
 				{
@@ -305,7 +305,7 @@ namespace Project
 
 						//ShowTextRestartToApplyChanges();
 					};
-					comboWindowedMode.ReadOnly = SystemSettings.MobileDevice;
+					comboWindowedMode.ReadOnly = SystemSettings.Mobile;
 				}
 			}
 
@@ -345,7 +345,7 @@ namespace Project
 
 					//ShowTextRestartToApplyChanges();
 				};
-				comboVideoMode.ReadOnly = SystemSettings.MobileDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
+				comboVideoMode.ReadOnly = SystemSettings.Mobile || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
 			}
 
 			//Vertical sync
@@ -358,7 +358,7 @@ namespace Project
 					SimulationApp.VerticalSync = obj.Checked.Value == UICheck.CheckValue.Checked;
 					ShowTextRestartToApplyChanges();
 				};
-				checkVerticalSync.ReadOnly = SystemSettings.MobileDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
+				checkVerticalSync.ReadOnly = SystemSettings.Mobile || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
 			}
 
 			//Restart to apply changes text
@@ -652,7 +652,7 @@ namespace Project
 			var comboWindowedMode = GetComboWindowedMode();
 			var comboVideoMode = GetComboVideoMode();
 			if( comboWindowedMode != null && comboVideoMode != null )
-				comboVideoMode.ReadOnly = (WindowedModeEnum)comboWindowedMode.SelectedIndex == WindowedModeEnum.Borderless || SystemSettings.MobileDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
+				comboVideoMode.ReadOnly = (WindowedModeEnum)comboWindowedMode.SelectedIndex == WindowedModeEnum.Borderless || SystemSettings.Mobile || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
 		}
 	}
 }

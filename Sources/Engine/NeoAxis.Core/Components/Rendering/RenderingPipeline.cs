@@ -344,7 +344,7 @@ namespace NeoAxis
 
 			public RenderSceneData()
 			{
-				int multiplier = SystemSettings.LimitedDevice ? 1 : 4;
+				int multiplier = SystemSettings.Limited ? 1 : 4;
 
 				Meshes = new OpenList<MeshItem>( 512 * multiplier );
 				Billboards = new OpenList<BillboardItem>( 128 * multiplier );
@@ -1530,7 +1530,7 @@ namespace NeoAxis
 		{
 			var result = HighDynamicRange.Value;
 			if( result == AutoTrueFalse.Auto )
-				result = SystemSettings.LimitedDevice ? AutoTrueFalse.False : AutoTrueFalse.True;
+				result = SystemSettings.Limited ? AutoTrueFalse.False : AutoTrueFalse.True;
 			return result == AutoTrueFalse.True;
 		}
 
@@ -1541,12 +1541,12 @@ namespace NeoAxis
 				return false;
 
 			//multi render targets are not supported on limited devices
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 				return false;
 
 			var result = UseMultiRenderTargets.Value;
 			if( result == AutoTrueFalse.Auto )
-				result = SystemSettings.LimitedDevice ? AutoTrueFalse.False : AutoTrueFalse.True;
+				result = SystemSettings.Limited ? AutoTrueFalse.False : AutoTrueFalse.True;
 			return result == AutoTrueFalse.True;
 		}
 
@@ -1567,7 +1567,7 @@ namespace NeoAxis
 		{
 			var result = SimpleGeometryAntialiasing.Value;
 			if( result == AutoTrueFalse.Auto )
-				result = SystemSettings.LimitedDevice ? AutoTrueFalse.False : AutoTrueFalse.True;
+				result = SystemSettings.Limited ? AutoTrueFalse.False : AutoTrueFalse.True;
 			return result == AutoTrueFalse.True;
 		}
 

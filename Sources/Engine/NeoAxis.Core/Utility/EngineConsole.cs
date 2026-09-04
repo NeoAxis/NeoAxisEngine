@@ -644,7 +644,7 @@ namespace NeoAxis
 
 			//draw background info
 			string staticText = "";
-			if( SystemSettings.MobileDevice )
+			if( SystemSettings.Mobile )
 				staticText = "Click on the console area to hide it.";
 			else
 			{

@@ -234,7 +234,7 @@ namespace NeoAxis
 					//if( RenderingSystem.Tessellation )
 					//	list.Add( ("GLOBAL_TESSELLATION", "1") );
 
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						list.Add( ("LIMITED_DEVICE", "1") );
 					//if( SystemSettings.MobileDevice )
 					//	list.Add( ("MOBILE_DEVICE", "1") );

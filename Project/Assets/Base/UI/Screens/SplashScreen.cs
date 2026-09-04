@@ -215,7 +215,7 @@ namespace Project
 				}
 
 				//antialiase for better scaling images
-				if( !SystemSettings.LimitedDevice )
+				if( !SystemSettings.Limited )
 					renderer.ScreenAntialisingForThisFrame = true;
 			}
 		}

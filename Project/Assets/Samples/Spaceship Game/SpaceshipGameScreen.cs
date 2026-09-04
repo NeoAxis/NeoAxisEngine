@@ -65,7 +65,7 @@ namespace Project
 		protected override void OnTouchControlsUpdate( float delta )
 		{
 			//override default implemetation
-			var enable = SystemSettings.MobileDevice;// && !GameMode.FreeCamera && GameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None;
+			var enable = SystemSettings.Mobile;// && !GameMode.FreeCamera && GameMode.UseBuiltInCamera.Value != GameMode.BuiltInCameraEnum.None;
 			TouchControlsEnable( enable );
 		}
 

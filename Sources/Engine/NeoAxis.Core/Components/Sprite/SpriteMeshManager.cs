@@ -71,7 +71,7 @@ namespace NeoAxis
 
 		static SpriteMeshManager()
 		{
-			if( !SystemSettings.LimitedDevice )
+			if( !SystemSettings.Limited )
 				MaxCacheSize = 200;
 		}
 

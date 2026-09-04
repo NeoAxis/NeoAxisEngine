@@ -996,7 +996,7 @@ namespace NeoAxis.Editor
 			var renderer = viewport.CanvasRenderer;
 
 			//render UI controls
-			viewport.UIContainer.PerformRenderUI( renderer );
+			viewport.UIContainer?.PerformRenderUI( renderer );
 
 			//draw selection rectangle
 			if( selectByRectangle_Enabled && selectByRectangle_Activated && AllowSelectObjects )

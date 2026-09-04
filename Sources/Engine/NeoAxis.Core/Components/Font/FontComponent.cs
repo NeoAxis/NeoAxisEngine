@@ -654,7 +654,7 @@ namespace NeoAxis
 			}
 
 			bool scaled = false;
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 			{
 				if( sizeInPixels >= BakingMaxCharacterSizeInPixelsLimitedDevice.Value )
 				{

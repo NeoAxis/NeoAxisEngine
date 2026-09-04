@@ -1240,7 +1240,7 @@ namespace NeoAxis
 
 				if( !shadowTechnique.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						shadowTechnique = ProjectSettings.Get.Rendering.ShadowTechniqueLimitedDevice;
 					else
 						shadowTechnique = ProjectSettings.Get.Rendering.ShadowTechnique;
@@ -1257,7 +1257,7 @@ namespace NeoAxis
 			{
 				if( !shadowTextureFormat.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						shadowTextureFormat = ProjectSettings.Get.Rendering.ShadowTextureFormatLimitedDevice;
 					else
 						shadowTextureFormat = ProjectSettings.Get.Rendering.ShadowTextureFormat;
@@ -1274,7 +1274,7 @@ namespace NeoAxis
 			{
 				if( !staticShadows.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						staticShadows = ProjectSettings.Get.Rendering.StaticShadowsLimitedDevice;
 					else
 						staticShadows = ProjectSettings.Get.Rendering.StaticShadows;
@@ -1291,7 +1291,7 @@ namespace NeoAxis
 			{
 				if( !shadowMaxTextureSizeDirectionalLight.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						shadowMaxTextureSizeDirectionalLight = ProjectSettings.Get.Rendering.ShadowMaxTextureSizeDirectionalLightLimitedDevice;
 					else
 						shadowMaxTextureSizeDirectionalLight = ShadowTextureSizeEnum._8192;// ProjectSettings.Get.Rendering.ShadowMaxTextureSizeDirectionalLight;
@@ -1308,7 +1308,7 @@ namespace NeoAxis
 			{
 				if( !shadowMaxTextureSizePointLight.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						shadowMaxTextureSizePointLight = ProjectSettings.Get.Rendering.ShadowMaxTextureSizePointLightLimitedDevice;
 					else
 						shadowMaxTextureSizePointLight = ShadowTextureSizeEnum._8192;// ProjectSettings.Get.Rendering.ShadowMaxTextureSizePointLight;
@@ -1325,7 +1325,7 @@ namespace NeoAxis
 			{
 				if( !shadowMaxTextureSizeSpotLight.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						shadowMaxTextureSizeSpotLight = ProjectSettings.Get.Rendering.ShadowMaxTextureSizeSpotLightLimitedDevice;
 					else
 						shadowMaxTextureSizeSpotLight = ShadowTextureSizeEnum._8192;// ProjectSettings.Get.Rendering.ShadowMaxTextureSizeSpotLight;
@@ -1358,7 +1358,7 @@ namespace NeoAxis
 			{
 				if( !debugMode.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						debugMode = ProjectSettings.Get.Rendering.DebugModeLimitedDevice;
 					else
 						debugMode = ProjectSettings.Get.Rendering.DebugMode;
@@ -1379,7 +1379,7 @@ namespace NeoAxis
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				return false;
 
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 				lightMask = ProjectSettings.Get.Rendering.LightMaskLimitedDevice;
 			else
 				lightMask = ProjectSettings.Get.Rendering.LightMask;
@@ -1396,7 +1396,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static bool InitializeLightGrid()
 		{
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 			{
 				//!!!!disabled because samplers limit
 				lightGrid = false;
@@ -1420,7 +1420,7 @@ namespace NeoAxis
 			{
 				if( !displacementMaxSteps.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						displacementMaxSteps = ProjectSettings.Get.Rendering.DisplacementMaxStepsLimitedDevice;
 					else
 						displacementMaxSteps = ProjectSettings.Get.Rendering.DisplacementMaxSteps;
@@ -1437,7 +1437,7 @@ namespace NeoAxis
 			{
 				if( !tessellation.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						tessellation = ProjectSettings.Get.Rendering.TessellationLimitedDevice;
 					else
 						tessellation = ProjectSettings.Get.Rendering.Tessellation;
@@ -1454,7 +1454,7 @@ namespace NeoAxis
 			{
 				if( !removeTextureTiling.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						removeTextureTiling = ProjectSettings.Get.Rendering.RemoveTextureTilingLimitedDevice;
 					else
 						removeTextureTiling = ProjectSettings.Get.Rendering.RemoveTextureTiling;
@@ -1471,7 +1471,7 @@ namespace NeoAxis
 			{
 				if( !opacityDithering.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						opacityDithering = ProjectSettings.Get.Rendering.OpacityDitheringLimitedDevice;
 					else
 						opacityDithering = ProjectSettings.Get.Rendering.OpacityDithering;
@@ -1488,7 +1488,7 @@ namespace NeoAxis
 			{
 				if( !motionVector.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						motionVector = false;//ProjectSettings.Get.Rendering.MotionVectorLimitedDevice;
 					else
 						motionVector = ProjectSettings.Get.Rendering.MotionVector;
@@ -1518,7 +1518,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static int InitializeCutVolumeMaxAmount()
 		{
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 				cutVolumeMaxAmount = ProjectSettings.Get.Rendering.CutVolumeMaxAmountLimitedDevice;
 			else
 				cutVolumeMaxAmount = ProjectSettings.Get.Rendering.CutVolumeMaxAmount;
@@ -1545,7 +1545,7 @@ namespace NeoAxis
 			{
 				if( !fadeByVisibilityDistance.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						fadeByVisibilityDistance = ProjectSettings.Get.Rendering.FadeByVisibilityDistanceLimitedDevice;
 					else
 						fadeByVisibilityDistance = ProjectSettings.Get.Rendering.FadeByVisibilityDistance;
@@ -1562,7 +1562,7 @@ namespace NeoAxis
 			{
 				if( !fog.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						fog = ProjectSettings.Get.Rendering.FogLimitedDevice;
 					else
 						fog = ProjectSettings.Get.Rendering.Fog;
@@ -1579,7 +1579,7 @@ namespace NeoAxis
 			{
 				if( !smoothLOD.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						smoothLOD = ProjectSettings.Get.Rendering.SmoothLODLimitedDevice;
 					else
 						smoothLOD = ProjectSettings.Get.Rendering.SmoothLOD;
@@ -1596,7 +1596,7 @@ namespace NeoAxis
 			{
 				if( !normalMapping.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						normalMapping = ProjectSettings.Get.Rendering.NormalMappingLimitedDevice;
 					else
 						normalMapping = ProjectSettings.Get.Rendering.NormalMapping;
@@ -1609,7 +1609,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static ProjectSettingsPage_Rendering.SkeletalAnimationEnum InitializeSkeletalAnimation()
 		{
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 				skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimationLimitedDevice;
 			else
 				skeletalAnimation = ProjectSettings.Get.Rendering.SkeletalAnimation;
@@ -1629,7 +1629,7 @@ namespace NeoAxis
 			{
 				if( !voxelLOD.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						voxelLOD = false;//ProjectSettings.Get.Rendering.VoxelLODLimitedDevice;
 					else
 						voxelLOD = ProjectSettings.Get.Rendering.VoxelLOD;
@@ -1646,7 +1646,7 @@ namespace NeoAxis
 			{
 				if( !voxelLODMaxSteps.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						voxelLODMaxSteps = 1;//ProjectSettings.Get.Rendering.VoxelLODMaxStepsLimitedDevice;
 					else
 						voxelLODMaxSteps = ProjectSettings.Get.Rendering.VoxelLODMaxSteps;
@@ -1663,7 +1663,7 @@ namespace NeoAxis
 			{
 				if( !materialShading.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						materialShading = ProjectSettings.Get.Rendering.MaterialShadingLimitedDevice;
 					else
 						materialShading = ProjectSettings.Get.Rendering.MaterialShading;
@@ -1676,7 +1676,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static bool InitializeAnisotropicFiltering()
 		{
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 				anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFilteringLimitedDevice;
 			else
 				anisotropicFiltering = ProjectSettings.Get.Rendering.AnisotropicFiltering;
@@ -1696,7 +1696,7 @@ namespace NeoAxis
 			{
 				if( !deferredShading.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						deferredShading = false;//ProjectSettings.Get.Rendering.DeferredShadingLimitedDevice;
 					else
 						deferredShading = ProjectSettings.Get.Rendering.DeferredShading;
@@ -1733,7 +1733,7 @@ namespace NeoAxis
 			{
 				if( !environmentMapMixing.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						environmentMapMixing = ProjectSettings.Get.Rendering.EnvironmentMapMixingLimitedDevice;
 					else
 						environmentMapMixing = ProjectSettings.Get.Rendering.EnvironmentMapMixing;
@@ -1746,7 +1746,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static int InitializeLimitTextureSize()
 		{
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 				limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSizeLimitedDevice;
 			else
 				limitTextureSize = ProjectSettings.Get.Rendering.LimitTextureSize;
@@ -1766,7 +1766,7 @@ namespace NeoAxis
 			{
 				if( !accurateSrgbCorrection.HasValue )
 				{
-					if( SystemSettings.LimitedDevice )
+					if( SystemSettings.Limited )
 						accurateSrgbCorrection = ProjectSettings.Get.Rendering.AccurateSrgbCorrectionLimitedDevice;
 					else
 						accurateSrgbCorrection = ProjectSettings.Get.Rendering.AccurateSrgbCorrection;
@@ -1779,7 +1779,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static bool InitializeInterpolation()
 		{
-			if( SystemSettings.LimitedDevice )
+			if( SystemSettings.Limited )
 				interpolation = ProjectSettings.Get.Rendering.InterpolationLimitedDevice;
 			else
 				interpolation = ProjectSettings.Get.Rendering.Interpolation;

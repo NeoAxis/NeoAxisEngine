@@ -5,6 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Linq;
+using Internal.DotRecast.Detour;
 
 namespace NeoAxis
 {
@@ -193,11 +194,8 @@ namespace NeoAxis
 			UpdateCachedCoverControls();
 			UpdateCapturedAndFocusedControls();
 
-			if( focusedControl != null )
-			{
-				if( focusedControl.CallKeyDown( e ) )
-					return true;
-			}
+			if( focusedControl != null && focusedControl.CallKeyDown( e ) )
+				return true;
 
 			//tab stop
 			if( e.Key == EKeys.Tab )
@@ -215,8 +213,8 @@ namespace NeoAxis
 			UpdateCachedCoverControls();
 			UpdateCapturedAndFocusedControls();
 
-			if( focusedControl != null )
-				return focusedControl.CallKeyPress( e );
+			if( focusedControl != null && focusedControl.CallKeyPress( e ) )
+				return true;
 
 			return CallKeyPress( e );
 		}
@@ -227,8 +225,8 @@ namespace NeoAxis
 			UpdateCachedCoverControls();
 			UpdateCapturedAndFocusedControls();
 
-			if( focusedControl != null )
-				return focusedControl.CallKeyUp( e );
+			if( focusedControl != null && focusedControl.CallKeyUp( e ) )
+				return true;
 
 			return CallKeyUp( e );
 		}

@@ -1445,7 +1445,7 @@ namespace NeoAxis
 
 		static void Log_WarningHandler( string text, ref bool handled, ref bool dumpToLogFile )
 		{
-			if( ( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
+			if( ( SystemSettings.Desktop || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
 			{
 				if( !created )
 				{
@@ -1457,7 +1457,7 @@ namespace NeoAxis
 
 		static void Log_ErrorHandler( string text, ref bool handled, ref bool dumpToLogFile )
 		{
-			if( ( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
+			if( ( SystemSettings.Desktop || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
 			{
 				if( !created )
 				{
@@ -1469,7 +1469,7 @@ namespace NeoAxis
 
 		static void Log_FatalHandler( string text, string createdLogFilePath, ref bool handled )
 		{
-			if( ( SystemSettings.DesktopDevice || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
+			if( ( SystemSettings.Desktop || SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP ) && SystemSettings.CurrentPlatform != SystemSettings.Platform.Web )
 			{
 				if( createdInsideEngineWindow != null && WindowedMode == WindowedModeEnum.Fullscreen )
 					RestoreVideoModeAndMinimize();

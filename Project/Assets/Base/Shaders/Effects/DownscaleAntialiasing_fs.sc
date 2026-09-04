@@ -9,7 +9,7 @@ uniform vec4/*vec2*/ antialiasing_multiplier;
 
 void main()
 {
-	float multiplier = 1;
+	float multiplier = 1.0;
 	
 #ifdef SSAAX2
 	const int count = 8;
