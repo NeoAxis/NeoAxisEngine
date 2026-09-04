@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace NeoAxis
@@ -15,8 +16,8 @@ namespace NeoAxis
 	/// </summary>
 	public static class IOUtility
 	{
-		const int ErrorLockViolation = 33;
-		const int ErrorSharingViolation = 32;
+		//const int ErrorLockViolation = 33;
+		//const int ErrorSharingViolation = 32;
 
 		public static bool IsDirectoryEmpty( string path )
 		{
@@ -41,6 +42,33 @@ namespace NeoAxis
 				dir.Delete( true );
 		}
 
+		/// <summary>
+		/// Determines whether the specified IOException is caused by a file being locked or in use by another process.
+		/// </summary>
+		/// <param name="exception">The IOException to check.</param>
+		/// <returns>True if the exception is caused by a file being locked or in use by another process; otherwise, false.</returns>
+		public static bool IsFileLockedException( IOException exception )
+		{
+			int hr = exception.HResult;
+
+			if( RuntimeInformation.IsOSPlatform( OSPlatform.Windows ) )
+			{
+				int win32ErrorCode = hr & 0xFFFF;
+				return win32ErrorCode == 0x0020 || win32ErrorCode == 0x0021;
+			}
+			else
+			{
+				// On Linux/macOS, POSIX error codes (errno) are mapped to the lower 16 bits of HResult
+				int errno = hr & 0xFFFF;
+
+				// Common POSIX codes for locked/busy files:
+				// 11 (EAGAIN / EWOULDBLOCK) - Resource temporarily unavailable
+				// 13 (EACCES) - Permission denied (often returned by fcntl locks)
+				// 16 (EBUSY) - Device or resource busy
+				return errno == 11 || errno == 13 || errno == 16;
+			}
+		}
+
 		public static bool IsFileLocked( string fileName )
 		{
 			Debug.Assert( !string.IsNullOrEmpty( fileName ) );
@@ -55,10 +83,12 @@ namespace NeoAxis
 
 				return false;
 			}
-			catch( IOException ex )
+			catch( IOException e )
 			{
-				int errorCode = ex.HResult & 0xFFFF;
-				return errorCode == ErrorSharingViolation || errorCode == ErrorLockViolation;
+				return IsFileLockedException( e );
+
+				//int errorCode = e.HResult & 0xFFFF;
+				//return errorCode == ErrorSharingViolation || errorCode == ErrorLockViolation;
 			}
 		}
 
@@ -98,7 +128,7 @@ namespace NeoAxis
 				{
 					var entry = archive.Entries.FirstOrDefault();
 
-					if(entry == null )
+					if( entry == null )
 						throw new InvalidOperationException( "No entries in the zip archive." );
 					if( entry.Length > maxUncompressedSize )
 						throw new InvalidOperationException( "Uncompressed data size is too large." );

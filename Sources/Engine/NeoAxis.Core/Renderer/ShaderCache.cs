@@ -34,7 +34,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		static string GetCacheFileName()
+		static string GetCacheFileName( string postFix )
 		{
 			if( Bgfx.GetCurrentBackend() == RendererBackend.Noop )
 				return "";
@@ -46,8 +46,6 @@ namespace NeoAxis
 				name = "Direct3D11";
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D12 )
 				name = "Direct3D12";
-			//if( Bgfx.GetCurrentBackend() == RendererBackend.Direct3D11 || Bgfx.GetCurrentBackend() == RendererBackend.Direct3D12 )
-			//	name = "Direct3D11";
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.OpenGLES )
 				name = "OpenGLES";
 			else if( Bgfx.GetCurrentBackend() == RendererBackend.Vulkan )
@@ -55,9 +53,7 @@ namespace NeoAxis
 			else
 				Log.Fatal( "GpuProgramManager: Shader model is not specified. Bgfx.GetCurrentBackend() == {0}.", Bgfx.GetCurrentBackend() );
 
-			return Path.Combine( folder, name + ".cache" );
-
-			//return Path.Combine( folder, Bgfx.GetCurrentBackend().ToString() + ".cache" );
+			return Path.Combine( folder, name + postFix + ".cache" );
 		}
 
 		static void Init()
@@ -66,18 +62,23 @@ namespace NeoAxis
 			{
 				triedToInit = true;
 
-				var fileName = GetCacheFileName();
-				if( !string.IsNullOrEmpty( fileName ) )
+				var mainCacheFilePath = GetCacheFileName( "" );
+				if( !string.IsNullOrEmpty( mainCacheFilePath ) )
 				{
-					var folder = Path.GetDirectoryName( fileName );
+					var cacheFilePath = mainCacheFilePath;
+
+					var processLockedCopyStep = false;
+					nextprocessLockedStep:;
+
+					var folder = Path.GetDirectoryName( cacheFilePath );
 
 					try
 					{
 						//!!!!Android, iOS, Web readonly?
-						bool readOnly = SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
+						bool readOnly = SystemSettings.UWP || SystemSettings.Android || SystemSettings.iOS || SystemSettings.Web;
 
 						bool skip = false;
-						if( readOnly && !File.Exists( fileName ) )
+						if( readOnly && !File.Exists( cacheFilePath ) )
 							skip = true;
 
 						if( !skip )
@@ -85,35 +86,22 @@ namespace NeoAxis
 							if( !Directory.Exists( folder ) )
 								Directory.CreateDirectory( folder );
 
-							var supportShared =
-								SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
-								SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS;
+							var supportShared = SystemSettings.Windows || SystemSettings.macOS;
 							var connection = supportShared ? "shared" : "direct";
 
-							//if( ( EngineInfo.EngineMode == EngineInfo.EngineModeEnum.WorldsClient || EngineInfo.EngineMode == EngineInfo.EngineModeEnum.WorldsServer ) && EngineApp.IsSimulation )
 							if( SystemSettings.CloudAppContainer )
 								connection = "direct";
 
-							var connectionString = $"Filename={fileName};Connection={connection};Upgrade=true";
+							var connectionString = $"Filename={cacheFilePath};Connection={connection};Upgrade=true";
 							if( readOnly )
 								connectionString += ";ReadOnly=true";
 
 							int attemp = 0;
-again:
+							again:
 							try
 							{
 								database = new LiteDatabase( connectionString );
 
-								//var options = new LiteDB.FileOptions();
-								////in UWP we do not have write access to the application folder
-								//if( readOnly )
-								//	options.FileMode = LiteDB.FileMode.ReadOnly;
-
-								//database = new LiteDatabase( new FileDiskService( fileName, options ) );
-
-								//!!!!
-								//in UWP we do not have write access to the application folder
-								//even if we set FileMode = LiteDB.FileMode.ReadOnly, EnsureIndex() method writes to disk. it is a LiteDB issue?
 								if( !readOnly )
 								{
 									var collection = database.GetCollection<DatabaseItem>( "items" );
@@ -121,7 +109,7 @@ again:
 								}
 
 							}
-							catch( Exception )//e2 )
+							catch( Exception )
 							{
 								if( attemp < 3 )
 								{
@@ -130,12 +118,32 @@ again:
 									goto again;
 								}
 								else
-									throw;// e2;
+									throw;
 							}
 						}
 					}
 					catch( Exception e )
 					{
+						if( e is IOException ioException && IOUtility.IsFileLockedException( ioException ) && !processLockedCopyStep )
+						{
+							processLockedCopyStep = true;
+
+							for( int nCopy = 1; nCopy <= 5; nCopy++ )
+							{
+								cacheFilePath = GetCacheFileName( $"_Copy{nCopy}" );
+
+								try
+								{
+									if( !File.Exists( cacheFilePath ) || new FileInfo( cacheFilePath ).Length == 0 )
+										File.Copy( mainCacheFilePath, cacheFilePath, true );
+
+									//made a copy, try to open it
+									goto nextprocessLockedStep;
+								}
+								catch { }
+							}
+						}
+
 						Log.Warning( e.Message );
 						return;
 					}

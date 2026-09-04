@@ -54,10 +54,15 @@ namespace NeoAxis
 			get { return PathUtility.Combine( VirtualFileSystem.Directories.Project, @"Caches\CSharpScripts" ); }
 		}
 
-		string DatabaseFileName
+		string GetDatabaseFileName( string postFix )
 		{
-			get { return Path.Combine( CacheFolder, "CSharpScripts.cache" ); }
+			return Path.Combine( CacheFolder, "CSharpScripts" + postFix + ".cache" );
 		}
+
+		//string DatabaseFileName
+		//{
+		//	get { return Path.Combine( CacheFolder, "CSharpScripts.cache" ); }
+		//}
 
 		string AssemblyFileName
 		{
@@ -88,35 +93,56 @@ namespace NeoAxis
 			if( !Directory.Exists( CacheFolder ) )
 				Directory.CreateDirectory( CacheFolder );
 
-			////get file paths
-			//string textCachePath = Path.Combine( CacheFolder, textCacheName );
-			//string cacheAssemblyPath = Path.Combine( CacheFolder, cacheAssemblyName );
-
 #if !NO_LITE_DB
-			//init cache database
-			//on UWP, Android, iOS, Web scripts compiled inside Project.dll
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Windows ||
-				SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 			{
-				var connection = "shared";
-				//if( ( EngineInfo.EngineMode == EngineInfo.EngineModeEnum.WorldsClient || EngineInfo.EngineMode == EngineInfo.EngineModeEnum.WorldsServer ) && EngineApp.IsSimulation )
-				if( SystemSettings.CloudAppContainer )
-					connection = "direct";
+				var mainCacheFilePath = GetDatabaseFileName( "" );
 
-				var connectionString = $"Filename={DatabaseFileName};Connection={connection};Upgrade=true";
+				var cacheFilePath = mainCacheFilePath;
 
-				//var connectionString = $"Filename ={ DatabaseFileName}";
-				//if( SystemSettings.MobileDevice )
-				//	connectionString += ";Connection=direct;ReadOnly=true";
-				//else
-				//	connectionString += ";Connection=shared;Upgrade=true";
+				var processLockedCopyStep = false;
+				nextprocessLockedStep:;
 
-				//if( readOnly )
-				//	connectionString += ";ReadOnly=true";
+				try
+				{
+					//init cache database
+					//on UWP, Android, iOS, Web scripts compiled inside Project.dll
+					if( SystemSettings.Windows || SystemSettings.macOS )
+					{
+						var connection = "shared";
+						if( SystemSettings.CloudAppContainer )
+							connection = "direct";
 
-				database = new LiteDatabase( connectionString );
+						var connectionString = $"Filename={cacheFilePath};Connection={connection};Upgrade=true";
+						database = new LiteDatabase( connectionString );
 
-				//database = new LiteDatabase( DatabaseFileName );
+						//touch to load
+						database.GetCollectionNames();
+					}
+				}
+				catch( Exception e )
+				{
+					if( e is IOException ioException && IOUtility.IsFileLockedException( ioException ) && !processLockedCopyStep )
+					{
+						processLockedCopyStep = true;
+
+						for( int nCopy = 1; nCopy <= 5; nCopy++ )
+						{
+							cacheFilePath = GetDatabaseFileName( $"_Copy{nCopy}" );
+
+							try
+							{
+								if( !File.Exists( cacheFilePath ) || new FileInfo( cacheFilePath ).Length == 0 )
+									File.Copy( mainCacheFilePath, cacheFilePath, true );
+
+								//made a copy, try to open it
+								goto nextprocessLockedStep;
+							}
+							catch { }
+						}
+					}
+					else
+						throw;
+				}
 			}
 #endif
 
@@ -129,11 +155,8 @@ namespace NeoAxis
 			{
 				//check dll is not in the list of precompiled dlls
 				var compiledDllsCollection = database.GetCollection<DatabaseCompiledAssemblyDllItem>( "compiledDlls" );
-				//!!!!new. now compiledDlls used to info only about need recompilation
 				if( compiledDllsCollection.FindOne( Query.EQ( "ApplicationType", "AnyApp" ) ) == null )
 					needCompile = true;
-				//if( compiledDllsCollection.FindOne( Query.EQ( "ApplicationType", EngineApp.ApplicationType.ToString() ) ) == null )
-				//	needCompile = true;
 
 				// if text cache exists and assembly is absent
 				if( !File.Exists( AssemblyFileName ) )
@@ -141,10 +164,7 @@ namespace NeoAxis
 
 				// don't compile if assembly cache exist but locked.
 				if( needCompile && File.Exists( AssemblyFileName ) && IOUtility.IsFileLocked( AssemblyFileName ) )
-				{
-					//Log.Info( "Script Cache can not be updated because locked" );
 					needCompile = false;
-				}
 			}
 #endif
 
@@ -156,12 +176,7 @@ namespace NeoAxis
 			}
 			else
 			{
-#if IOS || WEB //#if UWP || ANDROID || IOS || WEB //#if DEPLOY
-				//on UWP, Android scripts compiled inside Player assembly
-				if( EngineApp.ProjectAssembly != null )
-					FillLoadedAssemblyDllTypes( EngineApp.ProjectAssembly );
-#else
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+				if( SystemSettings.UWP || SystemSettings.Android || SystemSettings.iOS || SystemSettings.Web )
 				{
 					//on UWP scripts compiled inside Player assembly
 					if( EngineApp.ProjectAssembly != null )
@@ -176,7 +191,6 @@ namespace NeoAxis
 							DeleteAssemblyDllFile();
 					}
 				}
-#endif
 			}
 		}
 
