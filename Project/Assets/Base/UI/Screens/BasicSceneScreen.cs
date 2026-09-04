@@ -1805,7 +1805,7 @@ namespace Project
 			if( ButtonSystemMenu != null )
 				ButtonSystemMenu.Enabled = ( SystemSettings.Mobile || SystemSettings.Web ) && !InGameMenuAlwaysHide;
 			if( ButtonFullscreen != null )
-				ButtonFullscreen.Enabled = !SystemSettings.Android && !SystemSettings.iOS;
+				ButtonFullscreen.Enabled = SystemSettings.Web;
 		}
 
 		public void ButtonFullscreen_Click( NeoAxis.UIButton sender )

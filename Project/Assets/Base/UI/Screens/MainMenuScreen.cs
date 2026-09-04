@@ -318,7 +318,7 @@ namespace Project
 					ButtonMultiplayerJoin.ReadOnly = SystemSettings.Web;
 
 				if( ButtonFullscreen != null )
-					ButtonFullscreen.Enabled = !SystemSettings.Android && !SystemSettings.iOS;
+					ButtonFullscreen.Enabled = SystemSettings.Web;
 			}
 		}
 
