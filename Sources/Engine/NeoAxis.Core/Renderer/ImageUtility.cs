@@ -257,8 +257,6 @@ namespace NeoAxis
 					//	}
 					//	break;
 
-					////!!!!check
-
 					//case PixelFormat.X8R8G8B8:
 					//	{
 					//		var p = pData + ( position.Y * size.X + position.X ) * 4;
@@ -272,10 +270,6 @@ namespace NeoAxis
 						{
 							var p = pData + ( position.Y * size.X + position.X ) * 4;
 							value = new ColorByte( p[ 2 ], p[ 1 ], p[ 0 ], p[ 3 ] );
-							//value.W = (float)p[ 3 ] / 255.0f;
-							//value.X = (float)p[ 2 ] / 255.0f;
-							//value.Y = (float)p[ 1 ] / 255.0f;
-							//value.Z = (float)p[ 0 ] / 255.0f;
 						}
 						break;
 
@@ -289,12 +283,8 @@ namespace NeoAxis
 					//	}
 					//	break;
 
-					//!!!!
-
 					default:
 						throw new Exception( $"ImageUtility: GetPixelByte: Format \"{format}\" is not supported." );
-						//Log.Fatal( "ImageUtility: SetPixel: Format is not supported." );
-						//break;
 					}
 				}
 
@@ -349,7 +339,7 @@ namespace NeoAxis
 						break;
 
 					case PixelFormat.A8R8G8B8:
-					case PixelFormat.X8R8G8B8://!!!!check
+					case PixelFormat.X8R8G8B8:
 						{
 							var p = pData + ( position.Y * size.X + position.X ) * 4;
 							p[ 3 ] = (byte)MathEx.Clamp( (int)( value.W * 255.0 ), 0, 255 );
@@ -361,8 +351,6 @@ namespace NeoAxis
 
 					case PixelFormat.R8G8B8:
 						{
-							//!!!!check
-
 							var p = pData + ( position.Y * size.X + position.X ) * 3;
 							p[ 2 ] = (byte)MathEx.Clamp( (int)( value.X * 255.0 ), 0, 255 );
 							p[ 1 ] = (byte)MathEx.Clamp( (int)( value.Y * 255.0 ), 0, 255 );
@@ -372,8 +360,6 @@ namespace NeoAxis
 
 					default:
 						throw new Exception( $"ImageUtility: SetPixel: Format \"{format}\" is not supported." );
-						//Log.Fatal( "ImageUtility: SetPixel: Format is not supported." );
-						//break;
 					}
 				}
 			}
@@ -413,17 +399,20 @@ namespace NeoAxis
 							p[ 2 ] = value.Red;
 							p[ 1 ] = value.Green;
 							p[ 0 ] = value.Blue;
-							//p[ 3 ] = (byte)MathEx.Clamp( (int)( value.W * 255.0 ), 0, 255 );
-							//p[ 2 ] = (byte)MathEx.Clamp( (int)( value.X * 255.0 ), 0, 255 );
-							//p[ 1 ] = (byte)MathEx.Clamp( (int)( value.Y * 255.0 ), 0, 255 );
-							//p[ 0 ] = (byte)MathEx.Clamp( (int)( value.Z * 255.0 ), 0, 255 );
+						}
+						break;
+
+					case PixelFormat.R8G8B8:
+						{
+							var p = pData + ( position.Y * size.X + position.X ) * 3;
+							p[ 2 ] = value.Red;
+							p[ 1 ] = value.Green;
+							p[ 0 ] = value.Blue;
 						}
 						break;
 
 					default:
 						throw new Exception( $"ImageUtility: SetPixel: Format \"{format}\" is not supported." );
-						//Log.Fatal( "ImageUtility: SetPixel: Format is not supported." );
-						//break;
 					}
 				}
 			}

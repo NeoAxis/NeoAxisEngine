@@ -4,14 +4,10 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using NeoAxis.Editor;
 
-//!!!!рендеринть в большую картинку, потом уменьшать
-
-//!!!!HDR. сохранять видимо в .hdr файл
-
 namespace NeoAxis
 {
 	/// <summary>
-	/// A tool for rendering a scene to a file. It intended to create screenshots and to create materials.
+	/// A tool for rendering a scene to a file, intended for creating screenshots, materials, and videos.
 	/// </summary>
 	[SettingsCell( "NeoAxis.Editor.RenderToFileSettingsCell" )]
 	[AddToResourcesWindow( @"Base\Scene objects\Additional\Render To File", 0 )]
@@ -49,7 +45,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="Resolution"/> property value changes.</summary>
 		public event Action<RenderToFile> ResolutionChanged;
-		ReferenceField<Vector2I> _resolution = new Vector2I( 1920, 1080 );// 4096, 3072 );
+		ReferenceField<Vector2I> _resolution = new Vector2I( 1920, 1080 );
 
 		/// <summary>
 		/// The file name to be output.
@@ -161,10 +157,20 @@ namespace NeoAxis
 		{
 			NoCompression,
 
-			[DisplayNameEnum( "Lagarith Lossless [LAGS]" )]
-			LagarithLosslessLAGS,
+			/// <summary>
+			/// H.264 (AVC) video compression format.
+			/// </summary>
+			H264,
 
-			Other,
+			/// <summary>
+			/// H.265 (HEVC) video compression format.
+			/// </summary>
+			H265,
+
+			/// <summary>
+			/// VP9 video compression format.
+			/// </summary>
+			VP9,
 		}
 
 		/// <summary>
@@ -180,33 +186,26 @@ namespace NeoAxis
 		public event Action<RenderToFile> FormatChanged;
 		ReferenceField<FormatEnum> _format = FormatEnum.NoCompression;
 
+		public enum QualityEnum
+		{
+			Low,
+			Medium,
+			High,
+			Ultra,
+		}
+
 		/// <summary>
-		/// The compression format specified by FourCC.
+		/// The quality of the video compression.
 		/// </summary>
-		[DefaultValue( "" )]
-		public Reference<string> FormatFourCC
+		[DefaultValue( QualityEnum.High )]
+		public Reference<QualityEnum> Quality
 		{
-			get { if( _formatFourCC.BeginGet() ) FormatFourCC = _formatFourCC.Get( this ); return _formatFourCC.value; }
-			set { if( _formatFourCC.BeginSet( this, ref value ) ) { try { FormatFourCCChanged?.Invoke( this ); } finally { _formatFourCC.EndSet(); } } }
+			get { if( _quality.BeginGet() ) Quality = _quality.Get( this ); return _quality.value; }
+			set { if( _quality.BeginSet( this, ref value ) ) { try { QualityChanged?.Invoke( this ); } finally { _quality.EndSet(); } } }
 		}
-		/// <summary>Occurs when the <see cref="FormatFourCC"/> property value changes.</summary>
-		public event Action<RenderToFile> FormatFourCCChanged;
-		ReferenceField<string> _formatFourCC = "";
-
-		public enum CaptureMethodEnum
-		{
-			CaptureFromScreen,
-		}
-
-		[DefaultValue( CaptureMethodEnum.CaptureFromScreen )]
-		public Reference<CaptureMethodEnum> CaptureMethod
-		{
-			get { if( _captureMethod.BeginGet() ) CaptureMethod = _captureMethod.Get( this ); return _captureMethod.value; }
-			set { if( _captureMethod.BeginSet( this, ref value ) ) { try { CaptureMethodChanged?.Invoke( this ); } finally { _captureMethod.EndSet(); } } }
-		}
-		/// <summary>Occurs when the <see cref="CaptureMethod"/> property value changes.</summary>
-		public event Action<RenderToFile> CaptureMethodChanged;
-		ReferenceField<CaptureMethodEnum> _captureMethod = CaptureMethodEnum.CaptureFromScreen;
+		/// <summary>Occurs when the <see cref="Quality"/> property value changes.</summary>
+		public event Action<RenderToFile> QualityChanged;
+		ReferenceField<QualityEnum> _quality = QualityEnum.High;
 
 		//
 
@@ -236,16 +235,18 @@ namespace NeoAxis
 
 				case nameof( FramesPerSecond ):
 				case nameof( Length ):
-				case nameof( CaptureMethod ):
 				case nameof( Format ):
 					if( Mode.Value != ModeEnum.Video )
 						skip = true;
 					break;
 
-				case nameof( FormatFourCC ):
-					if( Mode.Value != ModeEnum.Video )
+				case nameof( Resolution ):
+					if( Mode.Value == ModeEnum.Video )
 						skip = true;
-					if( Format.Value != FormatEnum.Other )
+					break;
+
+				case nameof( Quality ):
+					if( Mode.Value != ModeEnum.Video || Format.Value == FormatEnum.NoCompression )
 						skip = true;
 					break;
 				}

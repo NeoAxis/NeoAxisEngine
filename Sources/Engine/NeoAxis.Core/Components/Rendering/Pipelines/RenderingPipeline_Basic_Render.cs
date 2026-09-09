@@ -13276,9 +13276,9 @@ namespace NeoAxis
 			context.SetViewport( owner.OutputViewport ?? owner );
 			CopyToCurrentViewport( context, sceneTexture, flipY: owner.OutputFlipY );
 
-			///////////////////////////////////////
-			////Render video to file
-			//RenderVideoToFile( context, sceneTexture );
+			/////////////////////////////////////
+			//Render video to file
+			RenderVideoToFile( context, sceneTexture );
 
 			//clear or destroy something maybe
 
@@ -14819,84 +14819,6 @@ namespace NeoAxis
 				}
 			}
 		}
-
-
-		//void RenderVideoToFile( ViewportRenderingContext context, ImageComponent sceneTexture )
-		//{
-		//	может сначала рендерить в RenderTexture, далее отдавать из неё
-
-		//	if( EngineApp.RenderVideoToFileData != null )
-		//	{
-		//		ImageComponent texture = null;
-		//		ImageComponent textureRead = null;
-
-		//		try
-		//		{
-		//			var format = PixelFormat.A8R8G8B8;
-		//			var imageSize = sceneTexture.Result.ResultSize;
-
-		//			texture = context.RenderTarget2D_Alloc( imageSize, format, 0 );
-		//			var textureViewport = texture.Result.GetRenderTarget().Viewports[ 0 ];
-		//			context.SetViewport( textureViewport, Matrix4F.Identity, Matrix4F.Identity, FrameBufferTypes.All, new ColorValue( 0, 0, 0 ) );
-		//			CopyToCurrentViewport( context, sceneTexture );
-
-		//			textureRead = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
-		//			textureRead.CreateType = ImageComponent.TypeEnum._2D;
-		//			textureRead.CreateSize = imageSize;
-		//			textureRead.CreateMipmaps = false;
-		//			textureRead.CreateFormat = format;
-		//			textureRead.CreateUsage = ImageComponent.Usages.ReadBack | ImageComponent.Usages.BlitDestination;
-		//			textureRead.CreateFSAA = 0;
-		//			textureRead.Enabled = true;
-
-		//			//viewport.Update( true, cameraSettings );
-
-		//			//!!!!
-		//			texture.Result.GetRealObject( true ).BlitTo( context.CurrentViewNumber, textureRead.Result.GetRealObject( true ), 0, 0 );
-		//			//texture.Result.GetRealObject( true ).BlitTo( textureViewport.RenderingContext.CurrentViewNumber, textureRead.Result.GetRealObject( true ), 0, 0 );
-
-		//			//get data
-		//			var totalBytes = PixelFormatUtility.GetNumElemBytes( format ) * imageSize.X * imageSize.Y;
-		//			var data = new byte[ totalBytes ];
-		//			unsafe
-		//			{
-		//				fixed( byte* pBytes = data )
-		//				{
-		//					var demandedFrame = textureRead.Result.GetRealObject( true ).Read( (IntPtr)pBytes, 0 );
-		//					while( RenderingSystem.CallBgfxFrame() < demandedFrame ) { }
-		//				}
-		//			}
-
-		//			var image = new ImageUtility.Image2D( format, imageSize, data );
-
-		//			//!!!!
-
-		//			//make bitmap from clamped image
-		//			System.Drawing.Bitmap bitmap2;
-		//			unsafe
-		//			{
-		//				fixed( byte* pImage2 = image.Data )
-		//				{
-		//					bitmap2 = new System.Drawing.Bitmap( image.Size.X, image.Size.Y, image.Size.X * PixelFormatUtility.GetNumElemBytes( format ), System.Drawing.Imaging.PixelFormat.Format32bppArgb, (IntPtr)pImage2 );
-		//				}
-		//			}
-
-		//			if( System.IO.File.Exists( @"C:\______________sdjflsjdflsdf\Text.png" ) )
-		//				System.IO.File.Delete( @"C:\______________sdjflsjdflsdf\Text.png" );
-		//			bitmap2.Save( @"C:\______________sdjflsjdflsdf\Text.png" );
-
-
-		//		}
-		//		finally
-		//		{
-		//			context.DynamicTexture_Free( texture );
-		//			//!!!!
-		//			//!!!!texture?.Dispose();
-
-		//			textureRead?.Dispose();
-		//		}
-		//	}
-		//}
 
 		[MethodImpl( (MethodImplOptions)512 )]
 		unsafe void RenderOccluder( ViewportRenderingContext context, OcclusionCullingBuffer buffer, ref OccluderItem occluderItem, Matrix4F* viewProjMatrixFloat )

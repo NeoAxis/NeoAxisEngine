@@ -1025,5 +1025,69 @@ namespace NeoAxis
 
 			return texture;
 		}
+
+		void RenderVideoToFile( ViewportRenderingContext context, ImageComponent sceneTexture )
+		{
+			var owner = context.owner;
+
+			if( EngineApp.RenderVideoToFileData != null )
+			{
+				ImageComponent texture = null;
+
+				try
+				{
+					var format = PixelFormat.A8R8G8B8;
+					var imageSize = sceneTexture.Result.ResultSize;
+
+					//draw to texture with RGBA8 format and flip Y when needed
+					texture = context.RenderTarget2D_Alloc( imageSize, format, 0 );
+					var textureViewport = texture.Result.GetRenderTarget().Viewports[ 0 ];
+					context.SetViewport( owner.OutputViewport ?? owner );
+					CopyToCurrentViewport( context, sceneTexture, flipY: owner.OutputFlipY );
+
+					//get texture to read
+					var textureRead = EngineApp.RenderVideoToFileData.textureRead;
+
+					//create texture to read if not created yet
+					if( EngineApp.RenderVideoToFileData.textureRead == null )
+					{
+						textureRead = ComponentUtility.CreateComponent<ImageComponent>( null, true, false );
+						textureRead.CreateType = ImageComponent.TypeEnum._2D;
+						textureRead.CreateSize = imageSize;
+						textureRead.CreateMipmaps = false;
+						textureRead.CreateFormat = format;
+						textureRead.CreateUsage = ImageComponent.Usages.ReadBack | ImageComponent.Usages.BlitDestination;
+						textureRead.CreateFSAA = 0;
+						textureRead.Enabled = true;
+
+						EngineApp.RenderVideoToFileData.textureRead = textureRead;
+					}
+
+					texture.Result.GetNativeObject( true ).BlitTo( (ushort)RenderingSystem.CurrentViewNumber, textureRead.Result.GetNativeObject( true ), 0, 0 );
+
+					//get data
+					var totalBytes = PixelFormatUtility.GetNumElemBytes( format ) * imageSize.X * imageSize.Y;
+					var data = new byte[ totalBytes ];
+					unsafe
+					{
+						fixed( byte* pBytes = data )
+						{
+							var demandedFrame = textureRead.Result.GetNativeObject( true ).Read( (IntPtr)pBytes, 0, 0 );
+							while( RenderingSystem.CallFrame() < demandedFrame ) { }
+						}
+					}
+
+					//write to file
+					var image = new ImageUtility.Image2D( format, imageSize, data );
+					EngineApp.RenderVideoToFileData.AddFrame( image );
+				}
+				finally
+				{
+					context.DynamicTexture_Free( texture );
+
+					//textureRead?.Dispose();
+				}
+			}
+		}
 	}
 }

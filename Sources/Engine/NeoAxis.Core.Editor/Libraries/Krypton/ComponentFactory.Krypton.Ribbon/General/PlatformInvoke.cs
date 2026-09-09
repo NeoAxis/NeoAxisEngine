@@ -72,10 +72,10 @@ namespace Internal.ComponentFactory.Krypton.Ribbon
         }
         #endregion
 
-        #region Static DwmApi
-        [DllImport("dwmapi.dll, CharSet = CharSet.Unicode")]
-        internal static extern int DwmDefWindowProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, out IntPtr result);
-        #endregion
+        //#region Static DwmApi
+        //[DllImport("dwmapi.dll, CharSet = CharSet.Unicode")]
+        //internal static extern int DwmDefWindowProc(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam, out IntPtr result);
+        //#endregion
 
         #region Static User32
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -99,8 +99,8 @@ namespace Internal.ComponentFactory.Krypton.Ribbon
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         internal static extern bool ShowCaret(IntPtr hWnd);
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        internal static extern IntPtr GetActiveWindow();
+        //[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        //internal static extern IntPtr GetActiveWindow();
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         internal static extern int ShowWindow(IntPtr hWnd, short cmdShow);
@@ -108,22 +108,22 @@ namespace Internal.ComponentFactory.Krypton.Ribbon
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         internal static extern bool MessageBeep(int type);
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        internal static extern uint SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, ref TITLEBARINFOEX lParam);
+        //[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        //internal static extern uint SendMessage(IntPtr hWnd, int Msg, IntPtr wParam, ref TITLEBARINFOEX lParam);
         #endregion
 
         #region Static Gdi32
         [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
         internal static extern int BitBlt(IntPtr hDestDC, int x, int y, int nWidth, int nHeight, IntPtr hSrcDC, int xSrc, int ySrc, int dwRop);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
-        internal static extern IntPtr CreateCompatibleBitmap(IntPtr hDC, int nWidth, int nHeight);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
+        //internal static extern IntPtr CreateCompatibleBitmap(IntPtr hDC, int nWidth, int nHeight);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
-        internal static extern int ExcludeClipRect(IntPtr hDC, int x1, int y1, int x2, int y2);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
+        //internal static extern int ExcludeClipRect(IntPtr hDC, int x1, int y1, int x2, int y2);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
-        internal static extern int GetDeviceCaps(IntPtr hDC, int nIndex);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
+        //internal static extern int GetDeviceCaps(IntPtr hDC, int nIndex);
 
         [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
         internal static extern IntPtr CreateDIBSection(IntPtr hDC, BITMAPINFO pBMI, uint iUsage, int ppvBits, IntPtr hSection, uint dwOffset);

@@ -1699,7 +1699,7 @@ namespace NeoAxis
 				var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
 				viewport.Update( true );
 
-				RenderVideoToFileData?.AddFrame();
+				//RenderVideoToFileData?.AddFrame();
 
 				//renderPerformanceCounter.End();
 

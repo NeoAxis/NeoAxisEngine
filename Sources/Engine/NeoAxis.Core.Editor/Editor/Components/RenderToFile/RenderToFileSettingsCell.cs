@@ -175,8 +175,19 @@ namespace NeoAxis.Editor
 					break;
 
 				case RenderToFile.ModeEnum.Video:
-					if( !EditorUtility2.ShowSaveFileDialog( "", "Output.avi", "AVI files (*.avi)|*.avi", EditorForm.Instance.Handle, out destRealFileName ) )
-						return;
+					{
+						var extension = "avi";
+						switch( renderToFile.Format.Value )
+						{
+						case RenderToFile.FormatEnum.H264: extension = "mp4"; break;
+						case RenderToFile.FormatEnum.H265: extension = "mp4"; break;
+						//case RenderToFile.FormatEnum.AV1: extension = "mp4"; break;
+						case RenderToFile.FormatEnum.VP9: extension = "webm"; break;
+						}
+
+						if( !EditorUtility2.ShowSaveFileDialog( "", $"Output.{extension}", $"{extension.ToUpper()} files (*.{extension})|*.{extension}", EditorForm.Instance.Handle, out destRealFileName ) )
+							return;
+					}
 					break;
 
 				case RenderToFile.ModeEnum.Material:
@@ -1040,15 +1051,10 @@ namespace NeoAxis.Editor
 			if( document == null )
 				return;
 
-			var format = "";
-			switch( RenderToFile.Format.Value )
-			{
-			case RenderToFile.FormatEnum.NoCompression: format = "DIB "; break;
-			case RenderToFile.FormatEnum.LagarithLosslessLAGS: format = "LAGS"; break;
-			case RenderToFile.FormatEnum.Other: format = RenderToFile.FormatFourCC.Value; break;
-			}
+			var format = RenderToFile.Format.Value.ToString();
+			var quality = RenderToFile.Quality.Value.ToString();
 
-			RunSimulation.RunRenderVideoToFile( document.RealFileName, destRealFileName, RunSimulation.RunMethod.Player, RenderToFile.FramesPerSecond, RenderToFile.Length, camera != null ? camera.GetPathFromRoot() : "", renderingPipeline != null ? renderingPipeline.GetPathFromRoot() : "", RenderToFile.Resolution.Value, format );
+			RunSimulation.RunRenderVideoToFile( document.RealFileName, destRealFileName, RunSimulation.RunMethod.Player, RenderToFile.FramesPerSecond, RenderToFile.Length, camera != null ? camera.GetPathFromRoot() : "", renderingPipeline != null ? renderingPipeline.GetPathFromRoot() : "", RenderToFile.Resolution.Value, format, quality );
 		}
 	}
 }

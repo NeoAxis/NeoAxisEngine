@@ -1,7 +1,7 @@
 Tip
 {
 	Title = Manual
-	Text = "Welcome to NeoAxis Engine! To open the documentation use Ribbon -> Home -> Manual."
+	Text = "Welcome to NeoAxis Engine! To open the documentation use Menu > Home > Manual."
 	Image = StartManual.png
 }
 Tip

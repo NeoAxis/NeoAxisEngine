@@ -452,6 +452,7 @@ namespace NeoAxis
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Localization" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Tools\PlatformTools" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\Obfuscar" ) );
+					excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\Windows\ffmpeg.exe" ) );
 
 					//excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Core.Editor.dll" ) );
 					//excludePaths.Add( Path.Combine( sourceFolder, "NeoAxis.Core.Editor.deps.json" ) );

@@ -533,14 +533,14 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 		{
             Debug.Assert(e != null);
 
-            // HACK:
-            var sc = ActiveView?.MouseController as SeparatorController;
-            if (sc != null && sc.IsMoving && PI.IsWine())
-            {
-                //Debug.Assert(PI.IsWine());
-                Console.WriteLine("ViewManager.MouseLeave() SeparatorController WINE HACK!");
-                return;
-            }
+            //// HACK:
+            //var sc = ActiveView?.MouseController as SeparatorController;
+            //if (sc != null && sc.IsMoving && PI.IsWine())
+            //{
+            //    //Debug.Assert(PI.IsWine());
+            //    Console.WriteLine("ViewManager.MouseLeave() SeparatorController WINE HACK!");
+            //    return;
+            //}
             //
 
             // Validate incoming reference

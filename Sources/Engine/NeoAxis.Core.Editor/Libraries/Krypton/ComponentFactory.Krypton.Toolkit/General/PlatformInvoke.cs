@@ -228,13 +228,13 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
             return ((value & 0xFFFF) << 0x10);
         }
 
-		public static bool IsWine()
-		{
-			IntPtr hModule = GetModuleHandle("ntdll.dll");
-			if (hModule == IntPtr.Zero)
-				return false;
-			return GetProcAddress(hModule, "wine_get_version") != IntPtr.Zero;
-		}
+		//public static bool IsWine()
+		//{
+		//	IntPtr hModule = GetModuleHandle("ntdll.dll");
+		//	if (hModule == IntPtr.Zero)
+		//		return false;
+		//	return GetProcAddress(hModule, "wine_get_version") != IntPtr.Zero;
+		//}
 
         public static string GetClassName(IntPtr hWnd)
         {
@@ -253,11 +253,11 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 		#endregion
 
 		#region Static User32
-		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
+		//[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+  //      public static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern short VkKeyScan(char ch);
+        //[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        //public static extern short VkKeyScan(char ch);
         
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr WindowFromPoint(PI.POINT pt);
@@ -312,8 +312,8 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
                 return SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
         }
 
-		[DllImport("user32.dll", SetLastError = true)]
-		public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+		//[DllImport("user32.dll", SetLastError = true)]
+		//public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
 		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr GetActiveWindow();
@@ -334,8 +334,8 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern bool RedrawWindow(IntPtr hWnd, IntPtr rectUpdate, IntPtr hRgnUpdate, uint uFlags);
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern bool RedrawWindow(IntPtr hWnd, ref PI.RECT rectUpdate, IntPtr hRgnUpdate, uint uFlags);
+        //[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        //public static extern bool RedrawWindow(IntPtr hWnd, ref PI.RECT rectUpdate, IntPtr hRgnUpdate, uint uFlags);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern bool TrackMouseEvent(ref TRACKMOUSEEVENTS tme);
@@ -343,8 +343,8 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr GetDC(IntPtr hWnd);
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern IntPtr GetDCEx(IntPtr hWnd, IntPtr hRgnClip, uint fdwOptions);
+        //[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        //public static extern IntPtr GetDCEx(IntPtr hWnd, IntPtr hRgnClip, uint fdwOptions);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr GetWindowDC(IntPtr hwnd);
@@ -379,14 +379,14 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern bool InflateRect(ref RECT lprc, int dx, int dy);
+        //[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        //public static extern bool InflateRect(ref RECT lprc, int dx, int dy);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        public static extern uint RegisterWindowMessage(string lpString);
+        //[DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        //public static extern uint RegisterWindowMessage(string lpString);
 
         [DllImport("user32")]
         public static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
@@ -397,17 +397,17 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
 		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
 		public static extern bool UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref POINT pptDst, ref SIZE psize, IntPtr hdcSrc, ref POINT pprSrc, Int32 crKey, ref BLENDFUNCTION pblend, Int32 dwFlags);
 
-		[DllImport("user32.dll")]
-		public static extern bool IsWindowVisible(IntPtr hWnd);
+		//[DllImport("user32.dll")]
+		//public static extern bool IsWindowVisible(IntPtr hWnd);
 
-		[DllImport("user32.dll")]
-		public static extern bool IsZoomed(IntPtr hwnd);
+		//[DllImport("user32.dll")]
+		//public static extern bool IsZoomed(IntPtr hwnd);
 
-		[DllImport("user32.dll")]
-		public static extern bool IsIconic(IntPtr hwnd);
+		//[DllImport("user32.dll")]
+		//public static extern bool IsIconic(IntPtr hwnd);
 
-        [DllImport("user32.dll")]
-        public static extern bool GetUpdateRect(IntPtr hWnd, ref RECT rect, bool bErase);
+        //[DllImport("user32.dll")]
+        //public static extern bool GetUpdateRect(IntPtr hWnd, ref RECT rect, bool bErase);
         #endregion
 
         #region Static Gdi32
@@ -441,44 +441,44 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         [DllImport("gdi32.dll", CharSet = CharSet.Unicode)]
         public static extern bool DeleteDC(IntPtr hDC);
 
-        [DllImport("gdi32.dll", EntryPoint = "SaveDC", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern int IntSaveDC(HandleRef hDC);
+        //[DllImport("gdi32.dll", EntryPoint = "SaveDC", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern int IntSaveDC(HandleRef hDC);
 
-        [DllImport("gdi32.dll", EntryPoint = "RestoreDC", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern bool IntRestoreDC(HandleRef hDC, int nSavedDC);
+        //[DllImport("gdi32.dll", EntryPoint = "RestoreDC", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern bool IntRestoreDC(HandleRef hDC, int nSavedDC);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern bool GetViewportOrgEx(HandleRef hDC, [In, Out]POINTC point);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern bool GetViewportOrgEx(HandleRef hDC, [In, Out]POINTC point);
 
-        [DllImport("gdi32.dll", EntryPoint = "CreateRectRgn", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern IntPtr IntCreateRectRgn(int x1, int y1, int x2, int y2);
+        //[DllImport("gdi32.dll", EntryPoint = "CreateRectRgn", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern IntPtr IntCreateRectRgn(int x1, int y1, int x2, int y2);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern int GetClipRgn(HandleRef hDC, HandleRef hRgn);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern int GetClipRgn(HandleRef hDC, HandleRef hRgn);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern bool SetViewportOrgEx(HandleRef hDC, int x, int y, [In, Out]POINTC point);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern bool SetViewportOrgEx(HandleRef hDC, int x, int y, [In, Out]POINTC point);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern int GetRgnBox(HandleRef hRegion, ref RECT clipRect);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern int GetRgnBox(HandleRef hRegion, ref RECT clipRect);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern int CombineRgn(HandleRef hRgn, HandleRef hRgn1, HandleRef hRgn2, int nCombineMode);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern int CombineRgn(HandleRef hRgn, HandleRef hRgn1, HandleRef hRgn2, int nCombineMode);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern int SelectClipRgn(HandleRef hDC, HandleRef hRgn);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern int SelectClipRgn(HandleRef hDC, HandleRef hRgn);
 
         [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
         public static extern int SelectClipRgn(IntPtr hDC, IntPtr hRgn);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern uint SetTextColor(IntPtr hdc, int crColor);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern uint SetTextColor(IntPtr hdc, int crColor);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern uint SetBkColor(IntPtr hdc, int crColor);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern uint SetBkColor(IntPtr hdc, int crColor);
 
-        [DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
-        public static extern IntPtr CreateSolidBrush(int crColor);
+        //[DllImport("gdi32.dll", CharSet = CharSet.Unicode, SetLastError = true, ExactSpelling = true)]
+        //public static extern IntPtr CreateSolidBrush(int crColor);
         #endregion
 
         #region Static DwmApi
@@ -518,8 +518,8 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         public static extern short QueryPerformanceFrequency(ref long var);
 
-		[DllImport("kernel32.dll", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
-		internal static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+		//[DllImport("kernel32.dll", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+		//internal static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
 
 		[DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
 		public static extern IntPtr GetModuleHandle(string lpModuleName);

@@ -193,8 +193,29 @@ namespace OpenALSoundSystem
 		{
 			OpenALSoundWorld.criticalSection.Enter();
 
-			Al.alSourceStop( alSource );
-			OpenALSoundWorld.CheckError( "alSourceStop" );
+			if( alSource != 0 )
+			{
+				Al.alSourceStop( alSource );
+				OpenALSoundWorld.CheckError( "alSourceStop" );
+
+				//!!!!? added by GPT. sense?
+				//if( currentSound is OpenALFileStreamSoundData || currentSound is OpenALDataStreamSoundData )
+				//{
+				//	int queued;
+				//	Al.alGetSourcei( alSource, Al.AL_BUFFERS_QUEUED, out queued );
+				//	if( !OpenALSoundWorld.CheckError( "alGetSourcei, AL_BUFFERS_QUEUED" ) )
+				//	{
+				//		while( queued > 0 )
+				//		{
+				//			int alStreamBuffer = 0;
+				//			Al.alSourceUnqueueBuffers( alSource, 1, ref alStreamBuffer );
+				//			if( OpenALSoundWorld.CheckError( "alSourceUnqueueBuffers" ) )
+				//				break;
+				//			queued--;
+				//		}
+				//	}
+				//}
+			}
 
 			//never delete buffer because cannot delete. maybe need some time to free buffer internally
 			////delete al data buffers
@@ -230,8 +251,11 @@ namespace OpenALSoundSystem
 				fileStreamVorbisFileReader = null;
 			}
 
-			Al.alSourcei( alSource, Al.AL_BUFFER, 0 );
-			OpenALSoundWorld.CheckError( "alSourcei, AL_BUFFER" );
+			if( alSource != 0 )
+			{
+				Al.alSourcei( alSource, Al.AL_BUFFER, 0 );
+				OpenALSoundWorld.CheckError( "alSourcei, AL_BUFFER" );
+			}
 
 			currentSound = null;
 

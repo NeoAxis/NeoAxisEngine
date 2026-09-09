@@ -221,7 +221,7 @@ namespace Internal.ComponentFactory.Krypton.Toolkit
                     try
                     {
                         // Only need to remove the window theme, if there is one
-                        bool appThemed = PI.IsWine() || (PI.IsAppThemed() && PI.IsThemeActive());
+                        bool appThemed = /*PI.IsWine() ||*/ (PI.IsAppThemed() && PI.IsThemeActive());
                         if (appThemed)
                         {
                             //// Retest if composition should be applied

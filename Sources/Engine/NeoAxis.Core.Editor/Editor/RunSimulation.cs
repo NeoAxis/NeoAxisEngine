@@ -72,26 +72,27 @@ namespace NeoAxis.Editor
 			//Process.Start( fileName, arguments );
 		}
 
-		public static void RunRenderVideoToFile( string realFileName, string destRealFileName, RunMethod runMethod, int framesPerSecond, double length, string camera, string renderingPipeline, Vector2I resolution, string format )
+		public static void RunRenderVideoToFile( string realFileName, string destRealFileName, RunMethod runMethod, int framesPerSecond, double length, string camera, string renderingPipeline, Vector2I resolution, string format, string quality )
 		{
 			string fileName = Path.Combine( VirtualFileSystem.Directories.Binaries, "NeoAxis.Player.exe" );
 
 			string arguments = "";
 
-			arguments += "-windowedMode Fullscreen";
+			//arguments += "-windowedMode Fullscreen";
 
-			if( !string.IsNullOrEmpty( realFileName ) )
-				arguments += string.Format( " -play \"{0}\"", realFileName );
-
-			arguments += string.Format( " -renderVideoToFile \"{0}\"", destRealFileName );
+			arguments += string.Format( "-renderVideoToFile \"{0}\"", destRealFileName );
 			arguments += string.Format( " -framesPerSecond {0}", framesPerSecond );
 			arguments += string.Format( " -length {0}", length );
 			if( !string.IsNullOrEmpty( camera ) )
 				arguments += string.Format( " -camera \"{0}\"", camera );
 			if( !string.IsNullOrEmpty( renderingPipeline ) )
 				arguments += string.Format( " -renderingPipeline \"{0}\"", renderingPipeline );
-			arguments += string.Format( " -resolution \"{0}\"", resolution.ToString() );
-			arguments += string.Format( " -format \"{0}\"", format );
+			//arguments += string.Format( " -resolution \"{0}\"", resolution.ToString() );
+			arguments += string.Format( " -format {0}", format );
+			arguments += string.Format( " -quality {0}", quality );
+
+			if( !string.IsNullOrEmpty( realFileName ) )
+				arguments += string.Format( " -play \"{0}\"", realFileName );
 
 			Process.Start( new ProcessStartInfo( fileName, arguments ) { UseShellExecute = true } );
 			//Process.Start( fileName, arguments );
