@@ -302,9 +302,9 @@ namespace OpenALSoundSystem
 				bool initialized;
 
 				//!!!!temp
-				//but maybe is good for mobile devices
+				//but maybe is good for mobile devices and web
 				var allowStreaming = true;
-				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Android )
+				if( SystemSettings.Android || SystemSettings.Web )
 					allowStreaming = false;
 
 
