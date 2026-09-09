@@ -146,7 +146,10 @@ namespace OpenALSoundSystem
 			}
 
 			if( fileStreamSound != null )
+			{
+				SeekFileStreamToCurrentTime();
 				FileStreamStartPlay();
+			}
 
 			if( dataStreamSound != null )
 				DataStreamStartPlay();
@@ -175,7 +178,8 @@ namespace OpenALSoundSystem
 				return;
 			}
 
-			UpdateTime2();
+			if( sampleSound != null )
+				UpdateTime2();
 
 			//unpause
 			Al.alSourcePlay( alSource );
@@ -571,6 +575,45 @@ namespace OpenALSoundSystem
 				}
 				else
 					CurrentVirtualChannel.Stop();
+			}
+		}
+
+		[MethodImpl( (MethodImplOptions)512 )]
+		unsafe void SeekFileStreamToCurrentTime()
+		{
+			double time = CurrentVirtualChannel != null ? CurrentVirtualChannel.Time : 0;
+			if( time <= 0 )
+				return;
+
+			double length = currentSound.Length;
+			if( length > 0 )
+			{
+				if( ( currentSound.Mode & SoundModes.Loop ) != 0 )
+					time %= length;
+				else
+					time = Math.Min( time, length );
+			}
+
+			fileStreamVorbisFile.get_info( -1, out var sourceChannels, out var sourceFrequency );
+			int sampleFrameSize = sourceChannels * 2;
+			if( sampleFrameSize <= 0 )
+				return;
+
+			long bytesToSkip = (long)( time * sourceFrequency * sampleFrameSize );
+			bytesToSkip -= bytesToSkip % sampleFrameSize;
+
+			while( bytesToSkip > 0 )
+			{
+				int needRead = (int)Math.Min( streamBufferSize, bytesToSkip );
+				needRead -= needRead % sampleFrameSize;
+				if( needRead <= 0 )
+					needRead = (int)Math.Min( bytesToSkip, sampleFrameSize );
+
+				int readBytes = fileStreamVorbisFile.read( (IntPtr)streamBuffer, needRead, 0, 2, 1, IntPtr.Zero );
+				if( readBytes <= 0 )
+					break;
+
+				bytesToSkip -= readBytes;
 			}
 		}
 
