@@ -18,9 +18,9 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using Internal.DotRecast.Core;
+using NeoAxis.DotRecast.Core;
 
-namespace Internal.DotRecast.Detour.TileCache
+namespace NeoAxis.DotRecast.Detour.TileCache
 {
     public readonly struct DtTileCacheStorageParams
     {

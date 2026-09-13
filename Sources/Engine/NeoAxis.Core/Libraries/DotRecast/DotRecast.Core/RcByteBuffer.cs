@@ -1,7 +1,7 @@
 using System;
 using System.Buffers.Binary;
 
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     public class RcByteBuffer
     {

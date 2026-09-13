@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     public class DtBVItemYComparer : IComparer<DtBVItem>
     {

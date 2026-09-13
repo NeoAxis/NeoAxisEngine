@@ -18,9 +18,9 @@ freely, subject to the following restrictions:
 
 using System;
 using System.IO;
-using Internal.DotRecast.Core;
+using NeoAxis.DotRecast.Core;
 
-namespace Internal.DotRecast.Detour.Io
+namespace NeoAxis.DotRecast.Detour.Io
 {
     using static DtDetour;
 

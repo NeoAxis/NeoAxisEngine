@@ -1,7 +1,7 @@
 using System;
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     // Calculate the intersection between a polygon and a circle. A dodecagon is used as an approximation of the circle.
     public class DtStrictDtPolygonByCircleConstraint : IDtPolygonByCircleConstraint

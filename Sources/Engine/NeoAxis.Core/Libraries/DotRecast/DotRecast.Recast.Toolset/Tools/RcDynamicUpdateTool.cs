@@ -1,17 +1,17 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Detour.Dynamic;
-using Internal.DotRecast.Detour.Dynamic.Colliders;
-using Internal.DotRecast.Detour.Dynamic.Io;
-using Internal.DotRecast.Recast.Geom;
-using Internal.DotRecast.Recast.Toolset.Builder;
-using Internal.DotRecast.Recast.Toolset.Geom;
-using Internal.DotRecast.Recast.Toolset.Gizmos;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Detour.Dynamic;
+using NeoAxis.DotRecast.Detour.Dynamic.Colliders;
+using NeoAxis.DotRecast.Detour.Dynamic.Io;
+using NeoAxis.DotRecast.Recast.Geom;
+using NeoAxis.DotRecast.Recast.Toolset.Builder;
+using NeoAxis.DotRecast.Recast.Toolset.Geom;
+using NeoAxis.DotRecast.Recast.Toolset.Gizmos;
 
-namespace Internal.DotRecast.Recast.Toolset.Tools
+namespace NeoAxis.DotRecast.Recast.Toolset.Tools
 {
     public class RcDynamicUpdateTool : IRcToolable
     {

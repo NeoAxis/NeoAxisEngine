@@ -18,7 +18,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     using static DtDetour;
 

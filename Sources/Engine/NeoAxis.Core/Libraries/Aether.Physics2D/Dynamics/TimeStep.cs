@@ -25,12 +25,12 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using Internal.nkast.Aether.Physics2D.Common;
+using Internal.Physics2D.Common;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Dynamics
+namespace Internal.Physics2D.Dynamics
 {
     /// <summary>
     /// This is an internal structure.

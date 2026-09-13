@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace Internal.DotRecast.Core.Collections
+namespace NeoAxis.DotRecast.Core.Collections
 {
     public sealed class RcBinaryMinHeap<T>
     {

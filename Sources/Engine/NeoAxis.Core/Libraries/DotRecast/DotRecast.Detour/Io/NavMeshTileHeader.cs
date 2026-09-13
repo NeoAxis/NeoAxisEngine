@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Detour.Io
+namespace NeoAxis.DotRecast.Detour.Io
 {
     public struct NavMeshTileHeader
     {

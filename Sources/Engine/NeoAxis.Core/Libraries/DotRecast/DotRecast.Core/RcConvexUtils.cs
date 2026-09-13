@@ -18,9 +18,9 @@ freely, subject to the following restrictions:
 */
 
 using System.Collections.Generic;
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     public static class RcConvexUtils
     {

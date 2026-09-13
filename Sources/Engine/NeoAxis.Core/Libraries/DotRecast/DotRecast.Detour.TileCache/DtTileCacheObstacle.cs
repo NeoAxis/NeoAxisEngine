@@ -20,7 +20,7 @@ freely, subject to the following restrictions:
 
 using System.Collections.Generic;
 
-namespace Internal.DotRecast.Detour.TileCache
+namespace NeoAxis.DotRecast.Detour.TileCache
 {
     public class DtTileCacheObstacle
     {

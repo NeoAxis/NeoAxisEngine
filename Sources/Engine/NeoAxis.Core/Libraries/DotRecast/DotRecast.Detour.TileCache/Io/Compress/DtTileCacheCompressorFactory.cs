@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Internal.DotRecast.Core;
+using NeoAxis.DotRecast.Core;
 
-namespace Internal.DotRecast.Detour.TileCache.Io.Compress
+namespace NeoAxis.DotRecast.Detour.TileCache.Io.Compress
 {
     public class DtTileCacheCompressorFactory : IDtTileCacheCompressorFactory
     {

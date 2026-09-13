@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Internal.DotRecast.Core.Buffers
+namespace NeoAxis.DotRecast.Core.Buffers
 {
     // This implementation is thread unsafe
     public class RcObjectPool<T> where T : class

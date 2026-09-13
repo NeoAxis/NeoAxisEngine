@@ -1,6 +1,6 @@
-using Internal.DotRecast.Core.Collections;
+using NeoAxis.DotRecast.Core.Collections;
 
-namespace Internal.DotRecast.Recast.Toolset.Tools
+namespace NeoAxis.DotRecast.Recast.Toolset.Tools
 {
     public class RcDynamicUpdateToolMode
     {

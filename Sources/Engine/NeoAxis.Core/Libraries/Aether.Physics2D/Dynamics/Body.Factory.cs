@@ -5,15 +5,15 @@
 
 using System;
 using System.Collections.Generic;
-using Internal.nkast.Aether.Physics2D.Collision.Shapes;
-using Internal.nkast.Aether.Physics2D.Common;
-using Internal.nkast.Aether.Physics2D.Common.Decomposition;
-using Internal.nkast.Aether.Physics2D.Dynamics;
+using Internal.Physics2D.Collision.Shapes;
+using Internal.Physics2D.Common;
+using Internal.Physics2D.Common.Decomposition;
+using Internal.Physics2D.Dynamics;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Dynamics
+namespace Internal.Physics2D.Dynamics
 {
     // An easy to use factory for creating bodies
     public partial class Body

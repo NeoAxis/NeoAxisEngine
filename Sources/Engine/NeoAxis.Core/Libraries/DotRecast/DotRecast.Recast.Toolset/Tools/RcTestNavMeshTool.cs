@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Detour;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Detour;
 
-namespace Internal.DotRecast.Recast.Toolset.Tools
+namespace NeoAxis.DotRecast.Recast.Toolset.Tools
 {
     public class RcTestNavMeshTool : IRcToolable
     {

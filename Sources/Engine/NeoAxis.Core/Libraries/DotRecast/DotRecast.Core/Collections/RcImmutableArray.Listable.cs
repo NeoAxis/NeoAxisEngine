@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Internal.DotRecast.Core.Collections
+namespace NeoAxis.DotRecast.Core.Collections
 {
     public readonly partial struct RcImmutableArray<T> : IList<T>
     {

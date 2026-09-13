@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.CompilerServices;
-using Internal.DotRecast.Core.Collections;
+using NeoAxis.DotRecast.Core.Collections;
 
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     public static class RcThrowHelper
     {

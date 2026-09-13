@@ -18,10 +18,10 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Recast;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Recast;
 
-namespace Internal.DotRecast.Detour.Dynamic
+namespace NeoAxis.DotRecast.Detour.Dynamic
 {
     /**
  * Voxel raycast based on the algorithm described in

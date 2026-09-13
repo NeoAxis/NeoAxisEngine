@@ -1,7 +1,7 @@
 using System;
-using Internal.DotRecast.Core;
+using NeoAxis.DotRecast.Core;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     public class DtCollectPolysQuery : IDtPolyQuery
     {

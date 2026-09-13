@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Recast.Toolset
+namespace NeoAxis.DotRecast.Recast.Toolset
 {
     public class RcNavMeshBuildSettings
     {

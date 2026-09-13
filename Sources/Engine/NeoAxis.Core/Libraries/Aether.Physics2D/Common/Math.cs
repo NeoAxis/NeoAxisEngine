@@ -37,7 +37,7 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Common
+namespace Internal.Physics2D.Common
 {
     public static class MathUtils
     {

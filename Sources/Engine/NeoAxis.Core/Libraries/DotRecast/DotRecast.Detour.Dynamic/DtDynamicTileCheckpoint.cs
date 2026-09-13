@@ -18,9 +18,9 @@ freely, subject to the following restrictions:
 */
 
 using System.Collections.Generic;
-using Internal.DotRecast.Recast;
+using NeoAxis.DotRecast.Recast;
 
-namespace Internal.DotRecast.Detour.Dynamic
+namespace NeoAxis.DotRecast.Detour.Dynamic
 {
     public class DtDynamicTileCheckpoint
     {

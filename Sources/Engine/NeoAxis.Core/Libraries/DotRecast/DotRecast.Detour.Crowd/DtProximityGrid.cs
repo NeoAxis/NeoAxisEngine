@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Internal.DotRecast.Detour.Crowd
+namespace NeoAxis.DotRecast.Detour.Crowd
 {
     public class DtProximityGrid
     {

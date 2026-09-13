@@ -3,13 +3,13 @@
 // * Microsoft Permissive License (Ms-PL) v1.1
 // */
 
-//using Internal.nkast.Aether.Physics2D.Common;
-//using Internal.nkast.Aether.Physics2D.Dynamics;
+//using Internal.Physics2D.Common;
+//using Internal.Physics2D.Dynamics;
 //#if XNAAPI
 //using Vector2 = Microsoft.Xna.Framework.Vector2;
 //#endif
 
-//namespace Internal.nkast.Aether.Physics2D.Controllers
+//namespace Internal.Physics2D.Controllers
 //{
 //    /// <summary>
 //    /// Reference implementation for forces based on AbstractForceController

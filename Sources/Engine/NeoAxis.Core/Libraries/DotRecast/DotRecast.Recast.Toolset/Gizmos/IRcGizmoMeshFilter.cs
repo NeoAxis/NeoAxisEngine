@@ -1,6 +1,6 @@
-//using Internal.DotRecast.Recast.Demo.Draw;
+//using NeoAxis.DotRecast.Recast.Demo.Draw;
 
-namespace Internal.DotRecast.Recast.Toolset.Gizmos
+namespace NeoAxis.DotRecast.Recast.Toolset.Gizmos
 {
     public interface IRcGizmoMeshFilter
     {

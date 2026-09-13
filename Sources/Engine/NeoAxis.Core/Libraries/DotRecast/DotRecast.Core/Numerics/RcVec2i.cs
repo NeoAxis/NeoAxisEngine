@@ -1,6 +1,6 @@
 using System;
 
-namespace Internal.DotRecast.Core.Numerics
+namespace NeoAxis.DotRecast.Core.Numerics
 {
     public struct RcVec2i : IEquatable<RcVec2i>
     {

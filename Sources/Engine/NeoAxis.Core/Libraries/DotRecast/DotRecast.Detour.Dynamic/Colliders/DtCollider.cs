@@ -17,10 +17,10 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Recast;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Recast;
 
-namespace Internal.DotRecast.Detour.Dynamic.Colliders
+namespace NeoAxis.DotRecast.Detour.Dynamic.Colliders
 {
     public abstract class DtCollider : IDtCollider
     {

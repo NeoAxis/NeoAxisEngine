@@ -18,10 +18,10 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     /**
  * Simple helper to find an intersection between a ray and a nav mesh

@@ -18,9 +18,9 @@ freely, subject to the following restrictions:
 */
 
 using System.Collections.Generic;
-using Internal.DotRecast.Detour.Dynamic.Colliders;
+using NeoAxis.DotRecast.Detour.Dynamic.Colliders;
 
-namespace Internal.DotRecast.Detour.Dynamic
+namespace NeoAxis.DotRecast.Detour.Dynamic
 {
     public class DtDynamicTileColliderAdditionJob : IDtDaynmicTileJob
     {

@@ -1,6 +1,6 @@
 using System.Threading;
 
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     public class RcAtomicInteger
     {

@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     /// Provides an interface for optional logging and performance tracking of the Recast 
     /// build process.

@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     /// Options for dtNavMeshQuery::initSlicedFindPath and updateSlicedFindPath
     public static class DtFindPathOptions

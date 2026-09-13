@@ -6,7 +6,7 @@ using Complex = nkast.Aether.Physics2D.Common.Complex;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Common
+namespace Internal.Physics2D.Common
 {
     public struct Complex
     {

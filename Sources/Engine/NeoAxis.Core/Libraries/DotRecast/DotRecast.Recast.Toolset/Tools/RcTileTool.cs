@@ -1,12 +1,12 @@
 using System.Linq;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Collections;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Detour;
-using Internal.DotRecast.Recast.Geom;
-using Internal.DotRecast.Recast.Toolset.Builder;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Collections;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Detour;
+using NeoAxis.DotRecast.Recast.Geom;
+using NeoAxis.DotRecast.Recast.Toolset.Builder;
 
-namespace Internal.DotRecast.Recast.Toolset.Tools
+namespace NeoAxis.DotRecast.Recast.Toolset.Tools
 {
     public class RcTileTool : IRcToolable
     {

@@ -21,7 +21,7 @@ freely, subject to the following restrictions:
 using System;
 using System.Collections.Generic;
 
-namespace Internal.DotRecast.Core.Collections
+namespace NeoAxis.DotRecast.Core.Collections
 {
     public class RcSortedQueue<T>
     {

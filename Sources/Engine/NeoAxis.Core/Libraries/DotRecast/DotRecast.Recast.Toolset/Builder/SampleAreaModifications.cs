@@ -18,9 +18,9 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using Internal.DotRecast.Core.Collections;
+using NeoAxis.DotRecast.Core.Collections;
 
-namespace Internal.DotRecast.Recast.Toolset.Builder
+namespace NeoAxis.DotRecast.Recast.Toolset.Builder
 {
     public class SampleAreaModifications
     {

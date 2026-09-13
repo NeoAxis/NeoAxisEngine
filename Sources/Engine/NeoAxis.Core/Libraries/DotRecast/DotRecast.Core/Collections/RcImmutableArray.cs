@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Core.Collections
+namespace NeoAxis.DotRecast.Core.Collections
 {
     public static class RcImmutableArray
     {

@@ -1,6 +1,6 @@
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour.Crowd
+namespace NeoAxis.DotRecast.Detour.Crowd
 {
     public class DtObstacleSegment
     {

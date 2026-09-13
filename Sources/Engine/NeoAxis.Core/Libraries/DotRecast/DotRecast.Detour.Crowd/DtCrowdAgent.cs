@@ -19,9 +19,9 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour.Crowd
+namespace NeoAxis.DotRecast.Detour.Crowd
 {
     /// Represents an agent managed by a #dtCrowd object.
     /// @ingroup crowd

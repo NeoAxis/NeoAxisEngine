@@ -32,14 +32,14 @@
 
 using System;
 using System.Diagnostics;
-using Internal.nkast.Aether.Physics2D.Common;
-using Internal.nkast.Aether.Physics2D.Dynamics.Contacts;
-using Internal.nkast.Aether.Physics2D.Dynamics.Joints;
+using Internal.Physics2D.Common;
+using Internal.Physics2D.Dynamics.Contacts;
+using Internal.Physics2D.Dynamics.Joints;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Dynamics
+namespace Internal.Physics2D.Dynamics
 {
     /// <summary>
     /// This is an internal class.

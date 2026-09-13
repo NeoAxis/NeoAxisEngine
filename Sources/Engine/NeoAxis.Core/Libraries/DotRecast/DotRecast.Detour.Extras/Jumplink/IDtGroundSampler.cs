@@ -1,6 +1,6 @@
-using Internal.DotRecast.Recast;
+using NeoAxis.DotRecast.Recast;
 
-namespace Internal.DotRecast.Detour.Extras.Jumplink
+namespace NeoAxis.DotRecast.Detour.Extras.Jumplink
 {
     public interface IDtGroundSampler
     {

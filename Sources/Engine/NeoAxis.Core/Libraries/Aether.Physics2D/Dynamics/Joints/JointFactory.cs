@@ -3,14 +3,14 @@
  * Microsoft Permissive License (Ms-PL) v1.1
  */
 
-using Internal.nkast.Aether.Physics2D.Common;
-using Internal.nkast.Aether.Physics2D.Dynamics;
-using Internal.nkast.Aether.Physics2D.Dynamics.Joints;
+using Internal.Physics2D.Common;
+using Internal.Physics2D.Dynamics;
+using Internal.Physics2D.Dynamics.Joints;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Dynamics.Joints
+namespace Internal.Physics2D.Dynamics.Joints
 {
     /// <summary>
     /// An easy to use factory for using joints.

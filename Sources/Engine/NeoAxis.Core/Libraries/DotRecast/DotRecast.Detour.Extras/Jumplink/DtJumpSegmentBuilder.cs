@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Internal.DotRecast.Core;
+using NeoAxis.DotRecast.Core;
 
-namespace Internal.DotRecast.Detour.Extras.Jumplink
+namespace NeoAxis.DotRecast.Detour.Extras.Jumplink
 {
     public class DtJumpSegmentBuilder
     {

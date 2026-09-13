@@ -25,12 +25,12 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.nkast.Aether.Physics2D.Common;
+using Internal.Physics2D.Common;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Common.PolygonManipulation
+namespace Internal.Physics2D.Common.PolygonManipulation
 {
     /// <summary>
     /// Combines a list of triangles into a list of convex polygons.

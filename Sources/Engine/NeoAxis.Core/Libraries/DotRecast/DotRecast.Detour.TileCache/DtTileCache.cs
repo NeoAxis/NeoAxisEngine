@@ -20,11 +20,11 @@ freely, subject to the following restrictions:
 
 using System;
 using System.Collections.Generic;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Detour.TileCache.Io;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Detour.TileCache.Io;
 
-namespace Internal.DotRecast.Detour.TileCache
+namespace NeoAxis.DotRecast.Detour.TileCache
 {
     using static DtDetour;
 

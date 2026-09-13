@@ -1,6 +1,6 @@
 using System;
 
-namespace Internal.DotRecast.Recast.Toolset.Gizmos
+namespace NeoAxis.DotRecast.Recast.Toolset.Gizmos
 {
     public static class RcGizmoHelper
     {

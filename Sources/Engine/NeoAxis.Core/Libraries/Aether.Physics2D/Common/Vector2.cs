@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Internal.nkast.Aether.Physics2D.Common
+namespace Internal.Physics2D.Common
 {
     public struct Vector2 : IEquatable<Vector2>
     {

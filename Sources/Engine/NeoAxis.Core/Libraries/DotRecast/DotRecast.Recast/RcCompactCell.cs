@@ -18,7 +18,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     /** Provides information on the content of a cell column in a compact heightfield. */
     public readonly struct RcCompactCell

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Internal.DotRecast.Core.Numerics
+namespace NeoAxis.DotRecast.Core.Numerics
 {
     public struct RcVec2f
     {

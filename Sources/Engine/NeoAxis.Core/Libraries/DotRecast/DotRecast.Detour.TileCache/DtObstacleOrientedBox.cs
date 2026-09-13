@@ -1,6 +1,6 @@
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour.TileCache
+namespace NeoAxis.DotRecast.Detour.TileCache
 {
     public class DtObstacleOrientedBox
     {

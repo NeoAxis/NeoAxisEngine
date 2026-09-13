@@ -17,7 +17,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     /// A memory pool used for quick allocation of spans within a heightfield.
     /// @see rcHeightfield

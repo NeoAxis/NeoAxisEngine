@@ -290,6 +290,7 @@ namespace NeoAxis.Editor
 				AddItem( new Item( group + @"\Decal", typeof( Decal ) ) );
 				AddItem( new Item( group + @"\Reflection Probe", typeof( ReflectionProbe ) ) );
 				AddItem( new Item( group + @"\Sound Source", typeof( SoundSource ) ) );
+				AddItem( new Item( group + @"\Points In Space", typeof( PointsInSpace ) ) );
 				//AddItem( new Item( group + @"\Render Target In Space", typeof( RenderTargetInSpace ) ) );
 				//AddItem( new Item( group + @"\Additional\Text 2D", typeof( Text2D ) ) );
 				AddItem( new Item( group + @"\Additional\Curve In Space", typeof( CurveInSpace ) ) );

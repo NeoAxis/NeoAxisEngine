@@ -18,10 +18,10 @@ freely, subject to the following restrictions:
 */
 
 using System.IO;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour.Dynamic.Io
+namespace NeoAxis.DotRecast.Detour.Dynamic.Io
 {
     public class DtVoxelFileReader
     {

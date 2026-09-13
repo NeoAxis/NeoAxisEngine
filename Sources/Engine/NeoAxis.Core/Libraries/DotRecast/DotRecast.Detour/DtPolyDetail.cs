@@ -18,7 +18,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     /// Defines the location of detail sub-mesh data within a dtMeshTile.
     public readonly struct DtPolyDetail

@@ -1,6 +1,6 @@
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     /// Represents a heightfield layer within a layer set.
     /// @see rcHeightfieldLayerSet

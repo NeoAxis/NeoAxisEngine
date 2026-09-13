@@ -18,9 +18,9 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour.Crowd
+namespace NeoAxis.DotRecast.Detour.Crowd
 {
     public class DtCrowdAgentDebugInfo
     {

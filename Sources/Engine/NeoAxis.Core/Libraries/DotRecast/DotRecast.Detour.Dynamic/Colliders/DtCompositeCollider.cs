@@ -20,10 +20,10 @@ freely, subject to the following restrictions:
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Recast;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Recast;
 
-namespace Internal.DotRecast.Detour.Dynamic.Colliders
+namespace NeoAxis.DotRecast.Detour.Dynamic.Colliders
 {
     public class DtCompositeCollider : IDtCollider
     {

@@ -24,7 +24,7 @@
 
 using System;
 
-namespace Internal.DotRecast.Core.Compression
+namespace NeoAxis.DotRecast.Core.Compression
 {
     public static class FastLZ
     {

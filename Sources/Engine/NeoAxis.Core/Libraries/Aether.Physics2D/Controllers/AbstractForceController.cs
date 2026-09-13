@@ -4,15 +4,15 @@
 // */
 
 //using System;
-//using Internal.nkast.Aether.Physics2D.Common.PhysicsLogic;
-//using Internal.nkast.Aether.Physics2D.Dynamics;
+//using Internal.Physics2D.Common.PhysicsLogic;
+//using Internal.Physics2D.Dynamics;
 //#if XNAAPI
 //using Vector2 = Microsoft.Xna.Framework.Vector2;
 //using Curve = Microsoft.Xna.Framework.Curve;
 //using CurveKey = Microsoft.Xna.Framework.CurveKey;
 //#endif
 
-//namespace Internal.nkast.Aether.Physics2D.Controllers
+//namespace Internal.Physics2D.Controllers
 //{
 //    public abstract class AbstractForceController : Controller
 //    {

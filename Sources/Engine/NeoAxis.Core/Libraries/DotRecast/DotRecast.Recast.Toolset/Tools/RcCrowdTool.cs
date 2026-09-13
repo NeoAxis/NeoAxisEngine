@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Detour;
-using Internal.DotRecast.Detour.Crowd;
-using Internal.DotRecast.Recast.Toolset.Builder;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Detour;
+using NeoAxis.DotRecast.Detour.Crowd;
+using NeoAxis.DotRecast.Recast.Toolset.Builder;
 
-namespace Internal.DotRecast.Recast.Toolset.Tools
+namespace NeoAxis.DotRecast.Recast.Toolset.Tools
 {
     public class RcCrowdTool : IRcToolable
     {

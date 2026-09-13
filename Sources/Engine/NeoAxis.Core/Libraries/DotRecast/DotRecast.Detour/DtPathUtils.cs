@@ -21,10 +21,10 @@ freely, subject to the following restrictions:
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     using static DtDetour;
 

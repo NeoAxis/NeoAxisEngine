@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
 
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     public static class RcFrequency
     {

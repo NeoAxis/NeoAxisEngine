@@ -18,9 +18,9 @@ freely, subject to the following restrictions:
 */
 
 using System.IO;
-using Internal.DotRecast.Core;
+using NeoAxis.DotRecast.Core;
 
-namespace Internal.DotRecast.Detour.Dynamic.Io
+namespace NeoAxis.DotRecast.Detour.Dynamic.Io
 {
     public class DtVoxelFileWriter
     {

@@ -19,7 +19,7 @@ freely, subject to the following restrictions:
 
 using System.Collections.Generic;
 
-namespace Internal.DotRecast.Detour.Dynamic
+namespace NeoAxis.DotRecast.Detour.Dynamic
 {
     public class DtDynamicTileColliderRemovalJob : IDtDaynmicTileJob
     {

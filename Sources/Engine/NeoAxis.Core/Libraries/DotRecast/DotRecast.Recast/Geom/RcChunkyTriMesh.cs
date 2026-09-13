@@ -20,7 +20,7 @@ freely, subject to the following restrictions:
 
 using System.Collections.Generic;
 
-namespace Internal.DotRecast.Recast.Geom
+namespace NeoAxis.DotRecast.Recast.Geom
 {
     public class RcChunkyTriMesh
     {

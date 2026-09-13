@@ -18,9 +18,9 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     // Convex-convex intersection based on "Computational Geometry in C" by Joseph O'Rourke
     public static class DtConvexConvexIntersections

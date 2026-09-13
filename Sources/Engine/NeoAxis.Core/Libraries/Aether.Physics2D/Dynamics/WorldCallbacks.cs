@@ -30,16 +30,16 @@
 * 3. This notice may not be removed or altered from any source distribution. 
 */
 
-using Internal.nkast.Aether.Physics2D.Collision;
-using Internal.nkast.Aether.Physics2D.Common;
-using Internal.nkast.Aether.Physics2D.Controllers;
-using Internal.nkast.Aether.Physics2D.Dynamics.Contacts;
-using Internal.nkast.Aether.Physics2D.Dynamics.Joints;
+using Internal.Physics2D.Collision;
+using Internal.Physics2D.Common;
+using Internal.Physics2D.Controllers;
+using Internal.Physics2D.Dynamics.Contacts;
+using Internal.Physics2D.Dynamics.Joints;
 #if XNAAPI
 using Microsoft.Xna.Framework;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Dynamics
+namespace Internal.Physics2D.Dynamics
 {
     /// <summary>
     /// Called for each fixture found in the query.

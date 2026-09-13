@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     public class RcObjImporterContext
     {

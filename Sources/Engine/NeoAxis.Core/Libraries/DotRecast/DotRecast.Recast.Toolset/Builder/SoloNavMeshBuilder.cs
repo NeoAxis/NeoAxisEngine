@@ -17,12 +17,12 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using Internal.DotRecast.Core.Collections;
-using Internal.DotRecast.Detour;
-using Internal.DotRecast.Recast.Geom;
-using Internal.DotRecast.Recast.Toolset.Geom;
+using NeoAxis.DotRecast.Core.Collections;
+using NeoAxis.DotRecast.Detour;
+using NeoAxis.DotRecast.Recast.Geom;
+using NeoAxis.DotRecast.Recast.Toolset.Geom;
 
-namespace Internal.DotRecast.Recast.Toolset.Builder
+namespace NeoAxis.DotRecast.Recast.Toolset.Builder
 {
     public class SoloNavMeshBuilder
     {

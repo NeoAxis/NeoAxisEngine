@@ -20,11 +20,11 @@ freely, subject to the following restrictions:
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Internal.DotRecast.Detour;
-using Internal.DotRecast.Recast.Geom;
-using Internal.DotRecast.Recast.Toolset.Geom;
+using NeoAxis.DotRecast.Detour;
+using NeoAxis.DotRecast.Recast.Geom;
+using NeoAxis.DotRecast.Recast.Toolset.Geom;
 
-namespace Internal.DotRecast.Recast.Toolset.Builder
+namespace NeoAxis.DotRecast.Recast.Toolset.Builder
 {
     public class TileNavMeshBuilder
     {

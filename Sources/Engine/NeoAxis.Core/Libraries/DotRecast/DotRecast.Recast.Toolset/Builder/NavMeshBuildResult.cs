@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Internal.DotRecast.Detour;
+using NeoAxis.DotRecast.Detour;
 
-namespace Internal.DotRecast.Recast.Toolset.Builder
+namespace NeoAxis.DotRecast.Recast.Toolset.Builder
 {
     public class NavMeshBuildResult
     {

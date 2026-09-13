@@ -20,11 +20,11 @@ freely, subject to the following restrictions:
 
 using System;
 using System.Collections.Generic;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
 
 
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     using static RcRecast;
     using static RcVec;

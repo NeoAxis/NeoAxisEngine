@@ -24,11 +24,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Recast.Geom;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Recast.Geom;
 
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     using static RcRecast;
     using static RcAreas;

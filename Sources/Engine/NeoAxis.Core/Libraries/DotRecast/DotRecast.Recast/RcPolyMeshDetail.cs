@@ -18,7 +18,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     /// Contains triangle meshes that represent detailed height data associated 
     /// with the polygons in its associated polygon mesh object.

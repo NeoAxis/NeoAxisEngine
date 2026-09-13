@@ -20,7 +20,7 @@ freely, subject to the following restrictions:
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Internal.DotRecast.Core.Numerics
+namespace NeoAxis.DotRecast.Core.Numerics
 {
     public struct RcVec3f
     {

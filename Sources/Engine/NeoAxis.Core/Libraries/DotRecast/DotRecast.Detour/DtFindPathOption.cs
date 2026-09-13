@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     public readonly struct DtFindPathOption
     {

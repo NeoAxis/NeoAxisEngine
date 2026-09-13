@@ -29,14 +29,14 @@
 */
 
 using System;
-using Internal.nkast.Aether.Physics2D.Common;
+using Internal.Physics2D.Common;
 #if XNAAPI
 using Complex = nkast.Aether.Physics2D.Common.Complex;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Dynamics.Joints
+namespace Internal.Physics2D.Dynamics.Joints
 {
     // Limit:
     // C = norm(pB - pA) - L

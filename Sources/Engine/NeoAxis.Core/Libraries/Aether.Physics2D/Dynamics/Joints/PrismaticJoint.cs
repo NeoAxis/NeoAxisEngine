@@ -30,14 +30,14 @@
 
 using System;
 using System.Diagnostics;
-using Internal.nkast.Aether.Physics2D.Common;
+using Internal.Physics2D.Common;
 #if XNAAPI
 using Complex = nkast.Aether.Physics2D.Common.Complex;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 using Vector3 = Microsoft.Xna.Framework.Vector3;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Dynamics.Joints
+namespace Internal.Physics2D.Dynamics.Joints
 {
     // Linear constraint (point-to-line)
     // d = p2 - p1 = x2 + r2 - x1 - r1

@@ -1,7 +1,7 @@
-using Internal.DotRecast.Core.Numerics;
-using static Internal.DotRecast.Recast.Toolset.Gizmos.RcGizmoHelper;
+using NeoAxis.DotRecast.Core.Numerics;
+using static NeoAxis.DotRecast.Recast.Toolset.Gizmos.RcGizmoHelper;
 
-namespace Internal.DotRecast.Recast.Toolset.Gizmos
+namespace NeoAxis.DotRecast.Recast.Toolset.Gizmos
 {
     public class RcSphereGizmo : IRcGizmoMeshFilter
     {

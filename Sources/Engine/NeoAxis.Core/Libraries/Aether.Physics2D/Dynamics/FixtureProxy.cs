@@ -31,12 +31,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.nkast.Aether.Physics2D.Collision;
-using Internal.nkast.Aether.Physics2D.Collision.Shapes;
-using Internal.nkast.Aether.Physics2D.Common;
-using Internal.nkast.Aether.Physics2D.Dynamics.Contacts;
+using Internal.Physics2D.Collision;
+using Internal.Physics2D.Collision.Shapes;
+using Internal.Physics2D.Common;
+using Internal.Physics2D.Dynamics.Contacts;
 
-namespace Internal.nkast.Aether.Physics2D.Dynamics
+namespace Internal.Physics2D.Dynamics
 {
     /// <summary>
     /// This proxy is used internally to connect fixtures to the broad-phase.

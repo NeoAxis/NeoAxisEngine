@@ -4,12 +4,12 @@
  */
 
 using System.Collections.Generic;
-using Internal.nkast.Aether.Physics2D.Common;
+using Internal.Physics2D.Common;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Common.ConvexHull
+namespace Internal.Physics2D.Common.ConvexHull
 {
     /// <summary>
     /// Andrew's Monotone Chain Convex Hull algorithm.

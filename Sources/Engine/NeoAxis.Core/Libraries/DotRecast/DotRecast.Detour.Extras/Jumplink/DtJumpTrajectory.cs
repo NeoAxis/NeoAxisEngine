@@ -1,8 +1,8 @@
 using System;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour.Extras.Jumplink
+namespace NeoAxis.DotRecast.Detour.Extras.Jumplink
 {
     public class DtJumpTrajectory : IDtTrajectory
     {

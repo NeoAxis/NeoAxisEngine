@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace Internal.DotRecast.Core.Buffers
+namespace NeoAxis.DotRecast.Core.Buffers
 {
     public static class RcCyclicBuffers
     {

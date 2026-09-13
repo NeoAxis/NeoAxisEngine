@@ -17,9 +17,9 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using Internal.DotRecast.Recast;
+using NeoAxis.DotRecast.Recast;
 
-namespace Internal.DotRecast.Detour.Dynamic
+namespace NeoAxis.DotRecast.Detour.Dynamic
 {
     public class DtDynamicNavMeshConfig
     {

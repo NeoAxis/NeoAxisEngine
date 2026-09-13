@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     // Struct to keep track of entries in the region table that have been changed.
     public readonly struct RcDirtyEntry

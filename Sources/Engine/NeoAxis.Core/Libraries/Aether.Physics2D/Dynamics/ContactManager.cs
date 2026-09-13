@@ -31,10 +31,10 @@
 */
 
 using System.Collections.Generic;
-using Internal.nkast.Aether.Physics2D.Collision;
-using Internal.nkast.Aether.Physics2D.Dynamics.Contacts;
+using Internal.Physics2D.Collision;
+using Internal.Physics2D.Dynamics.Contacts;
 
-namespace Internal.nkast.Aether.Physics2D.Dynamics
+namespace Internal.Physics2D.Dynamics
 {
     public class ContactManager
     {

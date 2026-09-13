@@ -19,9 +19,9 @@ freely, subject to the following restrictions:
 
 using System;
 using System.Linq;
-using Internal.DotRecast.Core;
+using NeoAxis.DotRecast.Core;
 
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     using static RcRecast;
 

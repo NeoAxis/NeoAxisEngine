@@ -1,6 +1,6 @@
-using Internal.DotRecast.Detour.Dynamic.Colliders;
+using NeoAxis.DotRecast.Detour.Dynamic.Colliders;
 
-namespace Internal.DotRecast.Recast.Toolset.Gizmos
+namespace NeoAxis.DotRecast.Recast.Toolset.Gizmos
 {
     public class RcGizmo
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     public class DtCallbackPolyQuery : IDtPolyQuery
     {

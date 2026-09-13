@@ -18,11 +18,11 @@ freely, subject to the following restrictions:
 */
 
 using System;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Recast;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Recast;
 
-namespace Internal.DotRecast.Detour.Dynamic.Colliders
+namespace NeoAxis.DotRecast.Detour.Dynamic.Colliders
 {
     public class DtCapsuleCollider : DtCollider
     {

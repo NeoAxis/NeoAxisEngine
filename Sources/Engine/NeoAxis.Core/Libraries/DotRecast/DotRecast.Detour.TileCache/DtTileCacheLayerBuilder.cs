@@ -21,12 +21,12 @@ freely, subject to the following restrictions:
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Detour.TileCache.Io.Compress;
-using Internal.DotRecast.Recast;
-using Internal.DotRecast.Recast.Geom;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Detour.TileCache.Io.Compress;
+using NeoAxis.DotRecast.Recast;
+using NeoAxis.DotRecast.Recast.Geom;
 
-namespace Internal.DotRecast.Detour.TileCache
+namespace NeoAxis.DotRecast.Detour.TileCache
 {
     public class DtTileCacheLayerBuilder
     {

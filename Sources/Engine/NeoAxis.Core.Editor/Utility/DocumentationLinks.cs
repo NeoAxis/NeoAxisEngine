@@ -114,7 +114,8 @@ namespace NeoAxis.Editor
 					( "Curve In Space", typeof( CurveInSpace ) ),
 					( "Curve In Space Objects", typeof( CurveInSpaceObjects ) ),
 					( "Render To File", typeof( RenderToFile ) ),
-					( "World Generator", typeof( WorldGenerator ) ), 
+					( "World Generator", typeof( WorldGenerator ) ),
+					( "Points In Space", typeof( PointsInSpace ) ), 
 
 					//Primitives
 					( "Arch", typeof( MeshGeometry_Arch ) ),

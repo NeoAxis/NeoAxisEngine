@@ -18,10 +18,10 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Compression;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Compression;
 
-namespace Internal.DotRecast.Detour.TileCache.Io.Compress
+namespace NeoAxis.DotRecast.Detour.TileCache.Io.Compress
 {
     public class DtTileCacheFastLzCompressor : IRcCompressor
     {

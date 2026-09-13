@@ -1,6 +1,6 @@
-using Internal.DotRecast.Core.Collections;
+using NeoAxis.DotRecast.Core.Collections;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     public class DtStraightPathOption
     {

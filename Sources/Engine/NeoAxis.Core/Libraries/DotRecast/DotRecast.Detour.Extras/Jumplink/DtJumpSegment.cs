@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Detour.Extras.Jumplink
+namespace NeoAxis.DotRecast.Detour.Extras.Jumplink
 {
     public class DtJumpSegment
     {

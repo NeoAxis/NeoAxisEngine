@@ -21,13 +21,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Collections;
-using Internal.DotRecast.Detour.Dynamic.Colliders;
-using Internal.DotRecast.Detour.Dynamic.Io;
-using Internal.DotRecast.Recast;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Collections;
+using NeoAxis.DotRecast.Detour.Dynamic.Colliders;
+using NeoAxis.DotRecast.Detour.Dynamic.Io;
+using NeoAxis.DotRecast.Recast;
 
-namespace Internal.DotRecast.Detour.Dynamic
+namespace NeoAxis.DotRecast.Detour.Dynamic
 {
     public class DtDynamicTile
     {

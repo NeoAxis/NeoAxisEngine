@@ -2,9 +2,9 @@
 using System;
 using System.ComponentModel;
 using System.Collections.Generic;
-using Internal.nkast.Aether.Physics2D;
-using Internal.nkast.Aether.Physics2D.Dynamics;
-using Internal.nkast.Aether.Physics2D.Common;
+using Internal.Physics2D;
+using Internal.Physics2D.Dynamics;
+using Internal.Physics2D.Common;
 using NeoAxis.Editor;
 
 namespace NeoAxis

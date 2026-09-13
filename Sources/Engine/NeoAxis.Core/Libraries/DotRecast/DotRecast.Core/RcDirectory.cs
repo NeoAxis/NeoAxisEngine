@@ -1,7 +1,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     public static class RcDirectory
     {

@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Detour.Extras.Jumplink;
-using Internal.DotRecast.Recast.Geom;
-using Internal.DotRecast.Recast.Toolset.Builder;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Detour.Extras.Jumplink;
+using NeoAxis.DotRecast.Recast.Geom;
+using NeoAxis.DotRecast.Recast.Toolset.Builder;
 
-namespace Internal.DotRecast.Recast.Toolset.Tools
+namespace NeoAxis.DotRecast.Recast.Toolset.Tools
 {
     public class RcJumpLinkBuilderTool : IRcToolable
     {

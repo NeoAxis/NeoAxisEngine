@@ -20,7 +20,7 @@ freely, subject to the following restrictions:
 
 using System;
 
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     /// Specifies a configuration to use when performing Recast builds.
     /// @ingroup recast

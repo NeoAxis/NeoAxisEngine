@@ -10,14 +10,14 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.nkast.Aether.Physics2D.Common.Decomposition.Seidel;
-using Internal.nkast.Aether.Physics2D.Common;
-using Point = Internal.nkast.Aether.Physics2D.Common.Decomposition.Seidel.Point;
+using Internal.Physics2D.Common.Decomposition.Seidel;
+using Internal.Physics2D.Common;
+using Point = Internal.Physics2D.Common.Decomposition.Seidel.Point;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Common.Decomposition
+namespace Internal.Physics2D.Common.Decomposition
 {
     /// <summary>
     /// Convex decomposition algorithm created by Raimund Seidel

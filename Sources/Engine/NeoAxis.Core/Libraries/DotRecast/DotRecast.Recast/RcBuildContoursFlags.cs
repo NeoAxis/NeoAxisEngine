@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     /// Contour build flags.
     /// @see rcBuildContours

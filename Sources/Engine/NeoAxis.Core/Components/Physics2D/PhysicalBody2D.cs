@@ -1,6 +1,6 @@
 ﻿// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 using System.ComponentModel;
-using Internal.nkast.Aether.Physics2D.Dynamics;
+using Internal.Physics2D.Dynamics;
 
 namespace NeoAxis
 {

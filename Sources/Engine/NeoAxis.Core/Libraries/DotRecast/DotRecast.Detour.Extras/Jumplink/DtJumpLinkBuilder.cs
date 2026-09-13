@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Recast;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Recast;
 
-namespace Internal.DotRecast.Detour.Extras.Jumplink
+namespace NeoAxis.DotRecast.Detour.Extras.Jumplink
 {
     public class DtJumpLinkBuilder
     {

@@ -21,7 +21,7 @@ freely, subject to the following restrictions:
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     public class DtNodePool
     {

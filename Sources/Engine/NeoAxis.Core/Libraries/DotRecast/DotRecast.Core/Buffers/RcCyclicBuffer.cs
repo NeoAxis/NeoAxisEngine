@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Internal.DotRecast.Core.Buffers
+namespace NeoAxis.DotRecast.Core.Buffers
 {
     // https://github.com/joaoportela/CircularBuffer-CSharp/blob/master/CircularBuffer/CircularBuffer.cs
     public class RcCyclicBuffer<T> : IEnumerable<T>

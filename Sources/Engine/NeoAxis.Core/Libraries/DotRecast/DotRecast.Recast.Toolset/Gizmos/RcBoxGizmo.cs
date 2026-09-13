@@ -1,7 +1,7 @@
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Detour.Dynamic.Colliders;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Detour.Dynamic.Colliders;
 
-namespace Internal.DotRecast.Recast.Toolset.Gizmos
+namespace NeoAxis.DotRecast.Recast.Toolset.Gizmos
 {
     public class RcBoxGizmo : IRcGizmoMeshFilter
     {

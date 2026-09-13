@@ -1,9 +1,9 @@
-using Internal.DotRecast.Detour;
-using Internal.DotRecast.Detour.TileCache;
-using Internal.DotRecast.Recast.Geom;
-using Internal.DotRecast.Recast.Toolset.Builder;
+using NeoAxis.DotRecast.Detour;
+using NeoAxis.DotRecast.Detour.TileCache;
+using NeoAxis.DotRecast.Recast.Geom;
+using NeoAxis.DotRecast.Recast.Toolset.Builder;
 
-namespace Internal.DotRecast.Recast.Toolset.Geom
+namespace NeoAxis.DotRecast.Recast.Toolset.Geom
 {
     public class DemoDtTileCacheMeshProcess : IDtTileCacheMeshProcess
     {

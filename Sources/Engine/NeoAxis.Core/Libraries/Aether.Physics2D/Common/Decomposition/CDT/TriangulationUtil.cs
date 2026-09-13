@@ -34,7 +34,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT
+namespace Internal.Physics2D.Common.Decomposition.CDT
 {
     /**
      * @author Thomas Åhlén, thahlen@gmail.com

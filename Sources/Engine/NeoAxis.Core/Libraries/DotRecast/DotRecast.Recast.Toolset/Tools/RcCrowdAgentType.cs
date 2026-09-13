@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Recast.Toolset.Tools
+namespace NeoAxis.DotRecast.Recast.Toolset.Tools
 {
     public enum RcCrowdAgentType
     {

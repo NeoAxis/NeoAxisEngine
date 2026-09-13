@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     /// Recast log categories.
     /// @see rcContext

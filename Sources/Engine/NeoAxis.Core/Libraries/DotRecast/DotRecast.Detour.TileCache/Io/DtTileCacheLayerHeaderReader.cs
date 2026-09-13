@@ -19,9 +19,9 @@ freely, subject to the following restrictions:
 */
 
 using System.IO;
-using Internal.DotRecast.Core;
+using NeoAxis.DotRecast.Core;
 
-namespace Internal.DotRecast.Detour.TileCache.Io
+namespace NeoAxis.DotRecast.Detour.TileCache.Io
 {
     public static class DtTileCacheLayerHeaderReader
     {

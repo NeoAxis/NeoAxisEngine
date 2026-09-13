@@ -19,7 +19,7 @@ freely, subject to the following restrictions:
 
 using System;
 
-namespace Internal.DotRecast.Detour.Extras
+namespace NeoAxis.DotRecast.Detour.Extras
 {
     public static class DtPolyUtils
     {

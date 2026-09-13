@@ -33,12 +33,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Internal.nkast.Aether.Physics2D.Common;
+using Internal.Physics2D.Common;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Collision
+namespace Internal.Physics2D.Collision
 {
     /// <summary>
     /// A node in the dynamic tree. The client does not interact with this directly.

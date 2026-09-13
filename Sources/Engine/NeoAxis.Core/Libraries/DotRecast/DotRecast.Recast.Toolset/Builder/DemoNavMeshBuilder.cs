@@ -1,7 +1,7 @@
-using Internal.DotRecast.Detour;
-using Internal.DotRecast.Recast.Geom;
+using NeoAxis.DotRecast.Detour;
+using NeoAxis.DotRecast.Recast.Geom;
 
-namespace Internal.DotRecast.Recast.Toolset.Builder
+namespace NeoAxis.DotRecast.Recast.Toolset.Builder
 {
     public static class DemoNavMeshBuilder
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     public class RcRand : IRcRand
     {

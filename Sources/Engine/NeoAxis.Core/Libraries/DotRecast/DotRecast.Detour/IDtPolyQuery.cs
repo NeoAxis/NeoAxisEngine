@@ -1,6 +1,6 @@
 using System;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     /// Provides custom polygon query behavior.
     /// Used by dtNavMeshQuery::queryPolygons.

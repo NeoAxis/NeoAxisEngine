@@ -8,7 +8,7 @@
 //using System.Diagnostics;
 //using Microsoft.Xna.Framework;
 
-//namespace Internal.nkast.Aether.Physics2D.Common.TextureTools
+//namespace Internal.Physics2D.Common.TextureTools
 //{
 //    // User contribution from Sickbattery aka David Reschke.
 

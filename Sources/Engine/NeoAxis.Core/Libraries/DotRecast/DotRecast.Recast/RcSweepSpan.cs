@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     public class RcSweepSpan
     {

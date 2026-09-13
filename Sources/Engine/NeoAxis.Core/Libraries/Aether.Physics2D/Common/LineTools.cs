@@ -4,12 +4,12 @@
  */
 
 using System;
-using Internal.nkast.Aether.Physics2D.Collision;
+using Internal.Physics2D.Collision;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Common
+namespace Internal.Physics2D.Common
 {
     /// <summary>
     /// Collection of helper methods for misc collisions.

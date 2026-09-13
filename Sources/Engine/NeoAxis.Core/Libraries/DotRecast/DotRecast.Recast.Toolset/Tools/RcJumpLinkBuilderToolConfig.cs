@@ -16,9 +16,9 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-using Internal.DotRecast.Detour.Extras.Jumplink;
+using NeoAxis.DotRecast.Detour.Extras.Jumplink;
 
-namespace Internal.DotRecast.Recast.Toolset.Tools
+namespace NeoAxis.DotRecast.Recast.Toolset.Tools
 {
     public class RcJumpLinkBuilderToolConfig
     {

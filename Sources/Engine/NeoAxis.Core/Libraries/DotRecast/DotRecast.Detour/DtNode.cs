@@ -19,9 +19,9 @@ freely, subject to the following restrictions:
 */
 
 using System.Collections.Generic;
-using Internal.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Core.Numerics;
 
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     public class DtNode
     {

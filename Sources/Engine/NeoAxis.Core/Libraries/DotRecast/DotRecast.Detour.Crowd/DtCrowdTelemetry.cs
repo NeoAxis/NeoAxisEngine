@@ -20,10 +20,10 @@ freely, subject to the following restrictions:
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Buffers;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Buffers;
 
-namespace Internal.DotRecast.Detour.Crowd
+namespace NeoAxis.DotRecast.Detour.Crowd
 {
     public class DtCrowdTelemetry
     {

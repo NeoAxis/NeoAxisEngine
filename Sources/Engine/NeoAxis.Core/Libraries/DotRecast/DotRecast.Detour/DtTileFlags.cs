@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     /// Tile flags used for various functions and fields.
     /// For an example, see dtNavMesh::addTile().

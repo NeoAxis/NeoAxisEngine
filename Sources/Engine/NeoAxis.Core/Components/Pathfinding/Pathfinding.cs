@@ -1,15 +1,15 @@
 ﻿// Copyright 2006–2026 Ivan Efimov. All rights reserved.
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Core.Numerics;
-using Internal.DotRecast.Detour;
-using Internal.DotRecast.Detour.Dynamic;
-using Internal.DotRecast.Detour.Dynamic.Colliders;
-using Internal.DotRecast.Detour.Dynamic.Io;
-using Internal.DotRecast.Recast;
-using Internal.DotRecast.Recast.Geom;
-using Internal.DotRecast.Recast.Toolset;
-using Internal.DotRecast.Recast.Toolset.Builder;
-using Internal.DotRecast.Recast.Toolset.Tools;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Core.Numerics;
+using NeoAxis.DotRecast.Detour;
+using NeoAxis.DotRecast.Detour.Dynamic;
+using NeoAxis.DotRecast.Detour.Dynamic.Colliders;
+using NeoAxis.DotRecast.Detour.Dynamic.Io;
+using NeoAxis.DotRecast.Recast;
+using NeoAxis.DotRecast.Recast.Geom;
+using NeoAxis.DotRecast.Recast.Toolset;
+using NeoAxis.DotRecast.Recast.Toolset.Builder;
+using NeoAxis.DotRecast.Recast.Toolset.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

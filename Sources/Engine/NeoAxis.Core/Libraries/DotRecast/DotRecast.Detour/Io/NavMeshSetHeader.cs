@@ -16,7 +16,7 @@ freely, subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-namespace Internal.DotRecast.Detour.Io
+namespace NeoAxis.DotRecast.Detour.Io
 {
     public struct NavMeshSetHeader
     {

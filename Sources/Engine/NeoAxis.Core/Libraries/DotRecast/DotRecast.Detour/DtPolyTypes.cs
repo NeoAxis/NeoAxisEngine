@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Detour
+namespace NeoAxis.DotRecast.Detour
 {
     /// Flags representing the type of a navigation mesh polygon.
     public static class DtPolyTypes

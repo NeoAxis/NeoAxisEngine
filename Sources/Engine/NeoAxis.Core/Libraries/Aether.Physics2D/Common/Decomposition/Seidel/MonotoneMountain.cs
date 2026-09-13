@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.Seidel
+namespace Internal.Physics2D.Common.Decomposition.Seidel
 {
     internal class MonotoneMountain
     {

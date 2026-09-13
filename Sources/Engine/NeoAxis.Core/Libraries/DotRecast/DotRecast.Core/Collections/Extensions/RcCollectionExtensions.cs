@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Internal.DotRecast.Core.Collections.Extensions
+namespace NeoAxis.DotRecast.Core.Collections.Extensions
 {
     public static class RcCollectionExtensions
     {

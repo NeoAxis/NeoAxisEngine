@@ -2,7 +2,7 @@
 using System.Buffers;
 using System.Runtime.CompilerServices;
 
-namespace Internal.DotRecast.Core.Buffers
+namespace NeoAxis.DotRecast.Core.Buffers
 {
     public class RcRentedArray
     {

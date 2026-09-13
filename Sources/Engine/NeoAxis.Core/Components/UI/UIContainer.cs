@@ -5,7 +5,6 @@ using System.Text;
 using System.Diagnostics;
 using System.ComponentModel;
 using System.Linq;
-using Internal.DotRecast.Detour;
 
 namespace NeoAxis
 {

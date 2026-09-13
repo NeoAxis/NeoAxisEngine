@@ -19,7 +19,7 @@ freely, subject to the following restrictions:
 */
 
 
-namespace Internal.DotRecast.Recast
+namespace NeoAxis.DotRecast.Recast
 {
     /// Represents a set of heightfield layers.
     /// @ingroup recast

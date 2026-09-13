@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Detour.Crowd
+namespace NeoAxis.DotRecast.Detour.Crowd
 {
     public class DtCrowdTimerLabel
     {

@@ -41,7 +41,7 @@
  * 
  * @author Thomas Åhlén, thahlen@gmail.com
  */
-namespace Internal.nkast.Aether.Physics2D.Common.Decomposition.CDT
+namespace Internal.Physics2D.Common.Decomposition.CDT
 {
     internal class TriangulationConstraint
     {

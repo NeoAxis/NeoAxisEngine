@@ -19,11 +19,11 @@ freely, subject to the following restrictions:
 */
 
 using System.IO;
-using Internal.DotRecast.Core;
-using Internal.DotRecast.Detour.Io;
-using Internal.DotRecast.Detour.TileCache.Io.Compress;
+using NeoAxis.DotRecast.Core;
+using NeoAxis.DotRecast.Detour.Io;
+using NeoAxis.DotRecast.Detour.TileCache.Io.Compress;
 
-namespace Internal.DotRecast.Detour.TileCache.Io
+namespace NeoAxis.DotRecast.Detour.TileCache.Io
 {
     public class DtTileCacheWriter
     {

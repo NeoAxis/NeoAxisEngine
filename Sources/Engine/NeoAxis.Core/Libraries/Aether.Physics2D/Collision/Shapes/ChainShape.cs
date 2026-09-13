@@ -29,12 +29,12 @@
 */
 
 using System.Diagnostics;
-using Internal.nkast.Aether.Physics2D.Common;
+using Internal.Physics2D.Common;
 #if XNAAPI
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 #endif
 
-namespace Internal.nkast.Aether.Physics2D.Collision.Shapes
+namespace Internal.Physics2D.Collision.Shapes
 {
     /// <summary>
     /// A chain shape is a free form sequence of line segments.

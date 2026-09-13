@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 #pragma warning disable CS0169
 
-namespace Internal.DotRecast.Core.Collections
+namespace NeoAxis.DotRecast.Core.Collections
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct RcFixedArray8<T> where T : unmanaged

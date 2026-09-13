@@ -20,7 +20,7 @@ freely, subject to the following restrictions:
 
 using System.Runtime.CompilerServices;
 
-namespace Internal.DotRecast.Core
+namespace NeoAxis.DotRecast.Core
 {
     public static class RcMath
     {

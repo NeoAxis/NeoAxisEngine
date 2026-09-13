@@ -1,4 +1,4 @@
-namespace Internal.DotRecast.Detour.TileCache
+namespace NeoAxis.DotRecast.Detour.TileCache
 {
     public enum DtTileCacheObstacleType
     {
