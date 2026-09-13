@@ -101,7 +101,7 @@ namespace NeoAxis
 		/// </summary>
 		[Category( "Visualization" )]
 		[Range( 0.01, 1, RangeAttribute.ConvenientDistributionEnum.Exponential )]
-		[DefaultValue( 0.01 )]
+		[DefaultValue( 0.05 )]
 		public Reference<double> PointSize
 		{
 			get { if( _pointSize.BeginGet() ) PointSize = _pointSize.Get( this ); return _pointSize.value; }
@@ -109,7 +109,7 @@ namespace NeoAxis
 		}
 		/// <summary>Occurs when the <see cref="PointSize"/> property value changes.</summary>
 		public event Action<PointsInSpace> PointSizeChanged;
-		ReferenceField<double> _pointSize = 0.01;
+		ReferenceField<double> _pointSize = 0.05;
 
 		///////////////////////////////////////////////
 
@@ -229,6 +229,14 @@ namespace NeoAxis
 				context.thisObjectResultRayScale = scale;
 		}
 
+		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow = false )
+		{
+			base.NewObjectSetDefaultConfiguration( createdFromNewObjectWindow );
+
+			if( Positions.Value == null )
+				Positions = new BoundsF( -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f ).ToPoints();
+		}
+		
 		public bool DataExists()
 		{
 			return Positions.Value != null && Positions.Value.Length != 0;
