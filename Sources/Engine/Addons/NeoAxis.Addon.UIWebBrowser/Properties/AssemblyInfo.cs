@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle( "NeoAxis.Addon.UIWebBrowser" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Ivan Efimov" )]
+[assembly: AssemblyCompany( "NeoAxis" )]
 [assembly: AssemblyProduct( "NeoAxis.Addon.UIWebBrowser" )]
 [assembly: AssemblyCopyright( "Copyright 2006–2026 Ivan Efimov. All rights reserved." )]
 [assembly: AssemblyTrademark( "" )]

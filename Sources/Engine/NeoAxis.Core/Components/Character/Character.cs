@@ -838,7 +838,7 @@ namespace NeoAxis
 		SphericalDirectionF currentTurnToDirection;//use SphericalDirectionF instead float because vertical direction is used for first person camera
 		SphericalDirectionF? currentTurnToDirectionPreviousSimulationStep;
 
-		[MethodImpl( MethodImplOptions.AggressiveOptimization )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		public SphericalDirectionF GetCurrentTurnToDirectionInterpolated()
 		{
 			var current = currentTurnToDirection;

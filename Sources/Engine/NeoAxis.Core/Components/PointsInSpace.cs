@@ -256,12 +256,16 @@ namespace NeoAxis
 
 		static void WriteVector3F( byte[] data, int offset, Vector3F value )
 		{
+#if !NETSTANDARD2_1
 			Unsafe.WriteUnaligned( ref data[ offset ], value );
+#endif
 		}
 
 		static void WriteColorValue( byte[] data, int offset, ColorValue value )
 		{
+#if !NETSTANDARD2_1
 			Unsafe.WriteUnaligned( ref data[ offset ], value );
+#endif
 		}
 
 		//static void WriteColorByte( byte[] data, int offset, ColorByte value )

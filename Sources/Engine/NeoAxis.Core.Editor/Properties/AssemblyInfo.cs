@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle( "NeoAxis.Core.Editor" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Ivan Efimov" )]
+[assembly: AssemblyCompany( "NeoAxis" )]
 [assembly: AssemblyProduct( "NeoAxis.Core.Editor" )]
 [assembly: AssemblyCopyright( "Copyright 2006–2026 Ivan Efimov. All rights reserved." )]
 [assembly: AssemblyTrademark( "" )]

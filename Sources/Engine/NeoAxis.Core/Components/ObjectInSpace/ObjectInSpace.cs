@@ -247,7 +247,7 @@ namespace NeoAxis
 		public event Action<ObjectInSpace> TransformInterpolationChanged;
 		ReferenceField<bool> _transformInterpolation = true;
 
-		[MethodImpl( MethodImplOptions.AggressiveOptimization )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		public Transform GetTransformInterpolated()
 		{
 			var currentTransform = TransformV;

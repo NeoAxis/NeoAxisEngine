@@ -4,8 +4,19 @@ using System;
 #if NETSTANDARD2_1
 namespace System
 {
-	public class SuppressGCTransitionAttribute : Attribute
-	{
-	}
+	public sealed class SuppressGCTransitionAttribute : Attribute
+    {
+    }
+
+    public sealed class UnmanagedCallersOnlyAttribute : Attribute
+    {
+        public UnmanagedCallersOnlyAttribute()
+        {
+        }
+
+        public Type[] CallConvs;
+        public string EntryPoint;
+    }
 }
+
 #endif

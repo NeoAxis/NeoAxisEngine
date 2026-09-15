@@ -106,8 +106,9 @@ namespace NeoAxis
 			_findFileInfoDelegate = findFileInfo;
 			_fileExistsDelegate = fileExists;
 
-			if(SystemSettings.CurrentPlatform == SystemSettings.Platform.Web)
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 			{
+#if !NETSTANDARD2_1
 				virtualArchiveFactory = (MyOgreVirtualArchiveFactory*)MyOgreVirtualArchiveFactory.NewWeb(
 					RenderingSystem.realRoot,
 					(delegate* unmanaged[Cdecl]< void*, char*, int*, byte*, byte >)&openWeb,
@@ -120,11 +121,13 @@ namespace NeoAxis
 					(delegate* unmanaged[Cdecl]< char*, byte, byte, void*, byte >)&findFileInfoWeb,
 					(delegate* unmanaged[Cdecl]< char*, byte >)&fileExistsWeb
 				);
+#endif
 			}
 			else
 			{
-			virtualArchiveFactory = (MyOgreVirtualArchiveFactory*)MyOgreVirtualArchiveFactory.New( RenderingSystem.realRoot, _openDelegate, _closeDelegate, _readDelegate, _skipDelegate, _seekDelegate, _tellDelegate, _findDelegate, _findFileInfoDelegate, _fileExistsDelegate );
+				virtualArchiveFactory = (MyOgreVirtualArchiveFactory*)MyOgreVirtualArchiveFactory.New( RenderingSystem.realRoot, _openDelegate, _closeDelegate, _readDelegate, _skipDelegate, _seekDelegate, _tellDelegate, _findDelegate, _findFileInfoDelegate, _fileExistsDelegate );
 			}
+
 			OgreArchiveManager.addArchiveFactory( virtualArchiveFactory );
 
 			OgreResourceGroupManager.addResourceLocation( RenderingSystem.realRoot, VirtualFileSystem.Directories.Assets, "VirtualFileSystem", true );
@@ -327,6 +330,7 @@ namespace NeoAxis
 		}
 	}
 
+#if !NETSTANDARD2_1
 	static partial class MyOgreVirtualFileSystem
 	{
 		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
@@ -336,7 +340,7 @@ namespace NeoAxis
 			ref var streamSize = ref Unsafe.AsRef<int>( streamSizePtr );
 			ref var fileNotFound = ref Unsafe.AsRef<bool>( fileNotFoundPtr );
 
-			return open( stream, fileName, ref streamSize, ref fileNotFound) ? (byte)1 : (byte)0;
+			return open( stream, fileName, ref streamSize, ref fileNotFound ) ? (byte)1 : (byte)0;
 		}
 
 		[UnmanagedCallersOnly( CallConvs = new[] { typeof( CallConvCdecl ) } )]
@@ -390,4 +394,5 @@ namespace NeoAxis
 			return fileExists( fileName ) ? (byte)1 : (byte)0;
 		}
 	}
+#endif
 }

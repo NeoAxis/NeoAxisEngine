@@ -659,9 +659,11 @@ namespace NeoAxis
 
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 			{
+#if !NETSTANDARD2_1
 				logListener = (MyOgreLogListener*)MyOgreLogListener.NewWeb(
 					(delegate* unmanaged[Stdcall]< nint, OgreLogMessageLevel, void >)&logListener_messageLoggedWeb
-			);
+				);
+#endif
 			}
 			else
 			{
@@ -1787,7 +1789,7 @@ namespace NeoAxis
 		}
 		public static bool Interpolation
 		{
-			[MethodImpl( MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization )]
+			[MethodImpl( MethodImplOptions.AggressiveInlining | (MethodImplOptions)512 )]
 			get { return interpolation ?? InitializeInterpolation(); }
 		}
 

@@ -50,18 +50,25 @@ namespace NeoAxis.DotRecast.Core.Numerics
             Z = f;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly float Length()
+		//!!!!betauser. crash documentation generator. added summary and removed readonly to avoid crash
+		/// <summary>
+		/// Calculates the length of the vector.
+		/// </summary>
+		/// <returns>The square root of the squared length.</returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public /*readonly*/ float Length()
         {
             float lengthSquared = LengthSquared();
             return MathF.Sqrt(lengthSquared);
         }
 
-        /// Derives the square of the scalar length of the vector. (len * len)
-        /// @param[in] v The vector. [(x, y, z)]
-        /// @return The square of the scalar length of the vector.
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly float LengthSquared()
+		//!!!!betauser. crash documentation generator. added summary and removed readonly to avoid crash
+		/// <summary>
+		/// Derives the square of the scalar length of the vector. (len * len)
+		/// </summary>
+		/// <returns></returns>
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public /*readonly*/ float LengthSquared()
         {
             return Dot(this, this);
         }

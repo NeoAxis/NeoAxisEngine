@@ -29,17 +29,19 @@ namespace OpenALSoundSystem
 
 			streamGCHandle = GCHandle.Alloc( stream );
 
-			if(SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 			{
+#if !NETSTANDARD2_1
 				callbacksWeb.read_func = (delegate* unmanaged[Cdecl]< IntPtr, uint, uint, IntPtr, uint >)&Vorbis_read_funcWeb;
 				callbacksWeb.seek_func = (delegate* unmanaged[Cdecl]< IntPtr, long, int, int >)&Vorbis_seek_funcWeb;
 				callbacksWeb.tell_func = (delegate* unmanaged[Cdecl]< IntPtr, int >)&Vorbis_tell_funcWeb;
+#endif
 			}
 			else
 			{
-			callbacks.read_func = Vorbis_read_func;
-			callbacks.seek_func = Vorbis_seek_func;
-			callbacks.tell_func = Vorbis_tell_func;
+				callbacks.read_func = Vorbis_read_func;
+				callbacks.seek_func = Vorbis_seek_func;
+				callbacks.tell_func = Vorbis_tell_func;
 			}
 
 			////callbacks.close_func = Vorbis_close_func;
@@ -56,8 +58,8 @@ namespace OpenALSoundSystem
 			}
 			else
 			{
-			if( vorbisFile.open_callbacks( datasource, IntPtr.Zero, 0, callbacks ) != 0 )
-				return false;
+				if( vorbisFile.open_callbacks( datasource, IntPtr.Zero, 0, callbacks ) != 0 )
+					return false;
 			}
 
 			return true;

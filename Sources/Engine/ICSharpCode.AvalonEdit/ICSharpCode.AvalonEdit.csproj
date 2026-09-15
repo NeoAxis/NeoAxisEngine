@@ -10,10 +10,10 @@
     <OutputType>Library</OutputType>
 	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <NoStdLib>False</NoStdLib>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>ICSharpCode.AvalonEdit.snk</AssemblyOriginatorKeyFile>
+    <!-- <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>ICSharpCode.AvalonEdit.snk</AssemblyOriginatorKeyFile> 
     <DelaySign>False</DelaySign>
-    <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
+    <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode> -->
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <CodeAnalysisRules>-Microsoft.Design#CA1020;-Microsoft.Design#CA1033;-Microsoft.Performance#CA1805;-Microsoft.Performance#CA1810</CodeAnalysisRules>
     <NoWarn>1607</NoWarn>

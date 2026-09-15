@@ -136,10 +136,12 @@ namespace Internal.SharpBgfx
 
             var memory = Marshal.AllocHGlobal( Marshal.SizeOf<CallbackShim>() );
             var shim = (CallbackShim*)memory;
-            object saver;
+            object saver = null;
             if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
             {
+#if !NETSTANDARD2_1
                 saver = new DelegateSaverWeb( handler, shim );
+#endif
             }
             else
             {
@@ -320,6 +322,7 @@ namespace Internal.SharpBgfx
         static object savedDelegates;
     }
 
+#if !NETSTANDARD2_1
     // Should not be a nested class for unmanaged functions to work correctly.
     unsafe class DelegateSaverWeb
     {
@@ -414,4 +417,5 @@ namespace Internal.SharpBgfx
             handler.CaptureFrame( data, size );
         }
     }
+#endif
 }

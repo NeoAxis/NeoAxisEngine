@@ -260,6 +260,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////
 
+#if !NETSTANDARD2_1
 		//for macOS, Linux
 		static bool dllImportResolverInitialized;
 
@@ -429,6 +430,12 @@ namespace NeoAxis
 				return pointer;
 			}
 		}
+#else
+		public static IntPtr PreloadLibrary( string baseName, string overrideSetCurrentDirectory = "", bool errorFatal = true )
+		{
+			return IntPtr.Zero;
+		}
+#endif
 
 		///////////////////////////////////////////
 

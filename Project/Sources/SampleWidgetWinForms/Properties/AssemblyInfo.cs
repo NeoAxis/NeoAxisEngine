@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle( "SampleWidgetWinForms" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Ivan Efimov" )]
+[assembly: AssemblyCompany( "NeoAxis" )]
 [assembly: AssemblyProduct( "SampleWidgetWinForms" )]
 [assembly: AssemblyCopyright( "Copyright 2006–2026 Ivan Efimov. All rights reserved." )]
 [assembly: AssemblyTrademark( "" )]

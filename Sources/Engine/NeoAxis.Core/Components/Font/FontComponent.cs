@@ -1419,10 +1419,11 @@ namespace NeoAxis
 
 					Point[] points = null;
 
-					bool success;
+					bool success = false;
 					int drawOffsetX, drawOffsetY, advance;
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 					{
+#if !NETSTANDARD2_1
 						unsafe
 						{
 							success = FreeType.GetGlyphContoursWeb( freeTypeLibrary, freeTypeFace, character,
@@ -1432,6 +1433,7 @@ namespace NeoAxis
 
 						points = glyphContoursCallbackPoints;
 						glyphContoursCallbackPoints = null;
+#endif
 					}
 					else
 					{
@@ -1445,7 +1447,7 @@ namespace NeoAxis
 							for( int nPoint = 0; nPoint < pointCount; nPoint++ )
 								points[ nPoint ] = points3[ nPoint ];
 						}
-						}, out drawOffsetX, out drawOffsetY, out advance );
+					}, out drawOffsetX, out drawOffsetY, out advance );
 					}
 
 					if( success && points != null )
@@ -1509,10 +1511,13 @@ namespace NeoAxis
 
 					Point[] points = null;
 
-					bool success;
-					int drawOffsetX, drawOffsetY, advance;
+					bool success = false;
+					int drawOffsetX = 0;
+					int drawOffsetY = 0;
+					int advance = 0;
 					if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 					{
+#if !NETSTANDARD2_1
 						unsafe
 						{
 							success = FreeType.GetGlyphContoursWeb( freeTypeLibrary, freeTypeFace, character,
@@ -1522,19 +1527,20 @@ namespace NeoAxis
 
 						points = glyphContoursCallbackPoints;
 						glyphContoursCallbackPoints = null;
+#endif
 					}
 					else
 					{
 						success = FreeType.GetGlyphContours( freeTypeLibrary, freeTypeFace, character, delegate ( int pointCount, IntPtr points2 )
-					{
-						unsafe
 						{
-							points = new Point[ pointCount ];
+							unsafe
+							{
+								points = new Point[ pointCount ];
 
-							var points3 = (Point*)points2;
-							for( int nPoint = 0; nPoint < pointCount; nPoint++ )
-								points[ nPoint ] = points3[ nPoint ];
-						}
+								var points3 = (Point*)points2;
+								for( int nPoint = 0; nPoint < pointCount; nPoint++ )
+									points[ nPoint ] = points3[ nPoint ];
+							}
 						}, out drawOffsetX, out drawOffsetY, out advance );
 					}
 

@@ -2126,7 +2126,7 @@ namespace NeoAxis.Networking
 			}
 		}
 
-		[MethodImpl( MethodImplOptions.AggressiveOptimization )]
+		[MethodImpl( (MethodImplOptions)512 )]
 		void InterpolationUpdate()
 		{
 			var controller = interpolationScene.HierarchyController;

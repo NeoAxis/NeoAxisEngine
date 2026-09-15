@@ -74,6 +74,8 @@ namespace Internal
 			public string Output;
 		}
 
+#if NETSTANDARD2_1
+#else
 		public static async Task<ProcessResult> RunAndWaitAsync( string fileName, string arguments, IDictionary<string, string> environmentVariables = null, Action<string> errorDataReceivedCallback = null, Action<string> outputDataReceivedCallback = null, CancellationToken cancellationToken = default )
 		{
 			var startInfo = new ProcessStartInfo( fileName, arguments )
@@ -140,5 +142,6 @@ namespace Internal
 				return result;
 			}
 		}
+#endif
 	}
 }
