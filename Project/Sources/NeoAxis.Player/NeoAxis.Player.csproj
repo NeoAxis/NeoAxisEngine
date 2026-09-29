@@ -103,6 +103,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>libNeoAxisCoreNative.dylib</Link>
     </None>
+    <None Include="libs/macOS/libMoltenVK.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>libMoltenVK.dylib</Link>
+    </None>
   </ItemGroup>
   
 </Project>

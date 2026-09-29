@@ -43,7 +43,7 @@
 #endif
 #if BX_PLATFORM_OSX
 	#define BGFX_CONFIG_RENDERER_METAL 0
-	#define BGFX_CONFIG_RENDERER_VULKAN 0
+	#define BGFX_CONFIG_RENDERER_VULKAN 1
 #endif
 
 
@@ -239,7 +239,7 @@
 	)
 
 //!!!!betauser
-#if BX_PLATFORM_ANDROID
+#if BX_PLATFORM_ANDROID || BX_PLATFORM_IOS
 #	define BGFX_CONFIG_MAX_DRAW_CALLS ( (64<<10)-1)
 #	define BGFX_CONFIG_MAX_VIEWS 256
 #	define BGFX_CONFIG_MAX_VERTEX_LAYOUTS 128
@@ -342,10 +342,10 @@
 #	define BGFX_CONFIG_MULTITHREADED 0
 #endif
 
-////!!!!betauser. multithreaded renderer is disabled for all backends right now
-//#ifndef BGFX_CONFIG_MULTITHREADED
-//#	define BGFX_CONFIG_MULTITHREADED 0
-//#endif
+//!!!!betauser. disable multithreaded renderer for macOS
+#if BX_PLATFORM_OSX
+#	define BGFX_CONFIG_MULTITHREADED 0
+#endif
 
 
 /// Enable/disable multithreaded rendering. When enabled, bgfx can use a

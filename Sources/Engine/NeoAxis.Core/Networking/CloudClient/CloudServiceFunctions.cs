@@ -1630,7 +1630,7 @@ namespace NeoAxis.Cloud
 			public string Error;
 		}
 
-		public static async Task<AccessTokenNewResult> AccessTokenNewAsync( string authToken = null, CancellationToken cancellationToken = default )
+		public static async Task<AccessTokenNewResult> AccessTokenNewAsync( bool deleteAll, string authToken = null, CancellationToken cancellationToken = default )
 		{
 			try
 			{
@@ -1643,7 +1643,8 @@ namespace NeoAxis.Cloud
 				command.RequestMethod = CloudServiceExecuteCommand.RequestMethodEnum.Post;
 
 				var block = new TextBlock();
-				//block.SetAttribute( "Name", name );
+				if( deleteAll )
+					block.SetAttribute( "DeleteAll", "True" );
 				command.ContentData = Encoding.UTF8.GetBytes( block.DumpToString() );
 
 				var executeResult = await command.ExecuteAsync( cancellationToken );

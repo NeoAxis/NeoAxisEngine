@@ -571,7 +571,7 @@ namespace NeoAxis
 				path = VirtualFileSystem.MakePathRelative( path );
 
 			Vector2I initialWindowSize = new Vector2I( 10, 10 );
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP )
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 				initialWindowSize = EngineApp.platform.CreatedWindow_GetClientRectangle().Size;
 
 			//set backend for Android
@@ -593,12 +593,14 @@ namespace NeoAxis
 			//set backend for Web
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
 				EngineApp.InitSettings.RendererBackend = RendererBackend.OpenGLES;
+
 			//set backend for macOS
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 			{
 				//!!!!temp macOS
-				EngineApp.InitSettings.RendererBackend = RendererBackend.Noop;
-				//EngineApp.InitSettings.RendererBackend = RendererBackend.Vulkan;
+				//EngineApp.InitSettings.RendererBackend = RendererBackend.Noop;
+				EngineApp.InitSettings.RendererBackend = RendererBackend.Vulkan;
+				SystemSettings._UpdateDeviceProperties();
 
 				////EngineApp.InitSettings.RendererBackend = RendererBackend.Metal;
 			}
@@ -640,6 +642,9 @@ namespace NeoAxis
 			//initSettings.MaxFrameLatency = ;
 			initSettings.PlatformData = platformData;
 
+			//now multithreading is disabled in bgfx defines
+			//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+			//	Bgfx.ManuallyRenderFrame();
 
 			if( !Bgfx.Init( initSettings ) )
 			{

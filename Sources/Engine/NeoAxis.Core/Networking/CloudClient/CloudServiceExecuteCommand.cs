@@ -337,7 +337,7 @@ namespace NeoAxis.Cloud
 					else
 					{
 						if( !LoginUtility.GetCurrentLicense( out string email, out string hash ) )
-							throw new Exception( "Please login to process." );
+							throw new Exception( "Log in to continue." );
 
 						var email64 = StringUtility.EncodeToBase64URL( email );
 						var hash64 = StringUtility.EncodeToBase64URL( hash );

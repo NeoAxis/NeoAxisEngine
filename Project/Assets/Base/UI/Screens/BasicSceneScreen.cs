@@ -1691,7 +1691,7 @@ namespace Project
 				chatGettingNewMessages = true;
 
 				Chats.Message lastMessage = null;
-				if( ListChat.Items.Count > 0 )
+				if( ListChat != null && ListChat.Items.Count > 0 )
 				{
 					var lastItem = ListChat.Items[ ListChat.Items.Count - 1 ];
 					lastMessage = lastItem.Tag as Chats.Message;

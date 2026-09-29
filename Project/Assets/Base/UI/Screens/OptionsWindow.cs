@@ -293,17 +293,25 @@ namespace Project
 					//change value
 					comboWindowedMode.SelectedIndexChanged += delegate ( UICombo sender )
 					{
+						//change app settings
 						SimulationApp.WindowedMode = (WindowedModeEnum)sender.SelectedIndex;
 
-						MessageBoxWindow.Show( this, "Change the windowed mode right now?", "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender2, EDialogResult result, object anyData )
+						if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 						{
-							if( result == EDialogResult.Yes )
-								EngineApp.SetWindowedMode( SimulationApp.WindowedMode, EngineApp.WindowedModeSize );
-							else
-								ShowTextRestartToApplyChanges();
-						} );
-
-						//ShowTextRestartToApplyChanges();
+							//On macOS, changing the windowed mode requires restarting the application.
+							ShowTextRestartToApplyChanges();
+						}
+						else
+						{
+							//On other platforms, we can change the windowed mode immediately.
+							MessageBoxWindow.Show( this, "Change the windowed mode right now?", "Confirm", EMessageBoxButtons.YesNo, EMessageBoxIcon.Question, null, delegate ( MessageBoxWindow sender2, EDialogResult result, object anyData )
+							{
+								if( result == EDialogResult.Yes )
+									EngineApp.SetWindowedMode( SimulationApp.WindowedMode, EngineApp.WindowedModeSize );
+								else
+									ShowTextRestartToApplyChanges();
+							} );
+						}
 					};
 					comboWindowedMode.ReadOnly = SystemSettings.Mobile;
 				}

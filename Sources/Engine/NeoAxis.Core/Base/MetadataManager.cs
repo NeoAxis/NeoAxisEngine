@@ -208,7 +208,7 @@ namespace NeoAxis
 					//skip disabled types by namespace name
 					if( Internal.AssemblyUtility.disableNamespaceRegistration == null )
 						Internal.AssemblyUtility.ParseDisableAssemblyNamespaceRegistration();
-					if( Internal.AssemblyUtility.disableNamespaceRegistration.Contains( type.Namespace ) )
+					if( type.Namespace != null && Internal.AssemblyUtility.disableNamespaceRegistration.Contains( type.Namespace ) )
 						continue;
 
 					if( !EngineApp.IsEditor && type.Namespace == "NeoAxis.Editor" )

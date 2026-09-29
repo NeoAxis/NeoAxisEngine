@@ -308,7 +308,7 @@ namespace NeoAxis.Cloud
 			get { return serverNode != null ? serverNode.ClientCount : 0; }
 		}
 
-		static string HashPassword2( string value )
+		static string HashPassword2Old( string value )
 		{
 			using( var sha = SHA256.Create() )
 			{
@@ -322,9 +322,40 @@ namespace NeoAxis.Cloud
 			}
 		}
 
-		static string HashPassword( string value )
+		static string HashPasswordOld( string value )
 		{
-			return HashPassword2( HashPassword2( value + "sa" ) + "lt" );
+			return HashPassword2Old( HashPassword2Old( value + "sa" ) + "lt" );
+		}
+
+		static bool PasswordHasher_VerifyPassword( string password, string storedHash )
+		{
+			const int HashSize = 32;
+			const int Iterations = 600_000;
+
+			string[] parts = storedHash.Split( ':' );
+			if( parts.Length != 2 )
+				return false;
+
+			byte[] salt = Convert.FromBase64String( parts[ 0 ] );
+			byte[] hash = Convert.FromBase64String( parts[ 1 ] );
+
+			byte[] testHash = Rfc2898DeriveBytes.Pbkdf2(
+				password,
+				salt,
+				Iterations,
+				HashAlgorithmName.SHA256,
+				HashSize
+			);
+
+			return CryptographicOperations.FixedTimeEquals( hash, testHash );
+		}
+
+		static bool VerifyPasswordNewAndOld( string password, string storedRecord )
+		{
+			if( storedRecord.Contains( ":" ) )
+				return PasswordHasher_VerifyPassword( password, storedRecord );
+			else
+				return HashPasswordOld( password ) == storedRecord;
 		}
 
 		private static void Server_IncomingConnectionApproval( ServerNode sender, ServerNode.Client client, ServerNode.IncomingConnectionApproveResult approveResult )
@@ -393,12 +424,18 @@ namespace NeoAxis.Cloud
 					//check password
 					if( userID == 0 )
 					{
-						var passwordHash = HashPassword( password );
-						if( CloudServerProcessUtility.CommandLineParameters.ServerPasswordHash != passwordHash )
+						if( !VerifyPasswordNewAndOld( password, CloudServerProcessUtility.CommandLineParameters.ServerPasswordHash ?? "" ) )
 						{
 							approveResult.Reject( "Invalid password or access code." );
 							return;
 						}
+
+						//var passwordHash = HashPasswordOld( password );
+						//if( CloudServerProcessUtility.CommandLineParameters.ServerPasswordHash != passwordHash )
+						//{
+						//	approveResult.Reject( "Invalid password or access code." );
+						//	return;
+						//}
 					}
 
 					approveResult.Approve();
