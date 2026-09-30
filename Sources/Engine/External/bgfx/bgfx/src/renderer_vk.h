@@ -546,6 +546,7 @@ VK_DESTROY_FUNC(DescriptorSet);
 			, m_uniformBinding(0)
 			, m_numBindings(0)
 			, m_oldBindingModel(false)
+			, m_useGlobalDescriptorSet(false)
 		{
 		}
 
@@ -576,6 +577,8 @@ VK_DESTROY_FUNC(DescriptorSet);
 		VkDescriptorSetLayoutBinding m_bindings[2 * BGFX_CONFIG_MAX_TEXTURE_SAMPLERS + 1];
 
 		bool m_oldBindingModel;
+
+		bool m_useGlobalDescriptorSet;
 	};
 
 	struct ProgramVK
@@ -585,6 +588,7 @@ VK_DESTROY_FUNC(DescriptorSet);
 			, m_fsh(NULL)
 			, m_descriptorSetLayout(VK_NULL_HANDLE)
 			, m_pipelineLayout(VK_NULL_HANDLE)
+			, m_useGlobalDescriptorSet(false)
 		{
 		}
 
@@ -604,6 +608,8 @@ VK_DESTROY_FUNC(DescriptorSet);
 
 		VkDescriptorSetLayout m_descriptorSetLayout;
 		VkPipelineLayout m_pipelineLayout;
+
+		bool m_useGlobalDescriptorSet;
 	};
 
 	struct TimerQueryVK

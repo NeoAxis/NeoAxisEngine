@@ -127,10 +127,14 @@ MEDIUMP vec3 diffuseIrradianceTexture( const vec3 n, samplerCube environmentText
 MEDIUMP vec3 specularIrradiance(const vec3 r, float roughness, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
 {
 	MEDIUMP float lod;
-#ifdef GLSL
-	lod = pow(float(textureSize(environmentTexture, 0)), 0.5) * roughness;
-	//lod = float(textureQueryLevels(environmentTexture.m_texture)) * roughness;
-	//lod = 8.0 * roughness;
+#if GLSL || SPIRV_GLSL
+	ivec2 size = textureSize(environmentTexture, 0);
+	float maxLod = log2(float(size.x));
+	lod = maxLod * roughness;
+	//lod = pow(float(textureSize(environmentTexture, 0)), 0.5) * roughness;
+	//!!!!new way, but only for desktop
+	//float maxLod = float(textureQueryLevels(environmentTexture) - 1);
+	//lod = roughness * maxLod;
 #else
 	vec3 texDim = vec3(0.0, 0.0, 0.0);
 	environmentTexture.m_texture.GetDimensions(0, texDim.x, texDim.y, texDim.z);
@@ -142,8 +146,12 @@ MEDIUMP vec3 specularIrradiance(const vec3 r, float roughness, samplerCube envir
 MEDIUMP vec3 specularIrradiance_Offset(const vec3 r, float roughness, float offset, samplerCube environmentTexture, EnvironmentTextureData environmentTextureData)
 {
 	MEDIUMP float lod;
-#ifdef GLSL
-	lod = pow(float(textureSize(environmentTexture, 0)), 0.5) * roughness;
+#if GLSL || SPIRV_GLSL
+	ivec2 size = textureSize(environmentTexture, 0);
+	float maxLod = log2(float(size.x));
+	lod = maxLod * roughness * roughness;
+	//lod = pow(float(textureSize(environmentTexture, 0)), 0.5) * roughness;
+	//!!!!new way, but only for desktop
 	//lod = float(textureQueryLevels(environmentTexture.m_texture)) * roughness * roughness;
 	//lod = 8.0 * roughness * roughness;
 #else

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -41,7 +42,7 @@ namespace Internal.SharpBgfx
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [return: MarshalAs( UnmanagedType.U1 )]
         [SuppressGCTransition]
-		public static extern bool bgfx_alloc_transient_buffers( out TransientVertexBuffer tvb, ref VertexLayout.Data decl, int numVertices, out TransientIndexBuffer tib, int numIndices, [MarshalAs( UnmanagedType.U1 )] bool index32 );
+        public static extern bool bgfx_alloc_transient_buffers( out TransientVertexBuffer tvb, ref VertexLayout.Data decl, int numVertices, out TransientIndexBuffer tib, int numIndices, [MarshalAs( UnmanagedType.U1 )] bool index32 );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
@@ -49,7 +50,7 @@ namespace Internal.SharpBgfx
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-		public static extern void bgfx_dispatch( ushort id, ushort program, uint numX, uint numY, uint numZ, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
+        public static extern void bgfx_dispatch( ushort id, ushort program, uint numX, uint numY, uint numZ, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
@@ -66,7 +67,7 @@ namespace Internal.SharpBgfx
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-		public static extern void bgfx_set_image( byte stage, ushort texture, byte mip, ComputeBufferAccess access, TextureFormat format );
+        public static extern void bgfx_set_image( byte stage, ushort texture, byte mip, ComputeBufferAccess access, TextureFormat format );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
@@ -385,7 +386,7 @@ namespace Internal.SharpBgfx
         public static extern void bgfx_vertex_convert( ref VertexLayout.Data destDecl, IntPtr destData, ref VertexLayout.Data srcDecl, IntPtr srcData, int num );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-		public static extern uint bgfx_weld_vertices( ushort* output, ref VertexLayout.Data decl, IntPtr data, uint num,  [MarshalAs( UnmanagedType.U1 )] bool index32, float epsilon );
+        public static extern uint bgfx_weld_vertices( ushort* output, ref VertexLayout.Data decl, IntPtr data, uint num, [MarshalAs( UnmanagedType.U1 )] bool index32, float epsilon );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern byte bgfx_get_supported_renderers( byte max, RendererBackend[] backends );
@@ -590,25 +591,25 @@ namespace Internal.SharpBgfx
         public static extern void bgfx_encoder_set_texture( IntPtr encoder, byte stage, ushort sampler, ushort texture, uint flags );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
-		public static extern void bgfx_encoder_touch( IntPtr encoder, ushort id );
+        public static extern void bgfx_encoder_touch( IntPtr encoder, ushort id );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-		public static extern void bgfx_encoder_submit( IntPtr encoder, ushort id, ushort programHandle, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
+        public static extern void bgfx_encoder_submit( IntPtr encoder, ushort id, ushort programHandle, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-		public static extern void bgfx_encoder_submit_occlusion_query( IntPtr encoder, ushort id, ushort programHandle, ushort queryHandle, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
+        public static extern void bgfx_encoder_submit_occlusion_query( IntPtr encoder, ushort id, ushort programHandle, ushort queryHandle, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-		public static extern void bgfx_encoder_submit_indirect( IntPtr encoder, ushort id, ushort programHandle, ushort indirectHandle, uint start, uint num, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
+        public static extern void bgfx_encoder_submit_indirect( IntPtr encoder, ushort id, ushort programHandle, ushort indirectHandle, uint start, uint num, int depth, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
 
         //BGFX_C_API void bgfx_encoder_submit_indirect_count( bgfx_encoder_t* _this, bgfx_view_id_t _id, bgfx_program_handle_t _program, bgfx_indirect_buffer_handle_t _indirectHandle, uint32_t _start, bgfx_index_buffer_handle_t _numHandle, uint32_t _numIndex, uint32_t _numMax, uint32_t _depth, uint8_t _flags );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-		public static extern void bgfx_encoder_set_image( IntPtr encoder, byte stage, ushort texture, byte mip, ComputeBufferAccess access, TextureFormat format );
+        public static extern void bgfx_encoder_set_image( IntPtr encoder, byte stage, ushort texture, byte mip, ComputeBufferAccess access, TextureFormat format );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
@@ -632,7 +633,7 @@ namespace Internal.SharpBgfx
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
-		public static extern void bgfx_encoder_dispatch( IntPtr encoder, ushort id, ushort program, uint numX, uint numY, uint numZ, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
+        public static extern void bgfx_encoder_dispatch( IntPtr encoder, ushort id, ushort program, uint numX, uint numY, uint numZ, [MarshalAs( UnmanagedType.U1 )] DiscardFlags flags );
 
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         [SuppressGCTransition]
@@ -674,6 +675,10 @@ namespace Internal.SharpBgfx
 
         //!!!!betauser
         [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
+        public static extern void bgfx_custom_command_pre( int command, MemoryBlock.DataPtr* memory );
+
+        //!!!!betauser
+        [DllImport( DllName, CallingConvention = CallingConvention.Cdecl )]
         public static extern void bgfx_custom_command( int command, MemoryBlock.DataPtr* memory );
 
         ////!!!!betauser
@@ -689,5 +694,40 @@ namespace Internal.SharpBgfx
         //#else
         //        public const string DllName = "bgfx.dll";
         //#endif
+
+
+        //!!!!betauser
+
+        enum CustomCommand
+        {
+            LoadCombinedSamplers = 0
+        }
+
+        [StructLayout( LayoutKind.Sequential, Pack = 1 )]
+        struct CustomCommand_LoadCombinedSamplersCommand
+        {
+            [StructLayout( LayoutKind.Sequential, Pack = 1 )]
+            public struct CombinedSamplerBind
+            {
+                public ushort idx;
+                public uint samplerFlags;
+            }
+
+            public static unsafe void Send( List<CombinedSamplerBind> samplers )
+            {
+                var memory = new MemoryBlock( sizeof( ushort ) + sizeof( CombinedSamplerBind ) * samplers.Count );
+                var headerPtr = (ushort*)memory.Data;
+                *headerPtr = (ushort)samplers.Count;
+                headerPtr++;
+                var samplersPtr = (CombinedSamplerBind*)headerPtr;
+                for( int i = 0; i < samplers.Count; i++ )
+                {
+                    *samplersPtr = samplers[ i ];
+                    samplersPtr++;
+                }
+                bgfx_custom_command_pre( (int)CustomCommand.LoadCombinedSamplers, memory.ptr );
+            }
+        }
+
     }
 }

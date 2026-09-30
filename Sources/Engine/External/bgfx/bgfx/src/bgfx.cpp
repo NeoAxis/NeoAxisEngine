@@ -3531,7 +3531,8 @@ namespace bgfx
 				break;
 
 				//!!!!betauser
-			case CommandBuffer::CustomCommand:
+			case CommandBuffer::CustomCommandPre:
+			case CommandBuffer::CustomCommandPost:
 				{
 					BGFX_PROFILER_SCOPE("CustomCommand", 0xff2040ff);
 
@@ -6037,10 +6038,10 @@ namespace bgfx
 	//}
 
 	//!!!!betauser
-	void customCommand(int _command, const Memory* _mem)
+	void customCommand(int _command, const Memory* _mem, bool _beforeSubmit)
 	{
 		BX_ASSERT(NULL != _mem, "_mem can't be NULL");
-		return s_ctx->customCommand(_command, _mem);
+		return s_ctx->customCommand(_command, _mem, _beforeSubmit);
 	}
 
 #undef BGFX_CHECK_ENCODER0

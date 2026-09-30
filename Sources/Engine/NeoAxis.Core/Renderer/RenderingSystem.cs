@@ -587,8 +587,7 @@ namespace NeoAxis
 				//!!!!temp iOS
 				EngineApp.InitSettings.RendererBackend = RendererBackend.Noop;
 				//EngineApp.InitSettings.RendererBackend = RendererBackend.Vulkan;
-
-				////EngineApp.InitSettings.RendererBackend = RendererBackend.Metal;
+				//SystemSettings._UpdateDeviceProperties();
 			}
 			//set backend for Web
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
@@ -597,12 +596,8 @@ namespace NeoAxis
 			//set backend for macOS
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 			{
-				//!!!!temp macOS
-				//EngineApp.InitSettings.RendererBackend = RendererBackend.Noop;
 				EngineApp.InitSettings.RendererBackend = RendererBackend.Vulkan;
 				SystemSettings._UpdateDeviceProperties();
-
-				////EngineApp.InitSettings.RendererBackend = RendererBackend.Metal;
 			}
 
 			unsafe
@@ -1238,8 +1233,8 @@ namespace NeoAxis
 			{
 
 				//!!!!temp consider Vulkan as limited device. no shadows, light masks
-				if( Capabilities.Backend == RendererBackend.Vulkan )
-					return ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
+				//if( Capabilities.Backend == RendererBackend.Vulkan )
+				//	return ProjectSettingsPage_Rendering.ShadowTechniqueEnum.None;
 
 				//!!!!temp Web Shadows
 				//if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )
@@ -1378,7 +1373,7 @@ namespace NeoAxis
 		[MethodImpl( MethodImplOptions.NoInlining )]
 		static bool InitializeLightMask()
 		{
-			//!!!!temp consider Vulkan as limited device. no shadows, light masks
+			//!!!!crash when light masks are enabled
 			if( Capabilities.Backend == RendererBackend.Vulkan )
 				return false;
 

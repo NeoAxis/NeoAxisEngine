@@ -7,12 +7,11 @@ $input v_color0, v_texCoord0
 uniform vec4 u_canvasClipRectangle;
 uniform vec4/*bool, bool*/ u_bc5UNorm_L;//u_bc5UNorm
 
-//!!!!
-#if SPIRV_GLSL
-SAMPLER2D(s_baseTexture, 2);
-#else
 SAMPLER2D(s_baseTexture, 0);
-#endif
+
+//!!!!bindless example
+//layout(set = 1, binding = 0) uniform sampler2D g_bindlessSamplerSet[];
+//uni__form vec4 s_baseTexture;
 
 void main()
 {
@@ -21,6 +20,9 @@ void main()
 	if(pos.x < u_canvasClipRectangle.x || pos.y < u_canvasClipRectangle.y || pos.x > u_canvasClipRectangle.z || pos.y > u_canvasClipRectangle.w)
 		discard;
 	
+//!!!!bindless example
+//	vec4 rgba = texture2D(g_bindlessSamplerSet[int(s_baseTexture.x)], v_texCoord0);
+
 	vec4 rgba = texture2D(s_baseTexture, v_texCoord0);
 
 #ifndef LIMITED_DEVICE
@@ -37,19 +39,5 @@ void main()
 	if(u_bc5UNorm_L.y > 0.0)
 		rgba = vec4(rgba.x, rgba.x, rgba.x, 1.0);
 
-	
-	//!!!!
-	#if SPIRV_GLSL
-	if(capsLock)
-	{
-		rgba = vec4(1,0,0,1);
-
-		//gl_FragColor = texelFetch( s_baseTexture, ivec2( getFragCoord().xy ), 0 );		
-		//gl_FragColor = texture2D(s_baseTexture, v_texCoord0);
-		//return;
-	}
-	#endif
-	
-	
 	gl_FragColor = rgba * v_color0;
 }

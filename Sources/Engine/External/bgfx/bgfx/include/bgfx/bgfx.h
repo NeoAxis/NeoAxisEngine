@@ -4615,7 +4615,7 @@ namespace bgfx
 		);
 
 	//!!!!betauser
-	void customCommand(int _command, const Memory* _mem);
+	void customCommand(int _command, const Memory* _mem, bool _beforeSubmit);
 
 } // namespace bgfx
 

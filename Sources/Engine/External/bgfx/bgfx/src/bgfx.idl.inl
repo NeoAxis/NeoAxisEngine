@@ -1292,9 +1292,16 @@ BGFX_C_API bool bgfx_init(const bgfx_init_t * _init)
 
 }
 
+//!!!!betauser
+BGFX_C_API void bgfx_custom_command_pre(int _command, const bgfx_memory_t* _mem)
+{
+	bgfx::customCommand(_command, (const bgfx::Memory*)_mem, true);
+}
+
+//!!!!betauser
 BGFX_C_API void bgfx_custom_command(int _command, const bgfx_memory_t* _mem)
 {
-	bgfx::customCommand(_command, (const bgfx::Memory*)_mem);
+	bgfx::customCommand(_command, (const bgfx::Memory*)_mem, false);
 }
 
 /**/

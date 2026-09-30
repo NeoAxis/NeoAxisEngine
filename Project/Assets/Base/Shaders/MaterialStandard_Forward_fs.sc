@@ -5,6 +5,12 @@ $input v_texCoord01, v_worldPosition_depth, v_worldNormal_materialIndex, v_tange
 #include "Common.sh"
 #include "UniformsFragment.sh"
 
+#if defined( BLEND_MODE_TRANSPARENT ) || defined( BLEND_MODE_ADD )
+#ifdef SPIRV_GLSL
+layout(early_fragment_tests) in;
+#endif
+#endif
+
 ////!!!!test oit
 //#ifndef GLSL
 //#include "Common/bgfx_compute.sh"
@@ -941,7 +947,11 @@ void main()
 
 
 	//color
+#if SPIRV_GLSL
+	gl_FragColor = resultColor;
+#else
 	gl_FragData[0] = resultColor;
+#endif
 
 	//normal
 #ifndef LIMITED_DEVICE //#ifndef MOBILE

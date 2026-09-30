@@ -29,6 +29,10 @@ namespace NeoAxis
 		static Uniform? u_canvasOcclusionDepthCheck;
 		static Vector4F canvasOcclusionDepthCheckBinded = new Vector4F( -100, -100, -100, -100 );
 
+
+		//!!!!bindless example
+		//static Uniform? u_baseTexture;
+
 		//
 
 		float aspectRatio = 1;
@@ -2412,6 +2416,16 @@ namespace NeoAxis
 		//			}
 		//		}
 
+		//!!!!bindless example
+		//[StructLayout( LayoutKind.Sequential, Pack = 4 )]
+		//struct TextureBinding
+		//{
+		//	public uint textureUnit;
+		//	public uint uniformHandle;
+		//	public uint textureHandle;
+		//	public uint samplerFlags;
+		//}
+
 		[MethodImpl( (MethodImplOptions)512 )]
 		public override unsafe void ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context, bool clearData, double time, bool registerUniformsAndSetIdentityMatrix )
 		{
@@ -2440,11 +2454,61 @@ namespace NeoAxis
 				if( !u_canvasOcclusionDepthCheck.HasValue )
 					u_canvasOcclusionDepthCheck = GpuProgramManager.RegisterUniform( "u_canvasOcclusionDepthCheck", UniformType.Vector4, 1 );
 
+				//!!!!bindless example
+				//if( !u_baseTexture.HasValue )
+				//	u_baseTexture = GpuProgramManager.RegisterUniform( "s_baseTexture", UniformType.Vector4, 1 );
+
 				Matrix4F identity = Matrix4F.Identity;
 				Bgfx.SetTransform( (float*)&identity );
 			}
 
 			context.ObjectsDuringUpdate.namedTextures.TryGetValue( "depthTexture", out ImageComponent depthTexture );
+
+
+			//!!!!bindless example
+			//TextureBinding textureBinding = default;
+			//var samplerMap = new Dictionary<(uint, uint), uint>();
+			//{
+			//	var samplerList = new List<CombinedSamplerBind>();
+			//	for( int nItem = 0; nItem < outItems.Count; nItem++ )
+			//	{
+			//		var item = outItems[ nItem ];
+			//		foreach( RenderableItem renderableItem in item.renderableItems )
+			//		{
+			//			if( renderableItem.vertexBuffer.Disposed )
+			//				continue;
+
+			//			var pass = renderableItem.material.MaterialPass;
+			//			if( pass != null )
+			//			{
+			//				var texture = renderableItem.texture;
+			//				if( texture == null )
+			//					texture = ResourceUtility.WhiteTexture2D;
+
+			//				var minMag = renderableItem.textureFiltering == TextureFilteringMode.Linear ? FilterOption.Linear : FilterOption.Point;
+
+			//				// get texture properties (texture id, sampler flags)
+			//				int textureBindingCounter = 0;
+			//				var textureBindingPtr = (uint*)&textureBinding;
+			//				context.BindTexture( 0, texture, renderableItem.textureClamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, minMag, minMag, FilterOption.None, 0, ref textureBindingPtr, ref textureBindingCounter, false );
+			//				if( textureBindingCounter != 0 )
+			//				{
+			//					if( !samplerMap.ContainsKey( (textureBinding.textureHandle, textureBinding.samplerFlags) ) )
+			//					{
+			//						samplerMap[ (textureBinding.textureHandle, textureBinding.samplerFlags) ] = (uint)samplerList.Count;
+			//						samplerList.Add( new()
+			//						{
+			//							idx = (ushort)textureBinding.textureHandle,
+			//							samplerFlags = textureBinding.samplerFlags,
+			//						} );
+			//					}
+			//				}
+			//			}
+			//		}
+			//	}
+			//	LoadCombinedSamplersCmd.Send( samplerList );
+			//}
+
 
 			for( int nItem = 0; nItem < outItems.Count; nItem++ )
 			{
@@ -2476,6 +2540,20 @@ namespace NeoAxis
 							var minMag = renderableItem.textureFiltering == TextureFilteringMode.Linear ? FilterOption.Linear : FilterOption.Point;
 
 							context.BindTexture( 0, texture, renderableItem.textureClamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, minMag, minMag, FilterOption.None, 0, false );
+
+
+							//!!!!bindless example
+							//// get texture properties (texture id, sampler flags)
+							//int textureBindingCounter = 0;
+							//var textureBindingPtr = (uint*)&textureBinding;
+							//context.BindTexture( 0, texture, renderableItem.textureClamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap, minMag, minMag, FilterOption.None, 0, ref textureBindingPtr, ref textureBindingCounter, false );
+							//if( textureBindingCounter != 0 )
+							//{
+							//	var value = new Vector4F( samplerMap[ (textureBinding.textureHandle, textureBinding.samplerFlags) ], 0, 0, 0 );
+							//	Bgfx.SetUniform( u_baseTexture.Value, &value, 1 );
+							//}
+
+
 
 							//GpuMaterialPass.TextureParameterValue textureValue = new GpuMaterialPass.TextureParameterValue( texture,
 							//	renderableItem.textureClamp ? TextureAddressingMode.Clamp : TextureAddressingMode.Wrap,

@@ -489,6 +489,12 @@ static_assert(BGFX_CONFIG_MAX_VERTEX_STREAMS < 32, "Must be less than 32!");
 //#	define BGFX_CONFIG_MAX_TEXTURES (4<<10)
 #endif // BGFX_CONFIG_MAX_TEXTURES
 
+//!!!!betauser
+/// Maximum number of global texture handles. Default is 65536.
+#ifndef BGFX_CONFIG_MAX_GLOBAL_TEXTURES
+#	define BGFX_CONFIG_MAX_GLOBAL_TEXTURES (1<<16)
+#endif // BGFX_CONFIG_MAX_GLOBAL_TEXTURES
+
 /// Maximum number of texture samplers per draw call. Default is 16.
 //!!!!betauser
 #ifndef BGFX_CONFIG_MAX_TEXTURE_SAMPLERS

@@ -400,6 +400,8 @@ namespace bgfx { namespace spirv
 		// BgfxSampler2DMS
 		"texture2DMS",
 		"sampler2DMS",
+
+		"samplerCubeArray",
 	};
 
 	//static const char* s_samplerTypes[] =
@@ -569,6 +571,7 @@ namespace bgfx { namespace spirv
 		shader->setShiftBinding(glslang::EResUbo, (stage == EShLanguage::EShLangFragment ? kSpirvFragmentBinding : kSpirvVertexBinding));
 		shader->setShiftBinding(glslang::EResTexture, kSpirvBindShift);
 		shader->setShiftBinding(glslang::EResSampler, kSpirvBindShift + kSpirvSamplerShift);
+		shader->setShiftBinding(glslang::EResCombinedSampler, kSpirvBindShift);
 		shader->setShiftBinding(glslang::EResSsbo, kSpirvBindShift);
 		shader->setShiftBinding(glslang::EResImage, kSpirvBindShift);
 
@@ -581,6 +584,9 @@ namespace bgfx { namespace spirv
 
 		std::string codePrefix = "#version 450\n";
 		codePrefix += "#extension GL_EXT_control_flow_attributes : enable\n";
+
+		//TODO: only enable if the extension is available
+		codePrefix += "#extension GL_EXT_nonuniform_qualifier: enable\n";
 
 		//codePrefix += "#extension GL_OES_standard_derivatives : enable\n";
 		//codePrefix += "#extension GL_NV_explicit_typecast : enable\n";
@@ -654,6 +660,10 @@ namespace bgfx { namespace spirv
 
 				codeToCompile += uniformBlock;
 			}
+
+			////global descriptor set
+			////TODO: only append if the extension is available
+			//codeToCompile += "layout(set = 1, binding = 0) uniform sampler2D g_bindlessSamplerSet[];\n";
 
 			codeToCompile += codeWithoutUniforms;
 		}

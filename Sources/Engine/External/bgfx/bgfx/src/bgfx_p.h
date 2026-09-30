@@ -1004,6 +1004,10 @@ namespace bgfx
 			UpdateViewName,
 			InvalidateOcclusionQuery,
 			SetName,
+
+			//!!!!betauser
+			CustomCommandPre,
+
 			End,
 			RendererShutdownEnd,
 			DestroyVertexLayout,
@@ -1019,7 +1023,7 @@ namespace bgfx
 			ReadTexture,
 
 			//!!!!betauser
-			CustomCommand,			
+			CustomCommandPost,			
 		};
 
 		void resize(uint32_t _capacity = 0)
@@ -5671,12 +5675,12 @@ namespace bgfx
 		BGFX_API_FUNC(uint32_t frame(uint8_t _flags = BGFX_FRAME_NONE) );
 
 		//!!!!betauser
-		BGFX_API_FUNC(void customCommand(int _command, const Memory* _mem))
+		BGFX_API_FUNC(void customCommand(int _command, const Memory* _mem, bool _beforeSubmit))
 		{
 			//!!!!?
 			//BGFX_MUTEX_SCOPE(m_resourceApiLock);
 
-			CommandBuffer& cmdbuf = getCommandBuffer(CommandBuffer::CustomCommand);
+			CommandBuffer& cmdbuf = getCommandBuffer(_beforeSubmit ? CommandBuffer::CustomCommandPre : CommandBuffer::CustomCommandPost);
 			cmdbuf.write(_command);
 			cmdbuf.write(_mem);
 		}

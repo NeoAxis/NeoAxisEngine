@@ -32,18 +32,21 @@
 #define BGFX_SHADER_MATRIX_COLUMN_MAJOR (0 \
 	|| BGFX_SHADER_LANGUAGE_GLSL           \
 	|| BGFX_SHADER_LANGUAGE_WGSL           \
+	|| SPIRV_GLSL \
 	)
 
 #if BGFX_SHADER_TYPE_FRAGMENT
 #	if BGFX_SHADER_LANGUAGE_HLSL  \
 	|| BGFX_SHADER_LANGUAGE_METAL \
-	|| BGFX_SHADER_LANGUAGE_SPIRV \
 	|| BGFX_SHADER_LANGUAGE_WGSL
 #	define EARLY_DEPTH_STENCIL [earlydepthstencil]
 	#else
 #	define EARLY_DEPTH_STENCIL
 #	endif // BGFX_SHADER_LANGUAGE_...
 #endif // BGFX_SHADER_TYPE_FRAGMENT
+
+//!!!!betauser 	|| BGFX_SHADER_LANGUAGE_SPIRV disabled for EARLY_DEPTH_STENCIL
+
 
 #if BGFX_SHADER_LANGUAGE_GLSL
 #   define ARRAY_BEGIN(_type, _name, _count) _type _name[_count] = _type[](
@@ -945,6 +948,11 @@ ivec4 ivec4_splat(int _x) { return ivec4(_x, _x, _x, _x); }
 layout(location = 0) out vec4 out_FragColor;
 #define gl_FragColor out_FragColor
 #endif
+
+#if SPIRV_GLSL
+#define texture2DLod textureLod
+#endif
+
 
 
 #endif // __cplusplus

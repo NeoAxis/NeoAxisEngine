@@ -3754,6 +3754,8 @@ BGFX_C_API void bgfx_discard(uint8_t _flags);
  */
 BGFX_C_API void bgfx_blit(bgfx_view_id_t _id, bgfx_texture_handle_t _dst, uint8_t _dstMip, uint16_t _dstX, uint16_t _dstY, uint16_t _dstZ, bgfx_texture_handle_t _src, uint8_t _srcMip, uint16_t _srcX, uint16_t _srcY, uint16_t _srcZ, uint16_t _width, uint16_t _height, uint16_t _depth);
 
+//!!!!betauser
+BGFX_C_API void bgfx_custom_command_pre(int _command, const bgfx_memory_t* _mem);
 BGFX_C_API void bgfx_custom_command(int _command, const bgfx_memory_t* _mem);
 
 /**/

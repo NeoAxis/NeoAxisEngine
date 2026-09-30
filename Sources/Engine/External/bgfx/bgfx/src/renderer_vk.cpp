@@ -384,6 +384,10 @@ VK_IMPORT_DEVICE
 			EXT_custom_border_color,
 			EXT_debug_report,
 			EXT_debug_utils,
+
+			//!!!!betauser
+			EXT_descriptor_indexing,
+
 			EXT_line_rasterization,
 			EXT_memory_budget,
 			EXT_shader_viewport_index_layer,
@@ -432,6 +436,10 @@ VK_IMPORT_DEVICE
 		{ "VK_EXT_custom_border_color",             1, false, false, true,                                                          Layer::Count },
 		{ "VK_EXT_debug_report",                    1, false, false, false,                                                         Layer::Count },
 		{ "VK_EXT_debug_utils",                     1, false, false, BGFX_CONFIG_DEBUG_OBJECT_NAME || BGFX_CONFIG_DEBUG_ANNOTATION, Layer::Count },
+
+		//!!!!betauser
+		{ "VK_EXT_descriptor_indexing",             1, false, false, true,                                                          Layer::Count },
+
 		{ "VK_EXT_line_rasterization",              1, false, false, true,                                                          Layer::Count },
 		{ "VK_EXT_memory_budget",                   1, false, false, true,                                                          Layer::Count },
 		{ "VK_EXT_shader_viewport_index_layer",     1, false, false, true,                                                          Layer::Count },
@@ -1189,6 +1197,35 @@ VK_IMPORT_DEVICE
 			);
 	}
 
+
+	//!!!!betauser
+	enum CustomCommand
+	{
+		LoadCombinedSamplers
+	};
+#pragma pack(push, 2)
+	struct CombinedSamplerBind
+	{
+		uint16_t m_idx;
+		uint32_t m_samplerFlags;
+	};
+#pragma pack(pop)
+	struct GlobalDescriptorSet
+	{
+		void release()
+		{
+			vkDestroy(m_descriptorSet);
+			vkDestroy(m_descriptorPool);
+		}
+
+		VkDescriptorSet m_descriptorSet;
+		VkDescriptorPool m_descriptorPool;
+		uint16_t m_samplerSetCount;
+		uint8_t m_lifetime;
+	};
+	//!!!!betauser END
+
+
 	struct RendererContextVK : public RendererContextI
 	{
 		RendererContextVK()
@@ -1204,6 +1241,11 @@ VK_IMPORT_DEVICE
 			, m_captureBuffer(VK_NULL_HANDLE)
 			, m_captureMemory()
 			, m_captureSize(0)
+
+			//!!!!betauser
+			, m_dummyColorImage(VK_NULL_HANDLE)
+			, m_dummyColorImageView(VK_NULL_HANDLE)
+			, m_globalDescriptorSetLayout(VK_NULL_HANDLE)
 			, m_variableRateShadingSupported(false)
 		{
 		}
@@ -1234,6 +1276,9 @@ VK_IMPORT_DEVICE
 			const bool headless = NULL == g_platformData.nwh;
 
 			const void* nextFeatures = NULL;
+
+			//!!!!betauser
+			VkPhysicalDeviceDescriptorIndexingFeaturesEXT descriptorIndexingFeatures = {};
 
 			VkPhysicalDeviceLineRasterizationFeaturesEXT lineRasterizationFeatures = {};
 			VkPhysicalDeviceCustomBorderColorFeaturesEXT customBorderColorFeatures = {};
@@ -1718,6 +1763,36 @@ VK_IMPORT_INSTANCE
 						nextFeatures = &fragmentShadingRate;
 					}
 				}
+
+				//!!!!betauser
+				if (s_extension[Extension::KHR_get_physical_device_properties2].m_supported && s_extension[Extension::EXT_descriptor_indexing].m_supported)
+				{
+					VkPhysicalDeviceFeatures2KHR deviceFeatures2;
+					deviceFeatures2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
+					deviceFeatures2.pNext = NULL;
+
+					VkBaseOutStructure* next = (VkBaseOutStructure*)&deviceFeatures2;
+
+					next->pNext = (VkBaseOutStructure*)&descriptorIndexingFeatures;
+					descriptorIndexingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+					descriptorIndexingFeatures.pNext = NULL;
+
+					vkGetPhysicalDeviceFeatures2KHR(m_physicalDevice, &deviceFeatures2);
+
+					if (!descriptorIndexingFeatures.descriptorBindingPartiallyBound || !descriptorIndexingFeatures.runtimeDescriptorArray)
+					{
+						s_extension[Extension::EXT_descriptor_indexing].m_supported = false;
+					}
+					else
+					{
+						descriptorIndexingFeatures.pNext = (VkBaseOutStructure*)nextFeatures;
+						descriptorIndexingFeatures.descriptorBindingPartiallyBound = VK_TRUE;
+						descriptorIndexingFeatures.runtimeDescriptorArray = VK_TRUE;
+
+						nextFeatures = &descriptorIndexingFeatures;
+					}
+				}
+				//!!!!betauser END
 
 				bx::memSet(&m_deviceFeatures, 0, sizeof(m_deviceFeatures) );
 
@@ -2386,6 +2461,41 @@ VK_IMPORT_DEVICE
 			}
 
 			m_backBuffer.destroy();
+
+
+			//!!!!betauser
+			{
+				for (uint32_t iii = 0; iii < BGFX_CONFIG_MAX_FRAME_LATENCY; ++iii)
+				{
+					auto& list = m_frameGlobalDescriptors[iii];
+					for (uint32_t ii = 0; ii < list.size(); ++ii)
+						list[ii].release();
+					list.clear();
+				}
+
+				for (uint32_t ii = 0; ii < m_globalDescriptorPool.size(); ++ii)
+					m_globalDescriptorPool[ii].release();
+				m_globalDescriptorPool.clear();
+
+				if (VK_NULL_HANDLE != m_dummyColorImageView)
+				{
+					release(m_dummyColorImageView);
+					m_dummyColorImageView = VK_NULL_HANDLE;
+				}
+
+				if (VK_NULL_HANDLE != m_dummyColorImage)
+				{
+					release(m_dummyColorImage);
+					m_dummyColorImage = VK_NULL_HANDLE;
+				}
+
+				recycleMemory(m_dummyColorImageMem);
+
+				if (VK_NULL_HANDLE != m_globalDescriptorSetLayout)
+					vkDestroy(m_globalDescriptorSetLayout);
+				m_globalDescriptorSetLayout = VK_NULL_HANDLE;
+			}
+
 
 			m_memoryLru.evictAll();
 
@@ -4869,9 +4979,345 @@ VK_IMPORT_DEVICE
 			return createHostBuffer(_size, flags, _buffer, _memory, true, NULL);
 		}
 
+
+
+		//!!!!betauser
+
+		VkDescriptorSetLayout getGlobalDescriptorSetLayout()
+		{
+			//create the global descriptor
+			if (VK_NULL_HANDLE == m_globalDescriptorSetLayout)
+			{
+				const void* extension = NULL;
+				VkDescriptorSetLayoutBinding globalBindings[1];
+				uint32_t numGlobalBindings = 0;
+				VkDescriptorSetLayoutCreateFlags flags = 0;
+
+				VkDescriptorBindingFlags bindlessFlags;
+				VkDescriptorSetLayoutBindingFlagsCreateInfoEXT bindlessFlagsLayoutExt = {};
+				if (s_extension[Extension::EXT_descriptor_indexing].m_supported)
+				{
+					bindlessFlags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT;
+					bindlessFlagsLayoutExt.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT;
+					bindlessFlagsLayoutExt.bindingCount = 1;
+					bindlessFlagsLayoutExt.pBindingFlags = &bindlessFlags;
+					bindlessFlagsLayoutExt.pNext = extension;
+					extension = &bindlessFlagsLayoutExt;
+
+					VkDescriptorSetLayoutBinding& binding = globalBindings[0];
+					binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+					binding.descriptorCount = BGFX_CONFIG_MAX_GLOBAL_TEXTURES;
+					binding.binding = 0;
+					binding.stageFlags = VK_SHADER_STAGE_ALL;
+					binding.pImmutableSamplers = nullptr;
+
+					numGlobalBindings++;
+
+					flags |= VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT;
+				}
+
+				VkDescriptorSetLayoutCreateInfo dslci;
+				dslci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+				dslci.pNext = extension;
+				dslci.flags = flags;
+				dslci.bindingCount = numGlobalBindings;
+				dslci.pBindings = globalBindings;
+
+				VK_CHECK(vkCreateDescriptorSetLayout(
+					m_device
+					, &dslci
+					, m_allocatorCb
+					, &m_globalDescriptorSetLayout
+				));
+			}
+			return m_globalDescriptorSetLayout;
+		}
+
+		VkDescriptorSet getLastGlobalDescriptorSet()
+		{
+			uint32_t frame = m_cmd.m_currentFrameInFlight;
+			if (m_numCurrentGlobalDescriptors == 0)
+				addFrameGlobalSamplerSet(NULL, 0);
+			auto& list = m_frameGlobalDescriptors[frame];
+			return list[list.size() - 1].m_descriptorSet;
+		}
+
+		GlobalDescriptorSet allocGlobalDescriptorSet()
+		{
+			GlobalDescriptorSet set = {};
+
+			//create the global descriptor set
+			if (m_globalDescriptorPool.empty())
+			{
+				// create global descriptor pool
+				{
+					const VkDescriptorPoolSize dps[] =
+					{
+						{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, BGFX_CONFIG_MAX_GLOBAL_TEXTURES },
+					};
+
+					VkDescriptorPoolCreateInfo dpci;
+					dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+					dpci.pNext = NULL;
+					dpci.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+					dpci.maxSets = BGFX_CONFIG_MAX_GLOBAL_TEXTURES;
+					dpci.poolSizeCount = 1;
+					dpci.pPoolSizes = dps;
+
+					if (s_extension[Extension::EXT_descriptor_indexing].m_supported)
+						dpci.flags |= VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT;
+
+					VK_CHECK(vkCreateDescriptorPool(m_device, &dpci, m_allocatorCb, &set.m_descriptorPool));
+				}
+
+				// create global descriptor set
+				{
+					const VkDescriptorSetLayout layout = getGlobalDescriptorSetLayout();
+					const void* extension = NULL;
+
+					VkDescriptorSetVariableDescriptorCountAllocateInfoEXT countInfoExt = {};
+					if (s_extension[Extension::EXT_descriptor_indexing].m_supported) {
+						uint32_t maxBinding = BGFX_CONFIG_MAX_GLOBAL_TEXTURES;
+
+						countInfoExt.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT;
+						countInfoExt.descriptorSetCount = 1;
+						countInfoExt.pDescriptorCounts = &maxBinding;
+						countInfoExt.pNext = extension;
+						extension = &countInfoExt;
+					}
+
+					VkDescriptorSetAllocateInfo dsai;
+					dsai.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+					dsai.pNext = extension;
+					dsai.descriptorPool = set.m_descriptorPool;
+					dsai.descriptorSetCount = 1;
+					dsai.pSetLayouts = &layout;
+
+					const VkResult result = vkAllocateDescriptorSets(m_device, &dsai, &set.m_descriptorSet);
+
+					BX_ASSERT(VK_SUCCESS == result
+						, "vkAllocateDescriptorSets: VK error %d: %s"
+						, result
+						, getName(result)
+					);
+				}
+			}
+			else
+			{
+				set = std::move(m_globalDescriptorPool.back());
+				m_globalDescriptorPool.pop_back();
+			}
+			return set;
+		}
+
+		void kickFrameGlobalDescriptors(const uint32_t frame)
+		{
+			constexpr uint8_t kMaxSetLifetime = 4;
+
+			for (int i = (int)m_globalDescriptorPool.size(); i > 0; --i)
+			{
+				const uint32_t ii = i - 1;
+				uint8_t lifetime = ++m_globalDescriptorPool[ii].m_lifetime;
+				if (lifetime >= kMaxSetLifetime)
+				{
+					m_globalDescriptorPool[ii].release();
+					m_globalDescriptorPool.erase(m_globalDescriptorPool.begin() + ii);
+				}
+			}
+
+			auto& list = m_frameGlobalDescriptors[frame];
+			if (m_numCurrentGlobalDescriptors < list.size())
+			{
+				for (uint8_t i = 0; i < m_numCurrentGlobalDescriptors; ++i)
+				{
+					auto set = std::move(list.back());
+					list.pop_back();
+
+					updateGlobalDescriptorSet(set, NULL, 0);
+
+					set.m_lifetime = 0;
+					m_globalDescriptorPool.push_back(std::move(set));
+				}
+			}
+			m_numCurrentGlobalDescriptors = 0;
+		}
+
+		VkImageView getDummyColorTextureView()
+		{
+			if (VK_NULL_HANDLE == m_dummyColorImageView)
+			{
+				VkImageCreateInfo ici =
+				{
+					.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+					.imageType = VK_IMAGE_TYPE_2D,
+					.format = VK_FORMAT_R8G8B8A8_UNORM,
+					.extent = {.width = 1, .height = 1, .depth = 1},
+					.mipLevels = 1,
+					.arrayLayers = 1,
+					.samples = VK_SAMPLE_COUNT_1_BIT,
+					.tiling = VK_IMAGE_TILING_OPTIMAL,
+					.usage = VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+					.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+					.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
+				};
+
+				VK_CHECK(vkCreateImage(m_device, &ici, m_allocatorCb, &m_dummyColorImage));
+
+				VkMemoryRequirements imageMemReq;
+				vkGetImageMemoryRequirements(m_device, m_dummyColorImage, &imageMemReq);
+
+				VK_CHECK(allocateMemory(&imageMemReq, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &m_dummyColorImageMem, false));
+
+				VK_CHECK(vkBindImageMemory(m_device, m_dummyColorImage, m_dummyColorImageMem.mem, m_dummyColorImageMem.offset));
+
+				VkImageViewCreateInfo viewInfo =
+				{
+					.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+					.image = m_dummyColorImage,
+					.viewType = VK_IMAGE_VIEW_TYPE_2D,
+					.format = VK_FORMAT_R8G8B8A8_UNORM,
+					.subresourceRange =
+					{
+						.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+						.baseMipLevel = 0,
+						.levelCount = 1,
+						.baseArrayLayer = 0,
+						.layerCount = 1
+					}
+				};
+
+				VK_CHECK(vkCreateImageView(m_device, &viewInfo, nullptr, &m_dummyColorImageView));
+			}
+			return m_dummyColorImageView;
+		}
+
+		void updateGlobalDescriptorSet(GlobalDescriptorSet& set, const CombinedSamplerBind* samplers, uint16_t numSamplers)
+		{
+			if (s_extension[Extension::EXT_descriptor_indexing].m_supported)
+			{
+				uint32_t numDescriptors = bx::max(set.m_samplerSetCount, numSamplers);
+				if (numDescriptors == 0)
+					return;
+
+				VkDescriptorImageInfo* imageInfo = new VkDescriptorImageInfo[numDescriptors];
+				VkWriteDescriptorSet* wds = new VkWriteDescriptorSet[numDescriptors];
+
+				uint32_t wdsCount = 0;
+				uint32_t imageCount = 0;
+
+				for (uint16_t i = 0; i < numSamplers; i++)
+				{
+					const CombinedSamplerBind& bind = samplers[i];
+					TextureVK& texture = m_textures[bind.m_idx];
+					const uint32_t samplerFlags = (BGFX_SAMPLER_INTERNAL_DEFAULT & bind.m_samplerFlags)
+						? bind.m_samplerFlags
+						: (uint32_t)texture.m_flags
+						;
+					const bool sampleStencil = !!(samplerFlags & BGFX_SAMPLER_SAMPLE_STENCIL);
+					VkSampler sampler = getSampler(samplerFlags, texture.m_format, NULL);
+
+					const VkImageViewType type = texture.m_type;
+
+					texture.setState(m_commandBuffer, texture.m_sampledLayout);
+
+					VkDescriptorImageInfo& di = imageInfo[imageCount];
+					di.imageLayout = texture.m_sampledLayout;
+					di.sampler = sampler;
+					di.imageView = getCachedImageView(
+						{ bind.m_idx }
+						, 0
+						, texture.m_numMips
+						, type
+						, sampleStencil
+					);
+
+					VkWriteDescriptorSet& wd = wds[wdsCount];
+					wd.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					wd.pNext = NULL;
+					wd.dstSet = set.m_descriptorSet;
+					wd.dstBinding = 0;
+					wd.dstArrayElement = wdsCount;
+					wd.descriptorCount = 1;
+					wd.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+					wd.pImageInfo = &imageInfo[imageCount];
+					wd.pBufferInfo = NULL;
+					wd.pTexelBufferView = NULL;
+
+					++wdsCount;
+					++imageCount;
+				}
+
+				if (numSamplers < set.m_samplerSetCount)
+				{
+					VkImageView dummyView = getDummyColorTextureView();
+					VkSampler sampler = getSampler(BGFX_SAMPLER_NONE, VK_FORMAT_R8G8B8A8_UNORM, NULL);
+
+					// resetting the rest of allocated samplers
+					for (uint16_t i = numSamplers; i < set.m_samplerSetCount; i++)
+					{
+						VkDescriptorImageInfo& di = imageInfo[imageCount];
+						di.sampler = sampler;
+						di.imageView = dummyView;
+						di.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+						VkWriteDescriptorSet& wd = wds[wdsCount];
+						wd.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+						wd.pNext = NULL;
+						wd.dstSet = set.m_descriptorSet;
+						wd.dstBinding = 0;
+						wd.dstArrayElement = wdsCount;
+						wd.descriptorCount = 1;
+						wd.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+						wd.pImageInfo = &imageInfo[imageCount];
+						wd.pBufferInfo = NULL;
+						wd.pTexelBufferView = NULL;
+
+						++wdsCount;
+						++imageCount;
+					}
+				}
+				set.m_samplerSetCount = numSamplers;
+
+				vkUpdateDescriptorSets(m_device, wdsCount, wds, 0, nullptr);
+
+				delete[] wds;
+				delete[] imageInfo;
+			}
+		}
+
+		//!!!!betauser END
+
+
+
+		void addFrameGlobalSamplerSet(const CombinedSamplerBind* samplers, uint16_t numSamplers) {
+			if (s_extension[Extension::EXT_descriptor_indexing].m_supported) {
+				uint32_t frame = m_cmd.m_currentFrameInFlight;
+				auto& list = m_frameGlobalDescriptors[frame];
+				if (m_numCurrentGlobalDescriptors >= list.size()) {
+					auto set = allocGlobalDescriptorSet();
+					updateGlobalDescriptorSet(set, samplers, numSamplers);
+					list.push_back(set);
+				}
+				else
+				{
+					updateGlobalDescriptorSet(list[m_numCurrentGlobalDescriptors], samplers, numSamplers);
+				}
+				m_numCurrentGlobalDescriptors++;
+			}
+		}
+
 		//!!!!betauser
 		void customCommand(int _command, const Memory* _mem) override
 		{
+			const uint8_t* dataPtr = _mem->data;
+			switch (_command) {
+			case CustomCommand::LoadCombinedSamplers:
+				uint16_t numSamplers = *(uint16_t*)dataPtr;
+				dataPtr += sizeof(uint16_t);
+
+				addFrameGlobalSamplerSet((CombinedSamplerBind*)dataPtr, numSamplers);
+				break;
+			}
 		}
 
 		VkAllocationCallbacks*   m_allocatorCb;
@@ -4940,6 +5386,18 @@ VK_IMPORT_DEVICE
 		void* m_uniforms[BGFX_CONFIG_MAX_UNIFORMS];
 		Matrix4 m_predefinedUniforms[PredefinedUniform::Count];
 		UniformRegistry m_uniformReg;
+
+
+		//!!!!betauser
+		VkImage m_dummyColorImage;
+		DeviceMemoryAllocationVK m_dummyColorImageMem;
+		VkImageView m_dummyColorImageView;
+		VkDescriptorSetLayout m_globalDescriptorSetLayout;
+		stl::vector<GlobalDescriptorSet> m_globalDescriptorPool;
+		stl::vector<GlobalDescriptorSet> m_frameGlobalDescriptors[BGFX_CONFIG_MAX_FRAME_LATENCY];
+		uint32_t m_numCurrentGlobalDescriptors;
+		//!!!!betauser END
+
 
 		StateCacheT<VkPipeline> m_pipelineStateCache;
 		StateCacheT<VkDescriptorSetLayout> m_descriptorSetLayoutCache;
@@ -5490,6 +5948,26 @@ VK_DESTROY
 		m_layoutHandle = _layoutHandle;
 	}
 
+
+	//!!!!betauser
+	static const char* s_globalSetUniformName[1] =
+	{
+		"g_bindlessSamplerSet",
+	};
+	bool isGlobalSetUniformName(const bx::StringView& _name)
+	{
+		uint32_t numUniforms = BX_COUNTOF(s_globalSetUniformName);
+		for (uint32_t ii = 0; ii < numUniforms; ++ii)
+		{
+			if (0 == bx::strCmp(_name, s_globalSetUniformName[ii]))
+				return true;
+		}
+
+		return false;
+	}
+	//!!!!betauser END
+
+
 	void ShaderVK::create(const Memory* _mem)
 	{
 		bx::MemoryReader reader(_mem->data, _mem->size);
@@ -5537,6 +6015,9 @@ VK_DESTROY
 		m_numUniforms   = count;
 		m_numTextures   = 0;
 
+		//!!!!betauser
+		m_useGlobalDescriptorSet = false;
+
 		m_oldBindingModel = isShaderVerLess(magic, 11);
 
 		BX_TRACE("%s Shader consts %d"
@@ -5565,6 +6046,9 @@ VK_DESTROY
 				char name[256];
 				bx::read(&reader, &name, nameSize, &err);
 				name[nameSize] = '\0';
+
+				//!!!!betauser
+				m_useGlobalDescriptorSet |= isGlobalSetUniformName(name);
 
 				uint8_t type = 0;
 				bx::read(&reader, type, &err);
@@ -5900,6 +6384,9 @@ VK_DESTROY
 			);
 		m_numPredefined = _vsh->m_numPredefined;
 
+		//!!!!betauser
+		m_useGlobalDescriptorSet = _vsh->m_useGlobalDescriptorSet;
+
 		if (NULL != _fsh)
 		{
 			BX_ASSERT(NULL != _fsh->m_code, "Fragment shader doesn't exist.");
@@ -5910,6 +6397,9 @@ VK_DESTROY
 				, _fsh->m_numPredefined * sizeof(PredefinedUniform)
 				);
 			m_numPredefined += _fsh->m_numPredefined;
+
+			//!!!!betauser
+			m_useGlobalDescriptorSet |= _fsh->m_useGlobalDescriptorSet;
 		}
 
 		m_numTextures = 0;
@@ -6027,14 +6517,28 @@ VK_DESTROY
 			}
 		}
 
+		//!!!!betauser
+		VkDescriptorSetLayout descriptorSetLayouts[2];
+		uint32_t numDescriptorSetLayouts = 1;
+		descriptorSetLayouts[0] = m_descriptorSetLayout;
+		if (m_useGlobalDescriptorSet)
+		{
+			descriptorSetLayouts[1] = s_renderVK->getGlobalDescriptorSetLayout();
+			numDescriptorSetLayouts++;
+		}
 		VkPipelineLayoutCreateInfo plci;
 		plci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		plci.pNext = NULL;
 		plci.flags = 0;
 		plci.pushConstantRangeCount = 0;
 		plci.pPushConstantRanges = NULL;
-		plci.setLayoutCount = (m_descriptorSetLayout == VK_NULL_HANDLE ? 0 : 1);
-		plci.pSetLayouts = &m_descriptorSetLayout;
+		//!!!!betauser END
+
+		//!!!!betauser
+		plci.setLayoutCount = numDescriptorSetLayouts;
+		plci.pSetLayouts = &descriptorSetLayouts[0];
+		//plci.setLayoutCount = (m_descriptorSetLayout == VK_NULL_HANDLE ? 0 : 1);
+		//plci.pSetLayouts = &m_descriptorSetLayout;
 
 		VK_CHECK(vkCreatePipelineLayout(
 			  s_renderVK->m_device
@@ -9022,6 +9526,9 @@ VK_DESTROY
 				s_renderVK->m_textures[th.idx].setState(m_activeCommandBuffer, VK_IMAGE_LAYOUT_GENERAL);
 			}
 
+			//!!!!betauser
+			s_renderVK->kickFrameGlobalDescriptors(m_currentFrameInFlight);
+
 			setMemoryBarrier(
 				  m_activeCommandBuffer
 				, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT
@@ -10143,13 +10650,30 @@ VK_DESTROY
 							}
 						}
 
+
+						//!!!!betauser
+						VkDescriptorSet descriptorSets[2];
+						descriptorSets[0] = currentDescriptorSet;
+						uint32_t numDescriptorSets = 1;
+						if (program.m_useGlobalDescriptorSet)
+						{
+							descriptorSets[1] = getLastGlobalDescriptorSet();
+							numDescriptorSets++;
+						}
+						//!!!!betauser END
+
+
 						vkCmdBindDescriptorSets(
 							  m_commandBuffer
 							, VK_PIPELINE_BIND_POINT_GRAPHICS
 							, program.m_pipelineLayout
 							, 0
-							, 1
-							, &currentDescriptorSet
+
+							//!!!!betauser
+							, numDescriptorSets
+							, &descriptorSets[0]
+							//, 1
+							//, &currentDescriptorSet
 							, numOffsets
 							, sbo.offsets
 							);
