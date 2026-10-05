@@ -58,7 +58,7 @@ namespace NeoAxis
 		{
 			public Internal.Assimp.Scene scene;
 			public Settings settings;
-			public string directoryName;
+			public string directoryName = "";
 			public Component materialsGroup;
 			public ESet<Internal.Assimp.Mesh> processedMeshes = new ESet<Internal.Assimp.Mesh>();
 			public EDictionary<int, Material> materialByIndex = new EDictionary<int, Material>();
@@ -421,7 +421,9 @@ namespace NeoAxis
 					Internal.Assimp.Scene scene = null;
 					VirtualFileStream stream = null;
 
-					var realFileName = VirtualPathUtility.GetRealPathByVirtual( settings.virtualFileName );
+					var realFileName = settings.realFileNameSpecialCase;
+					if( string.IsNullOrEmpty( realFileName ) )
+						realFileName = VirtualPathUtility.GetRealPathByVirtual( settings.virtualFileName );
 					if( !string.IsNullOrEmpty( realFileName ) && File.Exists( realFileName ) )
 					{
 						scene = assimpContext.ImportFile( realFileName, flags );
@@ -450,7 +452,8 @@ namespace NeoAxis
 					var context = new ImportContext();
 					context.scene = scene;
 					context.settings = settings;
-					context.directoryName = Path.GetDirectoryName( settings.virtualFileName );
+					if( !string.IsNullOrEmpty( settings.virtualFileName ) )
+						context.directoryName = Path.GetDirectoryName( settings.virtualFileName );
 
 					//get materials data
 					var materialsData = GetMaterialsData( context );
@@ -1098,7 +1101,7 @@ namespace NeoAxis
 			var result = new List<MaterialData>();
 
 			var scene = importContext.scene;
-			if( scene.HasMaterials && scene.MaterialCount != 0 )
+			if( scene.HasMaterials && scene.MaterialCount != 0 && !string.IsNullOrEmpty( importContext.settings.virtualFileName ) )
 			{
 				var extractedTextures = new Dictionary<int, string>();
 

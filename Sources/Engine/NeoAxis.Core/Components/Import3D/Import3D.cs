@@ -18,6 +18,11 @@ namespace NeoAxis
 	[SettingsCell( "NeoAxis.Editor.Import3DSettingsCell" )]
 	public class Import3D : Component
 	{
+		public delegate void CustomImportDelegate( Import3D sender, ImportGeneral.Settings settings, ref bool handled, ref string error );
+		public static event CustomImportDelegate CustomImport;
+
+		///////////////////////////////////////////////
+
 		//#if !DEPLOY
 		bool insideDoUpdate;
 
@@ -1069,27 +1074,38 @@ namespace NeoAxis
 					settings.component = this;
 					settings.virtualFileName = virtualFileName;
 
-					if( Path.GetExtension( virtualFileName ).ToLower() == ".fbx" )
+					//custom import
+					var handled = false;
+					CustomImport?.Invoke( this, settings, ref handled, ref error );
+					if( handled )
 					{
-						//FBX
-						EditorAssemblyInterface.Instance.ImportFBX( settings, out error );
-						//Import.FBX.ImportFBX.DoImport( settings, out error );
 						if( !string.IsNullOrEmpty( error ) )
 							return false;
 					}
 					else
 					{
-						//Assimp
-						ImportAssimp.DoImport( settings, out error );
-						//EditorAssemblyInterface.Instance.ImportAssimp( settings, out error );
-						if( !string.IsNullOrEmpty( error ) )
-							return false;
+						if( Path.GetExtension( virtualFileName ).ToLower() == ".fbx" )
+						{
+							//FBX
+							EditorAssemblyInterface.Instance.ImportFBX( settings, out error );
+							//Import.FBX.ImportFBX.DoImport( settings, out error );
+							if( !string.IsNullOrEmpty( error ) )
+								return false;
+						}
+						else
+						{
+							//Assimp
+							ImportAssimp.DoImport( settings, out error );
+							//EditorAssemblyInterface.Instance.ImportAssimp( settings, out error );
+							if( !string.IsNullOrEmpty( error ) )
+								return false;
+						}
 					}
 
 					//if( settings.updateMeshes )
 					//{
 					if( CenterBySize )
-						DoCenterBySize();
+						DoCenterBySizeWithoutSceneObjects();
 					//}
 
 					//if( UVUnwrap )
@@ -1324,6 +1340,10 @@ namespace NeoAxis
 						Enabled = true;
 				}
 
+				//doint it after Enabled because need to have updated bounds of objects in space
+				if( CenterBySize )
+					DoCenterBySizeWithSceneObjects();
+
 				//set EditorDocumentConfiguration
 				//if( createDocumentConfig )
 				{
@@ -1447,7 +1467,7 @@ namespace NeoAxis
 			}
 		}
 
-		public Import3D CreateForPreviewDisplay( Scene scene, out bool onlyOneMaterial, out Dictionary<Mesh, Transform> transformBySourceMesh )
+		public Import3D CreateForPreviewDisplay( Scene scene, bool preview, out bool onlyOneMaterial, out Dictionary<Mesh, Transform> transformBySourceMesh )
 		{
 			onlyOneMaterial = false;
 			transformBySourceMesh = new Dictionary<Mesh, Transform>();
@@ -1458,6 +1478,7 @@ namespace NeoAxis
 			scene.AddComponent( createdObject );
 
 			//create MeshInSpace for one mesh
+			if( GetComponent( "Scene Objects" ) == null || !preview )
 			{
 				var mesh = createdObject.GetComponent( "Mesh" ) as Mesh;
 				if( mesh != null )
@@ -1468,6 +1489,7 @@ namespace NeoAxis
 			}
 
 			//create meshes in space for Meshes
+			if( GetComponent( "Scene Objects" ) == null || !preview )
 			{
 				var sourceMeshesGroup = GetComponent( "Meshes" );
 				Mesh[] sourceMeshes = null;
@@ -1483,24 +1505,68 @@ namespace NeoAxis
 					{
 						if( sourceMeshesGroup != null )
 						{
-							double maxSizeY = 0;
-							foreach( var sourceMesh in sourceMeshesGroup.GetComponents<Mesh>() )
+							if( createdMeshes.Length > 30 )
 							{
-								if( sourceMesh.Result != null )
+								//arrange in grid
+
+								double maxSizeX = 0;
+								double maxSizeY = 0;
+								foreach( var sourceMesh in sourceMeshesGroup.GetComponents<Mesh>() )
 								{
-									var bounds = sourceMesh.Result.SpaceBounds.BoundingBox;
-									var sizeY = bounds.GetSize().Y;
-									if( sizeY > maxSizeY )
-										maxSizeY = sizeY;
+									if( sourceMesh.Result != null )
+									{
+										var bounds = sourceMesh.Result.SpaceBounds.BoundingBox;
+										var size = bounds.GetSize();
+										if( size.X > maxSizeX )
+											maxSizeX = size.X;
+										if( size.Y > maxSizeY )
+											maxSizeY = size.Y;
+									}
+								}
+
+								var step = Math.Max( maxSizeX, maxSizeY ) * 1.2;
+								int count = createdMeshes.Length;
+
+								int cols = (int)Math.Ceiling( Math.Sqrt( count ) );
+								int rows = (int)Math.Ceiling( (double)count / cols );
+
+								double totalWidth = ( cols - 1 ) * step;
+								double totalHeight = ( rows - 1 ) * step;
+
+								for( int n = 0; n < count; n++ )
+								{
+									int col = n % cols;
+									int row = n / cols;
+
+									double positionX = col * step - totalWidth / 2.0;
+									double positionY = row * step - totalHeight / 2.0;
+
+									positions[ n ] = new Vector3( positionX, positionY, 0 );
 								}
 							}
-							var step = maxSizeY * 1.2;
-							var totalSize = (double)( createdMeshes.Length - 1 ) * step;
-
-							for( int n = 0; n < createdMeshes.Length; n++ )
+							else
 							{
-								var positionY = (double)n * step - totalSize / 2;
-								positions[ n ] = new Vector3( 0, positionY, 0 );
+								//arrange in one column
+
+								double maxSizeY = 0;
+								foreach( var sourceMesh in sourceMeshesGroup.GetComponents<Mesh>() )
+								{
+									if( sourceMesh.Result != null )
+									{
+										var bounds = sourceMesh.Result.SpaceBounds.BoundingBox;
+										var sizeY = bounds.GetSize().Y;
+										if( sizeY > maxSizeY )
+											maxSizeY = sizeY;
+									}
+								}
+								var step = maxSizeY * 1.2;
+								var totalSize = (double)( createdMeshes.Length - 1 ) * step;
+
+								for( int n = 0; n < createdMeshes.Length; n++ )
+								{
+									var positionY = (double)n * step - totalSize / 2;
+									positions[ n ] = new Vector3( 0, positionY, 0 );
+								}
 							}
 						}
 					}
@@ -1823,53 +1889,78 @@ namespace NeoAxis
 		//	return true;
 		//}
 
-		void DoCenterBySize()
+		void DoCenterBySizeWithoutSceneObjects()
 		{
-			var meshes = GetMeshes( false );
-
-			foreach( var mesh in meshes )
+			var sceneObjects = GetComponent( "Scene Objects" );
+			if( sceneObjects == null )
 			{
-				var geometries = new List<MeshGeometry>();
-				{
-					foreach( var geometry in mesh.GetComponents<MeshGeometry>() )
-						if( geometry.VertexStructure.Value != null && geometry.Vertices.Value != null && geometry.Indices.Value != null )
-							geometries.Add( geometry );
-				}
+				var meshes = GetMeshes( false );
 
-				//calculate offset
-				Vector3F offset = Vector3F.Zero;
+				foreach( var mesh in meshes )
 				{
-					var bounds = BoundsF.Cleared;
+					var geometries = new List<MeshGeometry>();
+					{
+						foreach( var geometry in mesh.GetComponents<MeshGeometry>() )
+							if( geometry.VertexStructure.Value != null && geometry.Vertices.Value != null && geometry.Indices.Value != null )
+								geometries.Add( geometry );
+					}
 
+					//calculate offset
+					Vector3F offset = Vector3F.Zero;
+					{
+						var bounds = BoundsF.Cleared;
+
+						foreach( var geometry in geometries )
+						{
+							var structure = geometry.VertexStructure.Value;
+							VertexElements.GetInfo( structure, out var vertexSize, out _ );
+
+							if( structure.GetElementBySemantic( VertexElementSemantic.Position, out var element ) && element.Type == VertexElementType.Float3 )
+							{
+								var positions = geometry.VerticesExtractChannel<Vector3F>( VertexElementSemantic.Position );
+								if( positions != null )
+									bounds.Add( positions );
+							}
+						}
+
+						offset = -bounds.GetCenter();
+					}
+
+					//update vertices
 					foreach( var geometry in geometries )
 					{
-						var structure = geometry.VertexStructure.Value;
-						VertexElements.GetInfo( structure, out var vertexSize, out _ );
-
-						if( structure.GetElementBySemantic( VertexElementSemantic.Position, out var element ) && element.Type == VertexElementType.Float3 )
+						var positions = geometry.VerticesExtractChannel<Vector3F>( VertexElementSemantic.Position );
+						if( positions != null )
 						{
-							var positions = geometry.VerticesExtractChannel<Vector3F>( VertexElementSemantic.Position );
-							if( positions != null )
-								bounds.Add( positions );
+							for( int n = 0; n < positions.Length; n++ )
+								positions[ n ] = positions[ n ] + offset;
+
+							var vertices = (byte[])geometry.Vertices.Value.Clone();
+							geometry.VerticesWriteChannel( VertexElementSemantic.Position, positions, vertices );
+							geometry.Vertices = vertices;
 						}
 					}
-
-					offset = -bounds.GetCenter();
 				}
+			}
+		}
 
-				//update vertices
-				foreach( var geometry in geometries )
+		void DoCenterBySizeWithSceneObjects()
+		{
+			//Import3D must be Enabled
+
+			var sceneObjects = GetComponent( "Scene Objects" ) as ObjectInSpace;
+			if( sceneObjects != null && sceneObjects.EnabledInHierarchy )
+			{
+				var bounds = Bounds.Cleared;
+
+				bounds.Add( sceneObjects.SpaceBounds.BoundingBox );
+				foreach( var obj in sceneObjects.GetComponents<ObjectInSpace>( checkChildren: true, onlyEnabledInHierarchy: true ) )
+					bounds.Add( obj.SpaceBounds.BoundingBox );
+
+				if( !bounds.IsCleared() )
 				{
-					var positions = geometry.VerticesExtractChannel<Vector3F>( VertexElementSemantic.Position );
-					if( positions != null )
-					{
-						for( int n = 0; n < positions.Length; n++ )
-							positions[ n ] = positions[ n ] + offset;
-
-						var vertices = (byte[])geometry.Vertices.Value.Clone();
-						geometry.VerticesWriteChannel( VertexElementSemantic.Position, positions, vertices );
-						geometry.Vertices = vertices;
-					}
+					var offset = -bounds.GetCenter();
+					sceneObjects.SetPosition( sceneObjects.TransformV.Position + offset );
 				}
 			}
 		}
@@ -2125,6 +2216,11 @@ namespace NeoAxis
 				else
 					mesh.AddComponent( group.Geometries[ 0 ], insertIndex++ );
 			}
+		}
+
+		public void AssimpDoImport( ImportGeneral.Settings settings, out string error )
+		{
+			ImportAssimp.DoImport( settings, out error );
 		}
 
 		//void CalculateVirtualizedMesh( Mesh mesh )

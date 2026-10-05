@@ -17,7 +17,7 @@ namespace NeoAxis.Editor
 
 			var import = ObjectOfPreview as Import3D;
 			if( import != null )
-				import.CreateForPreviewDisplay( Scene, out _, out _ );
+				import.CreateForPreviewDisplay( Scene, true, out _, out _ );
 
 			Scene.Enabled = true;
 

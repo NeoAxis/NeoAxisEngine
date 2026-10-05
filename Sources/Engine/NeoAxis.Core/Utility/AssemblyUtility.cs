@@ -31,6 +31,8 @@ namespace Internal
 		internal static ESet<string> disableNamespaceRegistration;
 		static EDictionary<Assembly, RegisteredAssemblyItem> registeredAssemblies = new EDictionary<Assembly, RegisteredAssemblyItem>();
 
+		public static bool AllowAsssemblyRegistration { get; set; } = true;
+
 		/////////////////////////////////////////
 
 		/// <summary>
@@ -204,7 +206,7 @@ namespace Internal
 			string registerTypeNamesWithIncludedAssemblyName = "", bool loadWithoutLocking = false, Assembly reloadingOldAssembly = null )
 		{
 			var assembly = LoadAssemblyByRealFileNameImpl( realFileName, returnNullIfFileIsNotExists, loadWithoutLocking, reloadingOldAssembly );
-			if( assembly != null && registerAssembly )
+			if( assembly != null && registerAssembly && AllowAsssemblyRegistration )
 			{
 				if( reloadingOldAssembly != null )
 					UnregisterAssembly( reloadingOldAssembly, assembly );

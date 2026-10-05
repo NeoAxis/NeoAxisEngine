@@ -96,7 +96,7 @@ namespace NeoAxis.Editor
 						displayObject.Dispose();
 					}
 
-					displayObject = import.CreateForPreviewDisplay( Scene, out onlyOneMaterial, out _ );
+					displayObject = import.CreateForPreviewDisplay( Scene, true, out onlyOneMaterial, out _ );
 					displayObjectVersion = import.VersionForPreviewDisplay;
 
 					Scene.Enabled = true;

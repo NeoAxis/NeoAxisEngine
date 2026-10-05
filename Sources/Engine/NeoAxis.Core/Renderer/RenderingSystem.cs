@@ -1808,5 +1808,10 @@ namespace NeoAxis
 		{
 			get { return SystemSettings.CurrentPlatform == SystemSettings.Platform.Web && Capabilities.Backend == RendererBackend.OpenGLES; }
 		}
+
+		public static bool Vulkan
+		{
+			get { return Capabilities.Backend == RendererBackend.Vulkan; }
+		}
 	}
 }

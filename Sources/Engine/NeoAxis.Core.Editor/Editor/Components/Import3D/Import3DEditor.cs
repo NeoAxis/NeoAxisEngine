@@ -78,7 +78,7 @@ namespace NeoAxis.Editor
 		void CreateDisplayObject()
 		{
 			if( Import != null )
-				displayObject = Import.CreateForPreviewDisplay( Scene, out _, out displayObjectTransformBySourceMesh );
+				displayObject = Import.CreateForPreviewDisplay( Scene, false, out _, out displayObjectTransformBySourceMesh );
 		}
 
 		void DestroyDisplayObject()

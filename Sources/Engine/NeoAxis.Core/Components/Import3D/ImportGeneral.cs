@@ -31,6 +31,8 @@ namespace NeoAxis
 
 			public Import3D component;
 			public string virtualFileName;
+			public string realFileNameSpecialCase;//for Assimp import from another import implemetation
+
 			//public bool loadAnimations;
 			//public double frameStep;
 			//public Mat4 globalTransform;
