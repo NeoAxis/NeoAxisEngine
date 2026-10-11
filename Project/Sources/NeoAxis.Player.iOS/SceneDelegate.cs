@@ -1,4 +1,5 @@
 // Copyright 2006–2026 Ivan Efimov. All rights reserved.
+using CoreAnimation;
 using Foundation;
 using UIKit;
 
@@ -20,19 +21,39 @@ namespace NeoAxis.Player.iOS
 			{
 				Window ??= new UIKit.UIWindow( windowScene );
 
-				// Create a 'UIViewController' with a single 'UILabel'
+				//!!!!iOS: rendering view with CAMetalLayer for MoltenVK
+				var view = new MetalView( Window.Bounds );
+				var scale = windowScene.Screen.NativeScale;
+				view.ContentScaleFactor = scale;
+				view.Layer.ContentsScale = scale;
 				var vc = new UIViewController();
-				vc.View!.AddSubview( new UILabel( Window!.Frame )
-				{
-					BackgroundColor = UIColor.SystemBackground,
-					TextAlignment = UITextAlignment.Center,
-					Text = "Hello, iOS!",
-					AutoresizingMask = UIViewAutoresizing.All,
-				} );
+				vc.View = view;
+
+				PlatformFunctionalityIOS.screenSize = new Vector2I( (int)( view.Bounds.Width * scale ), (int)( view.Bounds.Height * scale ) );
+				EngineApp.InitSettings.UseApplicationWindowHandle = view.Layer.Handle;
 
 				Window.RootViewController = vc;
 				Window.MakeKeyAndVisible();
+
+				//start the engine after the window is shown
+				CoreFoundation.DispatchQueue.MainQueue.DispatchAsync( () =>
+				{
+					Engine.InitEngine();
+					Engine.engineInitialized = true;
+
+					//!!!!iOS
+					displayLink = CoreAnimation.CADisplayLink.Create( OnFrame );
+					displayLink.AddToRunLoop( NSRunLoop.Main, NSRunLoopMode.Common );
+				} );
 			}
+			}
+
+		CoreAnimation.CADisplayLink? displayLink;
+
+		void OnFrame()
+		{
+			Engine.ProcessInputEvents();
+			EngineApp.CreatedWindowApplicationIdle( false );
 		}
 
 		[Export( "sceneDidDisconnect:" )]
@@ -71,6 +92,57 @@ namespace NeoAxis.Player.iOS
 			// Called as the scene transitions from the foreground to the background.
 			// Use this method to save data, release shared resources, and store enough scene-specific state information
 			// to restore the scene back to its current state.
+		}
+	}
+
+	//!!!!iOS
+	class MetalView : UIView
+	{
+		public MetalView( CoreGraphics.CGRect frame ) : base( frame ) 
+		{
+			MultipleTouchEnabled = true;
+		}
+
+		[Export( "layerClass" )]
+		public static ObjCRuntime.Class GetLayerClass()
+		{
+			return new ObjCRuntime.Class( typeof( CoreAnimation.CAMetalLayer ) );
+		}
+
+		public override void TouchesBegan( NSSet touches, UIEvent? evt ) => AddTouches( touches, TouchData.ActionEnum.Down );
+		public override void TouchesMoved( NSSet touches, UIEvent? evt ) => AddTouches( touches, TouchData.ActionEnum.Move );
+		public override void TouchesEnded( NSSet touches, UIEvent? evt ) => AddTouches( touches, TouchData.ActionEnum.Up );
+		public override void TouchesCancelled( NSSet touches, UIEvent? evt ) => AddTouches( touches, TouchData.ActionEnum.Up );
+
+		void AddTouches( NSSet touches, TouchData.ActionEnum action )
+		{
+			var size = Bounds.Size;
+			lock( Engine.inputEventQueue )
+			{
+				foreach( UITouch touch in touches )
+				{
+					var location = touch.LocationInView( this );
+					var item = new Engine.TouchEventItem();
+					item.Action = action;
+					item.TouchHandle = touch.Handle;
+					item.Position = new Vector2F( (float)( location.X / size.Width ), (float)( location.Y / size.Height ) );
+					Engine.inputEventQueue.Enqueue( item );
+				}
+			}
+		}
+
+		public override void LayoutSubviews()
+		{
+			base.LayoutSubviews();
+
+			var scale = ContentScaleFactor;
+			var size = new Vector2I( (int)( Bounds.Width * scale ), (int)( Bounds.Height * scale ) );
+			if( size == PlatformFunctionalityIOS.screenSize )
+				return;
+			PlatformFunctionalityIOS.screenSize = size;
+
+			if( Engine.engineInitialized )
+				RenderingSystem.ApplicationRenderTarget?.WindowMovedOrResized( size );
 		}
 	}
 }

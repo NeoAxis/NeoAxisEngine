@@ -571,7 +571,8 @@ namespace NeoAxis
 				path = VirtualFileSystem.MakePathRelative( path );
 
 			Vector2I initialWindowSize = new Vector2I( 10, 10 );
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
+			//!!!iOS
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 				initialWindowSize = EngineApp.platform.CreatedWindow_GetClientRectangle().Size;
 
 			//set backend for Android
@@ -585,9 +586,9 @@ namespace NeoAxis
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 			{
 				//!!!!temp iOS
-				EngineApp.InitSettings.RendererBackend = RendererBackend.Noop;
-				//EngineApp.InitSettings.RendererBackend = RendererBackend.Vulkan;
-				//SystemSettings._UpdateDeviceProperties();
+				//EngineApp.InitSettings.RendererBackend = RendererBackend.Noop;
+				EngineApp.InitSettings.RendererBackend = RendererBackend.Vulkan;
+				SystemSettings._UpdateDeviceProperties();
 			}
 			//set backend for Web
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Web )

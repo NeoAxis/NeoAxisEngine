@@ -23,7 +23,7 @@ namespace NeoAxis
 	/// Navigation mesh pathfinding.
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Pathfinding\Pathfinding", 540 )]
-	[Editor.SettingsCell( typeof( Editor.PathfindingSettingsCell ) )]
+	[Editor.SettingsCell( "NeoAxis.Editor.PathfindingSettingsCell" )]
 	public class Pathfinding : ObjectInSpace
 	{
 		static List<Pathfinding> instances = new List<Pathfinding>();
@@ -794,8 +794,9 @@ namespace NeoAxis
 			public int MaxSmoothPath = 2048;
 			//public int MaxSteerPoints = 16;
 
-			public bool Finished;
-			public bool Partial;
+			internal volatile bool finished;
+			public bool Finished { get { return finished; } }
+			//public bool Partial;
 			public PathPoint[] Path;
 			public string Error = string.Empty;
 
@@ -1045,7 +1046,7 @@ namespace NeoAxis
 				}
 
 				foreach( var context in contexts )
-					context.Finished = true;
+					context.finished = true;
 			}
 		}
 

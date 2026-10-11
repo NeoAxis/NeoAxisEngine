@@ -351,6 +351,9 @@ namespace bgfx { namespace spirv
 		"BgfxUSampler3D",
 		"BgfxSamplerCube",
 		"BgfxSamplerCubeShadow",
+		//iOS: cube arrays used for point light shadows on limited devices
+		"BgfxSamplerCubeArray",
+		"BgfxSamplerCubeArrayShadow",
 		"BgfxSampler2DMS",
 	};
 

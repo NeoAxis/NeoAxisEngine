@@ -161,19 +161,19 @@ namespace NeoAxis.Editor
 
 		Bounds GetTotalBoundsOfObjectInSpace()
 		{
-			Bounds total = NeoAxis.Bounds.Cleared;
+			var total = Bounds.Cleared;
 
 			if( displayObject != null )
 			{
-				//if( createdObject.SpaceBounds.BoundingBox.HasValue )
-				//	total.Add( createdObject.SpaceBounds.BoundingBox.Value );
-				foreach( var obj in displayObject.GetComponents<ObjectInSpace>( false, true ) )
+				var sceneObjects = displayObject.GetComponent( "Scene Objects" );
+				if( sceneObjects != null )
 				{
-					if( obj.SpaceBounds.BoundingBoxOriginal )
-						total.Add( obj.SpaceBounds.BoundingBox );
+					var objectInSpaceRoot = sceneObjects as ObjectInSpace;
+					if( objectInSpaceRoot != null )
+						total.Add( objectInSpaceRoot.SpaceBounds.BoundingBox );
 
-					//if( obj.SpaceBounds.BoundingBox.HasValue )
-					//	total.Add( obj.SpaceBounds.BoundingBox.Value );
+					foreach( var obj in sceneObjects.GetComponents<ObjectInSpace>( checkChildren: true ) )
+						total.Add( obj.SpaceBounds.BoundingBox );
 				}
 			}
 

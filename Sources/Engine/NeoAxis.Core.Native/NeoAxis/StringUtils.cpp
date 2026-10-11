@@ -97,7 +97,8 @@ std::string ConvertStringToUTF8(const std::wstring& str)
 		////use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
 		//result = converter.to_bytes(str);
 #else
-		static iconv_t cd = (iconv_t)-1;
+		//!!!!iOS
+		static thread_local iconv_t cd = (iconv_t)-1;
 		if (cd == (iconv_t)-1)
 		{
 			cd = iconv_open("UTF-8", "UTF-32LE");
@@ -137,7 +138,8 @@ std::wstring ConvertStringToUTFWide(const std::string& str)
 		//use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
 		result = converter.from_bytes(str);
 #else
-		static iconv_t cd = (iconv_t)-1;
+		//!!!!iOS
+		static thread_local iconv_t cd = (iconv_t)-1;
 		if(cd == (iconv_t)-1)
 		{
 			cd = iconv_open("UTF-32LE", "UTF-8");

@@ -77,11 +77,32 @@ namespace NeoAxis
 		public Reference<int> Lanes
 		{
 			get { if( _lanes.BeginGet() ) Lanes = _lanes.Get( this ); return _lanes.value; }
-			set { if( _lanes.BeginSet( this, ref value ) ) { try { LanesChanged?.Invoke( this ); DataWasChanged(); } finally { _lanes.EndSet(); } } }
+			set
+			{
+				if( value < 1 )
+					value = 1;
+				if( value > 30 )
+					value = 30;
+				if( _lanes.BeginSet( this, ref value ) ) { try { LanesChanged?.Invoke( this ); DataWasChanged(); } finally { _lanes.EndSet(); } }
+			}
 		}
 		/// <summary>Occurs when the <see cref="Lanes"/> property value changes.</summary>
 		public event Action<Road> LanesChanged;
 		ReferenceField<int> _lanes = 2;
+
+		/// <summary>
+		/// The amount of forward lanes. If the value is -1, then the amount of forward lanes is calculated automatically.
+		/// </summary>
+		[DefaultValue( -1 )]
+		[Range( -1, 20 )]
+		public Reference<int> LanesForward
+		{
+			get { if( _lanesForward.BeginGet() ) LanesForward = _lanesForward.Get( this ); return _lanesForward.value; }
+			set { if( _lanesForward.BeginSet( this, ref value ) ) { try { LanesForwardChanged?.Invoke( this ); DataWasChanged(); } finally { _lanesForward.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LanesForward"/> property value changes.</summary>
+		public event Action<Road> LanesForwardChanged;
+		ReferenceField<int> _lanesForward = -1;
 
 		/// <summary>
 		/// Whether to have a collision body.
@@ -253,6 +274,8 @@ namespace NeoAxis
 			public int RoadTypeVersion;
 
 			public int Lanes;
+			public int LanesForward;
+			public int LanesBackward;
 
 			public Point[] Points;
 			public Curve PositionCurve;
@@ -294,6 +317,119 @@ namespace NeoAxis
 			public class CurveData
 			{
 				public (double Time, Vector3 Position, Quaternion Rotation)[] Curve;
+
+				//
+
+				/// <summary>
+				/// Finds the first index where Curve[index].Time >= targetTime.
+				/// </summary>
+				int LowerBound( double targetTime )
+				{
+					int low = 0;
+					int high = Curve.Length;
+					while( low < high )
+					{
+						int mid = low + ( ( high - low ) >> 1 );
+						if( Curve[ mid ].Time >= targetTime )
+							high = mid;
+						else
+							low = mid + 1;
+					}
+					return low;
+				}
+
+				/// <summary>
+				/// Finds the last index where Curve[index].Time <= targetTime.
+				/// </summary>
+				int UpperBound( double targetTime )
+				{
+					int low = 0;
+					int high = Curve.Length - 1;
+					int result = -1;
+					while( low <= high )
+					{
+						int mid = low + ( ( high - low ) >> 1 );
+						if( Curve[ mid ].Time <= targetTime )
+						{
+							result = mid;
+							low = mid + 1;
+						}
+						else
+							high = mid - 1;
+					}
+					return result;
+				}
+
+				/// <summary>
+				/// Return indexes Minimum and maximum inclusive.
+				/// </summary>
+				/// <param name="timeRange"></param>
+				/// <returns></returns>
+				public bool GetRangeByTimeRange( Range timeRange, out RangeI result )
+				{
+					//Find the indices using the bisection method, taking into account that the Time values ​​in the array are sequential.
+
+					if( Curve.Length == 0 )
+					{
+						result = default;
+						return false;
+					}
+
+					// Handle case where requested range does not overlap with array at all
+					if( timeRange.Maximum < Curve[ 0 ].Time || timeRange.Minimum > Curve[ ^1 ].Time )
+					{
+						result = default;
+						return false;
+					}
+
+					//!!!!strange. when Minimum == Maximum, then minIndex > maxIndex
+
+					// Find the lower bound: first index where Curve[i].Time >= timeRange.Minimum
+					int minIndex = LowerBound( timeRange.Minimum );
+
+					// Find the upper bound: last index where Curve[i].Time <= timeRange.Maximum
+					int maxIndex = UpperBound( timeRange.Maximum );
+
+					// Verify if a valid range of elements was found
+					if( minIndex <= maxIndex && minIndex < Curve.Length && maxIndex >= 0 )
+					{
+						result = new RangeI( minIndex, maxIndex );
+						return true;
+					}
+
+					result = default;
+					return false;
+				}
+
+				public bool GetIndexByTime( double time, out int result )
+				{
+					if( Curve.Length == 0 )
+					{
+						result = default;
+						return false;
+					}
+
+					// Handle case where requested range does not overlap with array at all
+					if( time < Curve[ 0 ].Time || time > Curve[ ^1 ].Time )
+					{
+						result = default;
+						return false;
+					}
+
+					//!!!!strange. when Minimum == Maximum, then minIndex > maxIndex
+
+					int index = LowerBound( time );
+
+					// Verify if a valid range of elements was found
+					if( index >= 0 && index < Curve.Length )
+					{
+						result = index;
+						return true;
+					}
+
+					result = default;
+					return false;
+				}
 			}
 
 			/////////////////////
@@ -1137,7 +1273,6 @@ namespace NeoAxis
 				if( !bounds.HasValue )
 				{
 					var result = Bounds.Cleared;
-
 					foreach( var borderCurve in GetBorderCurves() )
 					{
 						if( borderCurve.Curve != null )
@@ -1146,12 +1281,114 @@ namespace NeoAxis
 								result.Add( point.Position );
 						}
 					}
-
 					if( result.IsCleared() )
-						result = new Bounds( -1, -1, -1, 1, 1, 1 );
+					{
+						if( Owner != null )
+						{
+							result = new Bounds( Owner.TransformV.Position );
+							result.Expand( 0.5 );
+						}
+						else
+							result = new Bounds( -1, -1, -1, 1, 1, 1 );
+					}
 					bounds = result;
 				}
 				return bounds.Value;
+			}
+
+			public bool Intersects( Ray ray, out double scale, out int lane, out double timeOnCurve )
+			{
+				var curves = GetBorderCurves();
+				var curve0 = curves[ 0 ].Curve;
+				var curve1 = curves[ curves.Length - 1 ].Curve;
+
+				for( int n = 0; n < curve0.Length - 1; n++ )
+				{
+					var position00 = curve0[ n ].Position;
+					var position10 = curve1[ n ].Position;
+					var position01 = curve0[ n + 1 ].Position;
+					var position11 = curve1[ n + 1 ].Position;
+
+					var found = false;
+					if( MathAlgorithms.IntersectTriangleRay( ref position00, ref position10, ref position11, ref ray, out scale ) )
+						found = true;
+					else if( MathAlgorithms.IntersectTriangleRay( ref position11, ref position01, ref position00, ref ray, out scale ) )
+						found = true;
+
+					if( found )
+					{
+						//detect lane
+						var position = ray.GetPointOnRay( scale );
+						MathAlgorithms.ProjectPointToLine( ref position00, ref position01, ref position, out var projection );
+						var distance = ( projection - position ).Length();
+						lane = (int)( ( distance - RoadType.RoadsideEdgeWidth.Value ) / RoadType.LaneWidth.Value );
+						lane = MathEx.Clamp( lane, 0, Lanes - 1 );
+
+						if( position01 != position00 )
+							timeOnCurve = MathEx.Lerp( curve0[ n ].Time, curve0[ n + 1 ].Time, ( projection - position00 ).Length() / ( position01 - position00 ).Length() );
+						else
+							timeOnCurve = curve0[ n ].Time;
+
+						return true;
+					}
+				}
+				scale = 0;
+				lane = 0;
+				timeOnCurve = 0;
+				return false;
+			}
+
+			public bool IsForwardLane( int lane )
+			{
+				if( RoadType.LeftHandTraffic )
+					return lane < LanesForward;
+				else
+					return lane >= ( Lanes - LanesForward );
+			}
+
+			public int GetLaneOffsetFromCenterOfRoad( int lane )
+			{
+				//!!!!left hand drive
+
+				int laneOffset = 0;
+
+				if( IsForwardLane( lane ) )
+				{
+					for( int nLane = lane - 1; nLane >= 0; nLane-- )
+					{
+						if( IsForwardLane( nLane ) )
+							laneOffset++;
+						else
+							break;
+					}
+				}
+				else
+				{
+					for( int nLane = lane + 1; nLane < Lanes; nLane++ )
+					{
+						if( !IsForwardLane( nLane ) )
+							laneOffset++;
+						else
+							break;
+					}
+				}
+
+				return laneOffset;
+			}
+
+			public int GetLaneFromLaneOffsetWithClamp( int laneOffset, bool getForForwardDirection )
+			{
+				//!!!!left hand drive
+
+				int lane;
+
+				if( getForForwardDirection )
+					lane = LanesBackward + laneOffset;
+				else
+					lane = LanesBackward - 1 - laneOffset;
+
+				lane = MathEx.Clamp( lane, 0, Lanes - 1 );
+				return lane;
 			}
 		}
 
@@ -1701,33 +1938,31 @@ namespace NeoAxis
 				//CollisionBodies.Clear();
 			}
 
-			public ESet<Crossroad.CrossroadLogicalData.ConnectedRoadItem> GetConnectedRoadsInInterval( Range timeRange, Crossroad.CrossroadLogicalData skipCrossroad )
-			//public ESet<(LogicalData, Crossroad.CrossroadLogicalData.ConnectedRoadItem)> GetConnectedRoadsInInterval( Range timeRange, Crossroad.CrossroadLogicalData skipCrossroad )
+			public ESet<RoadJunction.RoadJunctionLogicalData.ConnectedRoadItem> GetConnectedRoadsInInterval( Range timeRange, RoadJunction.RoadJunctionLogicalData skipJunction )
 			{
-				var result = new ESet<Crossroad.CrossroadLogicalData.ConnectedRoadItem>();
-				//var result = new ESet<(LogicalData, Crossroad.CrossroadLogicalData.ConnectedRoadItem)>();
+				var result = new ESet<RoadJunction.RoadJunctionLogicalData.ConnectedRoadItem>();
 
 				foreach( var connectedNode in ConnectedNodes )
 				{
-					var crossroad = connectedNode as Crossroad.CrossroadLogicalData;
-					if( crossroad != null && crossroad != skipCrossroad )
+					var junction = connectedNode as RoadJunction.RoadJunctionLogicalData;
+					if( junction != null && junction != skipJunction )
 					{
-						var addCrossroad = false;
-						foreach( var crossroadRoad in crossroad.ConnectedRoads )
+						var addJunction = false;
+						foreach( var junctionRoad in junction.ConnectedRoads )
 						{
-							if( crossroadRoad.ConnectedRoad == RoadData )
+							if( junctionRoad.ConnectedRoad == RoadData )
 							{
-								if( crossroadRoad.TimeOnCurve >= timeRange.Minimum && crossroadRoad.TimeOnCurve <= timeRange.Maximum )
+								if( junctionRoad.TimeOnCurve >= timeRange.Minimum && junctionRoad.TimeOnCurve <= timeRange.Maximum )
 								{
-									addCrossroad = true;
+									addJunction = true;
 									break;
 								}
 							}
 						}
 
-						if( addCrossroad )
+						if( addJunction )
 						{
-							foreach( var connectedRoad in crossroad.ConnectedRoads )
+							foreach( var connectedRoad in junction.ConnectedRoads )
 							{
 								if( connectedRoad.ConnectedRoad != RoadData )
 								{
@@ -1735,7 +1970,7 @@ namespace NeoAxis
 
 									//var connectedRoadLogicalData = connectedRoad.ConnectedRoad.Owner.GetLogicalData();
 									//if( connectedRoadLogicalData != null )
-									//	result.AddWithCheckAlreadyContained( (connectedRoadLogicalData, connectedRoad) );// crossroad) );
+									//	result.AddWithCheckAlreadyContained( (connectedRoadLogicalData, connectedRoad) );// junction) );
 								}
 							}
 						}
@@ -1743,6 +1978,81 @@ namespace NeoAxis
 				}
 
 				return result;
+			}
+
+			/// <summary>
+			/// Enumerate all junctions and find the closest one in the direction of movement.
+			/// </summary>
+			public RoadJunction.RoadJunctionLogicalData.ConnectedRoadItem FindFirstJunctionFrom( double timeOnCurve, bool forwardDirection, RoadJunction.RoadJunctionLogicalData.ConnectedRoadItem skipConnectedRoad )
+			{
+				RoadJunction.RoadJunctionLogicalData.ConnectedRoadItem connectedRoadClosest = null;
+
+				foreach( var connectedNode in ConnectedNodes )
+				{
+					var junction = connectedNode as RoadJunction.RoadJunctionLogicalData;
+					if( junction != null )
+					{
+						//get enter to junction from this road
+						var connectedRoad = junction.GetConnectedRoadItem( RoadData, forwardDirection );
+						if( connectedRoad != null && connectedRoad != skipConnectedRoad )
+						{
+							//when moving along road direction, then find the first junction after the current position
+							if( forwardDirection && connectedRoad.TimeOnCurve > timeOnCurve )
+							{
+								//select the closest one
+								if( connectedRoadClosest == null || connectedRoad.TimeOnCurve < connectedRoadClosest.TimeOnCurve )
+									connectedRoadClosest = connectedRoad;
+							}
+
+							//when moving against road direction, then find the first junction before the current position
+							if( !forwardDirection && connectedRoad.TimeOnCurve < timeOnCurve )
+							{
+								//select the closest one
+								if( connectedRoadClosest == null || connectedRoad.TimeOnCurve > connectedRoadClosest.TimeOnCurve )
+									connectedRoadClosest = connectedRoad;
+							}
+						}
+					}
+				}
+
+				return connectedRoadClosest;
+			}
+
+			/// <summary>
+			/// Find exit junction for the end road.
+			/// </summary>
+			public RoadJunction.RoadJunctionLogicalData.ConnectedRoadItem FindEndJunctionItem( double timeOnCurve, bool forwardDirection )
+			{
+				RoadJunction.RoadJunctionLogicalData.ConnectedRoadItem connectedRoadClosest = null;
+
+				foreach( var connectedNode in ConnectedNodes )
+				{
+					var junction = connectedNode as RoadJunction.RoadJunctionLogicalData;
+					if( junction != null )
+					{
+						//get exit from junction to this road
+						var connectedRoad = junction.GetConnectedRoadItem( RoadData, !forwardDirection );
+						if( connectedRoad != null )
+						{
+							//when moving along road direction, then find the first junction before the current position
+							if( forwardDirection && connectedRoad.TimeOnCurve <= timeOnCurve )
+							{
+								//select the closest one
+								if( connectedRoadClosest == null || connectedRoad.TimeOnCurve > connectedRoadClosest.TimeOnCurve )
+									connectedRoadClosest = connectedRoad;
+							}
+							//when moving against road direction, then find the first junction after the current position
+							if( !forwardDirection && connectedRoad.TimeOnCurve >= timeOnCurve )
+							{
+								//select the closest one
+								if( connectedRoadClosest == null || connectedRoad.TimeOnCurve < connectedRoadClosest.TimeOnCurve )
+									connectedRoadClosest = connectedRoad;
+							}
+						}
+					}
+				}
+
+				return connectedRoadClosest;
 			}
 		}
 
@@ -1810,6 +2120,12 @@ namespace NeoAxis
 				if( roadData.RoadType == null )
 					roadData.RoadType = new RoadType();
 				roadData.Lanes = Lanes;
+				roadData.LanesForward = LanesForward;
+				if( roadData.LanesForward < 0 )
+					roadData.LanesForward = ( roadData.Lanes + 1 ) / 2;
+				if( roadData.LanesForward > roadData.Lanes )
+					roadData.LanesForward = roadData.Lanes;
+				roadData.LanesBackward = roadData.Lanes - roadData.LanesForward;
 
 				roadData.RoadTypeVersion = roadData.RoadType.Version;
 
@@ -1838,8 +2154,8 @@ namespace NeoAxis
 						{
 							//!!!!более точно выбирать список. сейчас все в bounds
 
-							var crossroad = roadNode as Crossroad;
-							if( crossroad != null && crossroad.WayToUse.Value != roadData.RoadType.WayToUse.Value )
+							var junction = roadNode as RoadJunction;
+							if( junction != null && junction.WayToUse.Value != roadData.RoadType.WayToUse.Value )
 								continue;
 
 							roadNode.NeedUpdate();
@@ -1876,11 +2192,11 @@ namespace NeoAxis
 							if( data != null )
 							{
 								//!!!!
-								var crossroadData = data as Crossroad.CrossroadLogicalData;
-								if( crossroadData != null )
+								var junctionData = data as RoadJunction.RoadJunctionLogicalData;
+								if( junctionData != null )
 								{
 									var containsThisRoad = false;
-									foreach( var roadItem in crossroadData.ConnectedRoads )
+									foreach( var roadItem in junctionData.ConnectedRoads )
 									{
 										if( roadItem.ConnectedRoad.Owner == this )
 										{
@@ -1892,7 +2208,7 @@ namespace NeoAxis
 									if( containsThisRoad )
 									{
 										//!!!!
-										if( !crossroadData.Valid )
+										if( !junctionData.Valid )
 										{
 											logicalData = null;
 											goto end;
@@ -2108,19 +2424,19 @@ namespace NeoAxis
 		{
 			base.OnSpaceBoundsUpdate( ref newBounds );
 
-			//!!!!use RoadData.Bounds?
-
 			var roadData = GetRoadData();
 			if( roadData != null && roadData.Points.Length != 0 )
-			{
-				var bounds = new Bounds( roadData.Points[ 0 ].Transform.Position );
-				for( int n = 1; n < roadData.Points.Length; n++ )
-					bounds.Add( roadData.Points[ n ].Transform.Position );
-				//!!!!
-				bounds.Expand( 0.5 );
-				//bounds.Expand( data.RoadType.OutsideDiameter * 0.5 );
-				newBounds = new SpaceBounds( bounds );
-			}
+				newBounds = new SpaceBounds( roadData.GetBounds() );
+		}
+
+		protected override void OnCheckSelectionByRay( CheckSelectionByRayContext context )
+		{
+			base.OnCheckSelectionByRay( context );
+
+			context.thisObjectWasChecked = true;
+			var roadData = GetRoadData();
+			if( roadData != null && roadData.Intersects( context.ray, out var scale, out _, out _ ) )
+				context.thisObjectResultRayScale = scale;
 		}
 
 		protected override void OnUpdate( float delta )
@@ -2190,7 +2506,61 @@ namespace NeoAxis
 				DeleteVisualData();
 		}
 
+		//void DisplayRoadwayBorder( Simple3DRenderer renderer )
+		//{
+		//}
+
 		void DisplayRoadwayBorder( ViewportRenderingContext context )
+		{
+			const double thicknessSelectedOrCanSelect = 0.1;
+
+			var context2 = context.ObjectInSpaceRenderingContext;
+			var renderer = context2.viewport.Simple3DRenderer;
+
+			var roadData = GetRoadData();
+			if( roadData != null && renderer != null )
+			{
+				ColorValue color;
+				var selected = false;
+				var canSelect = false;
+				if( context2.selectedObjects.Contains( this ) )
+				{
+					color = ProjectSettings.Get.Colors.SelectedColor;
+					selected = true;
+				}
+				else if( context2.canSelectObjects.Contains( this ) )
+				{
+					color = ProjectSettings.Get.Colors.CanSelectColor;
+					canSelect = true;
+				}
+				else
+					color = new ColorValue( 1, 1, 0, 0.8 );// ProjectSettings.Get.General.SceneShowVolumeColor;
+
+				renderer.SetColor( color, false );
+
+				var thickness = ( selected || canSelect ) ? thicknessSelectedOrCanSelect : -1;
+				var items = roadData.GetBorderCurves();
+
+				foreach( var item in items )
+				{
+					Vector3? previousPos = null;
+					for( int n = 0; n < item.Curve.Length; n++ )
+					{
+						var pos = item.Curve[ n ].Position;
+						if( previousPos.HasValue )
+							renderer.AddLine( previousPos.Value, pos, thickness );
+						previousPos = pos;
+					}
+				}
+
+				var item0 = items[ 0 ];
+				var item1 = items[ 1 ];
+				renderer.AddLine( item0.Curve[ 0 ].Position, item1.Curve[ 0 ].Position, thickness );
+				renderer.AddLine( item0.Curve[ item0.Curve.Length - 1 ].Position, item1.Curve[ item1.Curve.Length - 1 ].Position, thickness );
+			}
+		}
+
+		void DisplayLaneCurves( ViewportRenderingContext context )
 		{
 			var context2 = context.ObjectInSpaceRenderingContext;
 			var renderer = context2.viewport.Simple3DRenderer;
@@ -2204,63 +2574,39 @@ namespace NeoAxis
 				else if( context2.canSelectObjects.Contains( this ) )
 					color = ProjectSettings.Get.Colors.CanSelectColor;
 				else
-					color = new ColorValue( 1, 1, 0, 0.8 );// ProjectSettings.Get.General.SceneShowVolumeColor;
-				renderer.SetColor( color );
+					color = new ColorValue( 1, 1, 0, 0.8 );
 
-				var items = roadData.GetBorderCurves();
+				renderer.SetColor( color, false );
 
-				foreach( var item in items )
+				var laneCurves = roadData.GetLaneCurves();
+				for( int lane = 0; lane < laneCurves.Length; lane++ )
 				{
-					Vector3? previousPos = null;
-					for( int n = 0; n < item.Curve.Length; n++ )
-					{
-						var pos = item.Curve[ n ].Position;
+					var laneCurve = laneCurves[ lane ];
+					var forward = roadData.IsForwardLane( lane );
 
-						if( previousPos.HasValue )
-						{
-							renderer.AddLineThin( previousPos.Value, pos );
-							//renderer.AddLine( previousPos.Value, pos );
-						}
-
-						previousPos = pos;
-					}
-				}
-
-				var item0 = items[ 0 ];
-				var item1 = items[ 1 ];
-				renderer.AddLineThin( item0.Curve[ 0 ].Position, item1.Curve[ 0 ].Position );
-				renderer.AddLineThin( item0.Curve[ item0.Curve.Length - 1 ].Position, item1.Curve[ item1.Curve.Length - 1 ].Position );
-				//renderer.AddLine( item0.Curve[ 0 ].Position, item1.Curve[ 0 ].Position );
-				//renderer.AddLine( item0.Curve[ item0.Curve.Length - 1 ].Position, item1.Curve[ item1.Curve.Length - 1 ].Position );
-			}
-		}
-
-		void DisplayLaneCurves( ViewportRenderingContext context )
-		{
-			var context2 = context.ObjectInSpaceRenderingContext;
-			var renderer = context2.viewport.Simple3DRenderer;
-
-			var roadData = GetRoadData();
-			if( roadData != null && renderer != null )
-			{
-				foreach( var lane in roadData.GetLaneCurves() )
-				{
 					//center line
 					{
-						renderer.SetColor( new ColorValue( 1, 1, 0, 0.8 ) );
-
+						var arrowCounter = 0;
 						Vector3? previousPos = null;
-						for( int n = 0; n < lane.Curve.Length; n++ )
+						for( int n = 0; n < laneCurve.Curve.Length; n++ )
 						{
-							var pos = lane.Curve[ n ].Position;
+							var pos = laneCurve.Curve[ n ].Position;
 
 							if( previousPos.HasValue )
 							{
-								renderer.AddLineThin( previousPos.Value, pos );
-								//renderer.AddLine( previousPos.Value, pos );
+								if( arrowCounter % 10 == 0 )
+								{
+									if( forward )
+										renderer.AddArrow( previousPos.Value, pos, 0.5, 0.1, true, -1 );
+									else
+										renderer.AddArrow( pos, previousPos.Value, 0.5, 0.1, true, -1 );
+								}
+								else
+									renderer.AddLine( previousPos.Value, pos, -1 );
 							}
 
 							previousPos = pos;
+							arrowCounter++;
 						}
 					}
 
@@ -2292,8 +2638,8 @@ namespace NeoAxis
 					////}
 
 					//connectors
-					renderer.AddSphere( lane.Curve[ 0 ].Position, 0.1, 16, true );
-					renderer.AddSphere( lane.Curve[ lane.Curve.Length - 1 ].Position, 0.1, 16, true );
+					renderer.AddSphere( laneCurve.Curve[ 0 ].Position, 0.1, 16, true );
+					renderer.AddSphere( laneCurve.Curve[ laneCurve.Curve.Length - 1 ].Position, 0.1, 16, true );
 				}
 			}
 		}

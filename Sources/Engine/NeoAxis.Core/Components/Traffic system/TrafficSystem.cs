@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using NeoAxis.Editor;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using Internal.Physics2D.Common;
+using System.Formats.Tar;
+using Internal.Assimp.Configs;
 
 //!!!!
 //creatures
@@ -17,10 +21,11 @@ namespace NeoAxis
 	/// A system to simulate ground and fly traffic.
 	/// </summary>
 	[AddToResourcesWindow( @"Addons\Traffic System\Traffic System", 10580 )]
-	[SettingsCell( typeof( TrafficSystemSettingsCell ) )]
+	[SettingsCell( "NeoAxis.Editor.TrafficSystemSettingsCell" )]
 	public class TrafficSystem : Component
 	{
 		bool needUpdateObjects;
+		bool needHaveRoadsPrecompiledData;
 
 		Dictionary<TrafficSystemElement, ElementCachedData> cachedElementsDictionary;
 		ElementCachedData[] cachedGroundVehicleElements;
@@ -47,7 +52,11 @@ namespace NeoAxis
 		//float camerasPositionBoundsLastSecondRemainingTime;
 		//Queue<Bounds> camerasPositionBoundsLast10Seconds = new Queue<Bounds>();
 
-		List<Road.LogicalData> allWalkableRoadsCache;
+		RoadsPrecompiledData roadsPrecompiledData;
+		//List<Road.LogicalData> allWalkableRoadsCache;
+
+		//pathfinding
+		TrafficSystemPathfinding pathfinding;
 
 		///////////////////////////////////////////////
 
@@ -329,6 +338,7 @@ namespace NeoAxis
 		//ReferenceField<int> _staticObjectsMaxObjectsInGroup = 2000;
 
 		//!!!!может разделить на отдельные свойства?
+
 		/// <summary>
 		/// Whether to simulate dynamic objects.
 		/// </summary>
@@ -342,6 +352,36 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="SimulateDynamicObjects"/> property value changes.</summary>
 		public event Action<TrafficSystem> SimulateDynamicObjectsChanged;
 		ReferenceField<bool> _simulateDynamicObjects = true;
+
+		///////////////////////////////////////////////
+
+		/// <summary>
+		/// The maximum number of pathfinding processes to run in parallel. Set zero for automatically use the number of processor cores.
+		/// </summary>
+		[DefaultValue( 4 )]
+		[Category( "Pathfinding" )]
+		public Reference<int> PathfindingParallelCount
+		{
+			get { if( _pathfindingParallelCount.BeginGet() ) PathfindingParallelCount = _pathfindingParallelCount.Get( this ); return _pathfindingParallelCount.value; }
+			set { if( _pathfindingParallelCount.BeginSet( this, ref value ) ) { try { PathfindingParallelCountChanged?.Invoke( this ); } finally { _pathfindingParallelCount.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PathfindingParallelCount"/> property value changes.</summary>
+		public event Action<TrafficSystem> PathfindingParallelCountChanged;
+		ReferenceField<int> _pathfindingParallelCount = 4;
+
+		/// <summary>
+		/// Whether to show the pathfinding graph in the scene.
+		/// </summary>
+		[DefaultValue( false )]
+		[Category( "Pathfinding" )]
+		public Reference<bool> PathfindingShowGraph
+		{
+			get { if( _pathfindingShowGraph.BeginGet() ) PathfindingShowGraph = _pathfindingShowGraph.Get( this ); return _pathfindingShowGraph.value; }
+			set { if( _pathfindingShowGraph.BeginSet( this, ref value ) ) { try { PathfindingShowGraphChanged?.Invoke( this ); } finally { _pathfindingShowGraph.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="PathfindingShowGraph"/> property value changes.</summary>
+		public event Action<TrafficSystem> PathfindingShowGraphChanged;
+		ReferenceField<bool> _pathfindingShowGraph = false;
 
 		///////////////////////////////////////////////
 
@@ -443,6 +483,66 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
+		public class RoadsPrecompiledData
+		{
+			public Road.LogicalData[] WalkingRoads { get; init; }
+			public Road.LogicalData[] DrivingRoads { get; init; }
+			public RoadJunction.RoadJunctionLogicalData[] Junctions { get; init; }
+		}
+
+		///////////////////////////////////////////////
+
+		/// <summary>
+		/// The data to execution finding path.
+		/// </summary>
+		public class FindPathContext
+		{
+			//start position
+			public Vector3 StartPosition;
+			public Road StartRoad;
+			public int StartLane;
+			public double StartTimeOnCurve;
+
+			//end position
+			public Vector3 EndPosition;
+			public Road EndRoad;
+			public int EndLane;
+			public double EndTimeOnCurve;
+
+			//parameters
+			public int LimitSteps = 1000;
+			public int LimitLevel = 100;
+
+			internal volatile bool finished;
+			public bool Finished { get { return finished; } }
+			//public bool Partial;
+			public PathItem[] Path;
+			public string Error = "";
+
+			/////////////////////
+
+			public struct PathItem
+			{
+				public bool StartPoint;
+				public RoadJunction.RoadJunctionLogicalData.ConnectedRoadItem EnterToJunction;
+				public RoadJunction.RoadJunctionLogicalData.ConnectedRoadItem ExitFromJunction;
+				public bool EndPoint;
+
+				//!!!!RangeI RoadLaneRange;
+				////road
+				//public Road.LogicalData Road;
+				//public bool RoadForward;
+			}
+		}
+
+		///////////////////////////////////////////////
+
+		public TrafficSystem()
+		{
+			pathfinding = new TrafficSystemPathfinding();
+			pathfinding.owner = this;
+		}
+
 		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
 		{
 			base.OnMetadataGetMembersFilter( context, member, ref skip );
@@ -509,12 +609,16 @@ namespace NeoAxis
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
 				else
 					scene.GetRenderSceneData += Scene_GetRenderSceneData;
+
+				if( EnabledInHierarchyAndIsInstance )
+					scene.RenderEvent += Scene_RenderEvent;
+				else
+					scene.RenderEvent += Scene_RenderEvent;
 			}
 
 			if( EnabledInHierarchyAndIsInstance )
 			{
-				needUpdateObjects = true;
-				//UpdateObjects();
+				NeedUpdateObjects();
 			}
 			else
 			{
@@ -533,6 +637,9 @@ namespace NeoAxis
 			{
 				if( needUpdateObjects )
 					UpdateObjects();
+
+				if( needHaveRoadsPrecompiledData )
+					GetRoadsPrecompiledData( true );
 
 				//!!!!
 				////!!!!here? maybe it simulation step when it is simulation
@@ -570,6 +677,8 @@ namespace NeoAxis
 					//}
 				}
 			}
+
+			pathfinding.OnUpdate( delta );
 		}
 
 		void NeedUpdateObjects()
@@ -1056,7 +1165,8 @@ namespace NeoAxis
 				groupOfObjects = null;
 			}
 
-			allWalkableRoadsCache = null;
+			roadsPrecompiledData = null;
+			//allWalkableRoadsCache = null;
 		}
 
 		public ObjectInstance CreateObject( TrafficSystemElement element, ObjectListEnum objectList, Transform transform, bool isStatic )
@@ -1151,7 +1261,6 @@ namespace NeoAxis
 		////!!!!лучше отдельно их хранить если можем видеть несколько камер на большом расстоянии
 		//public Vector2? GetCamerasPosition()
 		//{
-		//	zzzzz;
 
 		//	var result = camerasPositionBoundsLastSecond;//Bounds.Cleared;
 		//	foreach( var b in camerasPositionBoundsLast10Seconds )
@@ -1351,30 +1460,30 @@ namespace NeoAxis
 			}
 		}
 
-		List<Road.LogicalData> GetAllWalkableRoads()
-		{
-			if( allWalkableRoadsCache == null )
-			{
-				allWalkableRoadsCache = new List<Road.LogicalData>( 64 );
+		//List<Road.LogicalData> GetAllWalkableRoads()
+		//{
+		//	if( allWalkableRoadsCache == null )
+		//	{
+		//		allWalkableRoadsCache = new List<Road.LogicalData>( 64 );
 
-				var scene = ParentScene;
-				if( scene != null )
-				{
-					foreach( var road in scene.GetComponents<Road>( checkChildren: true, onlyEnabledInHierarchy: true ) )
-					{
-						var roadData = road.GetLogicalData();
-						if( roadData != null )
-						{
-							var wayToUse = roadData.RoadData.RoadType.WayToUse.Value;
-							if( wayToUse == RoadType.WayToUseEnum.Walking )
-								allWalkableRoadsCache.Add( roadData );
-						}
-					}
-				}
-			}
+		//		var scene = ParentScene;
+		//		if( scene != null )
+		//		{
+		//			foreach( var road in scene.GetComponents<Road>( checkChildren: true, onlyEnabledInHierarchy: true ) )
+		//			{
+		//				var roadData = road.GetLogicalData();
+		//				if( roadData != null )
+		//				{
+		//					var wayToUse = roadData.RoadData.RoadType.WayToUse.Value;
+		//					if( wayToUse == RoadType.WayToUseEnum.Walking )
+		//						allWalkableRoadsCache.Add( roadData );
+		//				}
+		//			}
+		//		}
+		//	}
 
-			return allWalkableRoadsCache;
-		}
+		//	return allWalkableRoadsCache;
+		//}
 
 		List<Road.LogicalData> GetWalkableRoadsByCircle( Circle circle )// Sphere sphere )
 		{
@@ -1382,7 +1491,8 @@ namespace NeoAxis
 
 			var result = new List<Road.LogicalData>( 64 );
 
-			foreach( var road in GetAllWalkableRoads() )
+			var walkingRoads = GetRoadsPrecompiledData( true ).WalkingRoads;
+			foreach( var road in walkingRoads ) //GetAllWalkableRoads() )
 			{
 				var roadBounds = road.RoadData.GetBounds().ToRectangle();
 				if( circle.Intersects( ref roadBounds ) )
@@ -1816,6 +1926,12 @@ namespace NeoAxis
 			//}
 		}
 
+		//OnGetRenderSceneData?
+		private void Scene_RenderEvent( Scene sender, Viewport viewport )
+		{
+			pathfinding.Scene_RenderEvent( sender, viewport );
+		}
+
 		public ESet<ObjectInstance> GetParkedVehicles()
 		{
 			return parkedVehicles;
@@ -1834,6 +1950,130 @@ namespace NeoAxis
 		public ESet<ObjectInstance> GetWalkingPedestrians()
 		{
 			return walkingPedestrians;
+		}
+
+		public RoadsPrecompiledData GetRoadsPrecompiledData( bool allowUpdate )
+		{
+			//can't use allowUpdate from another thread
+			if( allowUpdate )
+			{
+				var controllerThread = ParentRoot?.HierarchyController?.ControllerThread;
+				if( controllerThread == null )
+					Log.Fatal( "TrafficSystem: GetRoadsPrecompiledData: Can't use allowUpdate because controllerThread is null." );
+				if( controllerThread != Thread.CurrentThread )
+					Log.Fatal( "TrafficSystem: GetRoadsPrecompiledData: Can't use allowUpdate from another thread." );
+			}
+
+			var data = roadsPrecompiledData;
+			if( data == null && allowUpdate )
+			{
+				var walkingRoads = new List<Road.LogicalData>( 64 );
+				var drivingRoads = new List<Road.LogicalData>( 64 );
+				var junctions = new List<RoadJunction.RoadJunctionLogicalData>( 64 );
+
+				var scene = ParentScene;
+				if( scene != null )
+				{
+					foreach( var road in scene.GetComponents<Road>( checkChildren: true, onlyEnabledInHierarchy: true ) )
+					{
+						var roadData = road.GetLogicalData();
+						if( roadData != null )
+						{
+							var wayToUse = roadData.RoadData.RoadType.WayToUse.Value;
+							if( wayToUse == RoadType.WayToUseEnum.Walking )
+								walkingRoads.Add( roadData );
+							else if( wayToUse == RoadType.WayToUseEnum.Driving )
+								drivingRoads.Add( roadData );
+						}
+					}
+					foreach( var junction in scene.GetComponents<RoadJunction>( checkChildren: true, onlyEnabledInHierarchy: true ) )
+					{
+						var junctionLogicalData = junction.GetLogicalData() as RoadJunction.RoadJunctionLogicalData;
+						if( junctionLogicalData != null )
+							junctions.Add( junctionLogicalData );
+					}
+				}
+
+				data = new RoadsPrecompiledData()
+				{
+					WalkingRoads = walkingRoads.ToArray(),
+					DrivingRoads = drivingRoads.ToArray(),
+					Junctions = junctions.ToArray()
+				};
+
+				roadsPrecompiledData = data;
+			}
+
+			return data;
+		}
+
+		public void FindPath( FindPathContext[] contexts, bool wait )
+		{
+			pathfinding.FindPath( contexts, wait );
+		}
+
+		public void FindPath( FindPathContext context, bool wait )
+		{
+			FindPath( new FindPathContext[] { context }, wait );
+		}
+
+		//public void FindPathDrawGraph( Viewport viewport )
+		//{
+		//	pathfinding.DrawGraph( viewport );
+		//}
+
+		public void NeedHaveRoadsPrecompiledData()
+		{
+			needHaveRoadsPrecompiledData = true;
+		}
+
+		public struct GetRoadsByRayItemResult
+		{
+			public Road Road;
+			public double Scale;
+			public int Lane;
+			public double TimeOnCurve;
+		}
+
+		public GetRoadsByRayItemResult[] GetRoadsByRay( Ray ray )
+		{
+			var scene = ParentScene;
+			if( scene == null )
+				return Array.Empty<GetRoadsByRayItemResult>();
+
+			var roadType = MetadataManager.GetTypeOfNetType( typeof( Road ) );
+
+			var getObjectsItem = new Scene.GetObjectsInSpaceItem( Scene.GetObjectsInSpaceItem.CastTypeEnum.All, roadType, true, ray );
+			scene.GetObjectsInSpace( getObjectsItem );
+
+			var result = new List<GetRoadsByRayItemResult>( getObjectsItem.Result.Length );
+
+			foreach( var resultItem in getObjectsItem.Result )
+			{
+				var road = resultItem.Object as Road;
+				if( road != null )
+				{
+					var roadData = road.GetRoadData();
+					if( roadData != null && roadData.Intersects( ray, out var scale, out var lane, out var timeOnCurve ) )
+						result.Add( new GetRoadsByRayItemResult() { Road = road, Scale = scale, Lane = lane, TimeOnCurve = timeOnCurve } );
+				}
+			}
+
+			//sort by distance
+			CollectionUtility.SelectionSort( result, delegate ( GetRoadsByRayItemResult a, GetRoadsByRayItemResult b )
+			{
+				//if distance is equal, sort by name
+				if( Math.Abs( a.Scale - b.Scale ) < 0.0001 )
+					return string.Compare( a.Road.Name, b.Road.Name, StringComparison.Ordinal );
+				return a.Scale.CompareTo( b.Scale );
+			} );
+
+			return result.ToArray();
+		}
+
+		public IList<Vector3> FindPathCalculatePositions( FindPathContext context, double roadMinimalDistanceBetweenPoints, double junctionMinimalDistanceBetweenPoints )
+		{
+			return pathfinding.FindPathCalculatePositions( context, roadMinimalDistanceBetweenPoints, junctionMinimalDistanceBetweenPoints );
 		}
 	}
 }

@@ -270,6 +270,10 @@ namespace NeoAxis
 
 			if( libraryName.Contains( "NeoAxisCoreNative" ) )
 			{
+				//!!!!iOS: native code is linked into the app executable
+				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+					return NativeLibrary.GetMainProgramHandle();
+
 				var path = "";
 				if( SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS )
 					path = Path.Combine( VirtualFileSystem.Directories.PlatformSpecific, "libNeoAxisCoreNative.dylib" );
@@ -345,6 +349,9 @@ namespace NeoAxis
 				}
 				else if( SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
 				{
+					//!!!!iOS: redirect DllImport to app executable
+					InitDllImportResolver();
+
 					//no preloading on iOS
 					return IntPtr.Zero;
 				}

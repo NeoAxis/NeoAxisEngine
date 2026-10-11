@@ -12,6 +12,7 @@ using Internal.ComponentFactory.Krypton.Toolkit;
 using System.IO;
 using Internal.Aga.Controls.Tree;
 using NeoAxis.Networking;
+using System.Xaml;
 
 namespace NeoAxis.Editor
 {
@@ -207,6 +208,38 @@ namespace NeoAxis.Editor
 								item.Enabled = false;
 
 							//item.Enabled = !rootNodeSelected;
+							items.Add( item );
+						}
+
+						//Select Children
+						{
+							var item = new KryptonContextMenuItem( Translate( "Select Children" ), EditorResourcesCache.Select,
+								delegate ( object s, EventArgs e2 )
+								{
+									if( componentItem != null )
+									{
+										var childrenComponents = componentItem.Component.GetComponents( checkChildren: true );
+										var components2 = CollectionUtility.Merge( [ componentItem.Component ], childrenComponents );
+
+										if( ModifierKeys.HasFlag( Keys.Shift ) )
+										{
+											var selectedObjects = SelectedItems.Where( s => s is ContentBrowserItem_Component ).Select( s => ( (ContentBrowserItem_Component)s ).Component ).Where( c => c != null ).ToArray();
+
+											var set = new HashSet<Component>( selectedObjects );
+											foreach( var c in components2 )
+												set.Add( c );
+											components2 = set.ToArray();
+										}
+
+										ContentBrowserUtility.SelectComponentItems( this, components2 );
+									}
+								} );
+							item.Enabled = componentItem.Component != null && !componentItem.Component.EditorReadOnlyInHierarchy && documentOfComponent != null;
+
+							var res = ComponentUtility.GetResourceInstanceByComponent( componentItem.Component );
+							if( res != null && res.InstanceType == Resource.InstanceType.Resource )
+								item.Enabled = false;
+
 							items.Add( item );
 						}
 

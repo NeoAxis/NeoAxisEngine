@@ -16,6 +16,10 @@
 #	import <QuartzCore/QuartzCore.h>
 #	import <Metal/Metal.h>
 #endif // BX_PLATFORM_OSX
+ //!!!!betauser iOS
+#if BX_PLATFORM_IOS
+#	include <dlfcn.h>
+#endif
 
 //!!!!betauser
 #ifdef __ANDROID__
@@ -413,6 +417,8 @@ VK_IMPORT_DEVICE
 			KHR_win32_surface,
 #	elif BX_PLATFORM_OSX
 			MVK_macos_surface,
+#	elif BX_PLATFORM_IOS
+			EXT_metal_surface,
 #	elif BX_PLATFORM_NX
 			NN_vi_surface,
 #	endif
@@ -464,6 +470,8 @@ VK_IMPORT_DEVICE
 		{ VK_KHR_WIN32_SURFACE_EXTENSION_NAME,      1, false, false, true,                                                          Layer::Count },
 #	elif BX_PLATFORM_OSX
 		{ VK_MVK_MACOS_SURFACE_EXTENSION_NAME,      1, false, false, true,                                                          Layer::Count },
+#	elif BX_PLATFORM_IOS
+		{ VK_EXT_METAL_SURFACE_EXTENSION_NAME,      1, false, false, true,                                                          Layer::Count },
 #	elif BX_PLATFORM_NX
 		{ VK_NN_VI_SURFACE_EXTENSION_NAME,          1, false, false, true,                                                          Layer::Count },
 #	endif
@@ -1302,7 +1310,10 @@ VK_IMPORT_DEVICE
 			}
 
 			setGraphicsDebuggerPresent(NULL != m_renderDocDll);
-
+#if BX_PLATFORM_IOS
+			//!!!!betauser iOS: MoltenVK is linked statically into the app, take functions from the app itself
+			m_vulkan1Dll = ::dlopen(NULL, RTLD_LAZY);
+#else
 			m_vulkan1Dll = bx::dlopen(
 #if BX_PLATFORM_WINDOWS
 				"vulkan-1.dll"
@@ -1314,6 +1325,7 @@ VK_IMPORT_DEVICE
 				"libvulkan.so.1"
 #endif // BX_PLATFORM_*
 					);
+#endif
 
 			if (NULL == m_vulkan1Dll)
 			{
@@ -1442,7 +1454,7 @@ VK_IMPORT
 				ici.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 				ici.pNext = NULL;
 				ici.flags = 0
-					| (BX_ENABLED(BX_PLATFORM_OSX) ? VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR : 0)
+					| (BX_ENABLED(BX_PLATFORM_OSX || BX_PLATFORM_IOS) ? VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR : 0)
 					;
 				ici.pApplicationInfo        = &appInfo;
 				ici.enabledLayerCount       = numEnabledLayers;
@@ -2067,7 +2079,7 @@ VK_IMPORT_INSTANCE
 					enabledExtension[numEnabledExtensions++] = VK_KHR_SWAPCHAIN_EXTENSION_NAME;
 				}
 
-				if (BX_ENABLED(BX_PLATFORM_OSX) )
+				if (BX_ENABLED(BX_PLATFORM_OSX || BX_PLATFORM_IOS))
 				{
 					enabledExtension[numEnabledExtensions++] = VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME;
 				}
@@ -8313,6 +8325,18 @@ VK_DESTROY
 				BX_WARN(VK_SUCCESS == result, "vkCreateMacOSSurfaceMVK failed %d: %s.", result, getName(result) );
 			}
 		}
+#elif BX_PLATFORM_IOS
+//!!!!betauser iOS
+if (NULL != vkCreateMetalSurfaceEXT)
+{
+	VkMetalSurfaceCreateInfoEXT sci;
+	sci.sType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
+	sci.pNext = NULL;
+	sci.flags = 0;
+	sci.pLayer = (const CAMetalLayer*)m_nwh;
+	result = vkCreateMetalSurfaceEXT(instance, &sci, allocatorCb, &m_surface);
+	BX_WARN(VK_SUCCESS == result, "vkCreateMetalSurfaceEXT failed %d: %s.", result, getName(result));
+}
 #elif BX_PLATFORM_NX
 		if (NULL != vkCreateViSurfaceNN)
 		{

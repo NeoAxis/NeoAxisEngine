@@ -7,8 +7,11 @@ using NeoAxis.Editor;
 
 namespace NeoAxis
 {
+
+	//!!!!maybe this class is not needed. just use RoadJunction
+
 	/// <summary>
-	/// A logical element of road system to connect roads. It indended to make crossroads and other road elements.
+	/// A logical element of road system to connect roads. It indended to make junctions and other road elements.
 	/// </summary>
 	public class RoadNode : ObjectInSpace
 	{

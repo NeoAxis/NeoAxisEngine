@@ -376,7 +376,7 @@ namespace NeoAxis
 			public enum ModeEnum
 			{
 				Road,
-				Crossroad,
+				Junction,
 			}
 
 			/////////////////////
@@ -626,7 +626,7 @@ namespace NeoAxis
 					if( !skip )
 					{
 						var width = generatorData.Lanes * laneWidth + roadsideEdgeWidth * 2;
-						if( Mode == ModeEnum.Crossroad )
+						if( Mode == ModeEnum.Junction )
 							width = 0;
 
 						for( int widthStep = 0; widthStep < widthSteps; widthStep++ )

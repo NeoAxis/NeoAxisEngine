@@ -597,6 +597,8 @@ namespace NeoAxis
 
 					result[ "NeoAxis.NetworkLogic" ] = "NeoAxis.GameLogic";
 
+					result[ "NeoAxis.Crossroad" ] = "NeoAxis.RoadJunction";
+
 					renamedTypeNames = result;
 				}
 

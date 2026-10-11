@@ -638,7 +638,7 @@ namespace NeoAxis
 			var sourceImage = new ImageUtility.Image2D( sourceFormat, sourceSize, sourceData );
 
 			var format = sourceImage.Format;
-			if( format == PixelFormat.R8G8B8 )
+			if( format == PixelFormat.R8G8B8 || format == PixelFormat.B8G8R8 )
 				format = PixelFormat.A8R8G8B8;
 
 			var pixelSize = PixelFormatUtility.GetNumElemBytes( format );
@@ -1029,6 +1029,26 @@ namespace NeoAxis
 							sourceData[ nData ] = newData;
 						}
 						resultFormat = PixelFormat.A8R8G8B8;
+					}
+
+					//iOS: convert B8G8R8 to A8B8G8R8. 24-bit formats not supported by Metal/MoltenVK
+					if( sourceFormat == PixelFormat.B8G8R8 )
+					{
+						for( int nData = 0; nData < sourceData.Length; nData++ )
+						{
+							var data = sourceData[ nData ];
+							var newData = new byte[ sourceSize.X * sourceSize.Y * 4 ];
+							int destPos = 0;
+							for( int sourcePos = 0; sourcePos < data.Length; sourcePos += 3 )
+							{
+								newData[ destPos++ ] = data[ sourcePos + 0 ];
+								newData[ destPos++ ] = data[ sourcePos + 1 ];
+								newData[ destPos++ ] = data[ sourcePos + 2 ];
+								newData[ destPos++ ] = 255;
+							}
+							sourceData[ nData ] = newData;
+						}
+						resultFormat = PixelFormat.A8B8G8R8;
 					}
 
 					//convert Float32RGB to Float32RGBA

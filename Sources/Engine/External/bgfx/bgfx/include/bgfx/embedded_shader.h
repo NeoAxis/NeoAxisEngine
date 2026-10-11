@@ -80,6 +80,7 @@
 #ifndef BGFX_PLATFORM_SUPPORTS_SPIRV
 #	define BGFX_PLATFORM_SUPPORTS_SPIRV (0 \
 		|| BX_PLATFORM_ANDROID             \
+		|| BX_PLATFORM_IOS                 \
 		|| BX_PLATFORM_EMSCRIPTEN          \
 		|| BX_PLATFORM_LINUX               \
 		|| BX_PLATFORM_WINDOWS             \

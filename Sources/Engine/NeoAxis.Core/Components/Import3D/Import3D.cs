@@ -265,17 +265,32 @@ namespace NeoAxis
 		/// <summary>
 		/// Whether to generate level of detail meshes.
 		/// </summary>
-		[DefaultValue( true )]
+		[DefaultValue( AutoTrueFalse.Auto )]
 		[DisplayName( "LODs" )]
 		[Category( "Geometry" )]
-		public Reference<bool> LODs
+		public Reference<AutoTrueFalse> LODs
 		{
 			get { if( _lods.BeginGet() ) LODs = _lods.Get( this ); return _lods.value; }
 			set { if( _lods.BeginSet( this, ref value ) ) { try { LODsChanged?.Invoke( this ); } finally { _lods.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="LODs"/> property value changes.</summary>
 		public event Action<Import3D> LODsChanged;
-		ReferenceField<bool> _lods = true;
+		ReferenceField<AutoTrueFalse> _lods = AutoTrueFalse.Auto;
+
+		///// <summary>
+		///// Whether to generate level of detail meshes.
+		///// </summary>
+		//[DefaultValue( true )]
+		//[DisplayName( "LODs" )]
+		//[Category( "Geometry" )]
+		//public Reference<bool> LODs
+		//{
+		//	get { if( _lods.BeginGet() ) LODs = _lods.Get( this ); return _lods.value; }
+		//	set { if( _lods.BeginSet( this, ref value ) ) { try { LODsChanged?.Invoke( this ); } finally { _lods.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="LODs"/> property value changes.</summary>
+		//public event Action<Import3D> LODsChanged;
+		//ReferenceField<bool> _lods = true;
 
 		/// <summary>
 		/// The result amount of levels of detail.
@@ -704,7 +719,7 @@ namespace NeoAxis
 
 				//case nameof( LODMethod ):
 				case nameof( LODReduction ):
-					if( !LODs || LODLevels.Value < 2 )
+					if( !GetLODsValue() || LODLevels.Value < 2 )
 						skip = true;
 					if( LODLevels.Value == 2 && LODVoxels.Value != AutoTrueFalse.False )
 						skip = true;
@@ -715,7 +730,7 @@ namespace NeoAxis
 				case nameof( LODScale ):
 				case nameof( LODScaleShadows ):
 				case nameof( LODVoxels ):
-					if( !LODs )
+					if( !GetLODsValue() )
 						skip = true;
 					break;
 
@@ -725,7 +740,7 @@ namespace NeoAxis
 				case nameof( LODVoxelBakeOpacity ):
 				case nameof( LODVoxelOptimizeMaterials ):
 				case nameof( LODVoxelFillHolesDistance ):
-					if( !LODs || LODVoxels.Value == AutoTrueFalse.False )
+					if( !GetLODsValue() || LODVoxels.Value == AutoTrueFalse.False )
 						skip = true;
 					break;
 
@@ -1136,7 +1151,7 @@ namespace NeoAxis
 					//generate LODs
 					//if( settings.updateMeshLODs )
 					//{
-					if( LODs )
+					if( GetLODsValue() )
 					{
 						if( !GenerateLODsOrReductLOD0( false, out error ) )
 							return false;
@@ -1662,10 +1677,10 @@ namespace NeoAxis
 							sourceGeometries.Add( geometry );
 				}
 
-				var lodLevels = LODs.Value ? LODLevels.Value : 1;
+				var lodLevels = GetLODsValue() ? LODLevels.Value : 1;
 
 				var voxelLodIndex = -1;
-				if( LODs && ( LODVoxels.Value == AutoTrueFalse.True || LODVoxels.Value == AutoTrueFalse.Auto && !sourceMesh.Skeleton.ReferenceOrValueSpecified ) )
+				if( GetLODsValue() && ( LODVoxels.Value == AutoTrueFalse.True || LODVoxels.Value == AutoTrueFalse.Auto && !sourceMesh.Skeleton.ReferenceOrValueSpecified ) )
 				{
 					//if( LODs && LODVoxels )// LODBillboardMode.Value != MeshGeometry.BillboardDataModeEnum.None )
 					voxelLodIndex = lodLevels - 1;
@@ -2221,6 +2236,13 @@ namespace NeoAxis
 		public void AssimpDoImport( ImportGeneral.Settings settings, out string error )
 		{
 			ImportAssimp.DoImport( settings, out error );
+		}
+
+		public virtual bool GetLODsValue()
+		{
+			if( LODs.Value == AutoTrueFalse.Auto )
+				return true;
+			return LODs.Value == AutoTrueFalse.True;
 		}
 
 		//void CalculateVirtualizedMesh( Mesh mesh )

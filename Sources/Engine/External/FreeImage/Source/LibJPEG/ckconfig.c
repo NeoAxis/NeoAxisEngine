@@ -1,3 +1,6 @@
+//!!!!iOS: standalone utility with own main(), conflicts with .NET main on iOS
+#ifndef PLATFORM_IOS
+
 /*
  * ckconfig.c
  *
@@ -401,3 +404,5 @@ int is_shifting_signed (arg)
 //
 //  return 0;
 //}
+
+#endif //!PLATFORM_IOS

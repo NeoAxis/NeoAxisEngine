@@ -137,6 +137,7 @@
 #	ifndef BGFX_CONFIG_RENDERER_VULKAN
 #		define BGFX_CONFIG_RENDERER_VULKAN (0 \
 					|| BX_PLATFORM_ANDROID    \
+					|| BX_PLATFORM_IOS        \
 					|| BX_PLATFORM_LINUX      \
 					|| BX_PLATFORM_NX         \
 					|| BX_PLATFORM_OSX        \

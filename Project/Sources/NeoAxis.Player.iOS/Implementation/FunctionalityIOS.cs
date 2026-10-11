@@ -18,7 +18,7 @@ namespace NeoAxis
 			instance = this;
 			SetInstance( instance, SystemSettings.Platform.iOS );
 
-			new LogPlatformFunctionalityIOS();
+			//new LogPlatformFunctionalityIOS();
 			new PlatformSpecificUtilityIOS();
 		}
 

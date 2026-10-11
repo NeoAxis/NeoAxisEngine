@@ -34,11 +34,24 @@ namespace NeoAxis
 		public Reference<WayToUseEnum> WayToUse
 		{
 			get { if( _wayToUse.BeginGet() ) WayToUse = _wayToUse.Get( this ); return _wayToUse.value; }
-			set { if( _wayToUse.BeginSet( this, ref value ) ) { try { WayToUseChanged?.Invoke( this ); } finally { _wayToUse.EndSet(); } } }
+			set { if( _wayToUse.BeginSet( this, ref value ) ) { try { WayToUseChanged?.Invoke( this ); DataWasChanged(); } finally { _wayToUse.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="WayToUse"/> property value changes.</summary>
 		public event Action<RoadType> WayToUseChanged;
 		ReferenceField<WayToUseEnum> _wayToUse = WayToUseEnum.Driving;
+
+		/// <summary>
+		/// Whether to use left-hand traffic.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> LeftHandTraffic
+		{
+			get { if( _leftHandTraffic.BeginGet() ) LeftHandTraffic = _leftHandTraffic.Get( this ); return _leftHandTraffic.value; }
+			set { if( _leftHandTraffic.BeginSet( this, ref value ) ) { try { LeftHandTrafficChanged?.Invoke( this ); DataWasChanged(); } finally { _leftHandTraffic.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="LeftHandTraffic"/> property value changes.</summary>
+		public event Action<RoadType> LeftHandTrafficChanged;
+		ReferenceField<bool> _leftHandTraffic = false;
 
 		/// <summary>
 		/// The width of lanes.

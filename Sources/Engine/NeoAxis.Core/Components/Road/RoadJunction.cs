@@ -3,18 +3,21 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
-using NeoAxis.Editor;
+using System.Collections.Concurrent;
 
 namespace NeoAxis
 {
+
+	//!!!!one RoadJunction can contains several types of junctions. As example lanes split (4 to 2+2) and side split (1 to 1+1).
+
 	/// <summary>
-	/// A logical element to make crossroads.
+	/// A logical element to make road junctions.
 	/// </summary>
-	[AddToResourcesWindow( @"Addons\Road\Crossroad", 10540 )]
-	public class Crossroad : RoadNode
+	[AddToResourcesWindow( @"Addons\Road\Road Junction", 10540 )]
+	public class RoadJunction : RoadNode
 	{
 		/// <summary>
-		/// The type of the crossroad.
+		/// The type of the road junction.
 		/// </summary>
 		[DefaultValue( RoadType.WayToUseEnum.Driving )]
 		public Reference<RoadType.WayToUseEnum> WayToUse
@@ -23,7 +26,7 @@ namespace NeoAxis
 			set { if( _wayToUse.BeginSet( this, ref value ) ) { try { WayToUseChanged?.Invoke( this ); DataWasChanged(); } finally { _wayToUse.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="WayToUse"/> property value changes.</summary>
-		public event Action<Crossroad> WayToUseChanged;
+		public event Action<RoadJunction> WayToUseChanged;
 		ReferenceField<RoadType.WayToUseEnum> _wayToUse = RoadType.WayToUseEnum.Driving;
 
 		//!!!!может быть несколько радиусов кривизны для каждой пары
@@ -39,7 +42,7 @@ namespace NeoAxis
 			set { if( _curvatureRadius.BeginSet( this, ref value ) ) { try { CurvatureRadiusChanged?.Invoke( this ); DataWasChanged(); } finally { _curvatureRadius.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CurvatureRadius"/> property value changes.</summary>
-		public event Action<Crossroad> CurvatureRadiusChanged;
+		public event Action<RoadJunction> CurvatureRadiusChanged;
 		ReferenceField<double> _curvatureRadius = 5.0;
 
 		/// <summary>
@@ -52,7 +55,7 @@ namespace NeoAxis
 			set { if( _crossingMarkings.BeginSet( this, ref value ) ) { try { CrossingMarkingsChanged?.Invoke( this ); DataWasChanged(); } finally { _crossingMarkings.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="CrossingMarkings"/> property value changes.</summary>
-		public event Action<Crossroad> CrossingMarkingsChanged;
+		public event Action<RoadJunction> CrossingMarkingsChanged;
 		ReferenceField<bool> _crossingMarkings = false;
 
 		/// <summary>
@@ -65,7 +68,7 @@ namespace NeoAxis
 			set { if( _trafficLights.BeginSet( this, ref value ) ) { try { TrafficLightsChanged?.Invoke( this ); DataWasChanged(); } finally { _trafficLights.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TrafficLights"/> property value changes.</summary>
-		public event Action<Crossroad> TrafficLightsChanged;
+		public event Action<RoadJunction> TrafficLightsChanged;
 		ReferenceField<bool> _trafficLights = false;
 
 		[DefaultValue( "0 -1 0" )]
@@ -75,7 +78,7 @@ namespace NeoAxis
 			set { if( _trafficLightsLocalOffset.BeginSet( this, ref value ) ) { try { TrafficLightsLocalOffsetChanged?.Invoke( this ); DataWasChanged(); } finally { _trafficLightsLocalOffset.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="TrafficLightsLocalOffset"/> property value changes.</summary>
-		public event Action<Crossroad> TrafficLightsLocalOffsetChanged;
+		public event Action<RoadJunction> TrafficLightsLocalOffsetChanged;
 		ReferenceField<Vector3> _trafficLightsLocalOffset = new Vector3( 0, -1, 0 );
 
 		//[DefaultValue( 0.0 )]
@@ -85,7 +88,7 @@ namespace NeoAxis
 		//	set { if( _trafficLightsOverrideDistance.BeginSet( this, ref value ) ) { try { TrafficLightsOverrideDistanceChanged?.Invoke( this ); DataWasChanged(); } finally { _trafficLightsOverrideDistance.EndSet(); } } }
 		//}
 		///// <summary>Occurs when the <see cref="TrafficLightsOverrideDistance"/> property value changes.</summary>
-		//public event Action<Crossroad> TrafficLightsOverrideDistanceChanged;
+		//public event Action<RoadJunction> TrafficLightsOverrideDistanceChanged;
 		//ReferenceField<double> _trafficLightsOverrideDistance = 0.0;
 
 		/// <summary>
@@ -98,7 +101,7 @@ namespace NeoAxis
 			set { if( _displayLogicalDataInEditor.BeginSet( this, ref value ) ) { try { DisplayLogicalDataInEditorChanged?.Invoke( this ); } finally { _displayLogicalDataInEditor.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayLogicalDataInEditor"/> property value changes.</summary>
-		public event Action<Crossroad> DisplayLogicalDataInEditorChanged;
+		public event Action<RoadJunction> DisplayLogicalDataInEditorChanged;
 		ReferenceField<bool> _displayLogicalDataInEditor = false;
 
 		/// <summary>
@@ -111,12 +114,12 @@ namespace NeoAxis
 			set { if( _displayLogicalDataInSimulation.BeginSet( this, ref value ) ) { try { DisplayLogicalDataInSimulationChanged?.Invoke( this ); } finally { _displayLogicalDataInSimulation.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="DisplayLogicalDataInSimulation"/> property value changes.</summary>
-		public event Action<Crossroad> DisplayLogicalDataInSimulationChanged;
+		public event Action<RoadJunction> DisplayLogicalDataInSimulationChanged;
 		ReferenceField<bool> _displayLogicalDataInSimulation = false;
 
 		///////////////////////////////////////////////
 
-		public class CrossroadLogicalData : LogicalData
+		public class RoadJunctionLogicalData : LogicalData
 		{
 			public List<ConnectedRoadItem> ConnectedRoads = new List<ConnectedRoadItem>();
 			public bool Valid;
@@ -128,7 +131,7 @@ namespace NeoAxis
 
 			public class ConnectedRoadItem
 			{
-				public CrossroadLogicalData Owner;
+				public RoadJunctionLogicalData Owner;
 
 				public Road.RoadData ConnectedRoad;//public Road.LogicalData ConnectedRoad;
 
@@ -137,6 +140,9 @@ namespace NeoAxis
 				public bool ForwardDirection;
 
 				public ConnectedRoadItem CrossingEndItem;
+
+				//used as a cache by TrafficSystem pathfinding
+				public ConcurrentDictionary<(ConnectedRoadItem, int, int), EnterToExitCurve> EnterToExitCurves;
 
 				//
 
@@ -155,7 +161,15 @@ namespace NeoAxis
 					Right,
 				}
 
-				public ConnectedRoadItem( CrossroadLogicalData owner )
+				public class EnterToExitCurve
+				{
+					public (double Time, Vector3 Position)[] Curve;
+					//public (double Time, Vector3 Position, Quaternion Rotation)[] Curve;
+				}
+
+				//
+
+				public ConnectedRoadItem( RoadJunctionLogicalData owner )
 				{
 					Owner = owner;
 				}
@@ -188,18 +202,42 @@ namespace NeoAxis
 					var offset = rotation * new Vector3( 0, widthOffset, heightOffset );
 					position = centerPosition + offset;
 				}
+
+				//used as a cache by TrafficSystem pathfinding
+				public EnterToExitCurve GetEnterToExitCurveItem( ConnectedRoadItem exit, int enterLane, int exitLane )
+				{
+					var curves = EnterToExitCurves;
+					if( curves == null )
+					{
+						curves = new ConcurrentDictionary<(ConnectedRoadItem, int, int), EnterToExitCurve>();
+						EnterToExitCurves = curves;
+					}
+
+					//!!!!good?
+					if( curves.Count > 1000 )
+						curves.Clear();
+
+					var key = (exit, enterLane, exitLane);
+					if( !curves.TryGetValue( key, out var curve ) )
+					{
+						curve = new EnterToExitCurve();
+						curves[ key ] = curve;
+					}
+
+					return curve;
+				}
 			}
 
 			/////////////////////
 
-			public CrossroadLogicalData( RoadNode owner )
+			public RoadJunctionLogicalData( RoadNode owner )
 				: base( owner )
 			{
 			}
 
-			public new Crossroad Owner
+			public new RoadJunction Owner
 			{
-				get { return (Crossroad)base.Owner; }
+				get { return (RoadJunction)base.Owner; }
 			}
 
 			public override void OnDelete()
@@ -226,9 +264,9 @@ namespace NeoAxis
 			{
 				base.OnConnectedRoadDelete( roadData );
 
-//!!!!never used?
+				//!!!!never used?
 
-again:;
+				again:;
 				for( int n = 0; n < ConnectedRoads.Count; n++ )
 				{
 					if( ConnectedRoads[ n ].ConnectedRoad == roadData )
@@ -438,7 +476,7 @@ again:;
 
 					var geometryGenerator = new RoadUtility.RoadGeometryGenerator();
 					roadConnection.GeometryGenerator = geometryGenerator;
-					geometryGenerator.Mode = RoadUtility.RoadGeometryGenerator.ModeEnum.Crossroad;
+					geometryGenerator.Mode = RoadUtility.RoadGeometryGenerator.ModeEnum.Junction;
 					geometryGenerator.RoadType = roadConnection.Road.ConnectedRoad.RoadType;
 					geometryGenerator.PositionCurve = curvePosition2;
 					geometryGenerator.UpCurve = curveUp;
@@ -946,6 +984,43 @@ again:;
 
 				return meshData;
 			}
+
+			public ConnectedRoadItem GetConnectedRoadItem( Road.RoadData roadData, bool forwardDirection )
+			{
+				for( int n = 0; n < ConnectedRoads.Count; n++ )
+				{
+					var item = ConnectedRoads[ n ];
+					if( item.ConnectedRoad == roadData && item.ForwardDirection == forwardDirection )
+						return item;
+				}
+				return null;
+			}
+
+			//!!!!add enterLaneRange or enterLane
+			public List<ConnectedRoadItem> GetExits( ConnectedRoadItem enter )
+			{
+				var result = new List<ConnectedRoadItem>();
+
+				for( int n = 0; n < ConnectedRoads.Count; n++ )
+				{
+					var item = ConnectedRoads[ n ];
+
+					//can't turn back to the same road
+					if( item == enter )
+						continue;
+
+
+					//!!!!есть ли lanes въезда
+
+
+					result.Add( item );
+				}
+
+				//capsLock
+				//!!!!sort by direction
+
+				return result;
+			}
 		}
 
 		///////////////////////////////////////////////
@@ -976,7 +1051,7 @@ again:;
 
 		protected override LogicalData OnCalculateLogicalData()
 		{
-			var logicalData = new CrossroadLogicalData( this );
+			var logicalData = new RoadJunctionLogicalData( this );
 
 			var cylinder = GetCylinder();
 			var bounds2 = cylinder.ToBounds().ToRectangle();
@@ -1027,10 +1102,10 @@ again:;
 							{
 								if( startInside != endInside )
 								{
-									var roadItem = new CrossroadLogicalData.ConnectedRoadItem( logicalData );
+									var roadItem = new RoadJunctionLogicalData.ConnectedRoadItem( logicalData );
 									roadItem.ConnectedRoad = roadData;
 
-									//calculate time with radius distance to center of crossroad
+									//calculate time with radius distance to center of junction
 
 									if( startInside )
 									{
@@ -1040,7 +1115,7 @@ again:;
 										roadData.GetClosestCurveTimeToPosition( splitPosition, radius, 0.5, out var timeOnCurve );
 										//roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
 
-										roadItem.ItemType = CrossroadLogicalData.ConnectedRoadItem.ItemTypeEnum.StartPointInside;
+										roadItem.ItemType = RoadJunctionLogicalData.ConnectedRoadItem.ItemTypeEnum.StartPointInside;
 										roadItem.TimeOnCurve = timeOnCurve;
 										roadItem.ForwardDirection = false;
 									}
@@ -1052,7 +1127,7 @@ again:;
 										roadData.GetClosestCurveTimeToPosition( splitPosition, radius, 0.5, out var timeOnCurve );
 										//roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
 
-										roadItem.ItemType = CrossroadLogicalData.ConnectedRoadItem.ItemTypeEnum.EndPointInside;
+										roadItem.ItemType = RoadJunctionLogicalData.ConnectedRoadItem.ItemTypeEnum.EndPointInside;
 										roadItem.TimeOnCurve = timeOnCurve;
 										roadItem.ForwardDirection = true;
 									}
@@ -1116,11 +1191,11 @@ again:;
 									roadData.GetDirectionByTime( centerTimeOnCurve, out var dir );
 
 
-									CrossroadLogicalData.ConnectedRoadItem roadItemStart;
-									CrossroadLogicalData.ConnectedRoadItem roadItemEnd;
+									RoadJunctionLogicalData.ConnectedRoadItem roadItemStart;
+									RoadJunctionLogicalData.ConnectedRoadItem roadItemEnd;
 
 									{
-										var roadItem = new CrossroadLogicalData.ConnectedRoadItem( logicalData );
+										var roadItem = new RoadJunctionLogicalData.ConnectedRoadItem( logicalData );
 										roadItemStart = roadItem;
 										roadItem.ConnectedRoad = roadData;
 
@@ -1128,7 +1203,7 @@ again:;
 										roadData.GetClosestCurveTimeToPosition( splitPosition, radius, 0.5, out var timeOnCurve );
 										//roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
 
-										roadItem.ItemType = CrossroadLogicalData.ConnectedRoadItem.ItemTypeEnum.CrossingStart;
+										roadItem.ItemType = RoadJunctionLogicalData.ConnectedRoadItem.ItemTypeEnum.CrossingStart;
 										roadItem.TimeOnCurve = timeOnCurve;
 										roadItem.ForwardDirection = true;
 
@@ -1138,7 +1213,7 @@ again:;
 									}
 
 									{
-										var roadItem = new CrossroadLogicalData.ConnectedRoadItem( logicalData );
+										var roadItem = new RoadJunctionLogicalData.ConnectedRoadItem( logicalData );
 										roadItemEnd = roadItem;
 										roadItem.ConnectedRoad = roadData;
 
@@ -1146,7 +1221,7 @@ again:;
 										roadData.GetClosestCurveTimeToPosition( splitPosition, radius, 0.5, out var timeOnCurve );
 										//roadData.GetClosestCurveTimeToPosition( splitPosition, timeStep, out var timeOnCurve );
 
-										roadItem.ItemType = CrossroadLogicalData.ConnectedRoadItem.ItemTypeEnum.CrossingEnd;
+										roadItem.ItemType = RoadJunctionLogicalData.ConnectedRoadItem.ItemTypeEnum.CrossingEnd;
 										roadItem.TimeOnCurve = timeOnCurve;
 										roadItem.ForwardDirection = false;
 
@@ -1175,17 +1250,17 @@ again:;
 
 			//calculate road inputs
 
-			logicalData.SortedRoads = new List<CrossroadLogicalData.ConnectedRoadItem>();
+			logicalData.SortedRoads = new List<RoadJunctionLogicalData.ConnectedRoadItem>();
 			foreach( var road in logicalData.ConnectedRoads )
 				logicalData.SortedRoads.Add( road );//.Value );
 
-			CollectionUtility.SelectionSort( logicalData.SortedRoads, delegate ( CrossroadLogicalData.ConnectedRoadItem item1, CrossroadLogicalData.ConnectedRoadItem item2 )
+			CollectionUtility.SelectionSort( logicalData.SortedRoads, delegate ( RoadJunctionLogicalData.ConnectedRoadItem item1, RoadJunctionLogicalData.ConnectedRoadItem item2 )
 			{
-				item1.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Center, out var pos1, out _, out _ );
+				item1.GetSurfacePositionOnEdge( RoadJunctionLogicalData.ConnectedRoadItem.PositionOnEdge.Center, out var pos1, out _, out _ );
 				var p1 = pos1 - center;
 				var angle1 = Math.Atan2( p1.Y, p1.X );
 
-				item2.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Center, out var pos2, out _, out _ );
+				item2.GetSurfacePositionOnEdge( RoadJunctionLogicalData.ConnectedRoadItem.PositionOnEdge.Center, out var pos2, out _, out _ );
 				var p2 = pos2 - center;
 				var angle2 = Math.Atan2( p2.Y, p2.X );
 
@@ -1246,7 +1321,7 @@ again:;
 				{
 					//!!!!фрустум порверять
 
-					var logicalData = (CrossroadLogicalData)GetLogicalData( false );
+					var logicalData = (RoadJunctionLogicalData)GetLogicalData( false );
 					if( logicalData != null )
 					{
 						ColorValue color;
@@ -1276,8 +1351,8 @@ again:;
 								renderer.AddArrow( pos, pos + dir * 4 );
 
 								{
-									road.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Left, out var left, out _, out _ );
-									road.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var right, out _, out _ );
+									road.GetSurfacePositionOnEdge( RoadJunctionLogicalData.ConnectedRoadItem.PositionOnEdge.Left, out var left, out _, out _ );
+									road.GetSurfacePositionOnEdge( RoadJunctionLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var right, out _, out _ );
 									renderer.AddLineThin( left, right );
 								}
 							}
@@ -1303,7 +1378,7 @@ again:;
 		{
 			base.OnCalculateVisualData( visualData );
 
-			var logicalData = (CrossroadLogicalData)GetLogicalData();
+			var logicalData = (RoadJunctionLogicalData)GetLogicalData();
 			if( !logicalData.Valid )
 				return;
 			if( !logicalData.SortedRoads[ 0 ].ConnectedRoad.RoadType.SurfaceMaterial.ReferenceOrValueSpecified )
@@ -1356,16 +1431,16 @@ again:;
 						//var nextRoad = logicalData.SortedRoads[ ( nRoad + 1 ) % logicalData.SortedRoads.Count ];
 						//var previousRoad = logicalData.SortedRoads[ ( nRoad + logicalData.SortedRoads.Count - 1 ) % logicalData.SortedRoads.Count ];
 
-						road.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var roadRightCornerPosition, out var roadRightCornerDirection, out var roadRightCornerUp );
+						road.GetSurfacePositionOnEdge( RoadJunctionLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var roadRightCornerPosition, out var roadRightCornerDirection, out var roadRightCornerUp );
 
-						road.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Left, out var roadLeftCornerPosition, out var roadLeftCornerDirection, out var roadLeftCornerUp );
+						road.GetSurfacePositionOnEdge( RoadJunctionLogicalData.ConnectedRoadItem.PositionOnEdge.Left, out var roadLeftCornerPosition, out var roadLeftCornerDirection, out var roadLeftCornerUp );
 
-						//road.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Left, out var roadCornerPosition, out var roadCornerDirection, out var roadCornerUp );
+						//road.GetSurfacePositionOnEdge( JunctionLogicalData.ConnectedRoadItem.PositionOnEdge.Left, out var roadCornerPosition, out var roadCornerDirection, out var roadCornerUp );
 
-						//nextRoad.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var nextRoadCornerPosition, out var nextRoadCornerDirection, out var nextRoadCornerUp );
+						//nextRoad.GetSurfacePositionOnEdge( JunctionLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var nextRoadCornerPosition, out var nextRoadCornerDirection, out var nextRoadCornerUp );
 
 						////!!!!left?
-						//previousRoad.GetSurfacePositionOnEdge( CrossroadLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var previousRoadCornerPosition, out var previousRoadCornerDirection, out var previousRoadCornerUp );
+						//previousRoad.GetSurfacePositionOnEdge( JunctionLogicalData.ConnectedRoadItem.PositionOnEdge.Right, out var previousRoadCornerPosition, out var previousRoadCornerDirection, out var previousRoadCornerUp );
 
 						//if( !MathAlgorithms.IntersectRayRay( roadCornerPosition.ToVector2(), roadCornerPosition.ToVector2() + roadCornerDirection.ToVector2(), nextRoadCornerPosition.ToVector2(), nextRoadCornerPosition.ToVector2() + nextRoadCornerDirection.ToVector2(), out var intersectionPoint2 ) )
 						//{
@@ -1573,7 +1648,7 @@ again:;
 		{
 			base.OnCalculateCollisionBodies();
 
-			var logicalData = (CrossroadLogicalData)GetLogicalData();
+			var logicalData = (RoadJunctionLogicalData)GetLogicalData();
 			if( !logicalData.Valid )
 				return;
 			if( !logicalData.SortedRoads[ 0 ].ConnectedRoad.RoadType.SurfaceMaterial.ReferenceOrValueSpecified )

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0-ios</TargetFramework>
-    <SupportedOSPlatformVersion>13.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
     <RootNamespace>NeoAxis.Player.iOS</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>IOS;DEPLOY;CLIENT</DefineConstants>
@@ -14,10 +14,14 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <PublishTrimmed>True</PublishTrimmed>
 	<Configurations>Release;Release-Simulator;Debug;Debug-Simulator</Configurations>
+    <ProvisioningType>manual</ProvisioningType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
     <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
+	  <MtouchInterpreter>-all</MtouchInterpreter>
+	  <NoSymbolStrip>true</NoSymbolStrip>
+	  <MtouchExtraArgs>--gcc_flags "-Wl,-export_dynamic -Wl,-exported_symbol,*"</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
@@ -26,11 +30,18 @@
     <DebugOptimization>True</DebugOptimization>
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
+	  <MtouchInterpreter>-all</MtouchInterpreter>
+	  <NoSymbolStrip>true</NoSymbolStrip>
+	  <MtouchExtraArgs>--gcc_flags "-Wl,-export_dynamic -Wl,-exported_symbol,*"</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug-Simulator'">
     <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
     <DefineConstants>$(DefineConstants);TRACE;DEBUG</DefineConstants>
-    <EnableCodeSigning>false</EnableCodeSigning>
+    <EnableCodeSigning>true</EnableCodeSigning>
+    <CodesignKey>-</CodesignKey>
+	  <MtouchInterpreter>-all</MtouchInterpreter>
+	  <NoSymbolStrip>true</NoSymbolStrip>
+	  <MtouchExtraArgs>--gcc_flags "-Wl,-export_dynamic -Wl,-exported_symbol,*"</MtouchExtraArgs>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release-Simulator'">
     <RuntimeIdentifier>iossimulator-arm64</RuntimeIdentifier>
@@ -65,15 +76,11 @@
     <Compile Include="Implementation\FunctionalityIOS.Input.cs" />
     <Compile Include="Implementation\FunctionalityIOS.Utility.cs" />
     <Compile Include="Implementation\FunctionalityIOS.Video.cs" />
-    <Compile Include="Implementation\LogPlatformFunctionalityIOS.cs" />
     <Compile Include="Implementation\Metal.cs" />
     <Compile Include="Implementation\PlatformSpecificUtilityIOS.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="SceneDelegate.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\ClientUtility.cs" />
     <Compile Include="Project\Assets\Base\Scripts\RunServer.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\NetworkLogic.cs" />
-    <Compile Include="Project\Assets\Base\Scripts\CloudServiceClient.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerCreateWindow.cs" />
     <Compile Include="Project\Assets\Base\Scripts\SimulationAppClient.cs" />
     <Compile Include="Project\Assets\Base\Scripts\SimulationAppServer.cs" />
@@ -88,45 +95,56 @@
     <Compile Include="Project\Assets\Base\UI\Styles\UIStyleEditor.cs" />
     <Compile Include="Project\Assets\Base\UI\Styles\UIStyleSimple.cs" />
     <Compile Include="Project\Assets\Base\UI\Windows\MessageBoxWindow.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterCommon.cs" />
-    <Compile Include="Project\Assets\Samples\Simple Game\SimpleGameGUI.cs" />
     <Compile Include="Project\Caches\CSharpScripts\CSharpScripts.cs" />
     <Compile Include="Project\Assets\Base\WindowApp\WindowAppMainForm.cs" />
-    <Compile Include="Project\Assets\Samples\Spaceship Game\SpaceshipGameGUI.cs" />
-    <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameGUI.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterNetworkLogic.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterInGameContextScreen.cs" />
-    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterSceneScreen.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MultiplayerJoinWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\BasicSceneScreen.cs" />
-    <Compile Include="Project\Assets\Base\UI\Screens\EntranceScreen.cs" />
-    <Compile Include="Project\Assets\Base\UI\Screens\InGameContextScreen.cs" />
-    <Compile Include="Project\Assets\Base\UI\Screens\AvatarWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MatchesWindow.cs" />
     <Compile Include="Project\Assets\Base\UI\Screens\MatchWindow.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\Cloud\MatchSceneClient.cs" />
+    <Compile Include="Project\Assets\Samples\Simple Game\SimpleGameScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Spaceship Game\SpaceshipGameScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Platform Game\PlatformGameScreen.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\Scripts\ShooterGameLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Shooter\UI\ShooterGameScreen.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ProjectSettingsPage_Extension.cs" />
+    <Compile Include="Project\Assets\Base\Scripts\ShaderFunctions.cs" />
+    <Compile Include="Project\Assets\Samples\Racing\Scripts\RacingGameLogic.cs" />
+    <Compile Include="Project\Assets\Samples\Racing\UI\RacingGameScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NeoAxis.Core">
       <HintPath>..\..\Binaries\NeoAxis.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
-
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'ios-arm64'">
     <NativeReference Include="libs\libNeoAxisCoreNative.a">
       <Kind>Static</Kind>
       <ForceLoad>True</ForceLoad>
+		<Frameworks>AudioToolbox CoreAudio</Frameworks>
+    </NativeReference>
+	  <NativeReference Include="libs\libMoltenVK.a">
+		  <Kind>Static</Kind>
+		  <ForceLoad>True</ForceLoad>
+		  <IsCxx>True</IsCxx>
+		  <Frameworks>Metal QuartzCore IOSurface CoreGraphics UIKit Foundation</Frameworks>
     </NativeReference>
     <DirectPInvoke Include="libNeoAxisCoreNative" />
   </ItemGroup>
-
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'iossimulator-arm64'">
     <NativeReference Include="libs\libNeoAxisCoreNativeSimulator.a">
       <Kind>Static</Kind>
       <ForceLoad>True</ForceLoad>
+			<Frameworks>AudioToolbox CoreAudio</Frameworks>
+		</NativeReference>
+		<NativeReference Include="libs\libMoltenVKSimulator.a">
+			<Kind>Static</Kind>
+			<ForceLoad>True</ForceLoad>
+			<IsCxx>True</IsCxx>
+			<Frameworks>Metal QuartzCore IOSurface CoreGraphics UIKit Foundation</Frameworks>
     </NativeReference>
-    <DirectPInvoke Include="libNeoAxisCoreNative" />
+    <DirectPInvoke Include="libNeoAxisCoreNativeSimulator" />
   </ItemGroup>
-
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="if EXIST &quot;$(ProjectDir)..\..\Project.csproj&quot; ( if EXIST &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; ( &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -platformProjectPatchWithCopyFiles &quot;$(ProjectDir)NeoAxis.Player.iOS.csproj&quot; -baseProject &quot;$(ProjectDir)..\..\Project.csproj&quot; ) )&#xD;&#xA;&#xD;&#xA;set Product=Base\Build\Demo iOS.product&#xD;&#xA;rem set Product=Base\Build\Simple Game iOS.product&#xD;&#xA;if exist &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; &quot;$(ProjectDir)..\..\Binaries\NeoAxis.Internal\Platforms\Windows\CommandLineTools\CommandLineTools.exe&quot; -prepareProductAssets 1 -productFile &quot;%25Product%25&quot; -destinationFolder &quot;$(ProjectDir)Resources&quot; -platform iOS" />
   </Target>

@@ -13,32 +13,36 @@ namespace NeoAxis.Player.iOS
 {
 	static class Engine
 	{
-
-		//!!!!impl. copied from Android
-
-
 		//public static AppCompatActivity activity;
 
 		//Thread engineMainThread;
 		public volatile static bool engineInitialized;
 
-		public struct TouchEventItem
+		static Dictionary<IntPtr, object> pointerIdentifiers = new Dictionary<IntPtr, object>();
+		public static Queue<InputEventItem> inputEventQueue = new Queue<InputEventItem>();
+
+		/////////////////////////////////////////
+
+		public abstract class InputEventItem
 		{
-			//!!!!
-			//public MotionEventActions Action;
-			//public int ActionIndex;
-			//public MotionEventActions ActionMasked;
-
-			public Vector2F[] PointersPosition;
-			public int[] PointersId;
-
-			//it can't work. MotionEvent properties become invalid when OnTouch is ended
-			//public View View;
-			//public MotionEvent MotionEvent;
 		}
-		public static Queue<TouchEventItem> touchEventsQueue = new Queue<TouchEventItem>();
 
-		static List<object> pointerIdentifiers = new List<object>();
+		/////////////////////////////////////////
+
+		public class TouchEventItem : InputEventItem
+		{
+			public TouchData.ActionEnum Action;
+			public IntPtr TouchHandle;
+			public Vector2F Position;
+		}
+
+		/////////////////////////////////////////
+
+		public class KeyDownEventItem : InputEventItem
+		{
+			public EKeys KeyCode;
+			public char Character;
+		}
 
 		/////////////////////////////////////////
 
@@ -279,6 +283,128 @@ namespace NeoAxis.Player.iOS
 			StartupTiming.CounterEnd( "Extract project files from the archive", alreadyExtracted ? "The archive is already extracted." : "" );
 		}
 
+		/////////////////////////////////////////
+
+		static void ProcessInputEvent_KeyDown( KeyDownEventItem item )
+		{
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+
+			if( item.KeyCode != EKeys.None )
+			{
+				var data = new KeyEvent( item.KeyCode );
+
+				{
+					var handled = false;
+					viewport.PerformKeyDown( data, ref handled );
+				}
+
+				//!!!!
+
+				{
+					var handled = false;
+					viewport.PerformKeyUp( data, ref handled );
+				}
+			}
+			else
+			{
+				var data = new KeyPressEvent( item.Character );
+
+				bool handled = false;
+				viewport.PerformKeyPress( data, ref handled );
+				//if( handled )
+				//	return;
+			}
+
+			//!!!!
+
+			//{
+			//	var data = new KeyEvent( key );
+
+			//	bool handled = false;
+			//	viewport.PerformKeyUp( data, ref handled );
+			//	//if( handled )
+			//	//	return;
+			//}
+
+
+
+			//EKeys key = EKeys.None;
+
+			//if( key == EKeys.None )
+			//	return;
+
+			//{
+			//	var data = new KeyEvent( key );
+
+			//	bool handled = false;
+			//	viewport.PerformKeyDown( data, ref handled );
+			//	//if( handled )
+			//	//	return;
+			//}
+
+			////!!!!
+
+			//{
+			//	var data = new KeyEvent( key );
+
+			//	bool handled = false;
+			//	viewport.PerformKeyUp( data, ref handled );
+			//	//if( handled )
+			//	//	return;
+			//}
+		}
+
+		static void ProcessInputEvent( InputEventItem item )
+		{
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+			if( viewport.SizeInPixels.X == 0 || viewport.SizeInPixels.Y == 0 )
+				return;
+
+			var touchItem = item as TouchEventItem;
+			if( touchItem != null )
+				ProcessInputEvent_Touch( touchItem );
+
+			var keyDownItem = item as KeyDownEventItem;
+			if( keyDownItem != null )
+				ProcessInputEvent_KeyDown( keyDownItem );
+		}
+
+		public static void ProcessInputEvents()
+		{
+			lock( inputEventQueue )
+			{
+				while( inputEventQueue.Count != 0 )
+				{
+					var item = inputEventQueue.Dequeue();
+					ProcessInputEvent( item );
+				}
+			}
+		}
+
+		//!!!!betauser iOS
+		static void ProcessInputEvent_Touch( TouchEventItem item )
+		{
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+
+			if( item.Action == TouchData.ActionEnum.Down )
+				pointerIdentifiers[ item.TouchHandle ] = new object();
+			if( !pointerIdentifiers.TryGetValue( item.TouchHandle, out var pointerIdentifier ) )
+				return;
+
+			var data = new TouchData();
+			data.Action = item.Action;
+			data.Position = item.Position;
+			data.PositionInPixels = ( item.Position * viewport.SizeInPixels.ToVector2F() ).ToVector2I();
+			data.PointerIdentifier = pointerIdentifier;
+
+			ProcessTouch( viewport, data );
+
+			if( item.Action == TouchData.ActionEnum.Up )
+				pointerIdentifiers.Remove( item.TouchHandle );
+		}
+
+		/////////////////////////////////////////
+
 		static void ProcessTouch( Viewport viewport, TouchData data )
 		{
 			bool handled = false;
@@ -326,100 +452,100 @@ namespace NeoAxis.Player.iOS
 			}
 		}
 
-		static void PerformTouch( TouchEventItem item )
-		{
-			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
-			if( viewport.SizeInPixels.X == 0 || viewport.SizeInPixels.Y == 0 )
-				return;
+		//static void PerformTouch( TouchEventItem item )
+		//{
+		//	var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+		//	if( viewport.SizeInPixels.X == 0 || viewport.SizeInPixels.Y == 0 )
+		//		return;
 
-			//!!!!
+		//	//!!!!
 
-			//switch( item.ActionMasked )//switch( item.Action )
-			//{
-			//case MotionEventActions.Down:
-			//case MotionEventActions.PointerDown:
-			//	{
-			//		var index = item.ActionIndex;
-			//		var id = item.PointersId[ index ];
+		//	//switch( item.ActionMasked )//switch( item.Action )
+		//	//{
+		//	//case MotionEventActions.Down:
+		//	//case MotionEventActions.PointerDown:
+		//	//	{
+		//	//		var index = item.ActionIndex;
+		//	//		var id = item.PointersId[ index ];
 
-			//		while( id >= pointerIdentifiers.Count )
-			//			pointerIdentifiers.Add( null );
-			//		pointerIdentifiers[ id ] = new object();
+		//	//		while( id >= pointerIdentifiers.Count )
+		//	//			pointerIdentifiers.Add( null );
+		//	//		pointerIdentifiers[ id ] = new object();
 
 
-			//		var data = new TouchData();
-			//		data.Action = TouchData.ActionEnum.Down;
+		//	//		var data = new TouchData();
+		//	//		data.Action = TouchData.ActionEnum.Down;
 
-			//		var position = item.PointersPosition[ index ];
-			//		data.PositionInPixels = position.ToVector2I();
-			//		data.Position = data.PositionInPixels.ToVector2F() / viewport.SizeInPixels.ToVector2F();
+		//	//		var position = item.PointersPosition[ index ];
+		//	//		data.PositionInPixels = position.ToVector2I();
+		//	//		data.Position = data.PositionInPixels.ToVector2F() / viewport.SizeInPixels.ToVector2F();
 
-			//		data.PointerIdentifier = pointerIdentifiers[ id ];
+		//	//		data.PointerIdentifier = pointerIdentifiers[ id ];
 
-			//		ProcessTouch( viewport, data );
-			//	}
-			//	break;
+		//	//		ProcessTouch( viewport, data );
+		//	//	}
+		//	//	break;
 
-			//case MotionEventActions.Up:
-			//case MotionEventActions.PointerUp:
-			//	{
-			//		var index = item.ActionIndex;
-			//		var id = item.PointersId[ index ];
+		//	//case MotionEventActions.Up:
+		//	//case MotionEventActions.PointerUp:
+		//	//	{
+		//	//		var index = item.ActionIndex;
+		//	//		var id = item.PointersId[ index ];
 
-			//		var data = new TouchData();
-			//		data.Action = TouchData.ActionEnum.Up;
+		//	//		var data = new TouchData();
+		//	//		data.Action = TouchData.ActionEnum.Up;
 
-			//		var position = item.PointersPosition[ index ];
-			//		data.PositionInPixels = position.ToVector2I();
-			//		data.Position = data.PositionInPixels.ToVector2F() / viewport.SizeInPixels.ToVector2F();
+		//	//		var position = item.PointersPosition[ index ];
+		//	//		data.PositionInPixels = position.ToVector2I();
+		//	//		data.Position = data.PositionInPixels.ToVector2F() / viewport.SizeInPixels.ToVector2F();
 
-			//		data.PointerIdentifier = pointerIdentifiers[ id ];
+		//	//		data.PointerIdentifier = pointerIdentifiers[ id ];
 
-			//		ProcessTouch( viewport, data );
+		//	//		ProcessTouch( viewport, data );
 
-			//		if( id < pointerIdentifiers.Count )
-			//			pointerIdentifiers[ id ] = null;
-			//		while( pointerIdentifiers.Count != 0 && pointerIdentifiers[ pointerIdentifiers.Count - 1 ] == null )
-			//			pointerIdentifiers.RemoveAt( pointerIdentifiers.Count - 1 );
-			//	}
-			//	break;
+		//	//		if( id < pointerIdentifiers.Count )
+		//	//			pointerIdentifiers[ id ] = null;
+		//	//		while( pointerIdentifiers.Count != 0 && pointerIdentifiers[ pointerIdentifiers.Count - 1 ] == null )
+		//	//			pointerIdentifiers.RemoveAt( pointerIdentifiers.Count - 1 );
+		//	//	}
+		//	//	break;
 
-			//case MotionEventActions.Move:
-			//	for( int index = 0; index < item.PointersPosition.Length; index++ )
-			//	{
-			//		var id = item.PointersId[ index ];
-			//		if( id < pointerIdentifiers.Count )
-			//		{
-			//			var data = new TouchData();
-			//			data.Action = TouchData.ActionEnum.Move;
+		//	//case MotionEventActions.Move:
+		//	//	for( int index = 0; index < item.PointersPosition.Length; index++ )
+		//	//	{
+		//	//		var id = item.PointersId[ index ];
+		//	//		if( id < pointerIdentifiers.Count )
+		//	//		{
+		//	//			var data = new TouchData();
+		//	//			data.Action = TouchData.ActionEnum.Move;
 
-			//			var position = item.PointersPosition[ index ];
-			//			data.PositionInPixels = position.ToVector2I();
-			//			data.Position = data.PositionInPixels.ToVector2F() / viewport.SizeInPixels.ToVector2F();
+		//	//			var position = item.PointersPosition[ index ];
+		//	//			data.PositionInPixels = position.ToVector2I();
+		//	//			data.Position = data.PositionInPixels.ToVector2F() / viewport.SizeInPixels.ToVector2F();
 
-			//			data.PointerIdentifier = pointerIdentifiers[ id ];
+		//	//			data.PointerIdentifier = pointerIdentifiers[ id ];
 
-			//			ProcessTouch( viewport, data );
-			//		}
-			//	}
-			//	break;
+		//	//			ProcessTouch( viewport, data );
+		//	//		}
+		//	//	}
+		//	//	break;
 
-			//default:
-			//	return;
-			//}
+		//	//default:
+		//	//	return;
+		//	//}
 
-		}
+		//}
 
-		public static void ProcessTouchEvents()
-		{
-			lock( touchEventsQueue )
-			{
-				while( touchEventsQueue.Count != 0 )
-				{
-					var item = touchEventsQueue.Dequeue();
-					PerformTouch( item );
-				}
-			}
-		}
+		//public static void ProcessTouchEvents()
+		//{
+		//	lock( touchEventsQueue )
+		//	{
+		//		while( touchEventsQueue.Count != 0 )
+		//		{
+		//			var item = touchEventsQueue.Dequeue();
+		//			PerformTouch( item );
+		//		}
+		//	}
+		//}
 	}
 }

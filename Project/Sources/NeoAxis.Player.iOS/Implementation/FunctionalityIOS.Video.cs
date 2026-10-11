@@ -24,10 +24,6 @@ namespace NeoAxis
 		{
 		}
 
-		public override void SetGamma( float value )
-		{
-		}
-
 		public override void ProcessChangingVideoMode()
 		{
 		}

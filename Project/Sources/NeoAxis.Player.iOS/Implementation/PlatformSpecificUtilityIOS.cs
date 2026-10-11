@@ -8,10 +8,10 @@ namespace NeoAxis
 {
 	class PlatformSpecificUtilityIOS : PlatformSpecificUtility
 	{
-		public PlatformSpecificUtilityIOS()
-		{
-			SetInstance( this );
-		}
+		//public PlatformSpecificUtilityIOS()
+		//{
+		//	SetInstance( this );
+		//}
 
 		public override string GetExecutableDirectoryPath()
 		{
@@ -19,9 +19,11 @@ namespace NeoAxis
 			return "";
 		}
 
-		public override IntPtr LoadLibrary( string path )
+		public override EDialogResult ShowMessageBox( string text, string caption, EMessageBoxButtons buttons = EMessageBoxButtons.OK )
 		{
-			return IntPtr.Zero;
+			//!!!!buttons, result
+			Console.WriteLine( "MESSAGE:\r\n" + caption + ":" + text );
+			return EDialogResult.OK;
 		}
 
 		public async override Task<string> GetClipboardTextAsync()

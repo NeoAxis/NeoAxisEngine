@@ -882,7 +882,7 @@ namespace NeoAxis
 			case TemplateEnum.OakForest:
 				{
 					data.BaseMaterial = new Reference<Material>( null, baseMaterialDefault );
-					data.BaseMaterialColor = ColorValue.One;
+					data.BaseMaterialColor = new ColorValue( 0.5, 0.5, 0.5 );
 					data.BaseSurface = new Reference<Surface>( null, baseSurfaceDefault );
 					data.BaseSurfacePaintFactor = 1;
 					data.BaseSurfaceColor = new ColorValue( 0.57, 0.75, 0.49 );
