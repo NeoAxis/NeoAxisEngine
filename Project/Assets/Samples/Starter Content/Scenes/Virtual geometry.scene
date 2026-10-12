@@ -226,7 +226,7 @@
 			}
 			Surface
 			{
-				GetByReference = "Samples\\Starter Content\\Scenes\\Levels.surface"
+				GetByReference = "Samples\\Starter Content\\Scenes\\Virtual Geometry.surface"
 			}
 		}
 	}
