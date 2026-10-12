@@ -16,12 +16,13 @@ Alternative website: <a href="https://www.neoaxis.cn/en/">www.neoaxis.cn/en/</a>
 <h2>Target supported platforms</h2>
 <ul>
 <li>Windows 10+</li>
-<li>Android ARM64, ARM32</li>
-<li>iOS</li>
 <li>macOS</li>
+<li>Android (ARM64, ARM32)</li>
+<li>iOS</li>
 <li>Web</li>
 <li>UWP x64 (Universal Windows Platform, Xbox)</li>
 <li>Linux x64 (Server only, no rendering)</li>
+<li>VR, AR - Coming soon</li>
 </ul>
 
 <h2>Building</h2>
