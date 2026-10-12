@@ -162,6 +162,7 @@ namespace NeoAxis.Widget
 
 		public static void WPFInit( string logFileName, string configFileName )
 		{
+			Platforms.Initialize();
 			EngineApp.ApplicationType = EngineApp.ApplicationTypeEnum.Simulation;
 
 			//get project's directories

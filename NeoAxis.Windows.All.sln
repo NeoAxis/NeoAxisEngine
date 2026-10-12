@@ -94,6 +94,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Addon.UIWebBrowser"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoAxis.Platforms", "Sources\Engine\NeoAxis.Platforms\NeoAxis.Platforms.csproj", "{493D26E8-A80E-5775-2809-039E84925F5F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWidgetWPF", "Project\Sources\SampleWidgetWPF\SampleWidgetWPF.csproj", "{21995779-7B4B-A78E-7355-17F985ED3FC5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{16520154-5B9F-42B1-B11A-BC7C6D6B778B} = {16520154-5B9F-42B1-B11A-BC7C6D6B778B}
+		{765CBD47-5D68-403F-98E3-46B43C10342F} = {765CBD47-5D68-403F-98E3-46B43C10342F}
+		{CA843A31-0452-4CAE-99FA-946573D8EEC6} = {CA843A31-0452-4CAE-99FA-946573D8EEC6}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -254,6 +261,14 @@ Global
 		{493D26E8-A80E-5775-2809-039E84925F5F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{493D26E8-A80E-5775-2809-039E84925F5F}.Release|x64.ActiveCfg = Release|Any CPU
 		{493D26E8-A80E-5775-2809-039E84925F5F}.Release|x64.Build.0 = Release|Any CPU
+		{21995779-7B4B-A78E-7355-17F985ED3FC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21995779-7B4B-A78E-7355-17F985ED3FC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21995779-7B4B-A78E-7355-17F985ED3FC5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{21995779-7B4B-A78E-7355-17F985ED3FC5}.Debug|x64.Build.0 = Debug|Any CPU
+		{21995779-7B4B-A78E-7355-17F985ED3FC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21995779-7B4B-A78E-7355-17F985ED3FC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21995779-7B4B-A78E-7355-17F985ED3FC5}.Release|x64.ActiveCfg = Release|Any CPU
+		{21995779-7B4B-A78E-7355-17F985ED3FC5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

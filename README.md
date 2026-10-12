@@ -15,7 +15,7 @@ Alternative website: <a href="https://www.neoaxis.cn/en/">www.neoaxis.cn/en/</a>
 
 <h2>Target supported platforms</h2>
 <ul>
-<li>Windows 10+</li>
+<li>Windows</li>
 <li>macOS</li>
 <li>Android (ARM64, ARM32)</li>
 <li>iOS</li>

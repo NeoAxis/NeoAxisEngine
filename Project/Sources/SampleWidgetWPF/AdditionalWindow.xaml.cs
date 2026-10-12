@@ -35,10 +35,12 @@ namespace SampleWidgetWPF
 
 		private void WidgetControl1_ViewportCreated( NeoAxis.Editor.EngineViewportControl sender )
 		{
-			Scene.First.ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
+			var scene = Scene.GetFirst();
+
+			scene.ViewportUpdateGetCameraSettings += Scene_ViewportUpdateGetCameraSettings;
 
 			//bind scene to viewport
-			WidgetControl.InnerControl.Viewport.AttachedScene = Scene.First;
+			WidgetControl.InnerControl.Viewport.AttachedScene = scene;
 		}
 
 		protected virtual void Scene_ViewportUpdateGetCameraSettings( Scene scene, Viewport viewport, ref bool processed )
@@ -49,9 +51,9 @@ namespace SampleWidgetWPF
 				if( defaultCamera == null )
 					defaultCamera = scene.Mode.Value == Scene.ModeEnum._3D ? scene.CameraEditor : scene.CameraEditor2D;
 
-				var position = new Vector3( 27, 4, -9 );
-				var lookTo = new Vector3( 25, -0.6, -10 );
-				var up = Vector3.ZAxis;
+				//var position = new Vector3( 27, 4, -9 );
+				//var lookTo = new Vector3( 25, -0.6, -10 );
+				//var up = Vector3.ZAxis;
 
 				//var obj = scene.GetComponent<ObjectInSpace>( "Mesh in Space 68" );
 				//if( obj != null )
@@ -64,8 +66,8 @@ namespace SampleWidgetWPF
 
 				var camera = (Camera)defaultCamera.Clone();
 				//camera = new Camera();
-				camera.Transform = new NeoAxis.Transform( position, Quaternion.LookAt( ( lookTo - position ).GetNormalize(), up ) );
-				camera.FixedUp = up;
+				//camera.Transform = new NeoAxis.Transform( position, Quaternion.LookAt( ( lookTo - position ).GetNormalize(), up ) );
+				//camera.FixedUp = up;
 				viewport.CameraSettings = new Viewport.CameraSettingsClass( viewport, camera );
 
 				processed = true;

@@ -1,12 +1,7 @@
 ﻿// Copyright 2006–2026 Ivan Efimov. All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Navigation;
 using NeoAxis.Widget;
 
 namespace SampleWidgetWPF
