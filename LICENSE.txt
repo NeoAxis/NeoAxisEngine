@@ -1,4 +1,4 @@
-NeoAxis Engine End User License Agreement
+NeoAxis Engine Standard End User License Agreement
 
 1. LICENSE AGREEMENT
 
@@ -10,11 +10,11 @@ The License becomes effective on the date you accept this Agreement or download 
 
 2. LICENSE GRANT
 
-Permission is hereby granted, free of charge, to you obtaining a copy of this software and associated documentation files, to deal in the software, including the rights to use, copy, modify, merge, publish, distribute, and/or sell copies of the software, and to permit persons to whom the software is furnished to do so, subject to the following conditions:
+Subject to the terms and conditions of this Agreement, including the timely payment of any applicable royalties and seat fees, Licensor hereby grants you a non-exclusive, non-transferable, revocable license to use, reproduce, modify, and distribute the Technology solely in accordance with the provisions set forth below:
 
 A. All redistributions must retain all occurrences of the above copyright notice and website addresses that are currently in place.
 
-B. Modified versions in binary or in source form must be plainly marked as such, and must not be misrepresented as being the original software. When distributing in original or modified form, you must explicitly state that this is not an official distribution source, specify the differences from the original distribution, and clearly indicate if it is an outdated version. The license imposes restrictions on creating a competing product, as it is technically possible to do so by forking the source code. This license does not permit the creation of another game engine or other competing game engine technology based substantially on the Engine Code; a special license is required for that.
+B. Modified versions of the Technology in binary or source form must be plainly marked as such and must not be misrepresented as being the original software. When distributing permitted modifications or derivative works, you must explicitly state that the distribution is unofficial and cause any modified files to carry prominent notices stating that you changed the files. You may not use the Engine Code or any portion, derivative work, or modification thereof to develop, distribute, license, or sell any competing game engine, real-time rendering engine, interactive authoring tool, software development kit (SDK), or runtime framework that offers functionality substantially similar to or substitutable for the Technology. Any such use requires a separate, written commercial license from the Licensor.
 
 C. You agree to pay the Licensor a royalty equal to 5% of all worldwide gross revenue from each video game Product, excluding the first $200,000 USD or equivalent in the lifetime of a Product. This includes gross revenue from any and all sales of a Product to end users through any and all media, revenue from any and all in-app purchases, in-app advertising, affiliate programs, downloadable content, microtransactions, subscriptions, sales, transfers, advance payments, exchange of content created by end users, and revenue in any other form. Payments must be made monthly, within fifteen (15) calendar days after the end of each applicable month. Notwithstanding the foregoing, gross revenue generated directly from the distribution of Products on the NeoX Service platform shall be exempt from the royalty obligations set forth in this Clause C.
 
@@ -28,7 +28,9 @@ G. Additional Content which is provided for an additional fee can be redistribut
 
 H. Certain Additional Content is distributed under the "Free to use with NeoAxis" license. This means that the content can only be used with the Engine Code.
 
-I. "NeoX Service" means a special case of this Agreement under which the Product may be distributed solely inside the NeoX cloud service.
+I. Certain Products may be licensed or distributed under the "NeoX Service" license terms, which represent a special case of this Agreement. Under these terms, the Product may be distributed solely inside the NeoX Service cloud platform.
+
+J. You may not modify, alter, bypass, disable, or circumvent the login verification behavior, authentication mechanisms, or account validation routines of the Engine Code. Furthermore, modifying, altering, or removing any portions of the source code or binary files marked with the statement "IMPORTANT: Modifying or bypassing this part of the code is prohibited by the NeoAxis Engine Standard EULA." is strictly prohibited under this License.
 
 If you do not accept these conditions or they are not enforceable in your jurisdiction, then you may not use the software.
 
@@ -69,6 +71,11 @@ Licensee agrees that use of the Software is at their own risk. In no event shall
 This Agreement and any documents or information referred to in this Agreement constitute the entire agreement between you and Ivan Efimov relating to the subject matter covered by this Agreement. All other communications, proposals, and representations with respect to the subject matter covered by this Agreement are excluded.
 
 If any provision in this Agreement is unenforceable or invalid, it shall not affect the rest of the Agreement. The Licensee agrees to replace any unenforceable or invalid provision with a valid provision that upholds the intent of the provision to the greatest extent possible.
+
+References in this Agreement to neoaxis.com shall be deemed to include the regional website neoaxis.cn.
+
+9. TERMINATION
+This Agreement will terminate automatically without notice if you fail to comply with any of its terms. Upon termination, you must immediately cease all use of the Technology and destroy all copies of the Engine Code in your possession. Sections 2.C, 2.D, 4, 5, 6, and 8 shall survive any termination of this Agreement.
 
 Copyright 2006–2026 Ivan Efimov. All rights reserved.
 https://www.neoaxis.com/
