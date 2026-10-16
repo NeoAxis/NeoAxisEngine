@@ -32,7 +32,7 @@ I. Certain Products may be licensed or distributed under the "NeoX Service" lice
 
 J. You may not modify, alter, bypass, disable, or circumvent the login verification behavior, authentication mechanisms, or account validation routines of the Engine Code. Furthermore, modifying, altering, or removing any portions of the source code or binary files marked with the statement "IMPORTANT: Modifying or bypassing this part of the code is prohibited by the NeoAxis Engine Standard EULA." is strictly prohibited under this License.
 
-K. You agree to provide accurate, complete, and up-to-date information during account registration and promptly update your profile if any changes occur. If you are setting up a project as a company or a sole proprietor, you need to select the entity type "Company" or "Sole proprietor" respectively.
+K. You agree to provide accurate, complete, and up-to-date information during account registration and promptly update your profile if any changes occur. If you are setting up a project as a company or a individual proprietor, you need to select the entity type "Company" or "Individual proprietor" respectively.
 
 If you do not accept these conditions or they are not enforceable in your jurisdiction, then you may not use the software.
 
