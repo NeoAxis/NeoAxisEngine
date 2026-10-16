@@ -122,7 +122,7 @@ namespace NeoAxis.Editor
 				else
 				{
 					if( LoginUtility.GetCurrentLicense( out string email, out string hash ) )
-						if( LoginUtility.GetRequestedInfo( out var userID, out _ ) )
+						if( LoginUtility.GetRequestedInfo( out var userID, out _ ) && userID != 0 )
 							authenticated = true;
 				}
 
@@ -670,7 +670,7 @@ namespace NeoAxis.Editor
 			else
 			{
 				if( LoginUtility.GetCurrentLicense( out string email, out string hash ) )
-					if( LoginUtility.GetRequestedInfo( out var userID, out _ ) )
+					if( LoginUtility.GetRequestedInfo( out var userID, out _ ) && userID != 0 )
 						authenticated = true;
 			}
 			if( !authenticated )

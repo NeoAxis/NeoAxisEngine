@@ -1,15 +1,12 @@
 ﻿// Copyright 2006–2026 Ivan Efimov. All rights reserved.
+
+//IMPORTANT: Modifying or bypassing this part of the code is prohibited by the NeoAxis Engine Standard EULA.
+
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
-using NeoAxis.Networking;
 using NeoAxis.Cloud;
-using Internal;
 
 namespace NeoAxis.Editor
 {
@@ -17,13 +14,25 @@ namespace NeoAxis.Editor
 	{
 		const string registryPath = @"HKEY_CURRENT_USER\SOFTWARE\NeoAxis";
 
-		static long requestedFullLicenseInfo_UserID;
-		//static volatile string requestedFullLicenseInfo_License = "";
-		static volatile string requestedFullLicenseInfo_Error = "";
+		volatile static ReceivedInfoClass receivedInfo = new ReceivedInfoClass();
 
-		//static string licenseCached;
+		//static long requestedFullLicenseInfo_UserID;
+		//static string requestedFullLicenseInfo_EntityType = "";
+		//static volatile string requestedFullLicenseInfo_Error = "";
+		////static volatile string requestedFullLicenseInfo_License = "";
 
-		//
+		volatile static int getLicenseAsyncCounter;
+
+		///////////////////////////////////////////////
+
+		public class ReceivedInfoClass
+		{
+			public long UserID;
+			public string EntityType = "";
+			public string Error = "";
+		}
+
+		///////////////////////////////////////////////
 
 		public static bool GetCurrentLicense( out string email, out string hash )
 		{
@@ -55,7 +64,7 @@ namespace NeoAxis.Editor
 			return new string( output );
 		}
 
-		public static void SetCurrentLicense( string email, string hash )
+		public static void SetCurrentLicense( string email, string hash, string hardwareFingerprintId )
 		{
 			try
 			{
@@ -68,26 +77,8 @@ namespace NeoAxis.Editor
 				return;
 			}
 
-			RequestInfo();
+			RequestInfo( hardwareFingerprintId );
 		}
-
-		//static async Task<CloudServiceExecuteCommand.ResultClass> UserGetAsync( long userID = 0 )
-		//{
-		//	var command = new CloudServiceExecuteCommand();
-		//	command.FunctionName = "api/v1/user/get";
-		//	command.RequireUserLogin = true;
-		//	//if( userID != 0 )
-		//	//	command.AddParameter( "moderator_get_user", userID.ToString(), true );
-		//	command.RequestMethod = CloudServiceExecuteCommand.RequestMethodEnum.Post;
-
-		//	var block = new TextBlock();
-		//	if( userID != 0 )
-		//		block.SetAttribute( "UserID", userID.ToString() );
-		//	command.ContentData = Encoding.UTF8.GetBytes( block.DumpToString() );
-
-		//	using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-		//	return await command.ExecuteAsync( cts.Token );
-		//}
 
 		async static Task GetLicenseAsync( object param )
 		{
@@ -96,24 +87,29 @@ namespace NeoAxis.Editor
 				var param2 = (Dictionary<string, string>)param;
 				var email = param2[ "Email" ];
 				var hash = param2[ "Hash" ];
+				int.TryParse( param2[ "getLicenseAsyncCounter" ], out var getLicenseAsyncCounter2 );
+				var hardwareFingerprintId = param2[ "HardwareFingerprintId" ];
+
+				again:
 
 				//get user
 				CloudServiceExecuteCommand.ResultClass getUserResult;
 				{
 					using var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-					getUserResult = await CloudServiceFunctions.UserGetAsync( cancellationToken: cts.Token );
-					//getUserResult = await UserGetAsync();
+					getUserResult = await CloudServiceFunctions.UserGetAsync( hardwareFingerprintId, cancellationToken: cts.Token );
 					if( !string.IsNullOrEmpty( getUserResult.Error ) )
 					{
-						requestedFullLicenseInfo_UserID = 0; //requestedFullLicenseInfo_License = "";
-						requestedFullLicenseInfo_Error = getUserResult.Error;
-						//requestedFullLicenseInfo_Error = "Invalid username or password. " + getUserResult.Error;
+						if( getLicenseAsyncCounter2 == getLicenseAsyncCounter )
+						{
+							receivedInfo = new ReceivedInfoClass() { Error = getUserResult.Error };
+							//requestedFullLicenseInfo_UserID = 0; //requestedFullLicenseInfo_License = "";
+							//requestedFullLicenseInfo_EntityType = "";
+							//requestedFullLicenseInfo_Error = getUserResult.Error;
 
-						//requestedUserID = 0;
-						//requestedLicense = "";
-						//requestedEmail = "";
-						//requestedUsername = "";
-						//requestedError = getUserResult.Error;
+							//pause for 1 minute before next attempt
+							await Task.Delay( 1000 * 60 );
+							goto again;
+						}
 
 						return;
 					}
@@ -123,122 +119,65 @@ namespace NeoAxis.Editor
 
 				if( !data.AttributeExists( "NotFound" ) )
 				{
-					long.TryParse( data.GetAttribute( "Id" ), out requestedFullLicenseInfo_UserID );
+					long.TryParse( data.GetAttribute( "Id" ), out var userID );
 
-					//requestedFullLicenseInfo_License = "Dummy";
-					requestedFullLicenseInfo_Error = "";
+					receivedInfo = new ReceivedInfoClass()
+					{
+						UserID = userID,
+						EntityType = data.GetAttribute( "EntityType" )
+					};
 
-					//long.TryParse( data.GetAttribute( "Id" ), out requestedUserID );
-					//requestedEmail = data.GetAttribute( "Email" );
-					//requestedUsername = data.GetAttribute( "Username" );
-					//requestedLicense = "Dummy";
-					//requestedError = "";
+					//long.TryParse( data.GetAttribute( "Id" ), out requestedFullLicenseInfo_UserID );
+					//requestedFullLicenseInfo_EntityType = data.GetAttribute( "EntityType" );
+
+					////requestedFullLicenseInfo_License = "Dummy";
+					//requestedFullLicenseInfo_Error = "";
 				}
 				else
 				{
-					requestedFullLicenseInfo_UserID = 0; //requestedFullLicenseInfo_License = "";
-					requestedFullLicenseInfo_Error = "Invalid username or password.";
+					receivedInfo = new ReceivedInfoClass() { Error = "Invalid username or password." };
 
-					//requestedUserID = 0;
-					//requestedLicense = "";
-					//requestedEmail = "";
-					//requestedUsername = "";
-					//requestedError = "Invalid username or password.";
+					//requestedFullLicenseInfo_UserID = 0; //requestedFullLicenseInfo_License = "";
+					//requestedFullLicenseInfo_EntityType = "";
+					//requestedFullLicenseInfo_Error = "Invalid username or password.";
 				}
-
-
-
-				//var email64 = StringUtility.EncodeToBase64URL( email );
-				//var hash64 = StringUtility.EncodeToBase64URL( hash );
-
-				//string data = $"email={email64}&hash={hash64}";
-				//byte[] dataStream = Encoding.UTF8.GetBytes( data );
-
-				//{
-				//	WebRequest request = WebRequest.Create( EngineInfo.StoreAddress + @"/api/get_user_info2/" );
-				//	request.Method = "POST";
-				//	request.ContentType = "application/x-www-form-urlencoded";
-				//	request.ContentLength = dataStream.Length;
-				//	Stream newStream = request.GetRequestStream();
-				//	newStream.Write( dataStream, 0, dataStream.Length );
-				//	newStream.Close();
-
-				//	string xml;
-				//	using( var response = (HttpWebResponse)request.GetResponse() )
-				//	using( var stream = response.GetResponseStream() )
-				//	using( var reader = new StreamReader( stream ) )
-				//		xml = reader.ReadToEnd();
-
-				//	if( !string.IsNullOrEmpty( xml ) )
-				//	{
-				//		var xDoc = new XmlDocument();
-				//		xDoc.LoadXml( xml );
-
-				//		requestedFullLicenseInfo_Error = "";
-
-				//		if( xDoc.DocumentElement != null )
-				//		{
-				//			foreach( XmlNode child in xDoc.DocumentElement.ChildNodes )
-				//			{
-				//				if( child.Name == "license" )
-				//					requestedFullLicenseInfo_License = child.InnerText;
-
-				//				if( child.Name == "purchased_products" )
-				//				{
-				//					var products = child.InnerText.Trim().Split( new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries );
-				//					foreach( var product in products )
-				//						requestedFullLicenseInfo_PurchasedProducts.AddWithCheckAlreadyContained( product );
-				//				}
-				//			}
-				//		}
-				//		//foreach( XmlNode child in xDoc.ChildNodes )
-				//		//{
-				//		//	if( child.Name == "license" )
-				//		//		requestedFullLicenseInfo_License = child.InnerText;
-				//		//}
-				//	}
-				//	else
-				//	{
-				//		requestedFullLicenseInfo_License = "";
-				//		requestedFullLicenseInfo_Error = "Invalid username or password.";
-				//	}
-				//}
-
-
-				//licenseCached = null;
 			}
-			catch//( Exception e )
-			{
-				//Log.Info( e.Message );
-				//Log.Warning( e.Message );
-			}
+			catch { }
 		}
 
-		public static void RequestInfo()
+		public static void RequestInfo( string hardwareFingerprintId )
 		{
-			requestedFullLicenseInfo_UserID = 0; //requestedFullLicenseInfo_License = "";
+			receivedInfo = new ReceivedInfoClass();
+			//requestedFullLicenseInfo_UserID = 0; //requestedFullLicenseInfo_License = "";
+			//requestedFullLicenseInfo_EntityType = "";
 
 			if( !GetCurrentLicense( out var email, out var hash ) )
 				return;
 
+			getLicenseAsyncCounter++;
+
 			var param = new Dictionary<string, string>();
 			param[ "Email" ] = email;
 			param[ "Hash" ] = hash;
+			param[ "getLicenseAsyncCounter" ] = getLicenseAsyncCounter.ToString();
+			param[ "HardwareFingerprintId" ] = hardwareFingerprintId;
 
 			TaskUtility.Run( TaskUtility.TaskLifetimeEnum.Minutes, "LoginUtility: RequestInfo", async () => await GetLicenseAsync( param ) );
-			//Task.Run( async () => await GetLicenseAsync( param ) );
-
-			//var thread1 = new Thread( ThreadGetLicense );
-			//thread1.IsBackground = true;
-			//thread1.Start( param );
 		}
 
+		public static ReceivedInfoClass ReceivedInfo
+		{
+			get { return receivedInfo; }
+		}
+
+		//!!!!delete?
 		public static bool GetRequestedInfo( out long userID, out string error )
 		{
-			if( requestedFullLicenseInfo_UserID != 0 || !string.IsNullOrEmpty( requestedFullLicenseInfo_Error ) )
+			var info = receivedInfo;
+			if( info.UserID != 0 || !string.IsNullOrEmpty( info.Error ) )
 			{
-				userID = requestedFullLicenseInfo_UserID;
-				error = requestedFullLicenseInfo_Error;
+				userID = info.UserID;
+				error = info.Error;
 				return true;
 			}
 			else
@@ -247,40 +186,19 @@ namespace NeoAxis.Editor
 				error = "";
 				return false;
 			}
+
+			//if( requestedFullLicenseInfo_UserID != 0 || !string.IsNullOrEmpty( requestedFullLicenseInfo_Error ) )
+			//{
+			//	userID = requestedFullLicenseInfo_UserID;
+			//	error = requestedFullLicenseInfo_Error;
+			//	return true;
+			//}
+			//else
+			//{
+			//	userID = 0;
+			//	error = "";
+			//	return false;
+			//}
 		}
-
-		//public static bool GetRequestedFullLicenseInfo( out string license, out string error )
-		//{
-		//	if( !string.IsNullOrEmpty( requestedFullLicenseInfo_License ) || !string.IsNullOrEmpty( requestedFullLicenseInfo_Error ) )
-		//	{
-		//		license = requestedFullLicenseInfo_License;
-		//		error = requestedFullLicenseInfo_Error;
-		//		return true;
-		//	}
-		//	else
-		//	{
-		//		license = "";
-		//		error = "";
-		//		return false;
-		//	}
-		//}
-
-		//public static string GetLicenseCached()
-		//{
-		//	if( licenseCached == null )
-		//	{
-		//		licenseCached = "";
-		//		if( GetCurrentLicense( out _, out _ ) )
-		//		{
-		//			if( GetRequestedFullLicenseInfo( out var license, out _, /*out _,*/ out _ ) )
-		//				licenseCached = license;
-		//		}
-		//	}
-
-		//	var result = licenseCached;
-		//	if( result == null )
-		//		result = "";
-		//	return result;
-		//}
 	}
 }

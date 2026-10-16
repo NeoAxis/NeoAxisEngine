@@ -69,6 +69,7 @@
 			this.kryptonLabelLicense = new Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonButtonRegister = new Internal.ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonButtonLogin = new Internal.ComponentFactory.Krypton.Toolkit.KryptonButton();
+			this.kryptonButtonLogout = new Internal.ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.kryptonTextBoxLoginPassword = new Internal.ComponentFactory.Krypton.Toolkit.KryptonTextBox();
 			this.kryptonLabel17 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel();
 			this.kryptonLabel18 = new Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel();
@@ -538,6 +539,7 @@
 			this.kryptonPageLogin.Controls.Add( this.kryptonLabelLicense );
 			this.kryptonPageLogin.Controls.Add( this.kryptonButtonRegister );
 			this.kryptonPageLogin.Controls.Add( this.kryptonButtonLogin );
+			this.kryptonPageLogin.Controls.Add( this.kryptonButtonLogout );
 			this.kryptonPageLogin.Controls.Add( this.kryptonTextBoxLoginPassword );
 			this.kryptonPageLogin.Controls.Add( this.kryptonLabel17 );
 			this.kryptonPageLogin.Controls.Add( this.kryptonLabel18 );
@@ -587,7 +589,7 @@
 			this.kryptonLabel15.Name = "kryptonLabel15";
 			this.kryptonLabel15.Size = new System.Drawing.Size( 84, 19 );
 			this.kryptonLabel15.TabIndex = 27;
-			this.kryptonLabel15.Values.Text = "Registered:";
+			this.kryptonLabel15.Values.Text = "Current Login:";
 			// 
 			// kryptonLabelLicense
 			// 
@@ -612,8 +614,17 @@
 			this.kryptonButtonLogin.Name = "kryptonButtonLogin";
 			this.kryptonButtonLogin.Size = new System.Drawing.Size( 117, 32 );
 			this.kryptonButtonLogin.TabIndex = 21;
-			this.kryptonButtonLogin.Values.Text = "Login";
+			this.kryptonButtonLogin.Values.Text = "Log in";
 			this.kryptonButtonLogin.Click += new System.EventHandler( this.kryptonButtonLogin_Click );
+			// 
+			// kryptonButtonLogout
+			// 
+			this.kryptonButtonLogout.Location = new System.Drawing.Point( 296, 255 );
+			this.kryptonButtonLogout.Name = "kryptonButtonLogout";
+			this.kryptonButtonLogout.Size = new System.Drawing.Size( 117, 32 );
+			this.kryptonButtonLogout.TabIndex = 23;
+			this.kryptonButtonLogout.Values.Text = "Log out";
+			this.kryptonButtonLogout.Click += new System.EventHandler( this.kryptonButtonLogout_Click );
 			// 
 			// kryptonTextBoxLoginPassword
 			// 
@@ -804,6 +815,7 @@
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabelLicense;
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonRegister;
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonLogin;
+		private Internal.ComponentFactory.Krypton.Toolkit.KryptonButton kryptonButtonLogout;
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonTextBox kryptonTextBoxLoginPassword;
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel17;
 		private Internal.ComponentFactory.Krypton.Toolkit.KryptonLabel kryptonLabel18;

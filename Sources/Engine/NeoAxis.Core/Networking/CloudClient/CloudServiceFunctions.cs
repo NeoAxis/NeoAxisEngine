@@ -1758,7 +1758,7 @@ namespace NeoAxis.Cloud
 			return await command.ExecuteAsync( cancellationToken );
 		}
 
-		public static async Task<CloudServiceExecuteCommand.ResultClass> UserGetAsync( long userID = 0, CancellationToken cancellationToken = default )
+		public static async Task<CloudServiceExecuteCommand.ResultClass> UserGetAsync( string hardwareFingerprintId, long userID = 0, CancellationToken cancellationToken = default )
 		{
 			var command = new CloudServiceExecuteCommand();
 			command.FunctionName = "api/v1/user/get";
@@ -1766,6 +1766,7 @@ namespace NeoAxis.Cloud
 			command.RequestMethod = CloudServiceExecuteCommand.RequestMethodEnum.Post;
 
 			var block = new TextBlock();
+			block.SetAttribute( "HardwareFingerprintID", hardwareFingerprintId );
 			if( userID != 0 )
 				block.SetAttribute( "UserID", userID.ToString() );
 			command.ContentData = Encoding.UTF8.GetBytes( block.DumpToString() );

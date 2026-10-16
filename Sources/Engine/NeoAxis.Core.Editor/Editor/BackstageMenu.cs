@@ -765,7 +765,7 @@ namespace NeoAxis.Editor
 				{
 					if( LoginUtility.GetCurrentLicense( out var email, out _ ) )
 					{
-						if( LoginUtility.GetRequestedInfo( out var userID, out var error2 ) )
+						if( LoginUtility.GetRequestedInfo( out var userID, out _ ) )
 						{
 							if( userID != 0 )
 								authorEmail = email;
@@ -890,11 +890,10 @@ namespace NeoAxis.Editor
 		}
 
 		bool loginFirstUpdate = true;
+		int loginUpdateSkipCounter;
 
 		void LoginUpdate()
 		{
-			//всё время запрашивается из реестра когда открыт бекстейдж
-
 			if( loginFirstUpdate )
 			{
 				if( LoginUtility.GetCurrentLicense( out var email, out _ ) )
@@ -903,32 +902,44 @@ namespace NeoAxis.Editor
 				loginFirstUpdate = false;
 			}
 
+			loginUpdateSkipCounter--;
+			if( loginUpdateSkipCounter < 0 )
 			{
-				string text;
-				string error = "";
-				if( LoginUtility.GetCurrentLicense( out var email, out _ ) )
+				loginUpdateSkipCounter = 10;
+
+				var currentLicenseSpecified = false;
+
 				{
-					text = email;
-					if( LoginUtility.GetRequestedInfo( out var userID, out var error2 ) )
+					string text;
+					string error = "";
+					if( LoginUtility.GetCurrentLicense( out var email, out _ ) )
 					{
-						if( userID != 0 )
-							text += " You are awesome!";
-						error = error2;
+						text = email;
+						if( LoginUtility.GetRequestedInfo( out var userID, out var error2 ) )
+						{
+							if( userID != 0 )
+								text += " You are awesome!";
+							error = error2;
+						}
+						else
+							text += " - Not registered.";
 					}
 					else
-						text += " - Not registered";
+						text = "";
+
+					kryptonLabelLicense.Text = text;
+					kryptonLabelLoginError.Text = error;
+
+					currentLicenseSpecified = !string.IsNullOrEmpty( email );
 				}
-				else
-					text = "Not registered";
 
-				kryptonLabelLicense.Text = text;
-				kryptonLabelLoginError.Text = error;
-			}
+				{
+					var email = kryptonTextBoxLoginEmail.Text.Trim().ToLower();
+					var password = kryptonTextBoxLoginPassword.Text;
+					kryptonButtonLogin.Enabled = !string.IsNullOrEmpty( email ) && !string.IsNullOrEmpty( password );
 
-			{
-				var email = kryptonTextBoxLoginEmail.Text.Trim().ToLower();
-				var password = kryptonTextBoxLoginPassword.Text;
-				kryptonButtonLogin.Enabled = !string.IsNullOrEmpty( email ) && !string.IsNullOrEmpty( password );
+					kryptonButtonLogout.Enabled = currentLicenseSpecified;
+				}
 			}
 		}
 
@@ -946,15 +957,17 @@ namespace NeoAxis.Editor
 				return;
 			}
 
-			LoginUtility.SetCurrentLicense( email, password );
-			//LoginUtility.SetCurrentLicense( kryptonTextBoxLoginEmail.Text, kryptonTextBoxLoginPassword.Text );
+			LoginUtility.SetCurrentLicense( email, password, HardwareFingerprint.GetUniqueHardwareId() );
 		}
 
 		private void kryptonButtonRegister_Click( object sender, EventArgs e )
 		{
-			Process.Start( new ProcessStartInfo( EngineInfo.WebsiteFullAddress + "/neoaxis/downloads/" ) { UseShellExecute = true } );
+			Process.Start( new ProcessStartInfo( EngineInfo.WebsiteFullAddress + "/register" ) { UseShellExecute = true } );
+		}
 
-			//Process.Start( new ProcessStartInfo( EngineInfo.StoreAddress + "/my-account/" ) { UseShellExecute = true } );
+		private void kryptonButtonLogout_Click( object sender, EventArgs e )
+		{
+			LoginUtility.SetCurrentLicense( "", "", "" );
 		}
 
 		bool IsPlatformInstalled( SystemSettings.Platform platform )

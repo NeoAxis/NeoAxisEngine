@@ -1251,7 +1251,7 @@ namespace NeoAxis.Editor
 		{
 			if( updateLogin )
 			{
-				LoginUtility.RequestInfo();
+				LoginUtility.RequestInfo( HardwareFingerprint.GetUniqueHardwareId() );
 				Thread.Sleep( 500 );
 			}
 

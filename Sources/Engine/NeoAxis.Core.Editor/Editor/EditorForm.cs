@@ -349,6 +349,7 @@ namespace NeoAxis.Editor
 			InitQAT();
 			InitRibbon();
 
+			//IMPORTANT: Modifying or bypassing this part of the code is prohibited by the NeoAxis Engine Standard EULA.
 			UpdateText();
 
 			//apply editor settings
@@ -369,7 +370,7 @@ namespace NeoAxis.Editor
 			//			}
 			//#endif
 
-			LoginUtility.RequestInfo();
+			LoginUtility.RequestInfo( HardwareFingerprint.GetUniqueHardwareId() );
 
 			kryptonRibbon.BeforeMinimizedModeChanged += KryptonRibbon_BeforeMinimizedModeChanged;
 			kryptonRibbon.MinimizedModeChanged += KryptonRibbon_MinimizedModeChanged;
@@ -621,28 +622,20 @@ namespace NeoAxis.Editor
 			return false;
 		}
 
-		public static string ReplaceCaption { get; set; } = "";
-
 		void UpdateText()
 		{
-			if( !string.IsNullOrEmpty( ReplaceCaption ) )
-			{
-				Text = ReplaceCaption;
-				return;
-			}
+			//IMPORTANT: Modifying or bypassing this part of the code is prohibited by the NeoAxis Engine Standard EULA.
 
 			string projectName = "";
-			var c = ProjectSettings.Get;//.GetComponent<ProjectSettings_General>();
-			if( c != null )
-			{
-				//!!!!new commented
-				//if( EngineInfo.EngineMode == EngineInfo.EngineModeEnum.CloudClient )
-				//	projectName = c.General.CloudProjectName.Trim();
-				//else
-				projectName = c.General.ProjectName.Value.Trim();
-			}
+			if( ProjectSettings.Get != null )
+				projectName = ProjectSettings.Get.General.ProjectName.Value.Trim();
 
 			var postFix = "";// " " + ( EngineApp.IsProPlan ? "Pro" : "Personal" );
+			LoginUtility.GetRequestedInfo( out var userID, out _ );
+			if( userID != 0 )
+				postFix += " " + StringUtility.AddSpacesBetweenWords( LoginUtility.ReceivedInfo.EntityType );
+			else if( EngineApp.EngineTime > 60 && userID == 0 )
+				postFix += " [Log in to get full access]".ToUpper();
 
 			if( projectName != "" )
 				Text = projectName + " - " + EngineInfo.NameWithVersion + postFix;
