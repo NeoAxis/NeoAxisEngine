@@ -34,6 +34,8 @@ J. You may not modify, alter, bypass, disable, or circumvent the login verificat
 
 K. You agree to provide accurate, complete, and up-to-date information during account registration and promptly update your profile if any changes occur. If you are setting up a project as a company or a individual proprietor, you need to select the entity type "Company" or "Individual proprietor" respectively.
 
+L. When updating or upgrading the Technology or Engine Code to a newer version, you are required to accept and agree to any updated or modified licensing terms associated with that version. Continued use, downloading, or integration of any newer version of the Technology constitutes your acceptance of the revised license agreement governing that release.
+
 If you do not accept these conditions or they are not enforceable in your jurisdiction, then you may not use the software.
 
 3. COPYRIGHT
