@@ -2426,9 +2426,25 @@ namespace NeoAxis
 		//	public uint samplerFlags;
 		//}
 
+		void AddLicenseText()
+		{
+			//IMPORTANT: Modifying or bypassing this part of the code is prohibited by the NeoAxis Engine Standard EULA.
+
+			var receivedLoginInfo = LoginUtility.ReceivedInfo;
+			var text = "";
+			if( receivedLoginInfo.UserID != 0 && receivedLoginInfo.EngineSubscriptionRequired )
+				text = "ENGINE SUBSCRIPTION REQUIRED";
+			if( !string.IsNullOrEmpty( text ) )
+				AddText( text, new Vector2( 0.99, 0.99 ), EHorizontalAlignment.Right, EVerticalAlignment.Bottom, new ColorValue( 1, 1, 1 ) );
+		}
+
 		[MethodImpl( (MethodImplOptions)512 )]
 		public override unsafe void ViewportRendering_RenderToCurrentViewport( ViewportRenderingContext context, bool clearData, double time, bool registerUniformsAndSetIdentityMatrix )
 		{
+			//IMPORTANT: Modifying or bypassing this part of the code is prohibited by the NeoAxis Engine Standard EULA.
+			if( !clearData && EngineApp.ApplicationType == EngineApp.ApplicationTypeEnum.Editor )
+				AddLicenseText();
+
 			if( updateTime != time )
 				updateTimePrevious = updateTime;
 			updateTime = time;

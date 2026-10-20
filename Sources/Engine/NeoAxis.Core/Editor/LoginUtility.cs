@@ -30,6 +30,7 @@ namespace NeoAxis.Editor
 			public long UserID;
 			public string EntityType = "";
 			public string Error = "";
+			public bool EngineSubscriptionRequired;
 		}
 
 		///////////////////////////////////////////////
@@ -115,16 +116,16 @@ namespace NeoAxis.Editor
 					}
 				}
 
-				var data = getUserResult.Data;
+				var rootBlock = getUserResult.Data;
 
-				if( !data.AttributeExists( "NotFound" ) )
+				if( !rootBlock.AttributeExists( "NotFound" ) )
 				{
-					long.TryParse( data.GetAttribute( "Id" ), out var userID );
-
+					long.TryParse( rootBlock.GetAttribute( "Id" ), out var userID );
 					receivedInfo = new ReceivedInfoClass()
 					{
 						UserID = userID,
-						EntityType = data.GetAttribute( "EntityType" )
+						EntityType = rootBlock.GetAttribute( "EntityType" ),
+						EngineSubscriptionRequired = rootBlock.GetAttribute( "EngineSubscriptionRequired" ) == "True"
 					};
 
 					//long.TryParse( data.GetAttribute( "Id" ), out requestedFullLicenseInfo_UserID );

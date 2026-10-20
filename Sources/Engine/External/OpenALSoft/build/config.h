@@ -80,7 +80,7 @@
 
 /* Define if we have the ALSA backend */
 #ifdef PLATFORM_LINUX
-//!!!!#define HAVE_ALSA
+#define HAVE_ALSA
 #endif
 /* #undef HAVE_ALSA */
 
@@ -150,6 +150,9 @@
 
 /* Define if we have dlfcn.h */
 /* #undef HAVE_DLFCN_H */
+#ifdef PLATFORM_LINUX
+#define HAVE_DLFCN_H
+#endif
 
 /* Define if we have pthread_np.h */
 /* #undef HAVE_PTHREAD_NP_H */

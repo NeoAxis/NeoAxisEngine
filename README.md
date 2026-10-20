@@ -17,12 +17,12 @@ Alternative website: <a href="https://www.neoaxis.cn/en/">www.neoaxis.cn/en/</a>
 <ul>
 <li>Windows</li>
 <li>macOS</li>
+<li>Linux</li>
 <li>Android (ARM64, ARM32)</li>
 <li>iOS</li>
 <li>Web</li>
-<li>UWP x64 (Universal Windows Platform, Xbox)</li>
-<li>Linux x64 (Server only, no rendering)</li>
-<li>VR, AR - Coming soon</li>
+<li>Universal Windows Platform (Xbox)</li>
+<li>(Coming soon) VR, AR</li>
 </ul>
 
 <h2>Building</h2>

@@ -630,12 +630,16 @@ namespace NeoAxis.Editor
 			if( ProjectSettings.Get != null )
 				projectName = ProjectSettings.Get.General.ProjectName.Value.Trim();
 
-			var postFix = "";// " " + ( EngineApp.IsProPlan ? "Pro" : "Personal" );
-			LoginUtility.GetRequestedInfo( out var userID, out _ );
-			if( userID != 0 )
-				postFix += " " + StringUtility.AddSpacesBetweenWords( LoginUtility.ReceivedInfo.EntityType );
-			else if( EngineApp.EngineTime > 60 && userID == 0 )
-				postFix += " [Log in to get full access]".ToUpper();
+			var receivedLoginInfo = LoginUtility.ReceivedInfo;
+			var postFix = "";
+			if( receivedLoginInfo.UserID != 0 )
+			{
+				postFix += " " + StringUtility.AddSpacesBetweenWords( receivedLoginInfo.EntityType );
+				if( receivedLoginInfo.EngineSubscriptionRequired )
+					postFix += " [ENGINE SUBSCRIPTION REQUIRED]";
+			}
+			else if( EngineApp.EngineTime > 60 && receivedLoginInfo.UserID == 0 )
+				postFix += " [LOG IN TO GET FULL ACCESS]";
 
 			if( projectName != "" )
 				Text = projectName + " - " + EngineInfo.NameWithVersion + postFix;

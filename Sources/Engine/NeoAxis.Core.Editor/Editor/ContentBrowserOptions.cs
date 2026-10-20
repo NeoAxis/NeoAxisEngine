@@ -55,6 +55,9 @@ namespace NeoAxis.Editor
 		public bool MembersButton { get; set; } = true;
 
 		[DefaultValue( true )]
+		public bool SearchButton { get; set; } = true;
+
+		[DefaultValue( true )]
 		public bool OpenButton { get; set; } = true;
 
 		[DefaultValue( true )]
@@ -65,9 +68,6 @@ namespace NeoAxis.Editor
 
 		[DefaultValue( true )]
 		public bool ButtonsForEditing { get; set; } = true;
-
-		[DefaultValue( true )]
-		public bool SearchButton { get; set; } = true;
 
 		//!!!!
 		//!!!!вернуть componentsBrowser.Options.SearchBar = false; в SettingsHeader_Components.cs

@@ -917,7 +917,7 @@ namespace NeoAxis
 					//!!!!!опцией продукта?
 
 					//!!!!Android, iOS, Web readonly?
-					bool readOnly = SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web;
+					bool readOnly = SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.Android || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.Web || SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux;
 					if( readOnly )
 						forceNoCompression = true;
 				}

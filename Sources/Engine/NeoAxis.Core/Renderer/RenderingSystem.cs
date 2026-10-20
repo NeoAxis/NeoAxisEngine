@@ -572,7 +572,7 @@ namespace NeoAxis
 
 			Vector2I initialWindowSize = new Vector2I( 10, 10 );
 			//!!!iOS
-			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS )
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.UWP || SystemSettings.CurrentPlatform == SystemSettings.Platform.macOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.iOS || SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux  )
 				initialWindowSize = EngineApp.platform.CreatedWindow_GetClientRectangle().Size;
 
 			//set backend for Android
@@ -600,6 +600,12 @@ namespace NeoAxis
 				EngineApp.InitSettings.RendererBackend = RendererBackend.Vulkan;
 				SystemSettings._UpdateDeviceProperties();
 			}
+			//set backend for Linux
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux && EngineApp.ApplicationWindowHandle != IntPtr.Zero )
+			{
+				EngineApp.InitSettings.RendererBackend = RendererBackend.Vulkan;
+				SystemSettings._UpdateDeviceProperties();
+			}
 
 			unsafe
 			{
@@ -615,6 +621,8 @@ namespace NeoAxis
 			}
 			else
 				platformData = new PlatformData { WindowHandle = EngineApp.ApplicationWindowHandle };
+			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
+				platformData.DisplayType = EngineApp.CallPlatformSpecificMethod( "GetX11Display", IntPtr.Zero );
 			Bgfx.SetPlatformData( platformData );
 
 			if( EngineApp.IsSimulation && EngineApp.InitSettings.SimulationTripleBuffering )

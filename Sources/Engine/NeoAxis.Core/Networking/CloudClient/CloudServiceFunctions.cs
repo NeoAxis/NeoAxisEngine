@@ -278,31 +278,43 @@ namespace NeoAxis.Cloud
 
 		public static async Task<UserTransactionsIsProjectEntryFeePaidResult> UserTransactionsIsProjectEntryFeePaidAsync( long userID, long projectID, string authToken = null, CancellationToken cancellationToken = default )
 		{
-			var paidCount = 0;
+			var result = await UserTransactionsGetAsync( "ProjectEntryFee", projectID, authToken: authToken, cancellationToken: cancellationToken );
+			if( !string.IsNullOrEmpty( result.Error ) )
+				return new UserTransactionsIsProjectEntryFeePaidResult() { Error = result.Error };
+
+			foreach( var tx in result.Transactions )
 			{
-				var result = await UserTransactionsGetAsync( "ProjectEntryFee", projectID, cancellationToken: cancellationToken );
-				if( !string.IsNullOrEmpty( result.Error ) )
-					return new UserTransactionsIsProjectEntryFeePaidResult() { Error = result.Error };
-				foreach( var tx in result.Transactions )
-				{
-					if( tx.SenderID == userID )
-						paidCount++;
-				}
+				if( tx.SenderID == userID )
+					return new UserTransactionsIsProjectEntryFeePaidResult() { Paid = true };
 			}
 
-			var cancelCount = 0;
-			{
-				var result = await UserTransactionsGetAsync( "ProjectEntryFeeCancel", projectID );
-				if( !string.IsNullOrEmpty( result.Error ) )
-					return new UserTransactionsIsProjectEntryFeePaidResult() { Error = result.Error };
-				foreach( var tx in result.Transactions )
-				{
-					//if( tx.SenderID == userID )
-					cancelCount++;
-				}
-			}
+			return new UserTransactionsIsProjectEntryFeePaidResult();
 
-			return new UserTransactionsIsProjectEntryFeePaidResult() { Paid = paidCount > cancelCount };
+			//var paidCount = 0;
+			//{
+			//	var result = await UserTransactionsGetAsync( "ProjectEntryFee", projectID, cancellationToken: cancellationToken );
+			//	if( !string.IsNullOrEmpty( result.Error ) )
+			//		return new UserTransactionsIsProjectEntryFeePaidResult() { Error = result.Error };
+			//	foreach( var tx in result.Transactions )
+			//	{
+			//		if( tx.SenderID == userID )
+			//			paidCount++;
+			//	}
+			//}
+
+			//var cancelCount = 0;
+			//{
+			//	var result = await UserTransactionsGetAsync( "ProjectEntryFeeCancel", projectID );
+			//	if( !string.IsNullOrEmpty( result.Error ) )
+			//		return new UserTransactionsIsProjectEntryFeePaidResult() { Error = result.Error };
+			//	foreach( var tx in result.Transactions )
+			//	{
+			//		//if( tx.SenderID == userID )
+			//		cancelCount++;
+			//	}
+			//}
+
+			//return new UserTransactionsIsProjectEntryFeePaidResult() { Paid = paidCount > cancelCount };
 		}
 
 		public static async Task<CloudServiceExecuteCommand.ResultClass> UserTransactionsRequestProjectInAppPurchaseAsync( long projectID, long senderID, double amount, string description /*= null*/, string requestID = null, string authToken = null, CancellationToken cancellationToken = default )

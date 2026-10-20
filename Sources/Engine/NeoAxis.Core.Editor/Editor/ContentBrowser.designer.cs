@@ -118,7 +118,8 @@
             this.toolStripButtonShowMembers,
             this.toolStripSeparatorFilteringMode,
             this.toolStripDropDownButtonFilteringMode,
-            this.toolStripSeparatorOpen,
+			this.toolStripButtonSearch,
+			this.toolStripSeparatorOpen,
             this.toolStripButtonOpen,
             this.toolStripSeparatorEditSettings,
             this.toolStripButtonEditor,
@@ -135,8 +136,6 @@
             this.toolStripButtonCut,
             this.toolStripButtonCopy,
             this.toolStripButtonPaste,
-            this.toolStripSeparatorSearch,
-            this.toolStripButtonSearch,
             this.toolStripSeparatorSearchBar,
             this.toolStripTextBoxSearch});
 			this.toolStripForTreeView.Location = new System.Drawing.Point(0, 0);

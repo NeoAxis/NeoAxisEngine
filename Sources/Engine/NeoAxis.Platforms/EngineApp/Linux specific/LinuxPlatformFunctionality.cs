@@ -52,6 +52,12 @@ namespace Internal//NeoAxis
 
 		bool createdWindow_UpdateShowSystemCursor;
 
+		IntPtr display;
+		IntPtr wmDeleteWindow;
+		Vector2I windowPosition;
+		Vector2I windowSize;
+		Vector2I mousePosition;
+
 		///////////////////////////////////////////
 
 		struct KeyInfo
@@ -707,6 +713,78 @@ namespace Internal//NeoAxis
 		//[DllImport( "dwmapi.dll", PreserveSig = true )]
 		//static extern int DwmSetWindowAttribute( IntPtr hwnd, DwmWindowAttribute attr, ref int attrValue, int attrSize );
 
+		const string x11Library = "libX11.so.6";
+
+		const long KeyPressMask = 1 << 0;
+		const long KeyReleaseMask = 1 << 1;
+		const long ButtonPressMask = 1 << 2;
+		const long ButtonReleaseMask = 1 << 3;
+		const long PointerMotionMask = 1 << 6;
+		const long ExposureMask = 1 << 15;
+		const long StructureNotifyMask = 1 << 17;
+		const long FocusChangeMask = 1 << 21;
+
+		const int ConfigureNotify = 22;
+		const int KeyPress = 2;
+		const int KeyRelease = 3;
+		const int ButtonPress = 4;
+		const int ButtonRelease = 5;
+		const int MotionNotify = 6;
+		const int ClientMessage = 33;
+
+		[StructLayout( LayoutKind.Explicit, Size = 192 )]
+		struct XEvent
+		{
+			[FieldOffset( 0 )] public int type;
+			[FieldOffset( 48 )] public int configureX;
+			[FieldOffset( 52 )] public int configureY;
+			[FieldOffset( 56 )] public int configureWidth;
+			[FieldOffset( 60 )] public int configureHeight;
+			[FieldOffset( 56 )] public IntPtr clientMessageData0;
+			[FieldOffset( 64 )] public int pointerX;
+			[FieldOffset( 68 )] public int pointerY;
+			[FieldOffset( 84 )] public uint buttonOrKeycode;
+		}
+
+		[DllImport( x11Library )]
+		static extern int XInitThreads();
+		[DllImport( x11Library )]
+		static extern IntPtr XOpenDisplay( IntPtr displayName );
+		[DllImport( x11Library )]
+		static extern int XCloseDisplay( IntPtr display );
+		[DllImport( x11Library )]
+		static extern int XDefaultScreen( IntPtr display );
+		[DllImport( x11Library )]
+		static extern IntPtr XRootWindow( IntPtr display, int screen );
+		[DllImport( x11Library )]
+		static extern int XDisplayWidth( IntPtr display, int screen );
+		[DllImport( x11Library )]
+		static extern int XDisplayHeight( IntPtr display, int screen );
+		[DllImport( x11Library )]
+		static extern IntPtr XCreateSimpleWindow( IntPtr display, IntPtr parent, int x, int y, uint width, uint height, uint borderWidth, IntPtr border, IntPtr background );
+		[DllImport( x11Library )]
+		static extern int XDestroyWindow( IntPtr display, IntPtr window );
+		[DllImport( x11Library )]
+		static extern int XMapWindow( IntPtr display, IntPtr window );
+		[DllImport( x11Library )]
+		static extern int XStoreName( IntPtr display, IntPtr window, string windowName );
+		[DllImport( x11Library )]
+		static extern int XSelectInput( IntPtr display, IntPtr window, IntPtr eventMask );
+		[DllImport( x11Library )]
+		static extern IntPtr XInternAtom( IntPtr display, string atomName, bool onlyIfExists );
+		[DllImport( x11Library )]
+		static extern int XSetWMProtocols( IntPtr display, IntPtr window, ref IntPtr protocols, int count );
+		[DllImport( x11Library )]
+		static extern int XPending( IntPtr display );
+		[DllImport( x11Library )]
+		static extern int XNextEvent( IntPtr display, out XEvent xevent );
+		[DllImport( x11Library )]
+		static extern int XFlush( IntPtr display );
+		[DllImport( x11Library )]
+		static extern IntPtr XLookupKeysym( ref XEvent keyEvent, int index );
+		[DllImport( x11Library )]
+		static extern int XLookupString( ref XEvent keyEvent, byte[] buffer, int bytesBuffer, out IntPtr keysym, IntPtr statusInOut );
+
 		///////////////////////////////////////////
 
 		public LinuxPlatformFunctionality()
@@ -728,7 +806,16 @@ namespace Internal//NeoAxis
 		public override Vector2I GetScreenSize()
 		{
 			//!!!!
-			return new Vector2I( 10, 10 );
+			if( display == IntPtr.Zero )
+			{
+				XInitThreads();
+				display = XOpenDisplay( IntPtr.Zero );
+			}
+			if( display == IntPtr.Zero )
+				return new Vector2I( 10, 10 );
+			var screen = XDefaultScreen( display );
+			return new Vector2I( XDisplayWidth( display, screen ), XDisplayHeight( display, screen ) );
+			//return new Vector2I( 10, 10 );
 
 			//return new Vector2I( GetSystemMetrics( SM_CXSCREEN ), GetSystemMetrics( SM_CYSCREEN ) );
 		}
@@ -759,7 +846,54 @@ namespace Internal//NeoAxis
 		public override IntPtr CreatedWindow_CreateWindow()
 		{
 			//!!!!
-			return IntPtr.Zero;
+			if( display == IntPtr.Zero )
+			{
+				XInitThreads();
+				display = XOpenDisplay( IntPtr.Zero );
+			}
+			if( display == IntPtr.Zero )
+			{
+				Log.Fatal( "EngineApp: WindowCreate: XOpenDisplay failed." );
+				return IntPtr.Zero;
+			}
+
+			bool showMaximized = EngineApp.WindowedMode == WindowedModeEnum.Windowed && EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Maximized && !EngineApp.InitSettings.MultiMonitorMode.Value;
+			bool showMinimized = EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Minimized;
+
+			Vector2I position;
+			Vector2I size;
+			{
+				if( showMaximized )
+				{
+					size = new Vector2I( 800, 600 );
+					position = ( GetScreenSize() - size ) / 2;
+				}
+				else
+				{
+					if( EngineApp.WindowedMode == WindowedModeEnum.Windowed || EngineApp.InitSettings.MultiMonitorMode.Value )
+						position = EngineApp.InitSettings.CreateWindowPosition.Value;
+					else
+						position = Vector2I.Zero;
+					size = EngineApp.InitSettings.CreateWindowSize.Value;
+				}
+			}
+
+			var screen = XDefaultScreen( display );
+			var windowHandle = XCreateSimpleWindow( display, XRootWindow( display, screen ), position.X, position.Y, (uint)size.X, (uint)size.Y, 0, IntPtr.Zero, IntPtr.Zero );
+
+			XSelectInput( display, windowHandle, (IntPtr)( KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | ExposureMask | StructureNotifyMask | FocusChangeMask ) );
+
+			wmDeleteWindow = XInternAtom( display, "WM_DELETE_WINDOW", false );
+			XSetWMProtocols( display, windowHandle, ref wmDeleteWindow, 1 );
+
+			XStoreName( display, windowHandle, EngineApp.CreatedInsideEngineWindow.Title );
+			XMapWindow( display, windowHandle );
+			XFlush( display );
+
+			windowPosition = position;
+			windowSize = size;
+
+			return windowHandle;
 
 			////backgroundBrush
 			//backgroundBrush = CreateSolidBrush( 0 );
@@ -850,6 +984,13 @@ namespace Internal//NeoAxis
 		public override void CreatedWindow_DestroyWindow()
 		{
 			//!!!!
+			if( display != IntPtr.Zero )
+			{
+				if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
+					XDestroyWindow( display, EngineApp.ApplicationWindowHandle );
+				XCloseDisplay( display );
+				display = IntPtr.Zero;
+			}
 
 			//intoMenuLoop = false;
 
@@ -1606,9 +1747,191 @@ namespace Internal//NeoAxis
 		//			//}
 		//		}
 
+		static EKeys GetEKeyByKeySym( long keySym )
+		{
+			if( keySym >= 0x61 && keySym <= 0x7a )
+				return (EKeys)( keySym - 0x20 );
+			if( keySym >= 0x41 && keySym <= 0x5a || keySym >= 0x30 && keySym <= 0x39 || keySym == 0x20 )
+				return (EKeys)keySym;
+			if( keySym >= 0xffbe && keySym <= 0xffc9 )
+				return EKeys.F1 + (int)( keySym - 0xffbe );
+
+			switch( keySym )
+			{
+			case 0xff08: return EKeys.Back;
+			case 0xff09: return EKeys.Tab;
+			case 0xff0d: return EKeys.Return;
+			case 0xff1b: return EKeys.Escape;
+			case 0xff50: return EKeys.Home;
+			case 0xff51: return EKeys.Left;
+			case 0xff52: return EKeys.Up;
+			case 0xff53: return EKeys.Right;
+			case 0xff54: return EKeys.Down;
+			case 0xff55: return EKeys.PageUp;
+			case 0xff56: return EKeys.PageDown;
+			case 0xff57: return EKeys.End;
+			case 0xff63: return EKeys.Insert;
+			case 0xffff: return EKeys.Delete;
+			case 0xffe1: return EKeys.LShift;
+			case 0xffe2: return EKeys.RShift;
+			case 0xffe3: return EKeys.LControl;
+			case 0xffe4: return EKeys.RControl;
+			case 0xffe9: return EKeys.LAlt;
+			case 0xffea: return EKeys.RAlt;
+			case 0xffe5: return EKeys.CapsLock;
+			}
+			return 0;
+		}
+
+		static bool GetEMouseButtonByButton( uint button, out EMouseButtons eButton )
+		{
+			switch( button )
+			{
+			case 1: eButton = EMouseButtons.Left; return true;
+			case 2: eButton = EMouseButtons.Middle; return true;
+			case 3: eButton = EMouseButtons.Right; return true;
+			case 8: eButton = EMouseButtons.XButton1; return true;
+			case 9: eButton = EMouseButtons.XButton2; return true;
+			}
+			eButton = EMouseButtons.Left;
+			return false;
+		}
+
+		void ProcessEvent( ref XEvent xevent )
+		{
+			Viewport viewport = null;
+			if( !RenderingSystem.Disposed && RenderingSystem.ApplicationRenderTarget != null )
+				viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+			switch( xevent.type )
+			{
+			case ClientMessage:
+				if( xevent.clientMessageData0 == wmDeleteWindow )
+					EngineApp.NeedExit = true;
+				break;
+
+			case ConfigureNotify:
+				windowPosition = new Vector2I( xevent.configureX, xevent.configureY );
+				if( windowSize.X != xevent.configureWidth || windowSize.Y != xevent.configureHeight )
+				{
+					windowSize = new Vector2I( xevent.configureWidth, xevent.configureHeight );
+					EngineApp.CreatedWindowProcessResize();
+				}
+				break;
+			case KeyPress:
+				if( viewport != null )
+				{
+					var eKey = GetEKeyByKeySym( (long)XLookupKeysym( ref xevent, 0 ) );
+					var buffer = new byte[ 8 ];
+					var count = XLookupString( ref xevent, buffer, buffer.Length, out _, IntPtr.Zero );
+
+					bool handled = false;
+					bool suppressKeyPress = false;
+
+					if( eKey != 0 )
+					{
+						KeyEvent keyEvent = new KeyEvent( eKey );
+						viewport.PerformKeyDown( keyEvent, ref handled );
+
+						if( eKey == EKeys.LShift || eKey == EKeys.RShift )
+						{
+							keyEvent = new KeyEvent( EKeys.Shift );
+							viewport.PerformKeyDown( keyEvent, ref handled );
+						}
+						if( eKey == EKeys.LControl || eKey == EKeys.RControl )
+						{
+							keyEvent = new KeyEvent( EKeys.Control );
+							viewport.PerformKeyDown( keyEvent, ref handled );
+						}
+						if( eKey == EKeys.LAlt || eKey == EKeys.RAlt )
+						{
+							keyEvent = new KeyEvent( EKeys.Alt );
+							viewport.PerformKeyDown( keyEvent, ref handled );
+						}
+
+						if( keyEvent.SuppressKeyPress )
+							suppressKeyPress = true;
+					}
+
+					if( !suppressKeyPress && count > 0 )
+					{
+						KeyPressEvent keyPressEvent = new KeyPressEvent( (char)buffer[ 0 ] );
+						viewport.PerformKeyPress( keyPressEvent, ref handled );
+					}
+				}
+				break;
+
+			case KeyRelease:
+				if( viewport != null )
+				{
+					var eKey = GetEKeyByKeySym( (long)XLookupKeysym( ref xevent, 0 ) );
+
+					bool handled = false;
+
+					if( eKey != 0 )
+					{
+						KeyEvent keyEvent = new KeyEvent( eKey );
+						viewport.PerformKeyUp( keyEvent, ref handled );
+
+						if( eKey == EKeys.LShift || eKey == EKeys.RShift )
+						{
+							keyEvent = new KeyEvent( EKeys.Shift );
+							viewport.PerformKeyUp( keyEvent, ref handled );
+						}
+						if( eKey == EKeys.LControl || eKey == EKeys.RControl )
+						{
+							keyEvent = new KeyEvent( EKeys.Control );
+							viewport.PerformKeyUp( keyEvent, ref handled );
+						}
+						if( eKey == EKeys.LAlt || eKey == EKeys.RAlt )
+						{
+							keyEvent = new KeyEvent( EKeys.Alt );
+							viewport.PerformKeyUp( keyEvent, ref handled );
+						}
+					}
+				}
+				break;
+
+			case ButtonPress:
+			case ButtonRelease:
+				mousePosition = new Vector2I( xevent.pointerX, xevent.pointerY );
+				if( viewport != null )
+				{
+					var handled = false;
+					var button = xevent.buttonOrKeycode;
+					if( button == 4 || button == 5 )
+					{
+						if( xevent.type == ButtonPress )
+							viewport.PerformMouseWheel( button == 4 ? 120 : -120, ref handled );
+					}
+					else if( GetEMouseButtonByButton( button, out var eButton ) )
+					{
+						if( xevent.type == ButtonPress )
+							viewport.PerformMouseDown( eButton, ref handled );
+						else
+							viewport.PerformMouseUp( eButton, ref handled );
+					}
+				}
+				break;
+
+			case MotionNotify:
+				mousePosition = new Vector2I( xevent.pointerX, xevent.pointerY );
+				if( viewport != null )
+					EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
+				break;
+			}
+		}
+
 		public override void CreatedWindow_ProcessMessageEvents()
 		{
 			//!!!!
+			if( display == IntPtr.Zero )
+				return;
+
+			while( XPending( display ) != 0 )
+			{
+				XNextEvent( display, out var xevent );
+				ProcessEvent( ref xevent );
+			}
 
 			//MSG msg = new MSG();
 
@@ -1631,19 +1954,13 @@ namespace Internal//NeoAxis
 
 			while( true )
 			{
-				//MSG msg = new MSG();
-
-				//if( PeekMessage( ref msg, IntPtr.Zero, 0, 0, PM_REMOVE ) )
-			//{
-			//		if( msg.message == WM_QUIT )
-			//			break;
-
-			//		TranslateMessage( ref msg );
-			//		DispatchMessage( ref msg );
-
-			//		continue;
-				//}
-				//else
+				if( display != IntPtr.Zero && XPending( display ) != 0 )
+				{
+					XNextEvent( display, out var xevent );
+					ProcessEvent( ref xevent );
+					continue;
+				}
+				else
 				{
 					if( EngineApp.NeedExit )
 						break;
@@ -1670,33 +1987,33 @@ namespace Internal//NeoAxis
 							//{
 							//	//windowed
 							//	if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Windowed )
-			//		{
+							//		{
 							//		SetWindowBorderStyle( WindowBorderStyle.Sizeable );
 
 							//		var pos = ( GetScreenSize() - EngineApp.WindowedModeSize ) / 2;
 							//		var size = EngineApp.WindowedModeSize - new Vector2I( 1, 1 );
 							//		SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, pos.X, pos.Y, size.X, size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
-			//			}
+							//			}
 
 							//	//borderless
 							//	if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Borderless )
-			//			{
+							//			{
 							//		SetWindowBorderStyle( WindowBorderStyle.None );
 
 							//		var monitorRect = GetWindowMonitorRectangle();
 
 							//		SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_NOTOPMOST, monitorRect.Left, monitorRect.Top, monitorRect.Size.X, monitorRect.Size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
-			//				}
+							//				}
 
 							//	//fullscreen
 							//	if( goingToAnotherWindowedMode2.Value == WindowedModeEnum.Fullscreen )
-			//				{
+							//				{
 							//		SetWindowBorderStyle( WindowBorderStyle.None );
 
 							//		var monitorRect = GetWindowMonitorRectangle();
 
 							//		SetWindowPos( EngineApp.ApplicationWindowHandle, HWND_TOPMOST, monitorRect.Left, monitorRect.Top, monitorRect.Size.X, monitorRect.Size.Y, SWP_FRAMECHANGED | SWP_SHOWWINDOW );
-			//				}
+							//				}
 
 							//	//SetWindowState( WindowState.Normal );
 							//	SetForegroundWindow( EngineApp.ApplicationWindowHandle );
@@ -1704,7 +2021,7 @@ namespace Internal//NeoAxis
 
 							//	goingToAnotherWindowedMode = null;
 							//	EngineApp.CreatedWindowProcessResize();
-			//}
+							//}
 
 							EngineApp.CreatedWindowApplicationIdle( false );
 						}
@@ -1835,6 +2152,8 @@ namespace Internal//NeoAxis
 		public override void CreatedWindow_UpdateWindowTitle( string title )
 		{
 			//!!!!
+			if( display != IntPtr.Zero && EngineApp.ApplicationWindowHandle != IntPtr.Zero )
+				XStoreName( display, EngineApp.ApplicationWindowHandle, title );
 			//if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
 			//	SetWindowText( EngineApp.ApplicationWindowHandle, title );
 		}
@@ -1937,7 +2256,7 @@ namespace Internal//NeoAxis
 		public override RectangleI CreatedWindow_GetWindowRectangle()
 		{
 			//!!!!
-			return new RectangleI( 0, 0, 10, 10 );
+			return new RectangleI( windowPosition, windowPosition + windowSize );
 
 			//RectangleI windowRect;
 			//GetWindowRect( EngineApp.ApplicationWindowHandle, out windowRect );
@@ -1948,7 +2267,7 @@ namespace Internal//NeoAxis
 		public override RectangleI CreatedWindow_GetClientRectangle()
 		{
 			//!!!!
-			return new RectangleI( 0, 0, 10, 10 );
+			return new RectangleI( Vector2I.Zero, windowSize );
 
 			//RectangleI clientRect;
 			//GetClientRect( EngineApp.ApplicationWindowHandle, out clientRect );
@@ -2090,7 +2409,10 @@ namespace Internal//NeoAxis
 				return Vector2F.Zero;
 
 			//!!!!
-			return new Vector2( 0, 0 );
+			var viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+			return new Vector2(
+				(float)mousePosition.X / (float)( viewport.SizeInPixels.X - viewport.SizeInPixels.X % 2 ),
+				(float)mousePosition.Y / (float)( viewport.SizeInPixels.Y - viewport.SizeInPixels.Y % 2 ) );
 
 			//Vector2I position;
 			//GetCursorPos( out position );
@@ -2630,6 +2952,8 @@ namespace Internal//NeoAxis
 
 		public override IntPtr CallPlatformSpecificMethod( string message, IntPtr param )
 		{
+			if( message == "GetX11Display" )
+				return display;
 			return IntPtr.Zero;
 		}
 

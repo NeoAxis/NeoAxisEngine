@@ -16,27 +16,27 @@
 //void *GetSymbol(void *handle, const char *name)
 //{ return reinterpret_cast<void*>(GetProcAddress(static_cast<HMODULE>(handle), name)); }
 //
-//#elif defined(HAVE_DLFCN_H)
-//
-//#include <dlfcn.h>
-//
-//void *LoadLib(const char *name)
-//{
-//    dlerror();
-//    void *handle{dlopen(name, RTLD_NOW)};
-//    const char *err{dlerror()};
-//    if(err) handle = nullptr;
-//    return handle;
-//}
-//void CloseLib(void *handle)
-//{ dlclose(handle); }
-//void *GetSymbol(void *handle, const char *name)
-//{
-//    dlerror();
-//    void *sym{dlsym(handle, name)};
-//    const char *err{dlerror()};
-//    if(err) sym = nullptr;
-//    return sym;
-//}
-//
-//#endif
+#if defined(HAVE_DLFCN_H)
+
+#include <dlfcn.h>
+
+void *LoadLib(const char *name)
+{
+    dlerror();
+    void *handle{dlopen(name, RTLD_NOW)};
+    const char *err{dlerror()};
+    if(err) handle = nullptr;
+    return handle;
+}
+void CloseLib(void *handle)
+{ dlclose(handle); }
+void *GetSymbol(void *handle, const char *name)
+{
+    dlerror();
+    void *sym{dlsym(handle, name)};
+    const char *err{dlerror()};
+    if(err) sym = nullptr;
+    return sym;
+}
+
+#endif
