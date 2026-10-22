@@ -2530,7 +2530,7 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
-		public void SwitchActiveItem( int index )
+		public bool SwitchActiveItem( int index )
 		{
 			var objectControlledByPlayer = ObjectControlledByPlayer.Value;
 			if( objectControlledByPlayer != null )
@@ -2539,16 +2539,24 @@ namespace NeoAxis
 				{
 					var character = objectControlledByPlayer as Character;
 					if( character != null )
-						character.SwitchActiveItem( this, index );
+					{
+						if( character.SwitchActiveItem( this, index ) )
+							return true;
+					}
 				}
 
 				//Character2D
 				{
 					var character = objectControlledByPlayer as Character2D;
 					if( character != null )
-						character.SwitchActiveItem( this, index );
+					{
+						if( character.SwitchActiveItem( this, index ) )
+							return true;
+					}
 				}
 			}
+
+			return false;
 		}
 	}
 }

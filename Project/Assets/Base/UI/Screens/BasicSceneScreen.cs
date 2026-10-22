@@ -520,11 +520,13 @@ namespace Project
 				}
 			}
 
+			//!!!!configure in GameMode
 			//switch active item
-			if( scene != null && gameMode != null && e.Key >= EKeys.D1 && e.Key <= EKeys.D8 && !IsOverlappedByOtherWindows() )
+			if( scene != null && gameMode != null && e.Key >= EKeys.D1 && e.Key <= EKeys.D8 && !gameMode.IsKeyPressed( EKeys.Control ) && !IsOverlappedByOtherWindows() )
 			{
 				var index = e.Key - EKeys.D1;
-				gameMode.SwitchActiveItem( index );
+				if( gameMode.SwitchActiveItem( index ) )
+					return true;
 			}
 
 			return base.OnKeyDown( e );

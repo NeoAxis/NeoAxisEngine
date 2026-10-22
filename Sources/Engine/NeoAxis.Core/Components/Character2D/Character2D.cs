@@ -2033,7 +2033,7 @@ namespace NeoAxis
 			}
 		}
 
-		public void SwitchActiveItem( GameMode gameMode, int index )
+		public bool SwitchActiveItem( GameMode gameMode, int index )
 		{
 			var items = GetAllItems();
 			if( index < items.Length )
@@ -2053,7 +2053,9 @@ namespace NeoAxis
 					else
 						ItemActivate( gameMode, item );
 				}
+				return true;
 			}
+			return false;
 		}
 
 		public delegate void SoundPlayBeforeDelegate( Character2D sender, ref Sound sound, ref bool handled );

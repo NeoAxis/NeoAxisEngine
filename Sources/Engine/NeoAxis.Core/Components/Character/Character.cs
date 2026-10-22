@@ -3901,7 +3901,7 @@ namespace NeoAxis
 			return null;
 		}
 
-		public void SwitchActiveItem( GameMode gameMode, int index )
+		public bool SwitchActiveItem( GameMode gameMode, int index )
 		{
 			//don't do action when active weapon is firing
 			var activeWeapon = GetActiveWeapon();
@@ -3925,8 +3925,10 @@ namespace NeoAxis
 						else
 							ItemActivate( gameMode, item );
 					}
+					return true;
 				}
 			}
+			return false;
 		}
 
 		void RotateWeaponIfCollided( Weapon weapon, TransformOffset offset, Degree rotationOffsetVertical )
