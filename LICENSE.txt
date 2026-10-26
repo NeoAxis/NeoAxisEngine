@@ -28,7 +28,7 @@ G. Additional Content which is provided for an additional fee can be redistribut
 
 H. Certain Additional Content is distributed under the "Free to use with NeoAxis" license. This means that the content can only be used with the Engine Code.
 
-I. Certain Products may be licensed or distributed under the "NeoX Service" license terms, which represent a special case of this Agreement. Under these terms, the Product may be distributed solely inside the NeoX Service cloud platform.
+I. Certain Products may be licensed or distributed under the "NeoX Service", "Free To Use", or "Paid Per Seat" license terms, which represent a special case of this Agreement. Under the "NeoX Service" terms, the Product may be distributed solely inside the NeoX Service cloud platform. Under the "Free To Use" terms, the Product is provided free of charge with no payment obligations. Under the "Paid Per Seat" terms, the license is granted subject to payment per individual seat. These license types serve as specific clarifications to the license granted under this Agreement.
 
 J. You may not modify, alter, bypass, disable, or circumvent the login verification behavior, authentication mechanisms, or account validation routines of the Engine Code. Furthermore, modifying, altering, or removing any portions of the source code or binary files marked with the statement "IMPORTANT: Modifying or bypassing this part of the code is prohibited by the NeoAxis Engine Standard EULA." is strictly prohibited under this License.
 
