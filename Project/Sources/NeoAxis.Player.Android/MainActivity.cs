@@ -19,13 +19,13 @@ using AppResource = NeoAxis.Player.Android.Resource;
 
 namespace NeoAxis.Player.Android
 {
-	[Activity( 
+	[Activity(
 		Label = "@string/app_name",
 		Theme = "@android:style/Theme.DeviceDefault.NoActionBar", //Theme = "@style/AppTheme.NoActionBar", 
-		MainLauncher = true, 
-		ScreenOrientation = DefaultScreenOrientation, 
-		ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize, 
-		WindowSoftInputMode = SoftInput.AdjustResize 
+		MainLauncher = true,
+		ScreenOrientation = DefaultScreenOrientation,
+		ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.ScreenSize,
+		WindowSoftInputMode = SoftInput.AdjustResize
 	)]
 	public class MainActivity : Activity, View.IOnTouchListener // AppCompatActivity, View.IOnTouchListener
 	{
@@ -86,7 +86,7 @@ namespace NeoAxis.Player.Android
 
 			surfaceView.SetOnTouchListener( this );
 #else
-			surfaceView = new GLSurfaceView( this );
+			surfaceView = new MyGLSurfaceView( this );
 			surfaceView.SetEGLContextClientVersion( 3 );
 
 			//it's just recommendation, is not works for any device
@@ -104,6 +104,9 @@ namespace NeoAxis.Player.Android
 			sceneHolder.AddView( surfaceView );
 
 			surfaceView.SetOnTouchListener( this );
+
+			surfaceView.Focusable = true;
+			surfaceView.FocusableInTouchMode = true;
 #endif
 
 			//engineMainThread = new Thread( EngineMainThreadMethod );
@@ -196,21 +199,28 @@ namespace NeoAxis.Player.Android
 				if( requiredSoftInput != currentSoftInput )
 				{
 					currentSoftInput = requiredSoftInput;
+					var show = currentSoftInput;
 
-					var view = SurfaceView;
-
-					var inputMethodManager = (InputMethodManager)GetSystemService( Context.InputMethodService );
-
-					if( currentSoftInput )
+					RunOnUiThread( delegate ()
 					{
-						view.RequestFocus();
-						// Explicitly show (avoids obsolete ToggleSoftInput on API 31+).
-						inputMethodManager.ShowSoftInput( view, ShowFlags.Forced );
-					}
-					else
-					{
-						inputMethodManager.HideSoftInputFromWindow( view.WindowToken, HideSoftInputFlags.None );
-					}
+						try
+						{
+							var view = SurfaceView;
+
+							var inputMethodManager = (InputMethodManager)GetSystemService( Context.InputMethodService );
+
+							if( show )
+							{
+								view.RequestFocus();
+								inputMethodManager.ShowSoftInput( view, ShowFlags.Forced );
+							}
+							else
+							{
+								inputMethodManager.HideSoftInputFromWindow( view.WindowToken, HideSoftInputFlags.None );
+							}
+						}
+						catch { }
+					} );
 				}
 			}
 			catch { }
@@ -315,9 +325,7 @@ namespace NeoAxis.Player.Android
 		public override bool OnKeyUp( [GeneratedEnum] Keycode keyCode, global::Android.Views.KeyEvent e )
 		{
 			if( Engine.engineInitialized )
-			{
 				return true;
-			}
 
 			return base.OnKeyUp( keyCode, e );
 		}
