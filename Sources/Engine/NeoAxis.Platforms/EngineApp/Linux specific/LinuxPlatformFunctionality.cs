@@ -27,7 +27,7 @@ namespace Internal//NeoAxis
 		//WndProcDelegate applicationWindowProc;
 		//static bool applicationWindowProcNeedCallDefWindowProc = true;
 
-		KeyInfo[] keysInfo = new KeyInfo[ EngineApp.GetEKeysMaxIndex() + 1 ];
+		//KeyInfo[] keysInfo = new KeyInfo[ EngineApp.GetEKeysMaxIndex() + 1 ];
 
 		//bool suspendModeTimerCreated;
 
@@ -48,7 +48,7 @@ namespace Internal//NeoAxis
 		//bool goingToFullScreenMode;
 		//bool goingToChangeWindowRectangle;
 
-		static List<SystemSettings.DisplayInfo> tempScreenList = new List<SystemSettings.DisplayInfo>();
+		//static List<SystemSettings.DisplayInfo> tempScreenList = new List<SystemSettings.DisplayInfo>();
 
 		bool createdWindow_UpdateShowSystemCursor;
 
@@ -57,6 +57,10 @@ namespace Internal//NeoAxis
 		Vector2I windowPosition;
 		Vector2I windowSize;
 		Vector2I mousePosition;
+
+		bool wayland;
+		static IntPtr waylandLibrary;
+		static LinuxWaylandWrapper.CallbackMessageEvent waylandMessageEventDelegate = WaylandMessageEvent;
 
 		///////////////////////////////////////////
 
@@ -787,6 +791,101 @@ namespace Internal//NeoAxis
 
 		///////////////////////////////////////////
 
+		public enum WaylandMessageTypes
+		{
+			WindowClose,
+			WindowResize,
+			MouseMove,
+			MouseDown,
+			MouseUp,
+			KeyDown,
+			KeyUp,
+		}
+
+		internal struct LinuxWaylandWrapper
+		{
+			public const string library = "libNeoAxisWayland";
+
+			public delegate void CallbackMessageEvent( WaylandMessageTypes messageType, int parameterA, int parameterB, int parameterC );
+
+			[DllImport( library, EntryPoint = "LinuxWaylandWrapper_CreateWindow", CallingConvention = CallingConvention.Cdecl )]
+			public static extern IntPtr CreateWindow( CallbackMessageEvent callback, string title, int width, int height );
+
+			[DllImport( library, EntryPoint = "LinuxWaylandWrapper_GetDisplay", CallingConvention = CallingConvention.Cdecl )]
+			public static extern IntPtr GetDisplay();
+
+			[DllImport( library, EntryPoint = "LinuxWaylandWrapper_ProcessEvents", CallingConvention = CallingConvention.Cdecl )]
+			public static extern void ProcessEvents();
+
+			[DllImport( library, EntryPoint = "LinuxWaylandWrapper_SetWindowTitle", CallingConvention = CallingConvention.Cdecl )]
+			public static extern void SetWindowTitle( string title );
+
+			[DllImport( library, EntryPoint = "LinuxWaylandWrapper_DestroyWindow", CallingConvention = CallingConvention.Cdecl )]
+			public static extern void DestroyWindow();
+		}
+
+		static bool InitWayland()
+		{
+			if( SystemSettings.CommandLineParameters.TryGetValue( "-display", out var display ) && string.Compare( display, "x11", true ) == 0 )
+				return false;
+
+			if( Environment.GetEnvironmentVariable( "WAYLAND_DISPLAY" ) == null )
+				return false;
+
+			if( waylandLibrary == IntPtr.Zero )
+			{
+				waylandLibrary = NativeUtility.PreloadLibrary( "libNeoAxisWayland", errorFatal: false );
+				if( waylandLibrary == IntPtr.Zero )
+					return false;
+				NativeLibrary.SetDllImportResolver( typeof( LinuxPlatformFunctionality ).Assembly, ( libraryName, assembly, searchPath ) => libraryName == LinuxWaylandWrapper.library ? waylandLibrary : IntPtr.Zero );
+			}
+			return true;
+		}
+
+		static void WaylandMessageEvent( WaylandMessageTypes messageType, int parameterA, int parameterB, int parameterC )
+		{
+			Viewport viewport = null;
+			if( !RenderingSystem.Disposed && RenderingSystem.ApplicationRenderTarget != null )
+				viewport = RenderingSystem.ApplicationRenderTarget.Viewports[ 0 ];
+
+			switch( messageType )
+			{
+			case WaylandMessageTypes.WindowClose:
+				EngineApp.NeedExit = true;
+				break;
+
+			case WaylandMessageTypes.WindowResize:
+				instance.windowSize = new Vector2I( parameterA, parameterB );
+				if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
+					EngineApp.CreatedWindowProcessResize();
+				break;
+
+			case WaylandMessageTypes.MouseMove:
+				instance.mousePosition = new Vector2I( parameterA, parameterB );
+				if( viewport != null )
+					EngineApp.CreatedInsideEngineWindow.ProcessMouseMoveEvent();
+				break;
+
+			case WaylandMessageTypes.MouseDown:
+			case WaylandMessageTypes.MouseUp:
+				if( viewport != null )
+					ProcessMouseButton( viewport, (uint)parameterA, messageType == WaylandMessageTypes.MouseDown );
+				break;
+
+			case WaylandMessageTypes.KeyDown:
+				if( viewport != null )
+					ProcessKeyDown( viewport, GetEKeyByKeySym( parameterA ), (char)parameterB );
+				break;
+
+			case WaylandMessageTypes.KeyUp:
+				if( viewport != null )
+					ProcessKeyUp( viewport, GetEKeyByKeySym( parameterA ) );
+				break;
+			}
+		}
+
+		///////////////////////////////////////////
+
 		public LinuxPlatformFunctionality()
 		{
 			instance = this;
@@ -805,7 +904,6 @@ namespace Internal//NeoAxis
 
 		public override Vector2I GetScreenSize()
 		{
-			//!!!!
 			if( display == IntPtr.Zero )
 			{
 				XInitThreads();
@@ -845,18 +943,6 @@ namespace Internal//NeoAxis
 
 		public override IntPtr CreatedWindow_CreateWindow()
 		{
-			//!!!!
-			if( display == IntPtr.Zero )
-			{
-				XInitThreads();
-				display = XOpenDisplay( IntPtr.Zero );
-			}
-			if( display == IntPtr.Zero )
-			{
-				Log.Fatal( "EngineApp: WindowCreate: XOpenDisplay failed." );
-				return IntPtr.Zero;
-			}
-
 			bool showMaximized = EngineApp.WindowedMode == WindowedModeEnum.Windowed && EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Maximized && !EngineApp.InitSettings.MultiMonitorMode.Value;
 			bool showMinimized = EngineApp.InitSettings.CreateWindowState.Value == EngineApp.WindowStateEnum.Minimized;
 
@@ -878,7 +964,35 @@ namespace Internal//NeoAxis
 				}
 			}
 
+			if( InitWayland() )
+			{
+				Log.InvisibleInfo( "Wayland: Window creating." );
+				windowSize = size;
+				var waylandWindow = LinuxWaylandWrapper.CreateWindow( waylandMessageEventDelegate, EngineApp.CreatedInsideEngineWindow.Title, size.X, size.Y );
+				if( waylandWindow != IntPtr.Zero )
+				{
+					Log.InvisibleInfo( "Wayland: Window created." );
+					wayland = true;
+					return waylandWindow;
+				}
+				LinuxWaylandWrapper.DestroyWindow();
+			}
+
+			if( display == IntPtr.Zero )
+			{
+				XInitThreads();
+				display = XOpenDisplay( IntPtr.Zero );
+			}
+			if( display == IntPtr.Zero )
+			{
+				Log.Fatal( "EngineApp: WindowCreate: XOpenDisplay failed." );
+				return IntPtr.Zero;
+			}
+
+			Log.InvisibleInfo( "X11: Window creating." );
+
 			var screen = XDefaultScreen( display );
+
 			var windowHandle = XCreateSimpleWindow( display, XRootWindow( display, screen ), position.X, position.Y, (uint)size.X, (uint)size.Y, 0, IntPtr.Zero, IntPtr.Zero );
 
 			XSelectInput( display, windowHandle, (IntPtr)( KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | ExposureMask | StructureNotifyMask | FocusChangeMask ) );
@@ -892,6 +1006,8 @@ namespace Internal//NeoAxis
 
 			windowPosition = position;
 			windowSize = size;
+
+			Log.InvisibleInfo( "X11: Window created." );
 
 			return windowHandle;
 
@@ -983,11 +1099,12 @@ namespace Internal//NeoAxis
 
 		public override void CreatedWindow_DestroyWindow()
 		{
-			//!!!!
+			if( wayland )
+				LinuxWaylandWrapper.DestroyWindow();
+			else if( display != IntPtr.Zero && EngineApp.ApplicationWindowHandle != IntPtr.Zero )
+				XDestroyWindow( display, EngineApp.ApplicationWindowHandle );
 			if( display != IntPtr.Zero )
 			{
-				if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
-					XDestroyWindow( display, EngineApp.ApplicationWindowHandle );
 				XCloseDisplay( display );
 				display = IntPtr.Zero;
 			}
@@ -1020,29 +1137,29 @@ namespace Internal//NeoAxis
 			//}
 		}
 
-		static bool GetEKeyByKeyCode( int keyCode, out EKeys eKey )
-		{
-			if( Enum.IsDefined( typeof( EKeys ), (int)keyCode ) )
-			{
-				eKey = (EKeys)(int)keyCode;
-				return true;
-			}
-			else
-			{
-				eKey = EKeys.Cancel;
-				return false;
-			}
-		}
+		//static bool GetEKeyByKeyCode( int keyCode, out EKeys eKey )
+		//{
+		//	if( Enum.IsDefined( typeof( EKeys ), (int)keyCode ) )
+		//	{
+		//		eKey = (EKeys)(int)keyCode;
+		//		return true;
+		//	}
+		//	else
+		//	{
+		//		eKey = EKeys.Cancel;
+		//		return false;
+		//	}
+		//}
 
-		static int HIWORD( int n )
-		{
-			return ( ( n >> 0x10 ) & 0xffff );
-		}
+		//static int HIWORD( int n )
+		//{
+		//	return ( ( n >> 0x10 ) & 0xffff );
+		//}
 
-		static int LOWORD( int n )
-		{
-			return ( n & 0xffff );
-		}
+		//static int LOWORD( int n )
+		//{
+		//	return ( n & 0xffff );
+		//}
 
 		//static void RemovePendingMessage( IntPtr hWnd, uint message )
 		//{
@@ -1797,6 +1914,87 @@ namespace Internal//NeoAxis
 			return false;
 		}
 
+		static void ProcessKeyDown( Viewport viewport, EKeys eKey, char character )
+		{
+			bool handled = false;
+			bool suppressKeyPress = false;
+
+			if( eKey != 0 )
+			{
+				KeyEvent keyEvent = new KeyEvent( eKey );
+				viewport.PerformKeyDown( keyEvent, ref handled );
+
+				if( eKey == EKeys.LShift || eKey == EKeys.RShift )
+				{
+					keyEvent = new KeyEvent( EKeys.Shift );
+					viewport.PerformKeyDown( keyEvent, ref handled );
+				}
+				if( eKey == EKeys.LControl || eKey == EKeys.RControl )
+				{
+					keyEvent = new KeyEvent( EKeys.Control );
+					viewport.PerformKeyDown( keyEvent, ref handled );
+				}
+				if( eKey == EKeys.LAlt || eKey == EKeys.RAlt )
+				{
+					keyEvent = new KeyEvent( EKeys.Alt );
+					viewport.PerformKeyDown( keyEvent, ref handled );
+				}
+
+				if( keyEvent.SuppressKeyPress )
+					suppressKeyPress = true;
+			}
+
+			if( !suppressKeyPress && character != 0 )
+			{
+				KeyPressEvent keyPressEvent = new KeyPressEvent( character );
+				viewport.PerformKeyPress( keyPressEvent, ref handled );
+			}
+		}
+
+		static void ProcessKeyUp( Viewport viewport, EKeys eKey )
+		{
+			bool handled = false;
+
+			if( eKey != 0 )
+			{
+				KeyEvent keyEvent = new KeyEvent( eKey );
+				viewport.PerformKeyUp( keyEvent, ref handled );
+
+				if( eKey == EKeys.LShift || eKey == EKeys.RShift )
+				{
+					keyEvent = new KeyEvent( EKeys.Shift );
+					viewport.PerformKeyUp( keyEvent, ref handled );
+				}
+				if( eKey == EKeys.LControl || eKey == EKeys.RControl )
+				{
+					keyEvent = new KeyEvent( EKeys.Control );
+					viewport.PerformKeyUp( keyEvent, ref handled );
+				}
+				if( eKey == EKeys.LAlt || eKey == EKeys.RAlt )
+				{
+					keyEvent = new KeyEvent( EKeys.Alt );
+					viewport.PerformKeyUp( keyEvent, ref handled );
+				}
+			}
+		}
+
+		static void ProcessMouseButton( Viewport viewport, uint button, bool pressed )
+		{
+			var handled = false;
+			if( button == 4 || button == 5 )
+			{
+				if( pressed )
+					viewport.PerformMouseWheel( button == 4 ? 120 : -120, ref handled );
+			}
+			else if( GetEMouseButtonByButton( button, out var eButton ) )
+			{
+				if( pressed )
+					viewport.PerformMouseDown( eButton, ref handled );
+				else
+					viewport.PerformMouseUp( eButton, ref handled );
+			}
+		}
+
 		void ProcessEvent( ref XEvent xevent )
 		{
 			Viewport viewport = null;
@@ -1820,97 +2018,22 @@ namespace Internal//NeoAxis
 			case KeyPress:
 				if( viewport != null )
 				{
-					var eKey = GetEKeyByKeySym( (long)XLookupKeysym( ref xevent, 0 ) );
 					var buffer = new byte[ 8 ];
 					var count = XLookupString( ref xevent, buffer, buffer.Length, out _, IntPtr.Zero );
-
-					bool handled = false;
-					bool suppressKeyPress = false;
-
-					if( eKey != 0 )
-					{
-						KeyEvent keyEvent = new KeyEvent( eKey );
-						viewport.PerformKeyDown( keyEvent, ref handled );
-
-						if( eKey == EKeys.LShift || eKey == EKeys.RShift )
-						{
-							keyEvent = new KeyEvent( EKeys.Shift );
-							viewport.PerformKeyDown( keyEvent, ref handled );
-						}
-						if( eKey == EKeys.LControl || eKey == EKeys.RControl )
-						{
-							keyEvent = new KeyEvent( EKeys.Control );
-							viewport.PerformKeyDown( keyEvent, ref handled );
-						}
-						if( eKey == EKeys.LAlt || eKey == EKeys.RAlt )
-						{
-							keyEvent = new KeyEvent( EKeys.Alt );
-							viewport.PerformKeyDown( keyEvent, ref handled );
-						}
-
-						if( keyEvent.SuppressKeyPress )
-							suppressKeyPress = true;
-					}
-
-					if( !suppressKeyPress && count > 0 )
-					{
-						KeyPressEvent keyPressEvent = new KeyPressEvent( (char)buffer[ 0 ] );
-						viewport.PerformKeyPress( keyPressEvent, ref handled );
-					}
+					ProcessKeyDown( viewport, GetEKeyByKeySym( (long)XLookupKeysym( ref xevent, 0 ) ), count > 0 ? (char)buffer[ 0 ] : (char)0 );
 				}
 				break;
 
 			case KeyRelease:
 				if( viewport != null )
-				{
-					var eKey = GetEKeyByKeySym( (long)XLookupKeysym( ref xevent, 0 ) );
-
-					bool handled = false;
-
-					if( eKey != 0 )
-					{
-						KeyEvent keyEvent = new KeyEvent( eKey );
-						viewport.PerformKeyUp( keyEvent, ref handled );
-
-						if( eKey == EKeys.LShift || eKey == EKeys.RShift )
-						{
-							keyEvent = new KeyEvent( EKeys.Shift );
-							viewport.PerformKeyUp( keyEvent, ref handled );
-						}
-						if( eKey == EKeys.LControl || eKey == EKeys.RControl )
-						{
-							keyEvent = new KeyEvent( EKeys.Control );
-							viewport.PerformKeyUp( keyEvent, ref handled );
-						}
-						if( eKey == EKeys.LAlt || eKey == EKeys.RAlt )
-						{
-							keyEvent = new KeyEvent( EKeys.Alt );
-							viewport.PerformKeyUp( keyEvent, ref handled );
-						}
-					}
-				}
+					ProcessKeyUp( viewport, GetEKeyByKeySym( (long)XLookupKeysym( ref xevent, 0 ) ) );
 				break;
 
 			case ButtonPress:
 			case ButtonRelease:
 				mousePosition = new Vector2I( xevent.pointerX, xevent.pointerY );
 				if( viewport != null )
-				{
-					var handled = false;
-					var button = xevent.buttonOrKeycode;
-					if( button == 4 || button == 5 )
-					{
-						if( xevent.type == ButtonPress )
-							viewport.PerformMouseWheel( button == 4 ? 120 : -120, ref handled );
-					}
-					else if( GetEMouseButtonByButton( button, out var eButton ) )
-					{
-						if( xevent.type == ButtonPress )
-							viewport.PerformMouseDown( eButton, ref handled );
-						else
-							viewport.PerformMouseUp( eButton, ref handled );
-					}
-				}
+					ProcessMouseButton( viewport, xevent.buttonOrKeycode, xevent.type == ButtonPress );
 				break;
 
 			case MotionNotify:
@@ -1923,7 +2046,11 @@ namespace Internal//NeoAxis
 
 		public override void CreatedWindow_ProcessMessageEvents()
 		{
-			//!!!!
+			if( wayland )
+			{
+				LinuxWaylandWrapper.ProcessEvents();
+				return;
+			}
 			if( display == IntPtr.Zero )
 				return;
 
@@ -1950,10 +2077,10 @@ namespace Internal//NeoAxis
 
 		public override void CreatedWindow_RunMessageLoop()
 		{
-			//!!!!
-
 			while( true )
 			{
+				if( wayland )
+					LinuxWaylandWrapper.ProcessEvents();
 				if( display != IntPtr.Zero && XPending( display ) != 0 )
 				{
 					XNextEvent( display, out var xevent );
@@ -2151,8 +2278,9 @@ namespace Internal//NeoAxis
 
 		public override void CreatedWindow_UpdateWindowTitle( string title )
 		{
-			//!!!!
-			if( display != IntPtr.Zero && EngineApp.ApplicationWindowHandle != IntPtr.Zero )
+			if( wayland )
+				LinuxWaylandWrapper.SetWindowTitle( title );
+			else if( display != IntPtr.Zero && EngineApp.ApplicationWindowHandle != IntPtr.Zero )
 				XStoreName( display, EngineApp.ApplicationWindowHandle, title );
 			//if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
 			//	SetWindowText( EngineApp.ApplicationWindowHandle, title );
@@ -2952,8 +3080,10 @@ namespace Internal//NeoAxis
 
 		public override IntPtr CallPlatformSpecificMethod( string message, IntPtr param )
 		{
-			if( message == "GetX11Display" )
-				return display;
+			if( message == "GetDisplay" )
+				return wayland ? LinuxWaylandWrapper.GetDisplay() : display;
+			if( message == "GetWindowHandleType" )
+				return wayland ? (IntPtr)(int)SharpBgfx.NativeWindowHandleType.Wayland : IntPtr.Zero;
 			return IntPtr.Zero;
 		}
 

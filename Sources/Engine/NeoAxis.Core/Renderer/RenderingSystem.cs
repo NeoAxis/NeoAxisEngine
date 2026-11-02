@@ -622,7 +622,10 @@ namespace NeoAxis
 			else
 				platformData = new PlatformData { WindowHandle = EngineApp.ApplicationWindowHandle };
 			if( SystemSettings.CurrentPlatform == SystemSettings.Platform.Linux )
-				platformData.DisplayType = EngineApp.CallPlatformSpecificMethod( "GetX11Display", IntPtr.Zero );
+			{
+				platformData.DisplayType = EngineApp.CallPlatformSpecificMethod( "GetDisplay", IntPtr.Zero );
+				platformData.Type = (NativeWindowHandleType)(int)EngineApp.CallPlatformSpecificMethod( "GetWindowHandleType", IntPtr.Zero );
+			}
 			Bgfx.SetPlatformData( platformData );
 
 			if( EngineApp.IsSimulation && EngineApp.InitSettings.SimulationTripleBuffering )
