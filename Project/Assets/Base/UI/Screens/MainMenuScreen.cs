@@ -314,8 +314,8 @@ namespace Project
 					ButtonMultiplayerCreate.ReadOnly = !SystemSettings.Windows;
 				}
 
-				if( ButtonMultiplayerJoin != null )
-					ButtonMultiplayerJoin.ReadOnly = SystemSettings.Web;
+				//if( ButtonMultiplayerJoin != null )
+				//	ButtonMultiplayerJoin.ReadOnly = SystemSettings.Web;
 
 				if( ButtonFullscreen != null )
 					ButtonFullscreen.Enabled = SystemSettings.Web;

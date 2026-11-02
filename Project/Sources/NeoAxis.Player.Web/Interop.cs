@@ -43,6 +43,28 @@ namespace NeoAxis.Player.Web
 		}
 
 		[JSExport]
+		public static void OnKeyPress( string character )
+		{
+			if( string.IsNullOrEmpty( character ) || character.Length != 1 || char.IsControl( character, 0 ) )
+				return;
+
+			var item = new Engine.KeyEventItem();
+			item.Type = Engine.KeyEventType.Press;
+			item.Character = character[ 0 ];
+			Engine.inputEventQueue.Enqueue( item );
+		}
+
+		[JSExport]
+		public static void ProcessInputEvents()
+		{
+			if( !EngineApp.Created )
+				return;
+
+			Engine.ProcessInputEvents();
+			Engine.UpdateSoftInput();
+		}
+
+		[JSExport]
 		public static void OnMouseMove( float x, float y )
 		{
 			Engine.inputEventQueue.Enqueue( new Engine.MouseEventItem()
@@ -193,6 +215,9 @@ namespace NeoAxis.Player.Web
 
 		[JSImport( "setMouseRelativeMode", "main.js" )]
 		public static partial void SetMouseRelativeMode( bool enable );
+
+		[JSImport( "setVirtualKeyboard", "main.js" )]
+		public static partial void SetVirtualKeyboard( bool enable );
 
 		[JSImport( "hideLogo", "main.js" )]
 		internal static partial void HideLogo();

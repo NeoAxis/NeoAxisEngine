@@ -58,6 +58,7 @@ namespace NeoAxis.Player.Web
 			}
 			// //process input
 			Engine.ProcessInputEvents();
+			Engine.UpdateSoftInput();
 
 			// //engine tick and render
 			EngineApp.CreatedWindowApplicationIdle( false );

@@ -2067,6 +2067,11 @@ namespace NeoAxis
 
 		///////////////////////////////////////////////
 
+		public Road()
+		{
+			CurveTypePosition = CurveTypeEnum.CatmullRomSpline;
+		}
+
 		public override void NewObjectSetDefaultConfiguration( bool createdFromNewObjectWindow )
 		{
 			var point = CreateComponent<RoadPoint>();

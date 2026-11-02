@@ -23,6 +23,7 @@ namespace NeoAxis.Player.iOS
 
 				//!!!!iOS: rendering view with CAMetalLayer for MoltenVK
 				var view = new MetalView( Window.Bounds );
+				metalView = view;
 				var scale = windowScene.Screen.NativeScale;
 				view.ContentScaleFactor = scale;
 				view.Layer.ContentsScale = scale;
@@ -49,10 +50,12 @@ namespace NeoAxis.Player.iOS
 			}
 
 		CoreAnimation.CADisplayLink? displayLink;
+		MetalView? metalView;
 
 		void OnFrame()
 		{
 			Engine.ProcessInputEvents();
+			metalView?.UpdateSoftInput();
 			EngineApp.CreatedWindowApplicationIdle( false );
 		}
 
@@ -96,8 +99,9 @@ namespace NeoAxis.Player.iOS
 	}
 
 	//!!!!iOS
-	class MetalView : UIView
+	class MetalView : UIView, IUIKeyInput
 	{
+		bool currentSoftInput;
 		public MetalView( CoreGraphics.CGRect frame ) : base( frame ) 
 		{
 			MultipleTouchEnabled = true;
@@ -143,6 +147,85 @@ namespace NeoAxis.Player.iOS
 
 			if( Engine.engineInitialized )
 				RenderingSystem.ApplicationRenderTarget?.WindowMovedOrResized( size );
+		}
+
+		public override bool CanBecomeFirstResponder
+		{
+			get { return true; }
+		}
+
+		[Export( "hasText" )]
+		public bool HasText
+		{
+			get { return true; }
+		}
+
+		[Export( "insertText:" )]
+		public void InsertText( string text )
+		{
+			lock( Engine.inputEventQueue )
+			{
+				foreach( var c in text )
+				{
+					var item = new Engine.KeyDownEventItem();
+					if( c == '\n' )
+						item.KeyCode = EKeys.Return;
+					else
+						item.Character = c;
+					Engine.inputEventQueue.Enqueue( item );
+				}
+			}
+		}
+
+		[Export( "deleteBackward" )]
+		public void DeleteBackward()
+		{
+			lock( Engine.inputEventQueue )
+			{
+				var item = new Engine.KeyDownEventItem();
+				item.KeyCode = EKeys.Back;
+				Engine.inputEventQueue.Enqueue( item );
+			}
+		}
+
+		[Export( "returnKeyType" )]
+		public UIReturnKeyType ReturnKeyType
+		{
+			get { return UIReturnKeyType.Done; }
+		}
+
+		[Export( "autocapitalizationType" )]
+		public UITextAutocapitalizationType AutocapitalizationType
+		{
+			get { return UITextAutocapitalizationType.None; }
+		}
+
+		[Export( "autocorrectionType" )]
+		public UITextAutocorrectionType AutocorrectionType
+		{
+			get { return UITextAutocorrectionType.No; }
+		}
+
+		public void UpdateSoftInput()
+		{
+			var requiredSoftInput = false;
+			var viewport = RenderingSystem.ApplicationRenderTarget?.Viewports[ 0 ];
+			if( viewport != null )
+			{
+				var edit = viewport.UIContainer?.FocusedControl as UIEdit;
+				if( edit != null && !edit.ReadOnlyInHierarchy )
+					requiredSoftInput = true;
+			}
+
+			if( requiredSoftInput != currentSoftInput )
+			{
+				currentSoftInput = requiredSoftInput;
+
+				if( currentSoftInput )
+					BecomeFirstResponder();
+				else
+					ResignFirstResponder();
+			}
 		}
 	}
 }

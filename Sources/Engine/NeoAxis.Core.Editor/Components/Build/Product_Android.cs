@@ -435,15 +435,15 @@ namespace NeoAxis
 			//		return;
 			//}
 
-			//copy Build.Android.sln or Build.Android.Extended.sln
-			if( File.Exists( Path.Combine( VirtualFileSystem.Directories.Project, "Build.Android.Extended.sln" ) ) )
-			{
-				CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Android.Extended.sln" );
-			}
-			else
-			{
-				CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Android.sln" );
-			}
+			////copy Build.Android.sln or Build.Android.Extended.sln
+			//if( File.Exists( Path.Combine( VirtualFileSystem.Directories.Project, "Build.Android.Extended.sln" ) ) )
+			//{
+			//	CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Android.Extended.sln" );
+			//}
+			//else
+			//{
+			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.Android.sln" );
+			//}
 
 			//copy Project.Android.csproj
 			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Project.Android.csproj" );

@@ -465,6 +465,7 @@ namespace NeoAxis
 			Line,
 			RoundedLine,
 			BezierPath,
+			CatmullRomSpline,
 		}
 
 		/////////////////////////////////////////
@@ -872,6 +873,7 @@ namespace NeoAxis
 					return new CurveBezierPath();
 				else
 					return new CurveCubicSpline();
+			case CurveTypeEnum.CatmullRomSpline: return new CatmullRomSpline();
 			}
 
 			Log.Fatal( "CurveInSpace: CreateCurve: no implementation." );

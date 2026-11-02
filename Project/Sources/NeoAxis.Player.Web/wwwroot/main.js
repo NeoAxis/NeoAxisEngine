@@ -233,6 +233,7 @@ canvas = globalThis.document.getElementById("canvas");
 dotnet.instance.Module["canvas"] = canvas;
 
 let mouseRelativeModeHandler = (enable) => { };
+let virtualKeyboardHandler = (enable) => { };
 
 setModuleImports("main.js", {
 	initialize: () =>
@@ -566,6 +567,79 @@ setModuleImports("main.js", {
 			return false;
 		}
 
+		const textInput = document.createElement("input");
+		textInput.type = "text";
+		textInput.autocomplete = "off";
+		textInput.spellcheck = false;
+		textInput.setAttribute("autocorrect", "off");
+		textInput.setAttribute("autocapitalize", "off");
+		textInput.style.cssText = "position: fixed; left: 0; top: 0; width: 200px; height: 40px; padding: 0; border: 0; opacity: 0.01; background: transparent; color: transparent; caret-color: transparent; font-size: 16px; pointer-events: none;";
+		document.body.appendChild(textInput);
+
+		const TEXT_INPUT_DEFAULT_VALUE = " ";
+		let textInputLastValue = "";
+		let virtualKeyboardRequested = false;
+		const virtualKeyboardIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+		const resetTextInput = () =>
+		{
+			textInput.value = TEXT_INPUT_DEFAULT_VALUE;
+			textInputLastValue = TEXT_INPUT_DEFAULT_VALUE;
+		}
+
+		const focusTextInput = () =>
+		{
+			resetTextInput();
+			textInput.focus({ preventScroll: true });
+		}
+
+		const setVirtualKeyboard = (enable) =>
+		{
+			virtualKeyboardRequested = enable;
+
+			if (!enable && document.activeElement === textInput)
+			{
+				textInput.blur();
+				canvas.focus();
+			}
+		}
+
+		virtualKeyboardHandler = setVirtualKeyboard;
+
+		const sendKey = (code) =>
+		{
+			interop.OnKeyDown(code, "", 0, false);
+			interop.OnKeyUp(code, 0, false);
+		}
+
+		textInput.addEventListener("input", () =>
+		{
+			const value = textInput.value;
+
+			let common = 0;
+			while (common < value.length && common < textInputLastValue.length && value[common] === textInputLastValue[common])
+				common++;
+
+			for (let i = common; i < textInputLastValue.length; i++)
+				sendKey(8);
+
+			for (const character of value.substring(common))
+				interop.OnKeyPress(character);
+
+			textInputLastValue = value;
+			if (value.length === 0)
+				resetTextInput();
+		});
+
+		textInput.addEventListener("keydown", (e) =>
+		{
+			if (e.key === "Enter")
+			{
+				sendKey(13);
+				e.preventDefault();
+			}
+		});
+
 		const activeTouchIds = new Set();
 
 		const touchStart = (e) =>
@@ -588,6 +662,7 @@ setModuleImports("main.js", {
 			if (!touches || touches.length === 0)
 				return;
 
+			if (!virtualKeyboardRequested)
 			canvas.focus();
 			invalidateCanvasRect();
 
@@ -601,6 +676,13 @@ setModuleImports("main.js", {
 				activeTouchIds.add(touch.identifier);
 				const position = getCanvasPosition(touch.clientX, touch.clientY);
 				interop.OnTouchStart(touch.identifier, position.x, position.y, modifiers);
+			}
+
+			if (mobileDevice && virtualKeyboardIOS)
+			{
+				interop.ProcessInputEvents();
+				if (virtualKeyboardRequested && document.activeElement !== textInput)
+					focusTextInput();
 			}
 		}
 
@@ -636,6 +718,13 @@ setModuleImports("main.js", {
 				const position = getCanvasPosition(touch.clientX, touch.clientY);
 				interop.OnTouchEnd(touch.identifier, position.x, position.y, modifiers);
 			}
+
+			if (mobileDevice)
+			{
+				interop.ProcessInputEvents();
+				if (virtualKeyboardRequested && document.activeElement !== textInput)
+					focusTextInput();
+			}
 		}
 
 		canvas.addEventListener("contextmenu", (e) => e.preventDefault(), false);
@@ -664,6 +753,7 @@ setModuleImports("main.js", {
 	},
 	hideLogo: () => splash.hide(),
 	setMouseRelativeMode: (enable) => mouseRelativeModeHandler(enable),
+	setVirtualKeyboard: (enable) => virtualKeyboardHandler(enable),
 	setClipboardText: (text) =>
 	{
 		if (globalThis.document.hasFocus())

@@ -18,6 +18,8 @@ namespace NeoAxis.Player.Web
 
 		static Dictionary<int, object> pointerIdentifiers = new Dictionary<int, object>();
 
+		static bool currentSoftInput;
+
 		/////////////////////////////////////////
 
 		public abstract class InputEventItem
@@ -75,6 +77,7 @@ namespace NeoAxis.Player.Web
 		{
 			Up,
 			Down,
+			Press,
 		}
 
 		/////////////////////////////////////////
@@ -132,6 +135,27 @@ namespace NeoAxis.Player.Web
 			{
 				var item = inputEventQueue.Dequeue();
 				ProcessInputEvent( item );
+			}
+		}
+
+		public static void UpdateSoftInput()
+		{
+			var requiredSoftInput = false;
+			if( SystemSettings.Mobile )
+			{
+				var viewport = RenderingSystem.ApplicationRenderTarget?.Viewports[ 0 ];
+				if( viewport != null )
+				{
+					var edit = viewport.UIContainer?.FocusedControl as UIEdit;
+					if( edit != null && !edit.ReadOnlyInHierarchy )
+						requiredSoftInput = true;
+				}
+			}
+
+			if( requiredSoftInput != currentSoftInput )
+			{
+				currentSoftInput = requiredSoftInput;
+				Interop.SetVirtualKeyboard( currentSoftInput );
 			}
 		}
 
@@ -448,6 +472,14 @@ namespace NeoAxis.Player.Web
 					var data = new KeyEvent( item.Code );
 					var handled = false;
 					viewport.PerformKeyUp( data, ref handled );
+				}
+				break;
+
+			case KeyEventType.Press:
+				{
+					var data = new KeyPressEvent( item.Character );
+					var handled = false;
+					viewport.PerformKeyPress( data, ref handled );
 				}
 				break;
 			}

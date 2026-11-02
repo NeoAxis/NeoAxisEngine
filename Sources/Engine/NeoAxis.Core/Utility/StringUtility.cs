@@ -353,22 +353,43 @@ namespace NeoAxis
 			return result.ToString();
 		}
 
-		public static string FormatSize( long byteCount )
+		public static string FormatSize( long byteCount, bool alwaysShowDecimal = false )
 		{
 			//copyright: from LiteDB
+
+			var format = alwaysShowDecimal ? "F1" : null;
 			try
 			{
-				var suf = new[] { "B", "KB", "MB", "GB", "TB" }; //Longs run out around EB
-				if( byteCount == 0 ) return "0 " + suf[ 0 ];
+				var suf = new[] { "B", "KB", "MB", "GB", "TB" };
+
+				if( byteCount == 0 )
+					return 0.ToString( format ) + " " + suf[ 0 ];
+
 				var bytes = Math.Abs( byteCount );
 				var place = Convert.ToInt64( Math.Floor( Math.Log( bytes, 1024 ) ) );
 				var num = Math.Round( bytes / Math.Pow( 1024, place ), 1 );
-				return ( Math.Sign( byteCount ) * num ).ToString() + " " + suf[ place ];
+
+				return ( Math.Sign( byteCount ) * num ).ToString( format ) + " " + suf[ place ];
 			}
 			catch
 			{
-				return ( byteCount / 1024 / 1024 / 1024 / 1024 ).ToString() + " TB";
+				var num = byteCount / 1024.0 / 1024 / 1024 / 1024;
+				return num.ToString( format ) + " TB";
 			}
+
+			//try
+			//{
+			//	var suf = new[] { "B", "KB", "MB", "GB", "TB" }; //Longs run out around EB
+			//	if( byteCount == 0 ) return "0 " + suf[ 0 ];
+			//	var bytes = Math.Abs( byteCount );
+			//	var place = Convert.ToInt64( Math.Floor( Math.Log( bytes, 1024 ) ) );
+			//	var num = Math.Round( bytes / Math.Pow( 1024, place ), 1 );
+			//	return ( Math.Sign( byteCount ) * num ).ToString() + " " + suf[ place ];
+			//}
+			//catch
+			//{
+			//	return ( byteCount / 1024 / 1024 / 1024 / 1024 ).ToString() + " TB";
+			//}
 		}
 	}
 }

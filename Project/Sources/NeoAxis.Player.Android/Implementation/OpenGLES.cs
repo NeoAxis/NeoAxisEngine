@@ -253,66 +253,6 @@ namespace NeoAxis.Player.Android
 		}
 	}
 
-	//public class EngineInputConnection : BaseInputConnection
-	//{
-	//	public EngineInputConnection( MyGLSurfaceView targetView, bool fullEditor )
-	//		: base( targetView, fullEditor )
-	//	{
-	//	}
-
-	//	public override bool CommitText( Java.Lang.ICharSequence text, int newCursorPosition )
-	//	{
-	//		if( text != null && text.Length() > 0 )
-	//		{
-	//			if( Engine.engineInitialized )
-	//			{
-	//				var characters = text.ToString();
-
-	//				lock( Engine.inputEventQueue )
-	//				{
-	//					foreach( var c in characters )
-	//					{
-	//						if( Engine.inputEventQueue.Count >= 200 )
-	//							break;
-
-	//						var item = new Engine.KeyDownEventItem();
-	//						item.Character = c;
-
-	//						Engine.inputEventQueue.Enqueue( item );
-	//					}
-	//				}
-	//			}
-
-	//			return true;
-	//		}
-
-	//		return base.CommitText( text, newCursorPosition );
-	//	}
-
-	//	//public override bool DeleteSurroundingText( int beforeLength, int afterLength )
-	//	//{
-	//	//	if( Engine.engineInitialized )
-	//	//	{
-	//	//		lock( Engine.inputEventQueue )
-	//	//		{
-	//	//			for( int n = 0; n < beforeLength; n++ )
-	//	//			{
-	//	//				if( Engine.inputEventQueue.Count >= 200 )
-	//	//					break;
-
-	//	//				var item = new Engine.KeyDownEventItem();
-	//	//				item.KeyCode = EKeys.Back;
-	//	//				Engine.inputEventQueue.Enqueue( item );
-	//	//			}
-	//	//		}
-	//	//		return true;
-	//	//	}
-
-	//	//	return base.DeleteSurroundingText( beforeLength, afterLength );
-	//	//}
-
-	//}
-
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	public class MyGLSurfaceView : GLSurfaceView

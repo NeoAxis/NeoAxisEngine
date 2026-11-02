@@ -21,6 +21,8 @@ namespace NeoAxis
 		static Dictionary<string, string[]> shaderFileIncludedFiles = new Dictionary<string, string[]>();
 		static object lockObject = new object();
 
+		static bool readOnlyMode;
+
 		/////////////////////////////////////////
 
 		public class DatabaseItem
@@ -92,12 +94,13 @@ namespace NeoAxis
 							if( SystemSettings.CloudAppContainer )
 								connection = "direct";
 
+							int attemp = 0;
+							again:
+
 							var connectionString = $"Filename={cacheFilePath};Connection={connection};Upgrade=true";
 							if( readOnly )
 								connectionString += ";ReadOnly=true";
 
-							int attemp = 0;
-							again:
 							try
 							{
 								database = new LiteDatabase( connectionString );
@@ -108,6 +111,16 @@ namespace NeoAxis
 									collection.EnsureIndex( "KeyIndex" );
 								}
 
+							}
+							catch( UnauthorizedAccessException )
+							{
+								//for Microsoft Store apps switch to read only mode
+								if( !readOnly )
+								{
+									readOnly = true;
+									goto again;
+								}
+								throw;
 							}
 							catch( Exception )
 							{
@@ -121,6 +134,8 @@ namespace NeoAxis
 									throw;
 							}
 						}
+
+						readOnlyMode = readOnly;
 					}
 					catch( Exception e )
 					{
@@ -263,6 +278,9 @@ namespace NeoAxis
 
 		public static void AddToCache( ShaderCompiler.ShaderModel shaderModel, ShaderCompiler.ShaderType shaderType, string shaderFile, string varyingFile, ICollection<(string, string)> defines, byte[] compiledData )
 		{
+			if( readOnlyMode )
+				return;
+
 			lock( lockObject )
 			{
 				Init();
