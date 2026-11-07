@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
 using NeoAxis.Editor;
+using Internal;
 
 namespace NeoAxis
 {
@@ -17,6 +18,34 @@ namespace NeoAxis
 	/// </summary>
 	public class Product_macOS : Product
 	{
+		/// <summary>
+		/// The build configuration.
+		/// </summary>
+		[Category( "Compilation" )]
+		[DefaultValue( ConfigurationEnum.Release )]
+		public Reference<ConfigurationEnum> Configuration
+		{
+			get { if( _configuration.BeginGet() ) Configuration = _configuration.Get( this ); return _configuration.value; }
+			set { if( _configuration.BeginSet( this, ref value ) ) { try { ConfigurationChanged?.Invoke( this ); } finally { _configuration.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="Configuration"/> property value changes.</summary>
+		public event Action<Product_macOS> ConfigurationChanged;
+		ReferenceField<ConfigurationEnum> _configuration = ConfigurationEnum.Release;
+
+		/// <summary>
+		/// Define constants for Project assembly separated by semicolon. For example: "CLIENT;ANOTHER_CONSTANT".
+		/// </summary>
+		[Category( "Compilation" )]
+		[DefaultValue( "" )]
+		public Reference<string> DefineConstants
+		{
+			get { if( _defineConstants.BeginGet() ) DefineConstants = _defineConstants.Get( this ); return _defineConstants.value; }
+			set { if( _defineConstants.BeginSet( this, ref value ) ) { try { DefineConstantsChanged?.Invoke( this ); } finally { _defineConstants.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="DefineConstants"/> property value changes.</summary>
+		public event Action<Product_macOS> DefineConstantsChanged;
+		ReferenceField<string> _defineConstants = "";
+
 		/// <summary>
 		/// The name of application executable file.
 		/// </summary>
@@ -128,6 +157,7 @@ namespace NeoAxis
 			//copy files
 			try
 			{
+				BuildProjects( buildInstance, new Range( 0, 0.5 ) );
 				var paths = GetPaths();
 
 				//execute
@@ -382,6 +412,57 @@ namespace NeoAxis
 			get { return false; }
 		}
 
+		void BuildProjects( ProductBuildInstance buildInstance, Range progressRange )
+		{
+			var dotnetExePath = FindSystemDotnet();
+			if( string.IsNullOrEmpty( dotnetExePath ) )
+				throw new Exception( ".NET SDK is not found in the system. .NET 10 SDK is required to build for macOS.\r\n\r\nDownload: https://dotnet.microsoft.com/download" );
+
+			var destinationFolder = Path.Combine( buildInstance.DestinationFolder, "Binaries" );
+			Directory.CreateDirectory( destinationFolder );
+
+			buildInstance.Progress = (float)progressRange.Minimum;
+
+			//build Project assembly
+			{
+				var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
+				var arguments = $"build \"{projectFullPath}\" --configuration {Configuration.Value} --output \"{destinationFolder}\" --verbosity minimal";
+
+				var defineConstants = DefineConstants.Value.Trim();
+				if( !string.IsNullOrEmpty( defineConstants ) )
+					arguments += $" -p:DefineConstants=\"{defineConstants}\"";
+
+				var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
+				if( !success )
+					throw new Exception( $"Unable to compile project.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+			}
+
+			buildInstance.Progress = (float)MathEx.Lerp( progressRange.Minimum, progressRange.Maximum, 0.5 );
+
+			//build Player assembly
+			{
+				var projectFullPath = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.Player\NeoAxis.Player.csproj" );
+				var arguments = $"build \"{projectFullPath}\" --configuration {Configuration.Value}-macOS --output \"{destinationFolder}\" --verbosity minimal";
+
+				var success = ProcessUtility.RunAndWait( dotnetExePath, arguments, out var result ) == 0;
+				if( !success )
+					throw new Exception( $"Unable to compile project.\r\n\r\n{result}\r\n\r\nCommand line:\r\n{dotnetExePath} {arguments}\r\n\r\nSee details in the log." );
+			}
+
+			buildInstance.Progress = (float)progressRange.Maximum;
+
+			//delete debug files
+			if( !DebugFiles )
+			{
+				foreach( var fileName in Directory.GetFiles( destinationFolder, "*.pdb", SearchOption.TopDirectoryOnly ) )
+					File.Delete( fileName );
+				foreach( var fileName in Directory.GetFiles( destinationFolder, "*.xml", SearchOption.TopDirectoryOnly ) )
+					File.Delete( fileName );
+				foreach( var fileName in Directory.GetFiles( destinationFolder, "*.mdb", SearchOption.TopDirectoryOnly ) )
+					File.Delete( fileName );
+			}
+		}
+
 		protected override void OnGetPaths( List<string> paths )
 		{
 			base.OnGetPaths( paths );
@@ -403,7 +484,8 @@ namespace NeoAxis
 
 			//Binaries
 
-			paths.Add( "Binaries" );
+			//paths.Add( "Binaries" );
+			paths.Add( @"Binaries\NeoAxis.Internal" );
 			//!!!!может Publish делать?
 
 			//exclude from Binaries
@@ -486,6 +568,8 @@ namespace NeoAxis
 					excludePaths.Add( Path.Combine( sourceFolder, "zh-Hans" ) );
 					excludePaths.Add( Path.Combine( sourceFolder, "zh-Hant" ) );
 				}
+
+				excludePaths.Add( Path.Combine( sourceFolder, @"NeoAxis.Internal\Platforms\macOS\CommandLineTools" ) );
 
 				foreach( var excludePath in excludePaths )
 					paths.Add( "exclude:" + excludePath );

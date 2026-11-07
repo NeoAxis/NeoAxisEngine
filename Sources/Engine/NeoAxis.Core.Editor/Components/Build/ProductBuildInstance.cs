@@ -184,6 +184,13 @@ namespace NeoAxis.Editor
 			instance.destinationFolder = destinationFolder;
 			instance.run = run;
 
+			try
+			{
+				//Set the environment variable to ensure the .NET CLI uses English for its output
+				Environment.SetEnvironmentVariable( "DOTNET_CLI_UI_LANGUAGE", "en" );
+			}
+			catch { }
+
 			if( configuration.CanBuildFromThread )
 			{
 				instance.buildThread = new Thread( BuildFunction );

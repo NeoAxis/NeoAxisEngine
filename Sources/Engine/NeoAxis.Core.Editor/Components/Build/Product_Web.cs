@@ -193,44 +193,6 @@ namespace NeoAxis
 			}
 		}
 
-		static string FindSystemDotnet()
-		{
-			var checkPaths = new List<string>();
-
-			var programFiles = Environment.GetEnvironmentVariable( "ProgramFiles" );
-			if( !string.IsNullOrEmpty( programFiles ) )
-				checkPaths.Add( Path.Combine( programFiles, "dotnet", "dotnet.exe" ) );
-
-			var pathVariable = Environment.GetEnvironmentVariable( "PATH" );
-			if( !string.IsNullOrEmpty( pathVariable ) )
-			{
-				foreach( var folder in pathVariable.Split( Path.PathSeparator ) )
-				{
-					var folder2 = folder.Trim();
-					if( folder2 != "" )
-					{
-						try
-						{
-							checkPaths.Add( Path.Combine( folder2, "dotnet.exe" ) );
-						}
-						catch { }
-					}
-				}
-			}
-
-			var dotnetRoot = Environment.GetEnvironmentVariable( "DOTNET_ROOT" );
-			if( !string.IsNullOrEmpty( dotnetRoot ) )
-				checkPaths.Add( Path.Combine( dotnetRoot, "dotnet.exe" ) );
-
-			foreach( var path in checkPaths )
-			{
-				if( File.Exists( path ) )
-					return path;
-			}
-
-			return null;
-		}
-
 		void CheckBuildRequirements( string dotnetExePath )
 		{
 			//check .NET SDK

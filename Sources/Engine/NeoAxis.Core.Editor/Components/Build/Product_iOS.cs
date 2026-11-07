@@ -310,6 +310,13 @@ namespace NeoAxis
 
 		void PatchCSharpProjects( ProductBuildInstance buildInstance )
 		{
+			{
+				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, "Sources", "NeoAxis.Player.iOS", "NeoAxis.Player.iOS.csproj" );
+				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, "Project.csproj" );
+				if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, true, out var error, out _ ) )
+					throw new Exception( error );
+			}
+
 			//{
 			//	var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.iOS.csproj" );
 			//	var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Sources\NeoAxis.CoreExtension\NeoAxis.CoreExtension.csproj" );
@@ -317,12 +324,12 @@ namespace NeoAxis
 			//		throw new Exception( error );
 			//}
 
-			{
-				var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.iOS.csproj" );
-				var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
-				if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, false, out var error, out _ ) )
-					throw new Exception( error );
-			}
+			//{
+			//	var p1 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.iOS.csproj" );
+			//	var p2 = Path.Combine( VirtualFileSystem.Directories.Project, @"Project.csproj" );
+			//	if( !EditorAPI.EditorCommandLineTools_PlatformProjectPatch_Process( p1, p2, false, out var error, out _ ) )
+			//		throw new Exception( error );
+			//}
 		}
 
 		void CopyFilesToPackageFolder( ProductBuildInstance buildInstance )
@@ -432,14 +439,14 @@ namespace NeoAxis
 			//}
 
 			//copy Build.iOS.sln or Build.iOS.Extended.sln
-			if( File.Exists( Path.Combine( VirtualFileSystem.Directories.Project, "Build.iOS.Extended.sln" ) ) )
-			{
-				CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.iOS.Extended.sln" );
-			}
-			else
-			{
+			//if( File.Exists( Path.Combine( VirtualFileSystem.Directories.Project, "Build.iOS.Extended.sln" ) ) )
+			//{
+			//	CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.iOS.Extended.sln" );
+			//}
+			//else
+			//{
 				CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Build.iOS.sln" );
-			}
+			//}
 
 			//copy Project.iOS.csproj
 			CopyFiles( VirtualFileSystem.Directories.Project, buildInstance.DestinationFolder, buildInstance, new Range( 0.4, 0.4 ), "Project.iOS.csproj" );
@@ -479,9 +486,9 @@ namespace NeoAxis
 
 			//!!!!unnecessary dlls are copied? we need a list of references?
 			//copy managed dll references from iOS folder
-			CopyFiles(
-				Path.Combine( sourcePlatformFolder, "Managed" ),
-				Path.Combine( destPlatformFolder, "Managed" ), buildInstance, new Range( 0.6, 0.7 ), "*.dll" );
+			//CopyFiles(
+			//	Path.Combine( sourcePlatformFolder, "Managed" ),
+			//	Path.Combine( destPlatformFolder, "Managed" ), buildInstance, new Range( 0.6, 0.7 ), "*.dll" );
 
 			if( CheckCancel( buildInstance ) )
 				return;
@@ -630,6 +637,7 @@ namespace NeoAxis
 		protected override void OnGetPaths( List<string> paths )
 		{
 			base.OnGetPaths( paths );
+			paths.Add( @"Binaries\NeoAxis.Core.dll" );
 
 			//Caches
 			paths.Add( "Caches" );
