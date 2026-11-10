@@ -127,6 +127,8 @@ namespace NeoAxis
 						texCoords[ n ] *= uvScale;
 				}
 
+				ApplyLocalTransform( positions, normals, tangents );
+
 				if( faces != null )
 					structure = SimpleMeshGenerator.CreateMeshStructure( faces );
 

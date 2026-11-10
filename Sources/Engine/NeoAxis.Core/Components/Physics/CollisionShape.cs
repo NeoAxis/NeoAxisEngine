@@ -45,7 +45,7 @@ namespace NeoAxis
 		{
 			key.Append( " lt " );
 			var relativeTransform = LocalTransform.Value;
-			if( !relativeTransform.IsIdentity )
+			if( relativeTransform != null && !relativeTransform.IsIdentity )
 				key.Append( relativeTransform.ToString() );
 			else
 				key.Append( '1' );

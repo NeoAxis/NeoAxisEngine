@@ -145,7 +145,7 @@ namespace NeoAxis
 								continue;
 
 							int verticesRendered = 0;
-							c.RenderPhysicalObject( context, ref verticesRendered );
+							c.RenderPhysicalObject( context.CurrentViewport, ref verticesRendered );
 							counterCount++;
 							counterVertices += verticesRendered;
 

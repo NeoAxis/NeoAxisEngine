@@ -95,16 +95,16 @@ namespace NeoAxis
 		/// <summary>
 		/// Whether to rotate models to engine's coordinate system. X axis is forward, Z axis is up.
 		/// </summary>
-		[DefaultValue( true )]
+		[DefaultValue( AutoTrueFalse.Auto )]
 		[Category( "Transform" )]
-		public Reference<bool> FixAxes
+		public Reference<AutoTrueFalse> FixAxes
 		{
 			get { if( _fixAxes.BeginGet() ) FixAxes = _fixAxes.Get( this ); return _fixAxes.value; }
 			set { if( _fixAxes.BeginSet( this, ref value ) ) { try { FixAxesChanged?.Invoke( this ); } finally { _fixAxes.EndSet(); } } }
 		}
 		/// <summary>Occurs when the <see cref="FixAxes"/> property value changes.</summary>
 		public event Action<Import3D> FixAxesChanged;
-		ReferenceField<bool> _fixAxes = true;
+		ReferenceField<AutoTrueFalse> _fixAxes = AutoTrueFalse.Auto;
 
 		/// <summary>
 		/// Whether to move models to center by result bounding box.
@@ -843,7 +843,7 @@ namespace NeoAxis
 					string virtualPath = resource.Name + resource.GetSaveAddFileExtension();
 					string realPath = VirtualPathUtility.GetRealPathByVirtual( virtualPath );
 
-					if( !File.Exists( realPath ) && Components.Count != 0 )
+					if( Components.Count != 0 ) //if( !File.Exists( realPath ) && Components.Count != 0 )
 					{
 						if( !ComponentUtility.SaveComponentToFile( this, realPath, null, out error ) )
 						{
@@ -1240,22 +1240,31 @@ namespace NeoAxis
 					if( settings.updateMaterials && DeleteUnusedMaterials && !settings.disableDeletionUnusedMaterials )
 					{
 						var usedMaterials = new ESet<Material>();
-						foreach( var meshGeometry in GetComponents<MeshGeometry>( false, true ) )
 						{
-							var material = meshGeometry.Material.Value;
-							if( material != null )
+							foreach( var meshGeometry in GetComponents<MeshGeometry>( false, true ) )
 							{
-								usedMaterials.AddWithCheckAlreadyContained( material );
-
-								var multiMaterial = material as MultiMaterial;
-								if( multiMaterial != null )
+								var material = meshGeometry.Material.Value;
+								if( material != null )
 								{
-									foreach( var m in multiMaterial.Materials )
+									usedMaterials.AddWithCheckAlreadyContained( material );
+
+									var multiMaterial = material as MultiMaterial;
+									if( multiMaterial != null )
 									{
-										if( m.Value != null )
-											usedMaterials.AddWithCheckAlreadyContained( m.Value );
+										foreach( var m in multiMaterial.Materials )
+										{
+											if( m.Value != null )
+												usedMaterials.AddWithCheckAlreadyContained( m.Value );
+										}
 									}
 								}
+							}
+
+							foreach( var meshInSpace in GetComponents<MeshInSpace>( false, true ) )
+							{
+								var material = meshInSpace.ReplaceMaterial.Value;
+								if( material != null )
+									usedMaterials.AddWithCheckAlreadyContained( material );
 							}
 						}
 
@@ -1456,18 +1465,20 @@ namespace NeoAxis
 				return false;
 			}
 
-			//MeshGeometry.Material
+			//MeshGeometry: Material
 			foreach( var meshGeometry in import3D.GetComponents<MeshGeometry>( false, true ) )
 			{
 				if( Fix( meshGeometry.Material, out var newReference ) )
 					meshGeometry.Material = ReferenceUtility.MakeReference<Material>( null, newReference );
 			}
 
-			//MeshInSpace.Mesh
+			//MeshInSpace: Mesh, ReplaceMaterial
 			foreach( var meshInSpace in import3D.GetComponents<MeshInSpace>( false, true ) )
 			{
 				if( Fix( meshInSpace.Mesh, out var newReference ) )
 					meshInSpace.Mesh = ReferenceUtility.MakeReference<Mesh>( null, newReference );
+				if( Fix( meshInSpace.ReplaceMaterial, out var newReference2 ) )
+					meshInSpace.ReplaceMaterial = ReferenceUtility.MakeReference<Material>( null, newReference2 );
 			}
 
 			//MultiMaterials
@@ -2052,8 +2063,8 @@ namespace NeoAxis
 			//old version compatibility
 			if( block.AttributeExists( "MergeMeshGeometries" ) && bool.TryParse( block.GetAttribute( "MergeMeshGeometries" ), out var v ) && !v )
 				MergeGeometries = MergeGeometriesEnum.False;
-			if( block.AttributeExists( "ForceFrontXAxis" ) && bool.TryParse( block.GetAttribute( "ForceFrontXAxis" ), out var v2 ) )
-				FixAxes = v2;
+			//if( block.AttributeExists( "ForceFrontXAxis" ) && bool.TryParse( block.GetAttribute( "ForceFrontXAxis" ), out var v2 ) )
+			//	FixAxes = v2;
 
 			return true;
 		}

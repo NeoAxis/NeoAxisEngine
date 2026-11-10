@@ -60,7 +60,7 @@ namespace NeoAxis
 		{
 			Matrix4 t = bodyTransform.ToMatrix4();
 			var local = LocalTransform.Value;
-			if( !local.IsIdentity )
+			if( local != null && !local.IsIdentity )
 				t *= local.ToMatrix4();
 
 			viewport.Simple3DRenderer.AddSphere( t, Radius.Value, 16, solid );

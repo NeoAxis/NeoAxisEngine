@@ -214,6 +214,8 @@ namespace NeoAxis
 
 			SimpleMeshGenerator.GenerateRoundingBox( Dimensions.Value.ToVector3F(), RoundingRadiuses, RoundingSegments.Value, InsideOut, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out indices, out var faces );
 
+			ApplyLocalTransform( positions, normals, tangents );
+
 			////roundingSegments must be equal or works wrong
 			//var roundingSegments2 = RoundingSegments.Value;
 			//var roundingSegments = new Vector3I( roundingSegments2, roundingSegments2, roundingSegments2 );

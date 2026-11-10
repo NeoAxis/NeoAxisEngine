@@ -268,6 +268,8 @@ namespace NeoAxis
 			SimpleMeshGenerator.GenerateSegmentedPlane( Axis, dimensions.ToVector2F(), Segments.Value, UVTilesPerUnit.Value.ToVector2F(), UVTilesInTotal.Value.ToVector2F(), UVOffset.Value.ToVector2F(), out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out indices, out var faces );
 			//SimpleMeshGenerator.GeneratePlane( dimensions, UVTilesPerUnit.Value, UVTilesInTotal.Value, out Vector3F[] positions, out var normals, out var tangents, out var texCoords, out indicesV, out var faces );
 
+			ApplyLocalTransform( positions, normals, tangents );
+
 			if( faces != null )
 				structure = SimpleMeshGenerator.CreateMeshStructure( faces );
 

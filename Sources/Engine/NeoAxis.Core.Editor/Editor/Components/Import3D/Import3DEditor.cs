@@ -326,6 +326,25 @@ namespace NeoAxis.Editor
 				{
 					var bounds = obj.SpaceBounds.BoundingBox;
 
+					//rigid body
+					var rigidBody = obj as RigidBody;
+					if( rigidBody != null )
+					{
+						var verticesRendered = 0;
+						RigidBody.Render( Viewport, true, true, false, rigidBody.Transform, ref verticesRendered, rigidBody, null );
+						continue;
+					}
+
+					//not work, no physical object
+					////constraint
+					//var constraint = obj as Constraint_SixDOF;
+					//if( constraint != null )
+					//{
+					//	constraint.RenderPhysicalObject( Viewport );
+					//	continue;
+					//}
+
+					//default
 					Viewport.Simple3DRenderer.SetColor( new ColorValue( 0, 1, 0, 0.5 ) );
 					Viewport.Simple3DRenderer.AddBounds( bounds );
 

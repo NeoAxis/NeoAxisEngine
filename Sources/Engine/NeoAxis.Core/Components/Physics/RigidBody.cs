@@ -1646,12 +1646,13 @@ namespace NeoAxis
 		//	return item;
 		//}
 
-		public static void Render( ViewportRenderingContext context, bool renderActive, bool renderSelected, bool renderCanSelect, Transform bodyTransform, ref int verticesRendered, RigidBody body, Scene.PhysicsWorldClass.Body physicalBody )
+		//public static void Render( ViewportRenderingContext context, bool renderActive, bool renderSelected, bool renderCanSelect, Transform bodyTransform, ref int verticesRendered, RigidBody body, Scene.PhysicsWorldClass.Body physicalBody )
+		public static void Render( Viewport viewport, bool renderActive, bool renderSelected, bool renderCanSelect, Transform bodyTransform, ref int verticesRendered, RigidBody body, Scene.PhysicsWorldClass.Body physicalBody )
 		{
-			var context2 = context.ObjectInSpaceRenderingContext;
+			//var context2 = context.ObjectInSpaceRenderingContext;
 
-			var viewport = context.Owner;
-			var renderer = viewport.Simple3DRenderer;
+			//var viewport = context.Owner;
+			var renderer = viewport?.Simple3DRenderer;
 
 			//var scene = ParentScene;
 
@@ -1897,7 +1898,7 @@ namespace NeoAxis
 				if( show && physicalBody != null )
 				{
 					var verticesRendered = 0;
-					Render( context, Active, context2.selectedObjects.Contains( this ), context2.canSelectObjects.Contains( this ), Transform, ref verticesRendered, this, PhysicalBody );
+					Render( context.CurrentViewport, Active, context2.selectedObjects.Contains( this ), context2.canSelectObjects.Contains( this ), Transform, ref verticesRendered, this, PhysicalBody );
 				}
 
 				var showLabels = /*show &&*/ physicalBody == null;

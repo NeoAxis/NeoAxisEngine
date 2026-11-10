@@ -403,7 +403,7 @@ namespace NeoAxis
 					{
 						var tr = new Transform( Position, Rotation, shape.scale );
 
-						RigidBody.Render( context, Active, false, false, tr, ref verticesRendered, shapeInfoBody, this );
+						RigidBody.Render( context.CurrentViewport, Active, false, false, tr, ref verticesRendered, shapeInfoBody, this );
 						//shapeInfoBody.Render( context, Active, false, false, tr, ref verticesRendered );
 
 						//GetData( out var pos, out var rot, out _, out _, out _ );
@@ -756,63 +756,106 @@ namespace NeoAxis
 					PhysicsWorld.DestroyConstraint( this );
 				}
 
-				public void RenderPhysicalObject( ViewportRenderingContext context, ref int verticesRendered )
+				//public void RenderPhysicalObject( ViewportRenderingContext context, ref int verticesRendered )
+				public void RenderPhysicalObject( Viewport viewport, ref int verticesRendered )
 				{
-					var viewport = context.Owner;
-					var renderer = viewport.Simple3DRenderer;
-
-					//var t = Transform.Value;
-
-					//var position = t.Position;
-
-					var scale = Math.Max( visualScale.X, Math.Max( visualScale.Y, visualScale.Z ) );
-					//var scale = Math.Max( t.Scale.X, Math.Max( t.Scale.Y, t.Scale.Z ) );
-
-					//!!!!в конфиг
-					//!!!!может указывать в пикселях? или вертикальным размером?
-					//!!!!графиком настраивать
-					//!!!!может картинку рисовать, может разным цветом
-					double maxSize = 80;
-					double minSize = 20;
-					double maxDistance = 100;
-
-					float drawConstraintSize;
-
-					double distance = ( position - viewport.CameraSettings.Position ).Length();
-					if( distance < maxDistance )
+					//var viewport = context.Owner;
+					var renderer = viewport?.Simple3DRenderer;
+					if( renderer != null )
 					{
-						var size = MathEx.Lerp( maxSize, minSize, distance / maxDistance );
-						var size2 = viewport.Simple3DRenderer.GetThicknessByPixelSize( position, size );
+						var drawConstraintSize = 0.0f;
 
-						drawConstraintSize = (float)( size2 * scale );
-						//physicalConstraint.DebugDrawSize = size2 * scale;
-					}
-					else
-					{
-						//!!!!check: внутри не рисуется если 0?
-						drawConstraintSize = 0;
-						//physicalConstraint.DebugDrawSize = 0;
-					}
-
-					////!!!!TransformToolConfig
-					//var toolSize = viewport.DebugGeometry.GetThicknessByPixelSize( t.Position, TransformToolConfig.size );
-					//var size = toolSize / 1.5;
-					//Constraint.DebugDrawSize = size;
-
-					unsafe
-					{
-						PhysicsNative.JConstraint_Draw( constraint, drawConstraintSize, out var lineCount, out var lines );
-
-						for( int n = 0; n < lineCount; n++ )
+						//calculate constraint size by bodies size
+						var c = owner as Constraint_SixDOF;
+						if( c != null )
 						{
-							ref var line = ref lines[ n ];
-							renderer.SetColor( line.Color.ToColorValue() );
-							renderer.AddLineThin( line.From, line.To );
+							var maxSize = 0.0;
+
+							if( c.creationBodyA != null )
+							{
+								var bounds = c.creationBodyA.SpaceBounds.BoundingBox;
+								var size = bounds.GetSize();
+								var side = Math.Max( size.X, Math.Max( size.Y, size.Z ) );
+								maxSize = Math.Max( maxSize, side );
+							}
+
+							if( c.creationBodyB != null )
+							{
+								var bounds = c.creationBodyB.SpaceBounds.BoundingBox;
+								var size = bounds.GetSize();
+								var side = Math.Max( size.X, Math.Max( size.Y, size.Z ) );
+								maxSize = Math.Max( maxSize, side );
+							}
+
+							if( maxSize > 0 )
+								drawConstraintSize = (float)maxSize / 2;
 						}
 
-						verticesRendered += lineCount * 2;
+						//default constraint size
+						if( drawConstraintSize == 0 )
+							drawConstraintSize = Math.Max( visualScale.X, Math.Max( visualScale.Y, visualScale.Z ) );
 
-						PhysicsNative.JConstraint_DrawFree( constraint, lines );
+
+
+						//var t = Transform.Value;
+
+						//var position = t.Position;
+
+						//var scale = Math.Max( visualScale.X, Math.Max( visualScale.Y, visualScale.Z ) );
+						//var scale = Math.Max( t.Scale.X, Math.Max( t.Scale.Y, t.Scale.Z ) );
+
+						////!!!!в конфиг
+						////!!!!может указывать в пикселях? или вертикальным размером?
+						////!!!!графиком настраивать
+						////!!!!может картинку рисовать, может разным цветом
+						//double maxSize = 80;
+						//double minSize = 20;
+						//double maxDistance = 100;
+
+						//float drawConstraintSize;
+
+						//double distance = ( position - viewport.CameraSettings.Position ).Length();
+						//if( distance < maxDistance )
+						//{
+						//	var size = MathEx.Lerp( maxSize, minSize, distance / maxDistance );
+						//	var size2 = viewport.Simple3DRenderer.GetThicknessByPixelSize( position, size );
+
+						//	drawConstraintSize = (float)( size2 * scale );
+						//	//physicalConstraint.DebugDrawSize = size2 * scale;
+						//}
+						//else
+						//{
+						//	//!!!!check: внутри не рисуется если 0?
+						//	drawConstraintSize = 0;
+						//	//physicalConstraint.DebugDrawSize = 0;
+						//}
+
+						//////!!!!TransformToolConfig
+						////var toolSize = viewport.DebugGeometry.GetThicknessByPixelSize( t.Position, TransformToolConfig.size );
+						////var size = toolSize / 1.5;
+						////Constraint.DebugDrawSize = size;
+
+
+						unsafe
+						{
+							PhysicsNative.JConstraint_Draw( constraint, drawConstraintSize, out var lineCount, out var lines );
+
+							for( int n = 0; n < lineCount; n++ )
+							{
+								ref var line = ref lines[ n ];
+
+								var color = line.Color.ToColorValue();
+								renderer.SetColor( color, color * ProjectSettings.Get.Colors.HiddenByOtherObjectsColorMultiplier );
+								renderer.AddLine( line.From, line.To );
+
+								//renderer.SetColor( line.Color.ToColorValue() );
+								//renderer.AddLineThin( line.From, line.To );
+							}
+
+							verticesRendered += lineCount * 2;
+
+							PhysicsNative.JConstraint_DrawFree( constraint, lines );
+						}
 					}
 				}
 
@@ -1229,7 +1272,12 @@ namespace NeoAxis
 					foreach( var child in shapeComponents )
 					{
 						if( child.Enabled )
-							componentShapes.Add( (child, bodyTransformScaleMatrix * child.LocalTransform.Value.ToMatrix4()) );
+						{
+							if( child.LocalTransform.Value != null )
+								componentShapes.Add( (child, bodyTransformScaleMatrix * child.LocalTransform.Value.ToMatrix4()) );
+							else
+								componentShapes.Add( (child, bodyTransformScaleMatrix) );
+						}
 					}
 
 					//var componentShapes = new List<(CollisionShape, Matrix4)>();

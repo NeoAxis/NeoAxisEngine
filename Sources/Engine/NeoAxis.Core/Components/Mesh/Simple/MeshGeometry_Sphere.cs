@@ -213,6 +213,8 @@ namespace NeoAxis
 				SimpleMeshGenerator.GenerateIcoSphere( Radius, Subdivisions.Value, InsideOut, out positions, out normals, out tangents, out texCoords, out indices, out faces );
 			}
 
+			ApplyLocalTransform( positions, normals, tangents );
+
 			if( faces != null )
 				structure = SimpleMeshGenerator.CreateMeshStructure( faces );
 

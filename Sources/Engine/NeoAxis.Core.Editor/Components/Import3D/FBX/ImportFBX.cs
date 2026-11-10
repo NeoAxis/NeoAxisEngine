@@ -129,7 +129,7 @@ namespace NeoAxis.Import.FBX
 			var settings = context.settings;
 			var scene = context.scene;
 
-			if( context.settings.component.FixAxes )
+			if( context.settings.component.FixAxes.Value != AutoTrueFalse.False )
 			{
 				//Через такой конструктор не получится создать такие же оси как EPreDefinedAxisSystem.eMax - Front Axis имеет обратное направление, а направление задать нельзя.
 				//new FbxAxisSystem( FbxAxisSystem.EUpVector.eZAxis, FbxAxisSystem.EFrontVector.eParityOdd, FbxAxisSystem.ECoordSystem.eRightHanded );
@@ -177,7 +177,7 @@ namespace NeoAxis.Import.FBX
 			//-------------------------
 
 			var fixedRotation = settings.component.Rotation.Value.GetNormalize();
-			if( context.settings.component.FixAxes )
+			if( context.settings.component.FixAxes.Value != AutoTrueFalse.False )
 			{
 				var rootNode = scene.GetRootNode();
 				if( rootNode != null && SceneLoader.HasSceneSkeleton( rootNode ) )

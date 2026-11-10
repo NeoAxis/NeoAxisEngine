@@ -139,7 +139,7 @@ namespace NeoAxis
 		{
 			Matrix4 t = bodyTransform.ToMatrix4();
 			var local = LocalTransform.Value;
-			if( !local.IsIdentity )
+			if( local != null && !local.IsIdentity )
 				t *= local.ToMatrix4();
 			int axis = Axis.Value;
 

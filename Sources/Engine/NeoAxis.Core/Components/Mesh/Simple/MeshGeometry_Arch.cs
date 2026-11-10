@@ -289,6 +289,8 @@ namespace NeoAxis
 
 			SimpleMeshGenerator.GenerateArch( Axis, Radius, Thickness, Depth, Segments, SegmentsDepth, Circumference, EndCapes, InsideOut, out Vector3F[] positions, out Vector3F[] normals, out Vector4F[] tangents, out Vector2F[] texCoords, out indices, out var faces );
 
+			ApplyLocalTransform( positions, normals, tangents );
+
 			if( faces != null )
 				structure = SimpleMeshGenerator.CreateMeshStructure( faces );
 

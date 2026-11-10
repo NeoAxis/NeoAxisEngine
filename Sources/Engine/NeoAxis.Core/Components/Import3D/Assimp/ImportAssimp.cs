@@ -482,7 +482,7 @@ namespace NeoAxis
 					}
 
 					var rotateByX = Matrix3.Identity;
-					if( settings.component.FixAxes )
+					if( settings.component.FixAxes.Value != AutoTrueFalse.False )
 						rotateByX = new Matrix3( 1, 0, 0, 0, 0, 1, 0, -1, 0 );
 					context.globalTransform = new Matrix4( settings.component.Rotation.Value.GetNormalize().ToMatrix3() * rotateByX, settings.component.Position );
 

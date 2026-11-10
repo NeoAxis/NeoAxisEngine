@@ -63,7 +63,7 @@ namespace NeoAxis
 		{
 			Matrix4 t = bodyTransform.ToMatrix4();
 			var local = LocalTransform.Value;
-			if( !local.IsIdentity )
+			if( local != null && !local.IsIdentity )
 				t *= local.ToMatrix4();
 			var d = Dimensions.Value;
 			viewport.Simple3DRenderer.AddBox( new Box( new Bounds( -d * .5, d * .5 ) ) * t, solid );

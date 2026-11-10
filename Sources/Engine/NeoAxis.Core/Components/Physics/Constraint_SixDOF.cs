@@ -13,8 +13,8 @@ namespace NeoAxis
 	public class Constraint_SixDOF : ObjectInSpace, IPhysicalObject
 	{
 		bool created;
-		ObjectInSpace creationBodyA;
-		ObjectInSpace creationBodyB;
+		internal ObjectInSpace creationBodyA;
+		internal ObjectInSpace creationBodyB;
 		Scene.PhysicsWorldClass.TwoBodyConstraint physicalConstraint;
 		//int softAnchorModeClosestNodeIndex = -1;
 		////int closestFaceIdx = -1;
@@ -982,7 +982,7 @@ namespace NeoAxis
 				if( show && physicalConstraint != null )
 				{
 					var verticesRendered = 0;
-					physicalConstraint.RenderPhysicalObject( context, ref verticesRendered );
+					physicalConstraint.RenderPhysicalObject( context.CurrentViewport, ref verticesRendered );
 				}
 
 				var showLabels = show;// /*show &&*/ physicalConstraint == null;
@@ -992,6 +992,15 @@ namespace NeoAxis
 				//var showLabels = /*show &&*/ physicalConstraint == null;
 				//if( !showLabels )
 				//	context2.disableShowingLabelForThisObject = true;
+			}
+		}
+
+		public void RenderPhysicalObject( Viewport viewport )
+		{
+			if( physicalConstraint != null )
+			{
+				var verticesRendered = 0;
+				physicalConstraint.RenderPhysicalObject( viewport, ref verticesRendered );
 			}
 		}
 
