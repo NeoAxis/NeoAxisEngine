@@ -16,9 +16,9 @@ namespace NeoAxis
 		object touchDown;
 		Dictionary<UIControl, UIMeasureValueVector2> originalSizes = new Dictionary<UIControl, UIMeasureValueVector2>();
 
-		/////////////////////////////////////////
+		internal List<(int, double)> lastItemPositionsToEnsureVisible;
 
-		//!!!!impl
+		/////////////////////////////////////////
 
 		[Browsable( false )]
 		public int NeedEnsureVisibleInStyle { get; set; } = -1;
@@ -146,6 +146,19 @@ namespace NeoAxis
 		/// <summary>Occurs when the <see cref="Multiselect"/> property value changes.</summary>
 		public event Action<UIControlList> MultiselectChanged;
 		ReferenceField<bool> _multiselect = false;
+
+		/// <summary>
+		/// The multiplier for the mouse wheel scroll speed.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		public Reference<double> MouseWheelScrollMultiplier
+		{
+			get { if( _mouseWheelScrollMultiplier.BeginGet() ) MouseWheelScrollMultiplier = _mouseWheelScrollMultiplier.Get( this ); return _mouseWheelScrollMultiplier.value; }
+			set { if( _mouseWheelScrollMultiplier.BeginSet( this, ref value ) ) { try { MouseWheelScrollMultiplierChanged?.Invoke( this ); } finally { _mouseWheelScrollMultiplier.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MouseWheelScrollMultiplier"/> property value changes.</summary>
+		public event Action<UIControlList> MouseWheelScrollMultiplierChanged;
+		ReferenceField<double> _mouseWheelScrollMultiplier = 1.0;
 
 		///////////////////////////////////////////////
 
@@ -414,7 +427,7 @@ namespace NeoAxis
 				if( scroll != null && scroll.EnabledInHierarchy && scroll.VisibleInHierarchy )
 				{
 					var v = scroll.Value.Value;
-					v -= (double)delta / 700.0f / 10; //v -= (double)delta / 700.0f;
+					v -= (double)delta * MouseWheelScrollMultiplier / 700.0f / 10;
 					MathEx.Clamp( ref v, scroll.ValueRange.Value.Minimum, scroll.ValueRange.Value.Maximum );
 					scroll.Value = v;
 
@@ -866,7 +879,7 @@ namespace NeoAxis
 			//calculate horizontal scroll offset
 			var screenOffsetX = 0.0;
 			if( horizontalScroll != null && horizontalScroll.Enabled )
-				screenOffsetX -= horizontalScroll.Value.Value;
+				screenOffsetX -= horizontalScroll.GetValueClamped();// Value.Value;
 
 			if( !needAndExistHorizontalScroll )
 			{
@@ -970,13 +983,15 @@ namespace NeoAxis
 						}
 					}
 				}
+
+				lastItemPositionsToEnsureVisible = null;
 			}
 			else
 			{
 				//with vertical scroll
 
 				//calculate items positions and scroll height
-				var itemsPositions = new Dictionary<UIControl, (int, double)>();
+				var itemPositions = new List<(int, double)>( items.Length ); //var itemsPositions = new Dictionary<UIControl, (int, double)>();
 				var maxHeight = 0.0;
 				{
 					var currentColumn = 0;
@@ -1001,7 +1016,8 @@ namespace NeoAxis
 							currentPositionY = 0;
 						}
 
-						itemsPositions[ item ] = (currentColumn, currentPositionY);
+						itemPositions.Add( (currentColumn, currentPositionY) );
+						//itemsPositions[ item ] = (currentColumn, currentPositionY);
 
 						currentPositionY += addY;
 						totalCurrentHeight += addY;
@@ -1026,7 +1042,7 @@ namespace NeoAxis
 				{
 					var screenPositionY = screenRectangle.Top;
 					if( verticalScroll != null && verticalScroll.Enabled )
-						screenPositionY -= verticalScroll.Value.Value;
+						screenPositionY -= verticalScroll.GetValueClamped();// Value.Value;
 
 					var verticalScrollSizeX = verticalScroll.GetScreenSize().X;
 					var verticalScrollIndent = ConvertOffsetX( VerticalScrollIndent.Value, UIMeasure.Screen );
@@ -1036,7 +1052,9 @@ namespace NeoAxis
 						var item = items[ n ];
 						var itemScreenSize = item.GetScreenSize();
 
-						itemsPositions.TryGetValue( item, out var position );
+						var position = itemPositions[ n ];
+						//itemsPositions.TryGetValue( item, out var position );
+
 						var currentColumn = position.Item1;
 						var currentPositionY = position.Item2;
 
@@ -1054,6 +1072,8 @@ namespace NeoAxis
 						}
 					}
 				}
+
+				lastItemPositionsToEnsureVisible = itemPositions;
 			}
 
 			var clipRectangleForItems = GetItemsClipRectangle();

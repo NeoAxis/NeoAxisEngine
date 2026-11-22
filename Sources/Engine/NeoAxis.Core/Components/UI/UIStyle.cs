@@ -493,6 +493,8 @@ namespace NeoAxis
 			//	OnRenderSplitContainer( splitContainer, renderer );
 			else if( component is UITabControl tabControl )
 				OnRenderTabControl( tabControl, renderer );
+			else if( component is UIControlList controlList )
+				OnRenderControlList( controlList, renderer );
 		}
 
 		protected virtual void OnRenderButton( UIButton control, CanvasRenderer renderer )
@@ -673,20 +675,28 @@ namespace NeoAxis
 
 		protected virtual void OnRenderText( UIText control, CanvasRenderer renderer )
 		{
-			UIText.RenderParentEditData parentEditData = null;
+			UIText.RenderSelectionAndCaretData renderSelectionAndCaretData = null;
 
 			var parentEdit = control.Parent as UIEdit;
 			if( parentEdit != null && parentEdit.GetTextControl() == control )
 			{
-				parentEditData = new UIText.RenderParentEditData();
-				parentEditData.Edit = parentEdit;
-				parentEditData.SelectionColor = new ColorValue( 0.75, 0.75, 0.75, 0.75 );
-				parentEditData.CaretColor = new ColorValue( 1, 1, 1 );
+				renderSelectionAndCaretData = new UIText.RenderSelectionAndCaretData();
+				renderSelectionAndCaretData.SelectionAndCaretData = parentEdit;
+				renderSelectionAndCaretData.SelectionColor = new ColorValue( 0.75, 0.75, 0.75, 0.75 );
+				renderSelectionAndCaretData.CaretColor = new ColorValue( 1, 1, 1 );
 				if( ( EngineApp.EngineTime - parentEdit.EditingOrChangeCaretPositionLastTime ) % 2.0 > 1.0 )
-					parentEditData.CaretColor.Alpha = 0;
+					renderSelectionAndCaretData.CaretColor.Alpha = 0;
 			}
 
-			control.RenderDefaultStyle( renderer, parentEditData );
+			if( control.Selection )
+			{
+				renderSelectionAndCaretData = new UIText.RenderSelectionAndCaretData();
+				renderSelectionAndCaretData.SelectionAndCaretData = control;
+				renderSelectionAndCaretData.SelectionColor = new ColorValue( 0.75, 0.75, 0.75, 0.75 );
+				renderSelectionAndCaretData.CaretColor = new ColorValue( 1, 1, 1 );
+			}
+
+			control.RenderDefaultStyle( renderer, renderSelectionAndCaretData );
 		}
 
 		/////////////////////////////////////////
@@ -1313,6 +1323,8 @@ namespace NeoAxis
 
 			var separatorHeight = menu.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 0, 4 ) ).Y;
 
+			var indentBetweenItems = menu.GetScreenOffsetByValue( new UIMeasureValueVector2( UIMeasure.Units, 0, 4 ) ).Y;
+
 			//update menu rectangle
 			{
 				var width = borderIndents.X * 2 + buttonSize.X;
@@ -1322,7 +1334,7 @@ namespace NeoAxis
 				{
 					var item = itemBase as UIContextMenu.Item;
 					if( item != null )
-						height += buttonSize.Y;
+						height += buttonSize.Y + indentBetweenItems;
 
 					var separator = itemBase as UIContextMenu.Separator;
 					if( separator != null )
@@ -1373,10 +1385,12 @@ namespace NeoAxis
 						var button = GetButtonByItem( item );
 						if( button != null )
 						{
+							currentPositionY += indentBetweenItems / 2;
+
 							button.Margin = new UIMeasureValueRectangle( UIMeasure.Screen, menu.GetScreenPosition().X + borderIndents.X, currentPositionY, 0, 0 );
 							button.Size = new UIMeasureValueVector2( UIMeasure.Screen, buttonSize );
 
-							currentPositionY += buttonSize.Y;
+							currentPositionY += buttonSize.Y + indentBetweenItems / 2;
 						}
 					}
 
@@ -1389,6 +1403,9 @@ namespace NeoAxis
 			//draw default background
 			if( menu.BackgroundColor.Value == ColorValue.Zero )
 			{
+
+				//!!!!rounding
+
 				var roundingSize = borderIndents.Y * 1.5;
 				renderer.AddQuad( menu.GetScreenRectangle(), new ColorValue( 0.4, 0.4, 0.4 ) );
 			}
@@ -1512,6 +1529,33 @@ namespace NeoAxis
 		{
 		}
 
+		protected virtual void OnRenderControlList( UIControlList control, CanvasRenderer renderer )
+		{
+			var scrollBar = control.GetVerticalScroll();
+
+			//update scroll bar properties
+			if( scrollBar != null )
+			{
+				//ensure visible
+				if( control.NeedEnsureVisibleInStyle != -1 )
+				{
+					var index = control.NeedEnsureVisibleInStyle;
+
+					var itemPositions = control.lastItemPositionsToEnsureVisible;
+					if( itemPositions != null && index >= 0 && index < itemPositions.Count )
+					{
+						var scroll = control.GetVerticalScroll();
+						if( scroll != null )
+						{
+							var itemPosition = itemPositions[ index ];
+							scroll.Value = itemPosition.Item2;
+						}
+					}
+
+					control.NeedEnsureVisibleInStyle = -1;
+				}
+			}
+		}
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

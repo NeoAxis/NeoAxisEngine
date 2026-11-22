@@ -3,24 +3,36 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
-using NeoAxis.Editor;
-using System.Net.WebSockets;
 using System.Threading.Tasks;
-using Internal;
 
 namespace NeoAxis
 {
 	/// <summary>
 	/// Standard UI element for text input.
 	/// </summary>
-	public class UIEdit : UIControl
+	public class UIEdit : UIControl, UIText.ISelectionAndCaretData
 	{
 		//!!!!add CanvasRenderer or Viewport as a key?
-		internal RectangleF[] lastCharacterRectangles;
+		[Browsable( false )]
+		public RectangleF[] LastCharacterRectangles { get; set; }
 
-		//EHorizontalAlignment textHorizontalAlignment = EHorizontalAlignment.Left;
+		bool mouseSelecting;
+		int mouseSelectingCaretStart;
 
-		/////////////////////////////////////////
+		struct UndoState
+		{
+			public string Text;
+			public int Caret;
+		}
+
+		readonly List<UndoState> undoStack = new List<UndoState>();
+		readonly List<UndoState> redoStack = new List<UndoState>();
+		bool applyingUndoRedo;
+		string undoLastKnownText = "";
+		int undoLastKnownCaret = -1;
+		const int MaxUndoCount = 1000;
+
+		///////////////////////////////////////////////
 
 		/// <summary>
 		/// Edit box maximum text characters count.
@@ -136,12 +148,18 @@ namespace NeoAxis
 
 			TextChanging += UIEdit_TextChanging;
 			//TextChanged += UIEdit_TextChanged;
+			TextChanged += UIEdit_TextChangedUndo;
 		}
 
 		private void UIEdit_TextChanging( UIControl sender, ref Reference<string> text )
 		{
 			if( text.Value.Length > MaxCharacterCount )
 				text = new Reference<string>( text.Value.Substring( 0, MaxCharacterCount ), text.GetByReference );
+		}
+
+		void UIEdit_TextChangedUndo( UIControl sender )
+		{
+			RegisterUndo();
 		}
 
 		//private void UIEdit_TextChanged( UIControl obj )
@@ -208,41 +226,31 @@ namespace NeoAxis
 			if( CanFocus )
 			{
 				bool intoArea = new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition );
-
 				if( intoArea && EnabledInHierarchy )
 				{
 					if( button == EMouseButtons.Left )
 					{
-						if( /*Focused &&*/ lastCharacterRectangles != null && ParentContainer != null )
+						if( /*Focused &&*/ LastCharacterRectangles != null && ParentContainer != null )
 						{
 							var screenMousePosition = ParentContainer.ContainerGetMousePosition().ToVector2F();
 
-							var characterIndex = -1;
-							var minDistance = float.MaxValue;
-
-							for( var n = 0; n < lastCharacterRectangles.Length; n++ )
-							{
-								var characterRectangle = lastCharacterRectangles[ n ];
-
-								var distance = characterRectangle.GetPointDistance( screenMousePosition );
-								if( characterIndex == -1 || distance < minDistance )
-								{
-									characterIndex = n;
-									if( screenMousePosition.X > characterRectangle.GetCenter().X )
-										characterIndex++;
-									minDistance = distance;
-								}
-							}
-
+							var characterIndex = GetCharacterIndexByScreenPosition( screenMousePosition );
 							if( characterIndex != -1 )
 							{
 								var oldCaret = GetCaretPosition();
 								CaretPosition = characterIndex;
 
 								if( ParentContainer.Viewport.IsKeyPressed( EKeys.Shift ) )
+								{
 									UpdateSelection( oldCaret );
+									mouseSelectingCaretStart = oldCaret;
+								}
 								else
+								{
 									DeselectAll();
+									mouseSelectingCaretStart = GetCaretPosition();
+								}
+								mouseSelecting = true;
 
 								EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
 							}
@@ -259,6 +267,57 @@ namespace NeoAxis
 			return base.OnMouseDown( button );
 		}
 
+		protected override void OnUpdate( float delta )
+		{
+			base.OnUpdate( delta );
+
+			if( mouseSelecting )
+			{
+				if( Focused && ParentContainer != null && LastCharacterRectangles != null && ParentContainer.Viewport.IsMouseButtonPressed( EMouseButtons.Left ) && Focused )
+				{
+					var screenMousePosition = ParentContainer.ContainerGetMousePosition().ToVector2F();
+					var characterIndex = GetCharacterIndexByScreenPosition( screenMousePosition );
+					if( characterIndex != -1 )
+					{
+						var textLength = Text.Value.Length;
+						if( characterIndex > textLength )
+							characterIndex = textLength;
+
+						var newCaret = characterIndex >= textLength ? -1 : characterIndex;
+						if( CaretPosition.Value != newCaret )
+						{
+							CaretPosition = newCaret;
+
+							var start = Math.Min( mouseSelectingCaretStart, characterIndex );
+							var end = Math.Max( mouseSelectingCaretStart, characterIndex );
+							Select( start, end - start );
+
+							EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+						}
+					}
+				}
+				else
+					mouseSelecting = false;
+			}
+		}
+
+		protected override bool OnMouseUp( EMouseButtons button )
+		{
+			if( button == EMouseButtons.Left )
+				mouseSelecting = false;
+
+			//show context menu
+			if( button == EMouseButtons.Right && new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition ) && Focused )
+			{
+				var handled = false;
+				ShowContextMenu( this, ref handled );
+				if( handled )
+					return true;
+			}
+
+			return base.OnMouseUp( button );
+		}
+
 		protected override void OnRenderUI( CanvasRenderer renderer )
 		{
 			base.OnRenderUI( renderer );
@@ -268,14 +327,14 @@ namespace NeoAxis
 			//{
 			//	var text = Text.Value;
 
-			//	if( lastCharacterRectangles != null )
+			//	if( LastCharacterRectangles != null )
 			//	{
-			//		//foreach( var r in lastCharacterRectangles )
-			//		for( int n = 0; n < lastCharacterRectangles.Length; n++ )
+			//		//foreach( var r in LastCharacterRectangles )
+			//		for( int n = 0; n < LastCharacterRectangles.Length; n++ )
 			//		{
 			//			try
 			//			{
-			//				var r = lastCharacterRectangles[ n ];
+			//				var r = LastCharacterRectangles[ n ];
 			//				var t = text[ n ];
 
 			//				renderer.AddQuad( r, new ColorValue( 0, 1, 0, .5f ) );
@@ -309,14 +368,14 @@ namespace NeoAxis
 
 		static int GetLineStartPosition( string text, int caretPosition )
 		{
-			if( text.Length == 0 )
+			if( text.Length == 0 || caretPosition <= 0 )
 				return 0;
 
-			var caretPosition2 = MathEx.Clamp( caretPosition - 1, 0, text.Length - 1 );
+			var caretPosition2 = Math.Min( caretPosition - 1, text.Length - 1 );
 			for( int n = caretPosition2; n >= 0; n-- )
 			{
 				if( text[ n ] == '\n' )
-					return MathEx.Clamp( n + 1, 0, text.Length - 1 );
+					return n + 1;
 			}
 			return 0;
 		}
@@ -571,20 +630,23 @@ namespace NeoAxis
 							var currentLineStart = GetLineStartPosition( Text.Value, caret );
 							var currentLinePosition = caret - currentLineStart;
 							var previousLineStart = GetLineStartPosition( Text.Value, currentLineStart - 1 );
-							caret = previousLineStart + Math.Min( currentLinePosition, GetLineLength( Text.Value, previousLineStart ) );
+							if( currentLineStart == 0 )
+								caret = 0;
+							else
+								caret = previousLineStart + Math.Min( currentLinePosition, GetLineLength( Text.Value, previousLineStart ) );
 
-							if( lastCharacterRectangles != null && lastCharacterRectangles.Length > 0 )
+							if( LastCharacterRectangles != null && LastCharacterRectangles.Length > 0 )
 							{
-								var oldCaret2 = MathEx.Clamp( oldCaret, 0, lastCharacterRectangles.Length - 1 );
-								var oldCharacterRectangle = lastCharacterRectangles[ oldCaret2 ];
+								var oldCaret2 = MathEx.Clamp( oldCaret, 0, LastCharacterRectangles.Length - 1 );
+								var oldCharacterRectangle = LastCharacterRectangles[ oldCaret2 ];
 								var oldPosition = new Vector2F( oldCharacterRectangle.Left, oldCharacterRectangle.GetCenter().Y );
 
 								float? heightOffsetFromRectangles = null;
 								{
-									var current = lastCharacterRectangles[ 0 ];
-									for( int n = 1; n < lastCharacterRectangles.Length; n++ )
+									var current = LastCharacterRectangles[ 0 ];
+									for( int n = 1; n < LastCharacterRectangles.Length; n++ )
 									{
-										var next = lastCharacterRectangles[ n ];
+										var next = LastCharacterRectangles[ n ];
 										if( next.Top != current.Top )
 										{
 											heightOffsetFromRectangles = next.Top - current.Top;
@@ -601,9 +663,9 @@ namespace NeoAxis
 									var characterIndex = -1;
 									var minDistance = float.MaxValue;
 
-									for( var n = 0; n < lastCharacterRectangles.Length; n++ )
+									for( var n = 0; n < LastCharacterRectangles.Length; n++ )
 									{
-										var characterRectangle = lastCharacterRectangles[ n ];
+										var characterRectangle = LastCharacterRectangles[ n ];
 										if( center.Y > characterRectangle.Top && center.Y < characterRectangle.Bottom )
 										{
 											var distance = Math.Abs( characterRectangle.GetCenter().X - center.X );
@@ -617,8 +679,13 @@ namespace NeoAxis
 										}
 									}
 
-									if( characterIndex != -1 )
-										caret = characterIndex;
+									//accept only a character index located on the previous line
+									if( characterIndex != -1 && currentLineStart > 0 )
+									{
+										var maxIndex = previousLineStart + GetLineLength( Text.Value, previousLineStart );
+										if( characterIndex >= previousLineStart && characterIndex <= maxIndex )
+											caret = characterIndex;
+									}
 								}
 							}
 
@@ -641,23 +708,32 @@ namespace NeoAxis
 							var text = Text.Value;
 							var currentLineStart = GetLineStartPosition( text, caret );
 							var currentLinePosition = caret - currentLineStart;
-							var nextLineStart = GetLineEndPosition( text, currentLineStart + 1, out _ );
-							while( nextLineStart < text.Length && text[ nextLineStart ] == '\n' )
-								nextLineStart++;
-							caret = nextLineStart + Math.Min( currentLinePosition, GetLineLength( Text.Value, nextLineStart ) );
 
-							if( lastCharacterRectangles != null && lastCharacterRectangles.Length > 0 )
+							//find the end of the current line (index of '\n' or text.Length)
+							var currentLineEnd = currentLineStart + GetLineLength( text, currentLineStart );
+							if( currentLineEnd >= text.Length )
 							{
-								var oldCaret2 = MathEx.Clamp( oldCaret, 0, lastCharacterRectangles.Length - 1 );
-								var oldCharacterRectangle = lastCharacterRectangles[ oldCaret2 ];
+								//last line: go to the end
+								caret = text.Length;
+							}
+							else
+							{
+								var nextLineStart = currentLineEnd + 1;
+								caret = nextLineStart + Math.Min( currentLinePosition, GetLineLength( text, nextLineStart ) );
+							}
+
+							if( LastCharacterRectangles != null && LastCharacterRectangles.Length > 0 )
+							{
+								var oldCaret2 = MathEx.Clamp( oldCaret, 0, LastCharacterRectangles.Length - 1 );
+								var oldCharacterRectangle = LastCharacterRectangles[ oldCaret2 ];
 								var oldPosition = new Vector2F( oldCharacterRectangle.Left, oldCharacterRectangle.GetCenter().Y );
 
 								float? heightOffsetFromRectangles = null;
 								{
-									var current = lastCharacterRectangles[ 0 ];
-									for( int n = 1; n < lastCharacterRectangles.Length; n++ )
+									var current = LastCharacterRectangles[ 0 ];
+									for( int n = 1; n < LastCharacterRectangles.Length; n++ )
 									{
-										var next = lastCharacterRectangles[ n ];
+										var next = LastCharacterRectangles[ n ];
 										if( next.Top != current.Top )
 										{
 											heightOffsetFromRectangles = next.Top - current.Top;
@@ -674,9 +750,9 @@ namespace NeoAxis
 									var characterIndex = -1;
 									var minDistance = float.MaxValue;
 
-									for( var n = 0; n < lastCharacterRectangles.Length; n++ )
+									for( var n = 0; n < LastCharacterRectangles.Length; n++ )
 									{
-										var characterRectangle = lastCharacterRectangles[ n ];
+										var characterRectangle = LastCharacterRectangles[ n ];
 										if( center.Y > characterRectangle.Top && center.Y < characterRectangle.Bottom )
 										{
 											var distance = Math.Abs( characterRectangle.GetCenter().X - center.X );
@@ -690,8 +766,24 @@ namespace NeoAxis
 										}
 									}
 
+									//accept only a character index located on the next line
 									if( characterIndex != -1 )
-										caret = characterIndex;
+									{
+										int minIndex, maxIndex;
+										if( currentLineEnd >= text.Length )
+										{
+											minIndex = text.Length;
+											maxIndex = text.Length;
+										}
+										else
+										{
+											minIndex = currentLineEnd + 1;
+											maxIndex = minIndex + GetLineLength( text, minIndex );
+										}
+
+										if( characterIndex >= minIndex && characterIndex <= maxIndex )
+											caret = characterIndex;
+									}
 								}
 							}
 
@@ -718,22 +810,8 @@ namespace NeoAxis
 						case EKeys.X:
 							if( !ReadOnlyInHierarchy && ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
 							{
-								try
-								{
-									GetSelection( out var start, out var length );
-									if( length != 0 )
-									{
-										PlatformSpecificUtility.Instance.SetClipboardText( SelectedText );
+								CutAndCopyToClipboard();
 
-										Text = Text.Value.Remove( start, length );
-										CaretPosition = start;
-										DeselectAll();
-									}
-								}
-								catch { }
-
-								DeselectAll();
-								EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
 								return true;
 							}
 							break;
@@ -741,15 +819,7 @@ namespace NeoAxis
 						case EKeys.C:
 							if( ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
 							{
-								try
-								{
-									GetSelection( out var start, out var length );
-									if( length != 0 )
-										PlatformSpecificUtility.Instance.SetClipboardText( SelectedText );
-								}
-								catch { }
-
-								EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+								CopyToClipboard();
 								return true;
 							}
 							break;
@@ -757,52 +827,7 @@ namespace NeoAxis
 						case EKeys.V:
 							if( !ReadOnlyInHierarchy && ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
 							{
-								GetSelection( out var start, out var length );
-								if( length != 0 )
-								{
-									Text = Text.Value.Remove( start, length );
-									CaretPosition = start;
-									DeselectAll();
-								}
-
-								Task.Run( async delegate ()
-								{
-									var text = await PlatformSpecificUtility.Instance.GetClipboardTextAsync();
-									if( !string.IsNullOrEmpty( text ) )
-									{
-										EngineThreading.ExecuteFromMainThreadLater( delegate ()
-										{
-											try
-											{
-												if( !ReadOnlyInHierarchy )
-												{
-													var font = GetFont();
-													var caret = GetCaretPosition();
-
-													var newText = Text.Value;
-													foreach( var c in text )
-													{
-														if( IsAllowCharacter( font, textControl, c ) && OnTextTypingFilter( e.Key, c, newText ) )
-														{
-															newText = newText.Insert( caret, c.ToString() );
-															caret++;
-														}
-													}
-													Text = newText;
-
-													if( caret == Text.Value.Length )
-														caret = -1;
-													CaretPosition = caret;
-
-													DeselectAll();
-													EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
-												}
-											}
-											catch { }
-										} );
-									}
-								} );
-
+								PasteFromClipboard();
 								return true;
 							}
 							break;
@@ -812,6 +837,25 @@ namespace NeoAxis
 							{
 								SelectAll();
 								EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+								return true;
+							}
+							break;
+
+						case EKeys.Z:
+							if( !ReadOnlyInHierarchy && ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
+							{
+								if( ParentContainer.Viewport.IsKeyPressed( EKeys.Shift ) )
+									Redo();
+								else
+									Undo();
+								return true;
+							}
+							break;
+
+						case EKeys.Y:
+							if( !ReadOnlyInHierarchy && ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
+							{
+								Redo();
 								return true;
 							}
 							break;
@@ -994,7 +1038,6 @@ namespace NeoAxis
 			obj.Name = "Text";
 			obj.Text = ReferenceUtility.MakeThisReference( obj, this, "DisplayText" );//"Text" );
 			obj.TextHorizontalAlignment = EHorizontalAlignment.Left;
-			//obj.TextHorizontalAlignment = ReferenceUtility.MakeThisReference( obj, this, "TextHorizontalAlignment" );
 			obj.Size = new UIMeasureValueVector2( UIMeasure.Parent, 1, 1 );
 			obj.CanBeSelected = false;
 			obj.HorizontalAlignment = EHorizontalAlignment.Stretch;
@@ -1034,25 +1077,33 @@ namespace NeoAxis
 			}
 		}
 
-		//[Browsable( false )]
-		//public EHorizontalAlignment TextHorizontalAlignment
-		//{
-		//	get { return textHorizontalAlignment; }
-		//}
-
 		public void GetSelection( out int start, out int length )
 		{
 			start = SelectionStart.Value;
 			length = SelectionLength.Value;
 
+			var text = Text.Value;
+
 			if( start < 0 )
 				start = 0;
+			if( start > text.Length )
+				start = text.Length;
 			if( length < 0 )
 				length = 0;
-
-			var text = Text.Value;
 			if( start + length > text.Length )
 				length = text.Length - start;
+
+			//start = SelectionStart.Value;
+			//length = SelectionLength.Value;
+
+			//if( start < 0 )
+			//	start = 0;
+			//if( length < 0 )
+			//	length = 0;
+
+			//var text = Text.Value;
+			//if( start + length > text.Length )
+			//	length = text.Length - start;
 		}
 
 		[Browsable( false )]
@@ -1078,17 +1129,31 @@ namespace NeoAxis
 
 		public void Select( int start, int length )
 		{
+			var text = Text.Value;
+
 			if( start < 0 )
 				start = 0;
+			if( start > text.Length )
+				start = text.Length;
 			if( length < 0 )
 				length = 0;
-
-			var text = Text.Value;
 			if( start + length > text.Length )
 				length = text.Length - start;
 
 			SelectionStart = start;
 			SelectionLength = length;
+
+			//if( start < 0 )
+			//	start = 0;
+			//if( length < 0 )
+			//	length = 0;
+
+			//var text = Text.Value;
+			//if( start + length > text.Length )
+			//	length = text.Length - start;
+
+			//SelectionStart = start;
+			//SelectionLength = length;
 		}
 
 		public void SelectAll()
@@ -1144,5 +1209,282 @@ namespace NeoAxis
 			return base.OnTouch( e );
 		}
 
+		int GetCharacterIndexByScreenPosition( Vector2F screenMousePosition )
+		{
+			if( LastCharacterRectangles == null )
+				return -1;
+
+			var characterIndex = -1;
+			var minDistance = float.MaxValue;
+
+			for( var n = 0; n < LastCharacterRectangles.Length; n++ )
+			{
+				var characterRectangle = LastCharacterRectangles[ n ];
+
+				var distance = characterRectangle.GetPointDistance( screenMousePosition );
+				if( characterIndex == -1 || distance < minDistance )
+				{
+					characterIndex = n;
+					if( screenMousePosition.X > characterRectangle.GetCenter().X )
+						characterIndex++;
+					minDistance = distance;
+				}
+			}
+
+			return characterIndex;
+		}
+
+		public void CutAndCopyToClipboard()
+		{
+			try
+			{
+				GetSelection( out var start, out var length );
+				if( length != 0 )
+				{
+					PlatformSpecificUtility.Instance.SetClipboardText( SelectedText );
+
+					Text = Text.Value.Remove( start, length );
+					CaretPosition = start;
+					DeselectAll();
+					EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+				}
+			}
+			catch { }
+		}
+
+		public void CopyToClipboard()
+		{
+			try
+			{
+				GetSelection( out var start, out var length );
+				if( length != 0 )
+					PlatformSpecificUtility.Instance.SetClipboardText( SelectedText );
+			}
+			catch { }
+
+			EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+		}
+
+		public void PasteFromClipboard()
+		{
+			if( ReadOnlyInHierarchy )
+				return;
+
+			var textControl = GetTextControl();
+			if( textControl == null )
+				return;
+
+			GetSelection( out var start, out var length );
+			if( length != 0 )
+			{
+				Text = Text.Value.Remove( start, length );
+				CaretPosition = start;
+				DeselectAll();
+			}
+
+			Task.Run( async delegate ()
+			{
+				var text = await PlatformSpecificUtility.Instance.GetClipboardTextAsync();
+				if( !string.IsNullOrEmpty( text ) )
+				{
+					EngineThreading.ExecuteFromMainThreadLater( delegate ()
+					{
+						try
+						{
+							if( !ReadOnlyInHierarchy )
+							{
+								var font = GetFont();
+								var caret = GetCaretPosition();
+
+								var newText = Text.Value;
+								foreach( var c in text )
+								{
+									if( IsAllowCharacter( font, textControl, c ) && OnTextTypingFilter( 0, c, newText ) )
+									{
+										newText = newText.Insert( caret, c.ToString() );
+										caret++;
+									}
+								}
+								Text = newText;
+
+								if( caret == Text.Value.Length )
+									caret = -1;
+								CaretPosition = caret;
+
+								DeselectAll();
+								EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+							}
+						}
+						catch { }
+					} );
+				}
+			} );
+
+		}
+
+		protected virtual void ShowContextMenu( UIControl parent, ref bool handled )
+		{
+			var items = new List<UIContextMenu.ItemBase>();
+
+			GetSelection( out var selectionStart, out var selectionLength );
+			var hasSelection = selectionLength != 0;
+			var readOnly = ReadOnlyInHierarchy;
+			var hasText = Text.Value.Length != 0;
+
+			//Cut
+			{
+				var item = new UIContextMenu.Item( "Cut", delegate ( UIContextMenu sender, UIContextMenu.Item item2 )
+				{
+					CutAndCopyToClipboard();
+					Focus();
+				} );
+				item.Enabled = hasSelection && !readOnly;
+				items.Add( item );
+			}
+
+			//Copy
+			{
+				var item = new UIContextMenu.Item( "Copy", delegate ( UIContextMenu sender, UIContextMenu.Item item2 )
+				{
+					CopyToClipboard();
+					Focus();
+				} );
+				item.Enabled = hasSelection;
+				items.Add( item );
+			}
+
+			//Paste
+			{
+				var item = new UIContextMenu.Item( "Paste", delegate ( UIContextMenu sender, UIContextMenu.Item item2 )
+				{
+					PasteFromClipboard();
+					Focus();
+				} );
+				item.Enabled = !readOnly;
+				items.Add( item );
+			}
+
+			//Select All
+			{
+				var item = new UIContextMenu.Item( "Select All", delegate ( UIContextMenu sender, UIContextMenu.Item item2 )
+				{
+					SelectAll();
+					Focus();
+					EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+				} );
+				item.Enabled = hasText;
+				items.Add( item );
+			}
+
+			if( items.Count != 0 )
+			{
+				var menu = new UIContextMenu();
+				menu.Style = GetStyle();
+
+				//!!!!indents between items
+
+				var parentMeasure = parent.Size.Value.Measure;
+				menu.ItemSize = new UIMeasureValueDouble( parentMeasure, 30 );
+				menu.ItemMargin = new UIMeasureValueVector2( parentMeasure, new Vector2( 10 + 10, 0 ) );
+				menu.ItemFontSize = new UIMeasureValueDouble( parentMeasure, 15 );
+
+				//menu.ItemSize = new UIMeasureValueDouble( UIMeasure.PixelsScaled, 30 );
+				//menu.ItemMargin = new UIMeasureValueVector2( UIMeasure.PixelsScaled, new Vector2( 10 + 10, 0 ) );
+				//menu.ItemFontSize = new UIMeasureValueDouble( UIMeasure.PixelsScaled, 15 );
+
+				menu.Items = items;
+				menu.Show( ParentContainer );//menu.Show( parent );
+
+				handled = true;
+			}
+		}
+
+		void RegisterUndo()
+		{
+			if( applyingUndoRedo )
+				return;
+
+			var text = Text.Value ?? "";
+			if( text == undoLastKnownText )
+				return;
+
+			//store the state before this change
+			undoStack.Add( new UndoState { Text = undoLastKnownText, Caret = undoLastKnownCaret } );
+			if( undoStack.Count > MaxUndoCount )
+				undoStack.RemoveAt( 0 );
+			redoStack.Clear();
+
+			undoLastKnownText = text;
+			undoLastKnownCaret = CaretPosition.Value;
+		}
+
+		void ApplyUndoState( UndoState state )
+		{
+			applyingUndoRedo = true;
+			try
+			{
+				var oldText = Text.Value ?? "";
+				var newText = state.Text ?? "";
+
+				//caret is placed at the end of the changed region
+				var prefix = 0;
+				var minLength = Math.Min( oldText.Length, newText.Length );
+				while( prefix < minLength && oldText[ prefix ] == newText[ prefix ] )
+					prefix++;
+				var suffix = 0;
+				while( suffix < minLength - prefix && oldText[ oldText.Length - 1 - suffix ] == newText[ newText.Length - 1 - suffix ] )
+					suffix++;
+				var caret = newText.Length - suffix;
+				if( caret >= newText.Length )
+					caret = -1;
+
+				Text = newText;
+				CaretPosition = caret;
+				DeselectAll();
+				undoLastKnownText = newText;
+				undoLastKnownCaret = caret;
+				EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+			}
+			finally
+			{
+				applyingUndoRedo = false;
+			}
+		}
+
+		public void Undo()
+		{
+			if( undoStack.Count == 0 )
+				return;
+
+			var state = undoStack[ undoStack.Count - 1 ];
+			undoStack.RemoveAt( undoStack.Count - 1 );
+
+			redoStack.Add( new UndoState { Text = Text.Value ?? "", Caret = CaretPosition.Value } );
+			ApplyUndoState( state );
+		}
+
+		public void Redo()
+		{
+			if( redoStack.Count == 0 )
+				return;
+
+			var state = redoStack[ redoStack.Count - 1 ];
+			redoStack.RemoveAt( redoStack.Count - 1 );
+
+			undoStack.Add( new UndoState { Text = Text.Value ?? "", Caret = CaretPosition.Value } );
+			ApplyUndoState( state );
+		}
+
+		[Browsable( false )]
+		public bool MouseSelecting
+		{
+			get { return mouseSelecting; }
+		}
+
+		[Browsable( false )]
+		public int MouseSelectingCaretStart
+		{
+			get { return mouseSelectingCaretStart; }
+		}
 	}
 }

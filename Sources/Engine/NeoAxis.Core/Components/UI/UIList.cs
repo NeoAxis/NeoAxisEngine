@@ -127,6 +127,19 @@ namespace NeoAxis
 		[Browsable( true )]
 		public List<string> ItemsAsText { get; set; } = new List<string>();
 
+		/// <summary>
+		/// The multiplier for the mouse wheel scroll speed.
+		/// </summary>
+		[DefaultValue( 1.0 )]
+		public Reference<double> MouseWheelScrollMultiplier
+		{
+			get { if( _mouseWheelScrollMultiplier.BeginGet() ) MouseWheelScrollMultiplier = _mouseWheelScrollMultiplier.Get( this ); return _mouseWheelScrollMultiplier.value; }
+			set { if( _mouseWheelScrollMultiplier.BeginSet( this, ref value ) ) { try { MouseWheelScrollMultiplierChanged?.Invoke( this ); } finally { _mouseWheelScrollMultiplier.EndSet(); } } }
+		}
+		/// <summary>Occurs when the <see cref="MouseWheelScrollMultiplier"/> property value changes.</summary>
+		public event Action<UIList> MouseWheelScrollMultiplierChanged;
+		ReferenceField<double> _mouseWheelScrollMultiplier = 1.0;
+
 		///////////////////////////////////////////////
 
 		public class ItemData
@@ -520,9 +533,7 @@ namespace NeoAxis
 				if( scroll != null && scroll.EnabledInHierarchy && scroll.VisibleInHierarchy )
 				{
 					var v = scroll.Value.Value;
-					//!!!!
-					v -= (double)delta / 700.0f / 10;
-					//v -= (double)delta / 700.0f;
+					v -= (double)delta * MouseWheelScrollMultiplier / 700.0f / 10;
 					MathEx.Clamp( ref v, scroll.ValueRange.Value.Minimum, scroll.ValueRange.Value.Maximum );
 					scroll.Value = v;
 

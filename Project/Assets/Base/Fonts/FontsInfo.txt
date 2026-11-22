@@ -1,2 +1,3 @@
-Default.ttf - Segoe UI
-FlowGraphEditor.ttf - Tahoma
+Default.ttf - Noto Sans
+Default Bold.ttf - Noto Sans Bold
+FlowGraphEditor.ttf - Noto Sans

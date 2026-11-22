@@ -3,16 +3,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
-using System.Runtime.ExceptionServices;
 
 namespace NeoAxis
 {
 	/// <summary>
 	/// Standard UI element for text drawing.
 	/// </summary>
-	public class UIText : UIControl
+	public class UIText : UIControl, UIText.ISelectionAndCaretData
 	{
-		//!!!!maybe Font to UIControl?
+		//!!!!add CanvasRenderer or Viewport as a key?
+		[Browsable( false )]
+		public RectangleF[] LastCharacterRectangles { get; set; }
+
+		bool mouseSelecting;
+		int mouseSelectingCaretStart;
+
+		///////////////////////////////////////////////
 
 		/// <summary>
 		/// The font of rendered text.
@@ -223,65 +229,48 @@ namespace NeoAxis
 		public event Action<UIText> ClipRectangleChanged;
 		ReferenceField<bool> _clipRectangle = false;
 
-		/////////////////////////////////////////
-
-		public UIText()
+		/// <summary>
+		/// Whether to select the text.
+		/// </summary>
+		[DefaultValue( false )]
+		public Reference<bool> Selection
 		{
-			Size = new UIMeasureValueVector2( UIMeasure.Units, 400, 30 );
+			get { if( _selection.BeginGet() ) Selection = _selection.Get( this ); return _selection.value; }
+			set { if( _selection.BeginSet( this, ref value ) ) { try { SelectionChanged?.Invoke( this ); } finally { _selection.EndSet(); } } }
 		}
+		/// <summary>Occurs when the <see cref="Selection"/> property value changes.</summary>
+		public event Action<UIText> SelectionChanged;
+		ReferenceField<bool> _selection = false;
 
-		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		[DefaultValue( 0 )]
+		public Reference<int> SelectionStart
 		{
-			base.OnMetadataGetMembersFilter( context, member, ref skip );
-
-			var p = member as Metadata.Property;
-			if( p != null )
-			{
-				switch( p.Name )
-				{
-				case nameof( ShadowOffset ):
-				case nameof( ShadowColor ):
-					if( !Shadow )
-						skip = true;
-					break;
-				}
-			}
+			get { if( _selectionStart.BeginGet() ) SelectionStart = _selectionStart.Get( this ); return _selectionStart.value; }
+			set { if( _selectionStart.BeginSet( this, ref value ) ) { try { SelectionStartChanged?.Invoke( this ); } finally { _selectionStart.EndSet(); } } }
 		}
+		/// <summary>Occurs when the <see cref="SelectionStart"/> property value changes.</summary>
+		public event Action<UIText> SelectionStartChanged;
+		ReferenceField<int> _selectionStart = 0;
 
-		protected override void OnBeforeRenderUIWithChildren( CanvasRenderer renderer )
+		[DefaultValue( 0 )]
+		public Reference<int> SelectionLength
 		{
-			if( ClipRectangle )
-				ScreenClipRectangle = GetScreenRectangle();
-			else
-				ScreenClipRectangle = null;
-
-			base.OnBeforeRenderUIWithChildren( renderer );
+			get { if( _selectionLength.BeginGet() ) SelectionLength = _selectionLength.Get( this ); return _selectionLength.value; }
+			set { if( _selectionLength.BeginSet( this, ref value ) ) { try { SelectionLengthChanged?.Invoke( this ); } finally { _selectionLength.EndSet(); } } }
 		}
+		/// <summary>Occurs when the <see cref="SelectionLength"/> property value changes.</summary>
+		public event Action<UIText> SelectionLengthChanged;
+		ReferenceField<int> _selectionLength = 0;
 
-		public class RenderParentEditData
+		[DefaultValue( -1 )]
+		public Reference<int> CaretPosition
 		{
-			public UIEdit Edit;
-			public ColorValue SelectionColor;
-			public ColorValue CaretColor;
+			get { if( _caretPosition.BeginGet() ) CaretPosition = _caretPosition.Get( this ); return _caretPosition.value; }
+			set { if( _caretPosition.BeginSet( this, ref value ) ) { try { CaretPositionChanged?.Invoke( this ); } finally { _caretPosition.EndSet(); } } }
 		}
-
-		public void RenderDefaultStyle( CanvasRenderer renderer, RenderParentEditData parentEditData )
-		{
-			string text;
-			//!!!!
-			//if( SupportLocalization )
-			//	localizedText = LanguageManager.Instance.Translate( "UISystem", Text );
-			//else
-			text = Text.Value ?? "";
-
-			if( !WordWrap || string.IsNullOrEmpty( text ) )
-			{
-				var text2 = text.Replace( '\n', ' ' );
-				NoWordWrapRenderUI( renderer, parentEditData, text2 );
-			}
-			else
-				WordWrapRenderUI( renderer, parentEditData, text );
-		}
+		/// <summary>Occurs when the <see cref="CaretPosition"/> property value changes.</summary>
+		public event Action<UIText> CaretPositionChanged;
+		ReferenceField<int> _caretPosition = -1;
 
 		/////////////////////////////////////////
 
@@ -399,15 +388,95 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 
-		void RenderEditSelectionAndCursor( CanvasRenderer renderer, RenderParentEditData parentEditData, TextItem text, double fontSize, Vector2 screenPos )
+		public interface ISelectionAndCaretData
+		{
+			RectangleF[] LastCharacterRectangles { get; set; }
+			bool Focused { get; }
+			void GetSelection( out int start, out int length );
+			int GetCaretPosition();
+		}
+
+		public class RenderSelectionAndCaretData
+		{
+			public ISelectionAndCaretData SelectionAndCaretData;
+			public ColorValue SelectionColor;
+			public ColorValue CaretColor;
+		}
+
+		/////////////////////////////////////////
+
+		public UIText()
+		{
+			Size = new UIMeasureValueVector2( UIMeasure.Units, 400, 30 );
+		}
+
+		protected override void OnMetadataGetMembersFilter( Metadata.GetMembersContext context, Metadata.Member member, ref bool skip )
+		{
+			base.OnMetadataGetMembersFilter( context, member, ref skip );
+
+			var p = member as Metadata.Property;
+			if( p != null )
+			{
+				switch( p.Name )
+				{
+				case nameof( ShadowOffset ):
+				case nameof( ShadowColor ):
+					if( !Shadow )
+						skip = true;
+					break;
+
+				case nameof( SelectionStart ):
+				case nameof( SelectionLength ):
+				case nameof( CaretPosition ):
+					if( !Selection )
+						skip = true;
+					break;
+				}
+			}
+		}
+
+		protected override void OnBeforeRenderUIWithChildren( CanvasRenderer renderer )
+		{
+			if( ClipRectangle )
+				ScreenClipRectangle = GetScreenRectangle();
+			else
+				ScreenClipRectangle = null;
+
+			base.OnBeforeRenderUIWithChildren( renderer );
+		}
+
+		protected virtual string GetTextOverride()
+		{
+			return Text.Value;
+		}
+
+		public virtual void RenderDefaultStyle( CanvasRenderer renderer, RenderSelectionAndCaretData renderSelectionAndCaretData )
+		{
+			string text;
+			//!!!!
+			//if( SupportLocalization )
+			//	localizedText = LanguageManager.Instance.Translate( "UISystem", Text );
+			//else
+			text = GetTextOverride() ?? "";
+
+			if( !WordWrap || string.IsNullOrEmpty( text ) )
+			{
+				var text2 = text.Replace( '\n', ' ' );
+				NoWordWrapRenderUI( renderer, renderSelectionAndCaretData, text2 );
+			}
+			else
+				WordWrapRenderUI( renderer, renderSelectionAndCaretData, text );
+		}
+
+		protected virtual void RenderSelectionAndCaret( CanvasRenderer renderer, RenderSelectionAndCaretData parentEditData, TextItem text, double fontSize, double screenVerticalIndention, Vector2 screenPos )
 		{
 			var font = Font.Value ?? renderer.DefaultFont;
 
 			var start = 0;
 			var length = 0;
-			if( parentEditData.Edit.Focused )
-				parentEditData.Edit.GetSelection( out start, out length );
-			var caret = parentEditData.Edit.GetCaretPosition();
+			if( parentEditData.SelectionAndCaretData.Focused )
+				parentEditData.SelectionAndCaretData.GetSelection( out start, out length );
+			var caret = parentEditData.SelectionAndCaretData.GetCaretPosition();
 
 			var pixelSize = renderer.ViewportForScreenCanvasRenderer != null ? 1.0 / renderer.ViewportForScreenCanvasRenderer.SizeInPixels.ToVector2() : Vector2.Zero;
 
@@ -426,24 +495,29 @@ namespace NeoAxis
 
 					if( characterIndex >= start && characterIndex < start + length )
 					{
-						var r = new Rectangle( posX + pixelSize.X, screenPos.Y, posX + textLength + pixelSize.X, screenPos.Y + fontSize );
-						r.Bottom += pixelSize.Y;
+						var r = new Rectangle( posX + pixelSize.X, screenPos.Y, posX + textLength + pixelSize.X, screenPos.Y + fontSize + screenVerticalIndention );
+						//if( screenVerticalIndention == 0 )
+						//	r.Bottom += pixelSize.Y;
 
 						renderer.AddQuad( r, parentEditData.SelectionColor );
 					}
 				}
 
 				//render caret
-				if( parentEditData.Edit.Focused && caret == characterIndex )
+				if( parentEditData.SelectionAndCaretData is UIEdit )
 				{
-					var width = fontSize / 25;
-					if( width < pixelSize.X )
-						width = pixelSize.X;
+					if( parentEditData.SelectionAndCaretData.Focused && caret == characterIndex )
+					{
+						var width = fontSize / 25;
+						if( width < pixelSize.X )
+							width = pixelSize.X;
 
-					var r = new Rectangle( posX, screenPos.Y, posX + width, screenPos.Y + fontSize );
-					r.Expand( new Vector2( 0, pixelSize.Y ) );
+						var r = new Rectangle( posX, screenPos.Y, posX + width, screenPos.Y + fontSize /* + screenVerticalIndention */);
+						//if( screenVerticalIndention == 0 )
+						//	r.Expand( new Vector2( 0, pixelSize.Y ) );
 
-					renderer.AddQuad( r, parentEditData.CaretColor );
+						renderer.AddQuad( r, parentEditData.CaretColor );
+					}
 				}
 
 				posX += textLength;
@@ -461,7 +535,7 @@ namespace NeoAxis
 			return result;
 		}
 
-		void NoWordWrapRenderUI( CanvasRenderer renderer, RenderParentEditData parentEditData, string text )
+		void NoWordWrapRenderUI( CanvasRenderer renderer, RenderSelectionAndCaretData parentEditData, string text )
 		{
 			var horizontalAlign = TextHorizontalAlignment.Value;
 			var verticalAlign = TextVerticalAlignment.Value;
@@ -487,13 +561,13 @@ namespace NeoAxis
 			var screenPos = ConvertLocalToScreen( localPos );
 
 			//UIEdit: change screen position by caret
-			if( parentEditData != null && parentEditData.Edit.Focused && ( horizontalAlign == EHorizontalAlignment.Left || horizontalAlign == EHorizontalAlignment.Right ) )
+			if( parentEditData != null && parentEditData.SelectionAndCaretData.Focused && ( horizontalAlign == EHorizontalAlignment.Left || horizontalAlign == EHorizontalAlignment.Right ) )
 			{
 				var font = Font.Value ?? renderer.DefaultFont;
 
 				try
 				{
-					var caret = parentEditData.Edit.GetCaretPosition();
+					var caret = parentEditData.SelectionAndCaretData.GetCaretPosition();
 
 					if( horizontalAlign == EHorizontalAlignment.Left )
 					{
@@ -537,36 +611,42 @@ namespace NeoAxis
 				var addTextResult = renderer.AddText( Font, fontSize, text, screenPos, horizontalAlign, verticalAlign, color, addTextOptions );
 
 				if( parentEditData != null && addTextResult != null )
-					parentEditData.Edit.lastCharacterRectangles = addTextResult.CharacterRectangles;
+					parentEditData.SelectionAndCaretData.LastCharacterRectangles = addTextResult.CharacterRectangles;
 
 				//selection, caret of parent UIEdit
-				if( parentEditData != null && ( parentEditData.Edit.SelectionLength.Value > 0 || parentEditData.Edit.Focused ) )
+				if( parentEditData != null )
 				{
-					var font = Font.Value ?? renderer.DefaultFont;
+					parentEditData.SelectionAndCaretData.GetSelection( out _, out var selectionLength );
+					if( ( selectionLength > 0 || parentEditData.SelectionAndCaretData is UIEdit ) && parentEditData.SelectionAndCaretData.Focused )
+					{
+						//if( selectionLength > 0 || parentEditData.SelectionAndCaretData.Focused )
 
-					Vector2F startPos = screenPos.ToVector2F();
+						var font = Font.Value ?? renderer.DefaultFont;
 
-					if( horizontalAlign == EHorizontalAlignment.Center )
-						startPos.X -= font.GetTextLength( fontSize, renderer, text ) * .5f;
-					else if( horizontalAlign == EHorizontalAlignment.Right )
-						startPos.X -= font.GetTextLength( fontSize, renderer, text );
+						Vector2F startPos = screenPos.ToVector2F();
 
-					if( verticalAlign == EVerticalAlignment.Center )
-						startPos.Y -= (float)fontSize * .5f * (float)GetTextLineCount( text );
-					else if( verticalAlign == EVerticalAlignment.Bottom )
-						startPos.Y -= (float)fontSize * (float)GetTextLineCount( text );
+						if( horizontalAlign == EHorizontalAlignment.Center )
+							startPos.X -= font.GetTextLength( fontSize, renderer, text ) * .5f;
+						else if( horizontalAlign == EHorizontalAlignment.Right )
+							startPos.X -= font.GetTextLength( fontSize, renderer, text );
+
+						if( verticalAlign == EVerticalAlignment.Center )
+							startPos.Y -= (float)fontSize * .5f * (float)GetTextLineCount( text );
+						else if( verticalAlign == EVerticalAlignment.Bottom )
+							startPos.Y -= (float)fontSize * (float)GetTextLineCount( text );
 
 
-					var textItem = new TextItem( text.Length + 1, 0 );
-					for( int n = 0; n < text.Length; n++ )
-						textItem.Add( new CharacterItem( text[ n ], n, 0 ) );
+						var textItem = new TextItem( text.Length + 1, 0 );
+						for( int n = 0; n < text.Length; n++ )
+							textItem.Add( new CharacterItem( text[ n ], n, 0 ) );
 
-					//add caret to end
-					var caret = parentEditData.Edit.GetCaretPosition();
-					if( caret == textItem.Count )
-						textItem.Add( new CharacterItem( '\0', caret, 0 ) );
+						//add caret to end
+						var caret = parentEditData.SelectionAndCaretData.GetCaretPosition();
+						if( caret == textItem.Count )
+							textItem.Add( new CharacterItem( '\0', caret, 0 ) );
 
-					RenderEditSelectionAndCursor( renderer, parentEditData, textItem, fontSize, startPos );
+						RenderSelectionAndCaret( renderer, parentEditData, textItem, fontSize, 0, startPos );
+					}
 				}
 			}
 		}
@@ -595,7 +675,7 @@ namespace NeoAxis
 		}
 
 		//slowly to calculate every time?
-		public IList<LineItem> CalculateLinesWordWrapRendering( CanvasRenderer renderer, RenderParentEditData parentEditData, string text )
+		public IList<LineItem> CalculateLinesWordWrapRendering( CanvasRenderer renderer, RenderSelectionAndCaretData parentEditData, string text )
 		{
 			//var screenRect = GetScreenRectangle();
 			var screenSize = GetScreenSize();
@@ -670,9 +750,9 @@ namespace NeoAxis
 			}
 
 			//add caret to end
-			if( parentEditData != null && parentEditData.Edit.Focused )
+			if( parentEditData != null && parentEditData.SelectionAndCaretData.Focused )
 			{
-				var caret = parentEditData.Edit.GetCaretPosition();
+				var caret = parentEditData.SelectionAndCaretData.GetCaretPosition();
 				if( caret == allCharacters.Count )
 				{
 					if( lines.Count == 0 )
@@ -685,7 +765,7 @@ namespace NeoAxis
 			return lines;
 		}
 
-		void WordWrapRenderUI( CanvasRenderer renderer, RenderParentEditData parentEditData, string text )
+		void WordWrapRenderUI( CanvasRenderer renderer, RenderSelectionAndCaretData parentEditData, string text )
 		{
 			var screenRect = GetScreenRectangle();
 			var screenSize = GetScreenSize();
@@ -705,7 +785,7 @@ namespace NeoAxis
 			var lines = CalculateLinesWordWrapRendering( renderer, parentEditData, text );
 
 			if( parentEditData != null )
-				parentEditData.Edit.lastCharacterRectangles = new RectangleF[ text.Length ];
+				parentEditData.SelectionAndCaretData.LastCharacterRectangles = new RectangleF[ text.Length ];
 
 			if( lines.Count != 0 )
 			{
@@ -735,9 +815,9 @@ namespace NeoAxis
 				}
 
 				//UIEdit: change screen position by caret
-				if( parentEditData != null && parentEditData.Edit.Focused && ( verticalAlign == EVerticalAlignment.Top || verticalAlign == EVerticalAlignment.Bottom ) )
+				if( parentEditData != null && parentEditData.SelectionAndCaretData.Focused && ( verticalAlign == EVerticalAlignment.Top || verticalAlign == EVerticalAlignment.Bottom ) && parentEditData.SelectionAndCaretData is UIEdit )
 				{
-					var caret = parentEditData.Edit.GetCaretPosition();
+					var caret = parentEditData.SelectionAndCaretData.GetCaretPosition();
 
 					if( verticalAlign == EVerticalAlignment.Top )
 					{
@@ -836,16 +916,27 @@ namespace NeoAxis
 										{
 											for( int n = 0; n < wordText.Length; n++ )
 											{
-												int characterIndex = word.CharacterIndexStart + n;
-												if( characterIndex < parentEditData.Edit.lastCharacterRectangles.Length )
-													parentEditData.Edit.lastCharacterRectangles[ characterIndex ] = characterRectangles[ n ];
+												int characterIndex = line.CharacterIndexStart + n;
+												if( characterIndex < parentEditData.SelectionAndCaretData.LastCharacterRectangles.Length )
+												{
+													var r = characterRectangles[ n ];
+													if( screenVerticalIndention > 0 )
+														r.Bottom += (float)screenVerticalIndention;
+													parentEditData.SelectionAndCaretData.LastCharacterRectangles[ characterIndex ] = r;
+												}
 											}
 										}
 									}
 
 									//selection, caret of parent UIEdit
-									if( parentEditData != null && ( parentEditData.Edit.SelectionLength.Value > 0 || parentEditData.Edit.Focused ) )
-										RenderEditSelectionAndCursor( renderer, parentEditData, word, fontSize, pos );
+									if( parentEditData != null )
+									{
+										parentEditData.SelectionAndCaretData.GetSelection( out _, out var selectionLength );
+										if( ( selectionLength > 0 || parentEditData.SelectionAndCaretData is UIEdit ) && parentEditData.SelectionAndCaretData.Focused )
+											RenderSelectionAndCaret( renderer, parentEditData, word, fontSize, screenVerticalIndention, pos );
+
+										//if( selectionLength > 0 || parentEditData.SelectionAndCaretData.Focused )
+									}
 								}
 
 								posX += widths[ nWord ] + space;
@@ -888,15 +979,26 @@ namespace NeoAxis
 										for( int n = 0; n < lineText.Length; n++ )
 										{
 											int characterIndex = line.CharacterIndexStart + n;
-											if( characterIndex < parentEditData.Edit.lastCharacterRectangles.Length )
-												parentEditData.Edit.lastCharacterRectangles[ characterIndex ] = characterRectangles[ n ];
+											if( characterIndex < parentEditData.SelectionAndCaretData.LastCharacterRectangles.Length )
+											{
+												var r = characterRectangles[ n ];
+												if( screenVerticalIndention > 0 )
+													r.Bottom += (float)screenVerticalIndention;
+												parentEditData.SelectionAndCaretData.LastCharacterRectangles[ characterIndex ] = r;
+											}
 										}
 									}
 								}
 
 								//selection, caret of parent UIEdit
-								if( parentEditData != null && ( parentEditData.Edit.SelectionLength.Value > 0 || parentEditData.Edit.Focused ) )
-									RenderEditSelectionAndCursor( renderer, parentEditData, line.Text, fontSize, pos );
+								if( parentEditData != null )
+								{
+									parentEditData.SelectionAndCaretData.GetSelection( out _, out var selectionLength );
+									if( ( selectionLength > 0 || parentEditData.SelectionAndCaretData is UIEdit ) && parentEditData.SelectionAndCaretData.Focused )
+										RenderSelectionAndCaret( renderer, parentEditData, line.Text, fontSize, screenVerticalIndention, pos );
+
+									//if( selectionLength > 0 || parentEditData.SelectionAndCaretData.Focused )
+								}
 							}
 						}
 
@@ -907,7 +1009,7 @@ namespace NeoAxis
 				//fill empty character rectangles
 				if( parentEditData != null )
 				{
-					var characterRectangles = parentEditData.Edit.lastCharacterRectangles;
+					var characterRectangles = parentEditData.SelectionAndCaretData.LastCharacterRectangles;
 					if( characterRectangles != null && characterRectangles.Length > 0 )
 					{
 						double positionX = 0;
@@ -957,6 +1059,319 @@ namespace NeoAxis
 			var value = FontSize.Value;
 			var fontSize = GetScreenOffsetByValue( new UIMeasureValueVector2( value.Measure, 0, value.Value ) ).Y;
 			return fontSize;
+		}
+
+		protected override bool OnMouseDown( EMouseButtons button )
+		{
+			if( Selection )
+			{
+				bool intoArea = new Rectangle( 0, 0, 1, 1 ).Contains( MousePosition );
+				if( intoArea && EnabledInHierarchy )
+				{
+					if( button == EMouseButtons.Left && ParentContainer.GetControlByScreenPosition( ParentContainer.ContainerGetMousePosition() ) == this )
+					{
+						if( LastCharacterRectangles != null && ParentContainer != null )
+						{
+							var screenMousePosition = ParentContainer.ContainerGetMousePosition().ToVector2F();
+
+							var characterIndex = GetCharacterIndexByScreenPosition( screenMousePosition );
+							if( characterIndex != -1 )
+							{
+								var oldCaret = GetCaretPosition();
+								CaretPosition = characterIndex;
+
+								if( ParentContainer.Viewport.IsKeyPressed( EKeys.Shift ) )
+								{
+									UpdateSelection( oldCaret );
+									mouseSelectingCaretStart = oldCaret;
+								}
+								else
+								{
+									DeselectAll();
+									mouseSelectingCaretStart = GetCaretPosition();
+								}
+								mouseSelecting = true;
+							}
+						}
+					}
+
+					Focus();
+					return true;
+				}
+				else
+					Unfocus();
+			}
+
+			return base.OnMouseDown( button );
+		}
+
+		protected override bool OnMouseUp( EMouseButtons button )
+		{
+			if( button == EMouseButtons.Left )
+				mouseSelecting = false;
+
+			return base.OnMouseUp( button );
+		}
+
+		protected override bool OnKeyDown( KeyEvent e )
+		{
+			if( Focused && Selection )
+			{
+				switch( e.Key )
+				{
+				case EKeys.C:
+					if( ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
+					{
+						CopyToClipboard();
+						return true;
+					}
+					break;
+
+				case EKeys.A:
+					if( ParentContainer.Viewport.IsKeyPressed( EKeys.Control ) )
+					{
+						SelectAll();
+						//EditingOrChangeCaretPositionLastTime = EngineApp.EngineTime;
+						return true;
+					}
+					break;
+				}
+			}
+
+			return base.OnKeyDown( e );
+		}
+
+		protected override void OnUpdate( float delta )
+		{
+			base.OnUpdate( delta );
+
+			if( mouseSelecting )
+			{
+				if( Selection && ParentContainer != null && LastCharacterRectangles != null && ParentContainer.Viewport.IsMouseButtonPressed( EMouseButtons.Left ) && Focused )
+				{
+					var screenMousePosition = ParentContainer.ContainerGetMousePosition().ToVector2F();
+					var characterIndex = GetCharacterIndexByScreenPosition( screenMousePosition );
+					if( characterIndex != -1 )
+					{
+						var textLength = GetTextOverride().Length;
+						if( characterIndex > textLength )
+							characterIndex = textLength;
+
+						var newCaret = characterIndex >= textLength ? -1 : characterIndex;
+
+						if( CaretPosition.Value != newCaret )
+						{
+							CaretPosition = newCaret;
+
+							var start = Math.Min( mouseSelectingCaretStart, characterIndex );
+							var end = Math.Max( mouseSelectingCaretStart, characterIndex );
+							Select( start, end - start );
+						}
+					}
+				}
+				else
+					mouseSelecting = false;
+			}
+		}
+
+		int GetCharacterIndexByScreenPosition( Vector2F screenMousePosition )
+		{
+			if( LastCharacterRectangles == null )
+				return -1;
+
+			var characterIndex = -1;
+			var minDistance = float.MaxValue;
+
+			//search nearest character rectangle in the same line
+			{
+				for( var n = 0; n < LastCharacterRectangles.Length; n++ )
+				{
+					var characterRectangle = LastCharacterRectangles[ n ];
+
+					if( screenMousePosition.Y >= characterRectangle.Top && screenMousePosition.Y <= characterRectangle.Bottom )
+					{
+						var distance = Math.Abs( screenMousePosition.X - characterRectangle.Left );
+						if( characterIndex == -1 || distance < minDistance )
+						{
+							characterIndex = n;
+							if( screenMousePosition.X > characterRectangle.GetCenter().X )
+								characterIndex++;
+							minDistance = distance;
+						}
+					}
+				}
+			}
+
+			//!!!!find better solution when no character on the line
+
+			//when no character found, find nearest character by Y
+			if( characterIndex == -1 )
+			{
+				for( var n = 0; n < LastCharacterRectangles.Length; n++ )
+				{
+					var characterRectangle = LastCharacterRectangles[ n ];
+
+					var distance = characterRectangle.GetPointDistance( screenMousePosition );
+					if( characterIndex == -1 || distance < minDistance )
+					{
+						characterIndex = n;
+						if( screenMousePosition.X > characterRectangle.GetCenter().X )
+							characterIndex++;
+						minDistance = distance;
+					}
+				}
+			}
+
+			return characterIndex;
+		}
+
+		public void Select( int start, int length )
+		{
+			var text = GetTextOverride();
+
+			if( start < 0 )
+				start = 0;
+			if( start > text.Length )
+				start = text.Length;
+			if( length < 0 )
+				length = 0;
+			if( start + length > text.Length )
+				length = text.Length - start;
+
+			SelectionStart = start;
+			SelectionLength = length;
+
+			//if( start < 0 )
+			//	start = 0;
+			//if( length < 0 )
+			//	length = 0;
+
+			//var text = Text.Value;
+			//if( start + length > text.Length )
+			//	length = text.Length - start;
+
+			//SelectionStart = start;
+			//SelectionLength = length;
+		}
+
+		public void SelectAll()
+		{
+			var text = GetTextOverride();
+			SelectionStart = 0;
+			SelectionLength = text.Length;
+		}
+
+		public void DeselectAll()
+		{
+			Select( 0, 0 );
+		}
+
+		public void GetSelection( out int start, out int length )
+		{
+			start = SelectionStart.Value;
+			length = SelectionLength.Value;
+
+			var text = GetTextOverride();
+
+			if( start < 0 )
+				start = 0;
+			if( start > text.Length )
+				start = text.Length;
+			if( length < 0 )
+				length = 0;
+			if( start + length > text.Length )
+				length = text.Length - start;
+
+			//start = SelectionStart.Value;
+			//length = SelectionLength.Value;
+
+			//if( start < 0 )
+			//	start = 0;
+			//if( length < 0 )
+			//	length = 0;
+
+			//var text = Text.Value;
+			//if( start + length > text.Length )
+			//	length = text.Length - start;
+		}
+
+		[Browsable( false )]
+		public string SelectedText
+		{
+			get
+			{
+				GetSelection( out var start, out var length );
+				return GetTextOverride().Substring( start, length );
+			}
+		}
+
+		public int GetCaretPosition()
+		{
+			var text = GetTextOverride();
+			var caret = CaretPosition.Value;
+			if( caret < 0 )
+				caret = text.Length;
+			if( caret > text.Length )
+				caret = text.Length;
+			return caret;
+		}
+
+		void UpdateSelection( int oldCaret )
+		{
+			var caret = GetCaretPosition();
+
+			var start = SelectionStart.Value;
+			var length = SelectionLength.Value;
+
+			if( length == 0 )
+			{
+				start = Math.Min( caret, oldCaret );
+				length = Math.Abs( caret - oldCaret );
+			}
+
+			var min = start;
+			var max = start + length;
+
+			if( caret < min )
+				min = caret;
+			if( caret > max )
+				max = caret;
+
+			Select( min, max - min );
+		}
+
+		public void CopyToClipboard()
+		{
+			try
+			{
+				GetSelection( out var start, out var length );
+				if( length != 0 )
+					PlatformSpecificUtility.Instance.SetClipboardText( SelectedText );
+			}
+			catch { }
+		}
+
+		[Browsable( false )]
+		public override bool CanFocus
+		{
+			get
+			{
+				if( Selection )
+					return true;
+				return base.CanFocus;
+			}
+		}
+
+		[Browsable( false )]
+		public bool MouseSelecting
+		{
+			get { return mouseSelecting; }
+		}
+
+		[Browsable( false )]
+		public int MouseSelectingCaretStart
+		{
+			get { return mouseSelectingCaretStart; }
 		}
 	}
 }

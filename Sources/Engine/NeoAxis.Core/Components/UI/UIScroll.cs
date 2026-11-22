@@ -73,6 +73,13 @@ namespace NeoAxis
 			return factor;
 		}
 
+		public double GetValueClamped()
+		{
+			var range = ValueRange.Value;
+			var value = Value.Value;
+			return MathEx.Clamp( value, range[ 0 ], range[ 1 ] );
+		}
+
 		protected override bool OnMouseDown( EMouseButtons button )
 		{
 			if( button == EMouseButtons.Left && VisibleInHierarchy && cursorInsideArea && EnabledInHierarchy && !ReadOnlyInHierarchy )
