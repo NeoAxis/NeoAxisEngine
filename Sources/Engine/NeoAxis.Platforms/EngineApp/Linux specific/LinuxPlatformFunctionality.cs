@@ -904,15 +904,23 @@ namespace Internal//NeoAxis
 
 		public override Vector2I GetScreenSize()
 		{
-			if( display == IntPtr.Zero )
+			try
 			{
-				XInitThreads();
-				display = XOpenDisplay( IntPtr.Zero );
+				if( display == IntPtr.Zero )
+				{
+					XInitThreads();
+					display = XOpenDisplay( IntPtr.Zero );
+				}
+				if( display == IntPtr.Zero )
+					return new Vector2I( 10, 10 );
+				var screen = XDefaultScreen( display );
+				return new Vector2I( XDisplayWidth( display, screen ), XDisplayHeight( display, screen ) );
 			}
-			if( display == IntPtr.Zero )
+			catch
+			{
 				return new Vector2I( 10, 10 );
-			var screen = XDefaultScreen( display );
-			return new Vector2I( XDisplayWidth( display, screen ), XDisplayHeight( display, screen ) );
+			}
+
 			//return new Vector2I( 10, 10 );
 
 			//return new Vector2I( GetSystemMetrics( SM_CXSCREEN ), GetSystemMetrics( SM_CYSCREEN ) );
@@ -978,36 +986,42 @@ namespace Internal//NeoAxis
 				LinuxWaylandWrapper.DestroyWindow();
 			}
 
-			if( display == IntPtr.Zero )
+			//init X11
+			var windowHandle = IntPtr.Zero;
+			try
 			{
-				XInitThreads();
-				display = XOpenDisplay( IntPtr.Zero );
+				if( display == IntPtr.Zero )
+				{
+					XInitThreads();
+					display = XOpenDisplay( IntPtr.Zero );
+				}
+				if( display == IntPtr.Zero )
+				{
+					//Log.Fatal( "EngineApp: WindowCreate: XOpenDisplay failed." );
+					return IntPtr.Zero;
+				}
+
+				Log.InvisibleInfo( "X11: Window creating." );
+
+				var screen = XDefaultScreen( display );
+
+				windowHandle = XCreateSimpleWindow( display, XRootWindow( display, screen ), position.X, position.Y, (uint)size.X, (uint)size.Y, 0, IntPtr.Zero, IntPtr.Zero );
+
+				XSelectInput( display, windowHandle, (IntPtr)( KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | ExposureMask | StructureNotifyMask | FocusChangeMask ) );
+
+				wmDeleteWindow = XInternAtom( display, "WM_DELETE_WINDOW", false );
+				XSetWMProtocols( display, windowHandle, ref wmDeleteWindow, 1 );
+
+				XStoreName( display, windowHandle, EngineApp.CreatedInsideEngineWindow.Title );
+				XMapWindow( display, windowHandle );
+				XFlush( display );
+
+				windowPosition = position;
+				windowSize = size;
+
+				Log.InvisibleInfo( "X11: Window created." );
 			}
-			if( display == IntPtr.Zero )
-			{
-				Log.Fatal( "EngineApp: WindowCreate: XOpenDisplay failed." );
-				return IntPtr.Zero;
-			}
-
-			Log.InvisibleInfo( "X11: Window creating." );
-
-			var screen = XDefaultScreen( display );
-
-			var windowHandle = XCreateSimpleWindow( display, XRootWindow( display, screen ), position.X, position.Y, (uint)size.X, (uint)size.Y, 0, IntPtr.Zero, IntPtr.Zero );
-
-			XSelectInput( display, windowHandle, (IntPtr)( KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask | ExposureMask | StructureNotifyMask | FocusChangeMask ) );
-
-			wmDeleteWindow = XInternAtom( display, "WM_DELETE_WINDOW", false );
-			XSetWMProtocols( display, windowHandle, ref wmDeleteWindow, 1 );
-
-			XStoreName( display, windowHandle, EngineApp.CreatedInsideEngineWindow.Title );
-			XMapWindow( display, windowHandle );
-			XFlush( display );
-
-			windowPosition = position;
-			windowSize = size;
-
-			Log.InvisibleInfo( "X11: Window created." );
+			catch { }
 
 			return windowHandle;
 
@@ -2278,10 +2292,15 @@ namespace Internal//NeoAxis
 
 		public override void CreatedWindow_UpdateWindowTitle( string title )
 		{
-			if( wayland )
-				LinuxWaylandWrapper.SetWindowTitle( title );
-			else if( display != IntPtr.Zero && EngineApp.ApplicationWindowHandle != IntPtr.Zero )
-				XStoreName( display, EngineApp.ApplicationWindowHandle, title );
+			try
+			{
+				if( wayland )
+					LinuxWaylandWrapper.SetWindowTitle( title );
+				else if( display != IntPtr.Zero && EngineApp.ApplicationWindowHandle != IntPtr.Zero )
+					XStoreName( display, EngineApp.ApplicationWindowHandle, title );
+			}
+			catch { }
+
 			//if( EngineApp.ApplicationWindowHandle != IntPtr.Zero )
 			//	SetWindowText( EngineApp.ApplicationWindowHandle, title );
 		}
