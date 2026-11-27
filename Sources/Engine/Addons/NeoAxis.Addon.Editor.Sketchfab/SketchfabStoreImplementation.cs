@@ -628,23 +628,29 @@ namespace NeoAxis
 					{
 						foreach( var sketchfabEntry in sketchfabArchive.Entries )
 						{
-							//read
-							var bytes = new byte[ sketchfabEntry.Length ];
-							using( var sketchfabStream = sketchfabEntry.Open() )
-								sketchfabStream.Read( bytes );
-
 							var destPath = Path.Combine( "Assets", virtualDestinationFolder, sketchfabEntry.FullName );
 
-							//write
+							//copy
 							var entry = archive.CreateEntry( destPath );
+							using( var sketchfabStream = sketchfabEntry.Open() )
 							using( var entryStream = entry.Open() )
-								entryStream.Write( bytes );
+								sketchfabStream.CopyTo( entryStream );
+
+							////read
+							//var bytes = new byte[ sketchfabEntry.Length ];
+							//using( var sketchfabStream = sketchfabEntry.Open() )
+							//	sketchfabStream.Read( bytes );
+
+							////write
+							//var entry = archive.CreateEntry( destPath );
+							//using( var entryStream = entry.Open() )
+							//	entryStream.Write( bytes );
 						}
 
 						//license.txt
 						{
 							var licenseTxtEntry = sketchfabArchive.GetEntry( "license.txt" );
-							if( licenseTxtText != null )
+							if( licenseTxtEntry != null )
 							{
 								using( var sketchfabStream = licenseTxtEntry.Open() )
 								{
