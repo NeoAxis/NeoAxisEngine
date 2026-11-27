@@ -165,6 +165,12 @@ namespace NeoAxis
 			return needRead;
 		}
 
+		public override void ReadUnmanagedExactly( nint buffer, int count )
+		{
+			if( ReadUnmanaged( buffer, count ) != count )
+				throw new EndOfStreamException();
+		}
+
 		public override int ReadByte()
 		{
 			if( closed )

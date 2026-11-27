@@ -199,6 +199,38 @@ namespace NeoAxis
 			return readed;
 		}
 
+		public override void ReadUnmanagedExactly( nint buffer, int count )
+		{
+			if( handle == IntPtr.Zero )
+				throw new ObjectDisposedException( null );
+			if( count < 0 )
+				throw new ArgumentOutOfRangeException( "count" );
+
+			while( count > 0 )
+			{
+				int readed;
+				bool error = ReadFile( handle, buffer, count, out readed, IntPtr.Zero ) == 0;
+				if( error )
+					throw new IOException( "Reading file failed." );
+				if( readed <= 0 )
+					throw new EndOfStreamException();
+
+				position += readed;
+				buffer += readed;
+				count -= readed;
+			}
+
+			//if( count == 0 )
+			//	return;
+
+			//int readed;
+			//bool error = ReadFile( handle, buffer, count, out readed, IntPtr.Zero ) == 0;
+			//if( error )
+			//	throw new IOException( "Reading file failed." );
+
+			//position += readed;
+		}
+
 		public override int ReadByte()
 		{
 			if( handle == IntPtr.Zero )

@@ -160,6 +160,23 @@ namespace NeoAxis
 			//}
 		}
 
+		public override void ReadUnmanagedExactly( nint buffer, int count )
+		{
+			if( stream == null )
+				throw new ObjectDisposedException( null );
+
+			var rented = System.Buffers.ArrayPool<byte>.Shared.Rent( count );
+			try
+			{
+				stream.ReadExactly( rented, 0, count );
+				Marshal.Copy( rented, 0, buffer, count );
+			}
+			finally
+			{
+				System.Buffers.ArrayPool<byte>.Shared.Return( rented );
+			}
+		}
+
 		public override int ReadByte()
 		{
 			if( stream == null )

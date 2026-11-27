@@ -31,8 +31,16 @@ namespace OpenALSoundSystem
 		{
 			byte[] buffer = new byte[ 4 ];
 
-			if( stream.Read( buffer, 0, 4 ) != 4 )
+			try
+			{
+				stream.ReadExactly( buffer );
+			}
+			catch
+			{
 				return SoundType.Unknown;
+			}
+			//if( stream.Read( buffer, 0, 4 ) != 4 )
+			//	return SoundType.Unknown;
 
 			stream.Seek( -4, SeekOrigin.Current );
 
@@ -93,7 +101,7 @@ namespace OpenALSoundSystem
 				sizeInBytes = numSamples * channels * 2;
 				samples = new byte[ sizeInBytes ];
 
-				fixed ( byte* pSamples = samples )
+				fixed( byte* pSamples = samples )
 				{
 					int samplePos = 0;
 					while( samplePos < sizeInBytes )
@@ -164,7 +172,7 @@ namespace OpenALSoundSystem
 				sizeInBytes /= 2;
 			}
 
-			fixed ( byte* pSamples = samples )
+			fixed( byte* pSamples = samples )
 				Al.alBufferData( alBuffer, alFormat, pSamples, sizeInBytes, frequency );
 
 			if( OpenALSoundWorld.CheckError( "alBufferData" ) )
@@ -423,7 +431,7 @@ namespace OpenALSoundSystem
 
 			unsafe
 			{
-				fixed ( byte* pBuffer = buffer )
+				fixed( byte* pBuffer = buffer )
 					Alc.alcCaptureSamples( alCaptureDevice, (IntPtr)pBuffer, needLength / ( channels * 2 ) );
 			}
 

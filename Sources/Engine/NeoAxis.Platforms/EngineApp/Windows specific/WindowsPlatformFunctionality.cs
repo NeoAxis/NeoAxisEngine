@@ -2289,8 +2289,9 @@ namespace Internal
 							using( VirtualFileStream stream = VirtualFile.Open( virtualFileName ) )
 							{
 								data = new byte[ stream.Length ];
-								if( stream.Read( data, 0, (int)stream.Length ) != stream.Length )
-									throw new Exception();
+								stream.ReadExactly( data );
+								//if( stream.Read( data, 0, (int)stream.Length ) != stream.Length )
+								//	throw new Exception();
 							}
 
 							File.WriteAllBytes( tempRealFileName, data );

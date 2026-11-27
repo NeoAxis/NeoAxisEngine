@@ -175,10 +175,13 @@ namespace NeoAxis
 			using( VirtualFileStream stream = Open( path ) )
 			{
 				byte[] result = new byte[ stream.Length ];
-				if( stream.Read( result, 0, result.Length ) != result.Length )
-				{
-					throw new EndOfStreamException();
-				}
+				stream.ReadExactly( result );
+
+				//if( stream.Read( result, 0, result.Length ) != result.Length )
+				//{
+				//	throw new EndOfStreamException();
+				//}
+
 				return result;
 			}
 		}

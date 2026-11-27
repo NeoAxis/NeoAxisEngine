@@ -164,32 +164,70 @@ namespace NeoAxis.Editor
 
 						using( var stream = response.GetResponseStream() )
 						{
-							var sourceImage = Image.FromStream( stream, true, true );
-
-							//!!!!
 							var maxSize = 512;
+							Image sourceImage;
 
-							var scale = 1.0;
-							if( sourceImage.Height > maxSize )
-								scale = (double)maxSize / (double)sourceImage.Height;
-
-							var size = (int)( scale * (double)sourceImage.Height );
-
-							//var size = Math.Min( sourceImage.Width, sourceImage.Height );
-							//if( size > 512 )
-							//	size = 512;
-
-							var squareImage = new Bitmap( size, size, sourceImage.PixelFormat );
-							using( var g = Graphics.FromImage( squareImage ) )
+							if( item.url.EndsWith( ".webp", StringComparison.OrdinalIgnoreCase ) )
 							{
-								g.DrawImage( sourceImage, new System.Drawing.Rectangle( 0, 0, size, size ), new System.Drawing.Rectangle( ( sourceImage.Width - sourceImage.Height ) / 2, 0, sourceImage.Height, sourceImage.Height ), GraphicsUnit.Pixel );
+								byte[] buffer;
+								using( var memoryStream = new MemoryStream() )
+								{
+									stream.CopyTo( memoryStream );
+									buffer = memoryStream.ToArray();
+								}
+
+								ImageUtility.LoadFromBuffer( buffer, "webp", out var data, out var size, out var depth, out var format, out _, out _, out var error );
+								if( !string.IsNullOrEmpty( error ) )
+								{
+									//Log.Warning( "Unable to load webp image. " + error );
+									return;
+								}
+
+								if( format != PixelFormat.A8R8G8B8 )
+									return;
+
+								var image2D = new ImageUtility.Image2D( format, size, data );
+
+								var bitmap = new Bitmap( size.X, size.Y, System.Drawing.Imaging.PixelFormat.Format32bppArgb );
+								var bitmapData = bitmap.LockBits( new System.Drawing.Rectangle( 0, 0, size.X, size.Y ), System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb );
+								try
+								{
+									var rowBytes = size.X * 4;
+									for( int y = 0; y < size.Y; y++ )
+									{
+										System.Runtime.InteropServices.Marshal.Copy( data, y * rowBytes, bitmapData.Scan0 + y * bitmapData.Stride, rowBytes );
+									}
+								}
+								finally
+								{
+									bitmap.UnlockBits( bitmapData );
+								}
+
+								sourceImage = bitmap;
+							}
+							else
+							{
+								sourceImage = Image.FromStream( stream, true, true );
 							}
 
-							if( item.disposed )
-								return;
+							{
+								var scale = 1.0;
+								if( sourceImage.Height > maxSize )
+									scale = (double)maxSize / (double)sourceImage.Height;
+								var size = (int)( scale * (double)sourceImage.Height );
 
-							item.sourceImage = sourceImage;
-							item.squareImage = squareImage;
+								var squareImage = new Bitmap( size, size, sourceImage.PixelFormat );
+								using( var g = Graphics.FromImage( squareImage ) )
+								{
+									g.DrawImage( sourceImage, new System.Drawing.Rectangle( 0, 0, size, size ), new System.Drawing.Rectangle( ( sourceImage.Width - sourceImage.Height ) / 2, 0, sourceImage.Height, sourceImage.Height ), GraphicsUnit.Pixel );
+								}
+
+								if( item.disposed )
+									return;
+
+								item.sourceImage = sourceImage;
+								item.squareImage = squareImage;
+							}
 						}
 					}
 				}
@@ -637,11 +675,11 @@ namespace NeoAxis.Editor
 
 		internal static void Init()
 		{
-			RegisterStore( new StoreItem() { Name = "NeoX Catalog"/*, Website = EngineInfo.StoreAddress + "/"*/, Icon16 = Properties.Resources.NeoAxis_16, Icon32 = Properties.Resources.NeoAxis_32, Implementation = new NeoAxisStoreImplementation() } );
+			RegisterStore( new StoreItem() { Name = "NeoX"/*, Website = EngineInfo.StoreAddress + "/"*/, Icon16 = Properties.Resources.NeoAxis_16, Icon32 = Properties.Resources.NeoAxis_32, Implementation = new NeoAxisStoreImplementation() } );
 
-			if( ChatWindow.EnableNeoXForgeStore )
+			if( ChatWindow.EnableNeoXAIStore )
 			{
-				RegisterStore( new StoreItem() { Name = "NeoX Forge"/*, Website = EngineInfo.StoreAddress + "/"*/, Icon16 = Properties.Resources.NeoAxis_16, Icon32 = Properties.Resources.NeoAxis_32, Implementation = new NeoXForgeImplementation() } );
+				RegisterStore( new StoreItem() { Name = "NeoX AI"/*, Website = EngineInfo.StoreAddress + "/"*/, Icon16 = Properties.Resources.NeoAxis_16, Icon32 = Properties.Resources.NeoAxis_32, Implementation = new NeoXAIImplementation() } );
 			}
 		}
 

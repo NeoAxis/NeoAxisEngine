@@ -15,13 +15,10 @@ namespace NeoAxis.Editor
 {
 	public class NeoXAIImplementation : StoreManager.StoreImplementation
 	{
-		zz zz;
-
 		static NeoXAIImplementation instance;
 
-		public const string StorageDirectory = "Forge";
-		//!!!!? add to settings
-		const string targetPathInAssets = "Forge";
+		public const string StorageDirectory = "AI";
+		const string targetPathInAssets = "AI";
 		const long projectID = 3082;
 
 		ThreadItem currentThread;
@@ -96,7 +93,7 @@ namespace NeoAxis.Editor
 			{
 				var info = packages[ n ];
 				var storageDirectoryName = $"{info.Author}/{StorageDirectory}/{info.Identifier.Replace( '_', '-' )}";
-				storageFileNames[ n ] = $"{storageDirectoryName}/OutputPreview1.jpg";
+				storageFileNames[ n ] = $"{storageDirectoryName}/OutputPreview1.webp";
 			}
 
 			var cts3 = new CancellationTokenSource( new TimeSpan( 0, 0, 15 * packages.Count ) );
@@ -112,7 +109,7 @@ namespace NeoAxis.Editor
 			}
 			else
 			{
-				//per item because of possible errors. if error, just no thumbnail
+				//per item because of possible errors. error can be when one of items preview is not found
 
 				for( int n = 0; n < packages.Count; n++ )
 				{
@@ -127,15 +124,17 @@ namespace NeoAxis.Editor
 			}
 		}
 
-		static string GetOutputFileExtension( string contentType, int amount )
+		static string GetOutputFileExtension( string outputType, int amount )
 		{
 			var outputFileExtension = "zip";
 			if( amount == 1 )
 			{
-				if( contentType == "3D Model" )
-					outputFileExtension = "glb";
-				else if( contentType == "Image" )
+				if( outputType == "Image" )
 					outputFileExtension = "png";
+				//if( outputType == "3D Model" )
+				//	outputFileExtension = "glb";
+				//else if( outputType == "Image" )
+				//	outputFileExtension = "png";
 			}
 			return outputFileExtension;
 		}
@@ -165,11 +164,11 @@ namespace NeoAxis.Editor
 						var packages = new List<PackageManager.PackageInfo>();
 
 
-						//!!!!more content types
+						//!!!!more output types
 
 
 						var cts2 = new CancellationTokenSource( new TimeSpan( 0, 2, 0 ) );
-						var getItemsResult = await client.CallMethodAsync<string>( "CloudServerImplementation", "GetItemsTextBlock", cts2.Token, null, new[] { userID }, null, new[] { "Finished" }, new[] { "3D Model" } );
+						var getItemsResult = await client.CallMethodAsync<string>( "Implementation", "GetItemsTextBlock", cts2.Token, null, new[] { userID }, null, new[] { "Finished" }, new[] { "3D Model" } );
 						if( !string.IsNullOrEmpty( getItemsResult.Error ) )
 							throw new Exception( getItemsResult.Error );
 
@@ -203,7 +202,7 @@ namespace NeoAxis.Editor
 								long.TryParse( block.GetAttribute( "CreationTime" ), out var creationTimeTicks );
 								var creationTime = new DateTime( creationTimeTicks, DateTimeKind.Utc );
 
-								var contentType = block.GetAttribute( "ContentType" );
+								var outputType = block.GetAttribute( "OutputType" );
 
 								int.TryParse( block.GetAttribute( "Amount", "1" ), out var amount );
 
@@ -239,7 +238,7 @@ namespace NeoAxis.Editor
 								//	info.License = license;
 
 								var storageDirectoryName = $"{info.Author}/{StorageDirectory}/{itemID}";
-								var outputFileExtension = GetOutputFileExtension( contentType, amount );
+								var outputFileExtension = GetOutputFileExtension( outputType, amount );
 								var storageFileName = $"{storageDirectoryName}/{itemID}.{outputFileExtension}";
 								info.FreeDownload = PathUtility.NormalizePath( storageFileName );
 
@@ -273,11 +272,12 @@ namespace NeoAxis.Editor
 
 
 								//category
-								if( contentType == "3D Model" )
+								if( outputType == "3D Model" )
 									info.Categories = "3D Models";
 								else
 								{
 									//!!!!
+
 								}
 
 

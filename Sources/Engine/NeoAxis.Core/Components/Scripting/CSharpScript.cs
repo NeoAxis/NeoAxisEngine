@@ -115,6 +115,26 @@ namespace NeoAxis
 			//needUpdate = true;
 		}
 
+		//public enum ExecutionModeEnum
+		//{
+		//	//Auto, //!!!!default
+		//	Assembly,
+		//	Interpreter,
+		//}
+
+		///// <summary>
+		///// How to compile and execute the C# script.
+		///// </summary>
+		//[DefaultValue( ExecutionModeEnum.Assembly )]
+		//public Reference<ExecutionModeEnum> ExecutionMode
+		//{
+		//	get { if( _executionMode.BeginGet() ) ExecutionMode = _executionMode.Get( this ); return _executionMode.value; }
+		//	set { if( _executionMode.BeginSet( this, ref value ) ) { try { ExecutionModeChanged?.Invoke( this ); } finally { _executionMode.EndSet(); } } }
+		//}
+		///// <summary>Occurs when the <see cref="ExecutionMode"/> property value changes.</summary>
+		//public event Action<CSharpScript> ExecutionModeChanged;
+		//ReferenceField<ExecutionModeEnum> _executionMode = ExecutionModeEnum.Assembly;
+
 		//!!!!
 		//[DefaultValue( false )]
 		//[Serialize]
@@ -982,7 +1002,7 @@ namespace NeoAxis
 
 		/////////////////////////////////////////
 		//Invoke Method
-		
+
 		public virtual void GetFlowGraphRepresentationData( FlowGraphRepresentationData data )
 		{
 			if( compiledOneMethod != null )

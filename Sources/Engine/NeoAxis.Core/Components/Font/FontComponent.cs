@@ -819,13 +819,24 @@ namespace NeoAxis
 
 					ttfFileData = NativeUtility.Alloc( NativeUtility.MemoryAllocationType.Renderer, ttdFileDataSize );
 
-					int readed = stream.ReadUnmanaged( ttfFileData, ttdFileDataSize );
-					if( readed != ttdFileDataSize )
+					try
+					{
+						stream.ReadUnmanagedExactly( ttfFileData, ttdFileDataSize );
+					}
+					catch
 					{
 						Log.Warning( "Font: Cannot load true type font \"{0}\".", fileName );
 						FreeTTFFileData();
 						return false;
 					}
+
+					//int readed = stream.ReadUnmanaged( ttfFileData, ttdFileDataSize );
+					//if( readed != ttdFileDataSize )
+					//{
+					//	Log.Warning( "Font: Cannot load true type font \"{0}\".", fileName );
+					//	FreeTTFFileData();
+					//	return false;
+					//}
 				}
 			}
 

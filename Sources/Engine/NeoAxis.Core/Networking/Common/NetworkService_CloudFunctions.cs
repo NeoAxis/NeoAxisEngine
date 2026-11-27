@@ -1708,11 +1708,22 @@ namespace NeoAxis
 									using( FileStream fs = new FileStream( fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite ) )
 									{
 										fs.Seek( part.PartStart, SeekOrigin.Begin );
-										if( fs.Read( data, 0, partSize ) != partSize )
+
+										try
+										{
+											fs.ReadExactly( data, 0, partSize );
+										}
+										catch
 										{
 											SendDownloadFileContentAnswerError( sender, requestID, "File reading failed." );
 											return;
 										}
+
+										//if( fs.Read( data, 0, partSize ) != partSize )
+										//{
+										//	SendDownloadFileContentAnswerError( sender, requestID, "File reading failed." );
+										//	return;
+										//}
 									}
 								}
 								else
@@ -4791,11 +4802,22 @@ namespace NeoAxis
 							using( FileStream fs = new FileStream( part.SourceFullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite ) )
 							{
 								fs.Seek( part.PartStart, SeekOrigin.Begin );
-								if( fs.Read( data, 0, partSize ) != partSize )
+
+								try
+								{
+									fs.ReadExactly( data, 0, partSize );
+								}
+								catch
 								{
 									error = "File reading failed.";
 									return false;
 								}
+
+								//if( fs.Read( data, 0, partSize ) != partSize )
+								//{
+								//	error = "File reading failed.";
+								//	return false;
+								//}
 							}
 						}
 					}
@@ -4864,82 +4886,83 @@ namespace NeoAxis
 			return true;
 		}
 
-		class StreamWithReadCounter : Stream
-		{
-			readonly FileStream _fileStream;
-			readonly Action<int> _callback;
-			bool _disposed;
+		//not used
+		//class StreamWithReadCounter : Stream
+		//{
+		//	readonly FileStream _fileStream;
+		//	readonly Action<int> _callback;
+		//	bool _disposed;
 
-			public StreamWithReadCounter( string filePath, Action<int> callback )
-			{
-				if( string.IsNullOrEmpty( filePath ) )
-					throw new ArgumentNullException( nameof( filePath ) );
+		//	public StreamWithReadCounter( string filePath, Action<int> callback )
+		//	{
+		//		if( string.IsNullOrEmpty( filePath ) )
+		//			throw new ArgumentNullException( nameof( filePath ) );
 
-				_fileStream = new FileStream( filePath, FileMode.Open, FileAccess.Read );
-				_callback = callback ?? throw new ArgumentNullException( nameof( callback ) );
-			}
+		//		_fileStream = new FileStream( filePath, FileMode.Open, FileAccess.Read );
+		//		_callback = callback ?? throw new ArgumentNullException( nameof( callback ) );
+		//	}
 
-			public override int Read( byte[] buffer, int offset, int count )
-			{
-				int bytesRead = _fileStream.Read( buffer, offset, count );
-				if( bytesRead > 0 )
-					_callback( bytesRead );
-				return bytesRead;
-			}
+		//	public override int Read( byte[] buffer, int offset, int count )
+		//	{
+		//		int bytesRead = _fileStream.Read( buffer, offset, count );
+		//		if( bytesRead > 0 )
+		//			_callback( bytesRead );
+		//		return bytesRead;
+		//	}
 
-			public override async Task<int> ReadAsync( byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken )
-			{
-				int bytesRead = await _fileStream.ReadAsync( buffer, offset, count, cancellationToken );
-				if( bytesRead > 0 )
-					_callback( bytesRead );
-				return bytesRead;
-			}
+		//	public override async Task<int> ReadAsync( byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken )
+		//	{
+		//		int bytesRead = await _fileStream.ReadAsync( buffer, offset, count, cancellationToken );
+		//		if( bytesRead > 0 )
+		//			_callback( bytesRead );
+		//		return bytesRead;
+		//	}
 
-			public override long Seek( long offset, SeekOrigin origin )
-			{
-				return _fileStream.Seek( offset, origin );
-			}
+		//	public override long Seek( long offset, SeekOrigin origin )
+		//	{
+		//		return _fileStream.Seek( offset, origin );
+		//	}
 
-			public override void SetLength( long value )
-			{
-				throw new NotSupportedException( "Setting length is not supported." );
-			}
+		//	public override void SetLength( long value )
+		//	{
+		//		throw new NotSupportedException( "Setting length is not supported." );
+		//	}
 
-			public override void Flush()
-			{
-				_fileStream.Flush();
-			}
+		//	public override void Flush()
+		//	{
+		//		_fileStream.Flush();
+		//	}
 
-			public override long Length => _fileStream.Length;
+		//	public override long Length => _fileStream.Length;
 
-			public override long Position
-			{
-				get => _fileStream.Position;
-				set => _fileStream.Position = value;
-			}
+		//	public override long Position
+		//	{
+		//		get => _fileStream.Position;
+		//		set => _fileStream.Position = value;
+		//	}
 
-			protected override void Dispose( bool disposing )
-			{
-				if( !_disposed )
-				{
-					if( disposing )
-					{
-						_fileStream.Dispose();
-					}
-					_disposed = true;
-				}
-				base.Dispose( disposing );
-			}
+		//	protected override void Dispose( bool disposing )
+		//	{
+		//		if( !_disposed )
+		//		{
+		//			if( disposing )
+		//			{
+		//				_fileStream.Dispose();
+		//			}
+		//			_disposed = true;
+		//		}
+		//		base.Dispose( disposing );
+		//	}
 
-			public override void Write( byte[] buffer, int offset, int count )
-			{
-				throw new NotImplementedException();
-			}
+		//	public override void Write( byte[] buffer, int offset, int count )
+		//	{
+		//		throw new NotImplementedException();
+		//	}
 
-			public override bool CanRead => _fileStream.CanRead;
-			public override bool CanSeek => _fileStream.CanSeek;
-			public override bool CanWrite => false;
-		}
+		//	public override bool CanRead => _fileStream.CanRead;
+		//	public override bool CanSeek => _fileStream.CanSeek;
+		//	public override bool CanWrite => false;
+		//}
 
 		public delegate void UploadFilesProgressCallback( long totalSize, int addedBytes, long totalUploadedSize, int percentage );
 		//public delegate void UploadFilesProgressCallback( int percentage );

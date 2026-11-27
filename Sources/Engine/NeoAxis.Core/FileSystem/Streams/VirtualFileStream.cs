@@ -13,5 +13,6 @@ namespace NeoAxis
 	public abstract class VirtualFileStream : Stream
 	{
 		public abstract int ReadUnmanaged( IntPtr buffer, int count );
+		public abstract void ReadUnmanagedExactly( IntPtr buffer, int count );
 	}
 }

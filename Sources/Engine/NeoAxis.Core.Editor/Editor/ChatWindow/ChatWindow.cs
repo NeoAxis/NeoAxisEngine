@@ -20,11 +20,13 @@ namespace NeoAxis.Editor
 	/// </summary>
 	public partial class ChatWindow : DockWindow
 	{
-		const bool EnableAI = false;
+		//const bool EnableAI = false;
 
-		public static readonly bool EnableNeoXForgeStore = EnableAI;
-		public static readonly bool EnableChatAssets = EnableAI;
-		public static readonly bool EnableChatDocument = EnableAI;
+		public static readonly bool EnableNeoXAIStore = true;// EnableAI;
+
+		//!!!!
+		public static readonly bool EnableChatAssets = false;// EnableAI;
+		public static readonly bool EnableChatDocument = false;// EnableAI;
 
 		static ChatWindow instance;
 
@@ -76,7 +78,7 @@ namespace NeoAxis.Editor
 			//welcome text
 			if( EnableChatDocument )
 			{
-				textBox1.Text = "1. To generate resources, use NeoX Forge in the NeoX app. Generated content will appear in the Stores window of the editor.\r\n\r\n2. To generate assets, use the context menu in the Resources window.\r\n\r\n3. Use the context menu in the document workspace to open the Chat AI form.";
+				textBox1.Text = "1. To generate resources, use NeoX AI in the NeoX app. Generated content will appear in the Stores window of the editor.\r\n\r\n2. To generate assets, use the context menu in the Resources window.\r\n\r\n3. Use the context menu in the document workspace to open the Chat AI form.";
 			}
 			else
 				textBox1.Text = "Chat AI features are disabled.";
@@ -259,7 +261,7 @@ namespace NeoAxis.Editor
 		static async Task DeleteItemAndChatAsync( string itemID, long chatID )
 		{
 			var cts = new CancellationTokenSource( new TimeSpan( 0, 1, 0 ) );
-			var client2 = await NeoXForgeImplementation.Instance.GetOrConnectClientAsync( cts.Token );
+			var client2 = await NeoXAIImplementation.Instance.GetOrConnectClientAsync( cts.Token );
 
 			//delete item
 			{
@@ -284,9 +286,9 @@ namespace NeoAxis.Editor
 				Log.Warning( "ChatWindow.ShowChatPromptForm: ChatWindow instance is null." );
 				return;
 			}
-			if( NeoXForgeImplementation.Instance == null )
+			if( NeoXAIImplementation.Instance == null )
 			{
-				Log.Warning( "ChatWindow.ShowChatPromptForm: NeoXForgeImplementation instance is null." );
+				Log.Warning( "ChatWindow.ShowChatPromptForm: NeoXAIImplementation instance is null." );
 				return;
 			}
 
@@ -327,7 +329,7 @@ namespace NeoAxis.Editor
 				try
 				{
 					//get client and user ID
-					var client = await NeoXForgeImplementation.Instance.GetOrConnectClientAsync( cts.Token );
+					var client = await NeoXAIImplementation.Instance.GetOrConnectClientAsync( cts.Token );
 					var userID = GetThisUserID( client );
 					if( userID == 0 )
 						throw new Exception( "User ID is not defined." );
@@ -404,7 +406,7 @@ namespace NeoAxis.Editor
 			}
 
 			//show processing form
-			processingForm = new ProcessingForm( "NeoX Forge", CancelHandler );
+			processingForm = new ProcessingForm( "NeoX AI", CancelHandler );
 			processingForm.ShowDialog( EditorForm.Instance );
 		}
 
@@ -432,11 +434,11 @@ namespace NeoAxis.Editor
 
 		static async Task<TaskStartResult> TaskStartAsync( CloudFunctionsClient client, long userID, IDocumentWindow documentWindow, Component[] selectedObjects, string newTaskID, string text, bool editOnlySelectedObjects, CancellationToken cancellationToken )
 		{
-			var storageDirectoryName = $"{userID}/{NeoXForgeImplementation.StorageDirectory}/{newTaskID}";
+			var storageDirectoryName = $"{userID}/{NeoXAIImplementation.StorageDirectory}/{newTaskID}";
 			var inputStorageFileName = $"{storageDirectoryName}/Input.zip";
 			var outputStorageFileName = $"{storageDirectoryName}/{newTaskID}.zip";
 
-			var tempZipFilePath = Path.Combine( Path.GetTempPath(), "_forgeSource_" + Guid.NewGuid().ToString() + ".zip" );
+			var tempZipFilePath = Path.Combine( Path.GetTempPath(), "_aiSource_" + Guid.NewGuid().ToString() + ".zip" );
 			try
 			{
 				//prepare zip archive with input data
@@ -666,7 +668,7 @@ namespace NeoAxis.Editor
 
 			TextBlock textBlock;
 
-			var tempZipFullPath = Path.Combine( Path.GetTempPath(), "_forgeOutput_" + Guid.NewGuid().ToString() + ".zip" );
+			var tempZipFullPath = Path.Combine( Path.GetTempPath(), "_aiOutput_" + Guid.NewGuid().ToString() + ".zip" );
 			try
 			{
 				//download file
@@ -720,9 +722,9 @@ namespace NeoAxis.Editor
 				Log.Warning( "ChatWindow.ShowChatPromptForm: ChatWindow instance is null." );
 				return;
 			}
-			if( NeoXForgeImplementation.Instance == null )
+			if( NeoXAIImplementation.Instance == null )
 			{
-				Log.Warning( "ChatWindow.ShowChatPromptForm: NeoXForgeImplementation instance is null." );
+				Log.Warning( "ChatWindow.ShowChatPromptForm: NeoXAIImplementation instance is null." );
 				return;
 			}
 
